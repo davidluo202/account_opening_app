@@ -1,0 +1,185 @@
+import { ReactNode } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { ChevronLeft, ChevronRight, FileText } from "lucide-react";
+import { useLocation } from "wouter";
+
+interface Step {
+  id: number;
+  title: string;
+  description: string;
+}
+
+const steps: Step[] = [
+  { id: 1, title: "客戶類型", description: "選擇客戶類型" },
+  { id: 2, title: "賬戶類型", description: "選擇賬戶類型" },
+  { id: 3, title: "個人基本信息", description: "填寫基本資料" },
+  { id: 4, title: "個人詳細信息", description: "填寫詳細資料" },
+  { id: 5, title: "職業信息", description: "填寫職業狀況" },
+  { id: 6, title: "就業詳情", description: "填寫收入資產" },
+  { id: 7, title: "財務與投資", description: "填寫投資信息" },
+  { id: 8, title: "銀行賬戶", description: "添加銀行賬戶" },
+  { id: 9, title: "稅務信息", description: "填寫稅務資料" },
+  { id: 10, title: "文件上傳", description: "上傳證明文件" },
+  { id: 11, title: "人臉識別", description: "進行人臉驗證" },
+  { id: 12, title: "監管聲明", description: "簽署協議" },
+];
+
+interface ApplicationWizardProps {
+  applicationId: number;
+  currentStep: number;
+  children: ReactNode;
+  onNext?: () => void;
+  onPrevious?: () => void;
+  isNextDisabled?: boolean;
+  isNextLoading?: boolean;
+  hideNext?: boolean;
+  hidePrevious?: boolean;
+  nextLabel?: string;
+}
+
+export default function ApplicationWizard({
+  applicationId,
+  currentStep,
+  children,
+  onNext,
+  onPrevious,
+  isNextDisabled = false,
+  isNextLoading = false,
+  hideNext = false,
+  hidePrevious = false,
+  nextLabel = "下一步",
+}: ApplicationWizardProps) {
+  const [, setLocation] = useLocation();
+  const progress = (currentStep / steps.length) * 100;
+  const currentStepInfo = steps.find(s => s.id === currentStep);
+
+  const handlePrevious = () => {
+    if (onPrevious) {
+      onPrevious();
+    } else if (currentStep > 1) {
+      setLocation(`/application/${applicationId}/step/${currentStep - 1}`);
+    }
+  };
+
+  const handleNext = () => {
+    if (onNext) {
+      onNext();
+    } else if (currentStep < steps.length) {
+      setLocation(`/application/${applicationId}/step/${currentStep + 1}`);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      {/* Header */}
+      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container py-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <FileText className="h-8 w-8 text-primary" />
+              <span className="text-xl font-bold">誠港金融開戶系統</span>
+            </div>
+            <Button
+              variant="ghost"
+              onClick={() => setLocation("/applications")}
+            >
+              返回申請列表
+            </Button>
+          </div>
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="font-medium">
+                步驟 {currentStep} / {steps.length}: {currentStepInfo?.title}
+              </span>
+              <span className="text-muted-foreground">{Math.round(progress)}% 完成</span>
+            </div>
+            <Progress value={progress} className="h-2" />
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="container py-8">
+        <div className="max-w-4xl mx-auto">
+          {/* Step Indicator */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold mb-2">{currentStepInfo?.title}</h2>
+            <p className="text-muted-foreground">{currentStepInfo?.description}</p>
+          </div>
+
+          {/* Form Content */}
+          <Card className="p-6 mb-6">
+            {children}
+          </Card>
+
+          {/* Navigation Buttons */}
+          <div className="flex justify-between">
+            {!hidePrevious && currentStep > 1 ? (
+              <Button
+                variant="outline"
+                onClick={handlePrevious}
+              >
+                <ChevronLeft className="h-4 w-4 mr-2" />
+                上一步
+              </Button>
+            ) : (
+              <div></div>
+            )}
+
+            {!hideNext && (
+              <Button
+                onClick={handleNext}
+                disabled={isNextDisabled || isNextLoading}
+              >
+                {isNextLoading ? (
+                  <span className="flex items-center">
+                    <span className="animate-spin mr-2">⏳</span>
+                    處理中...
+                  </span>
+                ) : (
+                  <>
+                    {nextLabel}
+                    <ChevronRight className="h-4 w-4 ml-2" />
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
+        </div>
+      </main>
+
+      {/* Steps Sidebar (Desktop) */}
+      <div className="hidden lg:block fixed right-8 top-1/2 -translate-y-1/2 w-64">
+        <Card className="p-4">
+          <h3 className="font-semibold mb-4">申請步驟</h3>
+          <div className="space-y-2">
+            {steps.map((step) => (
+              <div
+                key={step.id}
+                className={`p-2 rounded text-sm cursor-pointer transition-colors ${
+                  step.id === currentStep
+                    ? "bg-primary text-primary-foreground"
+                    : step.id < currentStep
+                    ? "bg-muted text-muted-foreground hover:bg-muted/80"
+                    : "text-muted-foreground"
+                }`}
+                onClick={() => {
+                  if (step.id <= currentStep) {
+                    setLocation(`/application/${applicationId}/step/${step.id}`);
+                  }
+                }}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">{step.id}.</span>
+                  <span>{step.title}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}

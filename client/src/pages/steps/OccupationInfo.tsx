@@ -1,0 +1,298 @@
+import { useState, useEffect } from "react";
+import { useParams, useLocation } from "wouter";
+import ApplicationWizard from "@/components/ApplicationWizard";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+
+const employmentStatuses = [
+  { value: "employed", label: "受僱 / Employed" },
+  { value: "self_employed", label: "自僱 / Self-Employed" },
+  { value: "student", label: "學生 / Student" },
+  { value: "unemployed", label: "無業 / Unemployed" },
+];
+
+const industries = [
+  "金融服務 / Financial Services",
+  "資訊科技 / IT",
+  "醫療保健 / Healthcare",
+  "教育 / Education",
+  "零售 / Retail",
+  "製造業 / Manufacturing",
+  "房地產 / Real Estate",
+  "法律 / Legal",
+  "會計 / Accounting",
+  "其他 / Other",
+];
+
+export default function OccupationInfo() {
+  const params = useParams<{ id: string }>();
+  const [, setLocation] = useLocation();
+  const applicationId = parseInt(params.id || "0");
+
+  const [formData, setFormData] = useState({
+    employmentStatus: "" as "employed" | "self_employed" | "student" | "unemployed" | "",
+    companyName: "",
+    position: "",
+    yearsOfService: 0,
+    industry: "",
+    companyAddress: "",
+    officePhone: "",
+  });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const { data: existingData, isLoading: isLoadingData } = trpc.occupation.get.useQuery(
+    { applicationId },
+    { enabled: !!applicationId }
+  );
+
+  const saveMutation = trpc.occupation.save.useMutation({
+    onSuccess: (result) => {
+      if (result.success && result.data) {
+        toast.success("保存成功");
+        setLocation(`/application/${applicationId}/step/6`);
+      }
+    },
+    onError: (error) => {
+      toast.error(`保存失敗: ${error.message}`);
+    },
+  });
+
+  useEffect(() => {
+    if (existingData) {
+      setFormData({
+        ...existingData,
+        companyName: existingData.companyName || "",
+        position: existingData.position || "",
+        yearsOfService: existingData.yearsOfService || 0,
+        industry: existingData.industry || "",
+        companyAddress: existingData.companyAddress || "",
+        officePhone: existingData.officePhone || "",
+      });
+    }
+  }, [existingData]);
+
+  const needsEmploymentDetails = formData.employmentStatus === "employed" || formData.employmentStatus === "self_employed";
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.employmentStatus) {
+      newErrors.employmentStatus = "請選擇就業狀況";
+    }
+
+    if (needsEmploymentDetails) {
+      if (!formData.companyName?.trim()) newErrors.companyName = "請輸入公司名稱";
+      if (!formData.position?.trim()) newErrors.position = "請輸入職務名稱";
+      if (!formData.yearsOfService || formData.yearsOfService <= 0) {
+        newErrors.yearsOfService = "請輸入從業年限";
+      }
+      if (!formData.industry) newErrors.industry = "請選擇行業";
+      if (!formData.companyAddress?.trim()) newErrors.companyAddress = "請輸入公司地址";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = () => {
+    if (!validateForm()) {
+      toast.error("請檢查表單中的錯誤");
+      return;
+    }
+
+    saveMutation.mutate({
+      applicationId,
+      employmentStatus: formData.employmentStatus as any,
+      companyName: needsEmploymentDetails ? formData.companyName : undefined,
+      position: needsEmploymentDetails ? formData.position : undefined,
+      yearsOfService: needsEmploymentDetails ? formData.yearsOfService : undefined,
+      industry: needsEmploymentDetails ? formData.industry : undefined,
+      companyAddress: needsEmploymentDetails ? formData.companyAddress : undefined,
+      officePhone: needsEmploymentDetails ? formData.officePhone : undefined,
+    });
+  };
+
+  if (isLoadingData) {
+    return (
+      <ApplicationWizard applicationId={applicationId} currentStep={5}>
+        <div className="flex justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </ApplicationWizard>
+    );
+  }
+
+  return (
+    <ApplicationWizard
+      applicationId={applicationId}
+      currentStep={5}
+      onNext={handleNext}
+      isNextLoading={saveMutation.isPending}
+    >
+      <div className="space-y-6">
+        {/* 就業狀況 */}
+        <div className="space-y-2">
+          <Label htmlFor="employmentStatus">
+            就業狀況 / Employment Status <span className="text-destructive">*</span>
+          </Label>
+          <Select 
+            value={formData.employmentStatus} 
+            onValueChange={(v) => {
+              setFormData({ ...formData, employmentStatus: v as any });
+              if (errors.employmentStatus) setErrors({ ...errors, employmentStatus: "" });
+            }}
+          >
+            <SelectTrigger className={errors.employmentStatus ? "border-destructive" : ""}>
+              <SelectValue placeholder="請選擇就業狀況" />
+            </SelectTrigger>
+            <SelectContent>
+              {employmentStatuses.map((status) => (
+                <SelectItem key={status.value} value={status.value}>
+                  {status.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {errors.employmentStatus && <p className="text-sm text-destructive">{errors.employmentStatus}</p>}
+        </div>
+
+        {/* 受僱/自僱詳情 */}
+        {needsEmploymentDetails && (
+          <div className="space-y-6 p-6 bg-muted/50 rounded-lg">
+            <h4 className="font-semibold text-lg">
+              {formData.employmentStatus === "employed" ? "僱傭詳情 / Employment Details" : "自僱詳情 / Self-Employment Details"}
+            </h4>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* 公司名稱 */}
+              <div className="space-y-2">
+                <Label htmlFor="companyName">
+                  {formData.employmentStatus === "employed" ? "公司名稱 / Company Name" : "業務名稱 / Business Name"} <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="companyName"
+                  value={formData.companyName}
+                  onChange={(e) => {
+                    setFormData({ ...formData, companyName: e.target.value });
+                    if (errors.companyName) setErrors({ ...errors, companyName: "" });
+                  }}
+                  placeholder="請輸入名稱"
+                  className={errors.companyName ? "border-destructive" : ""}
+                />
+                {errors.companyName && <p className="text-sm text-destructive">{errors.companyName}</p>}
+              </div>
+
+              {/* 職務名稱 */}
+              <div className="space-y-2">
+                <Label htmlFor="position">
+                  職務名稱 / Position <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="position"
+                  value={formData.position}
+                  onChange={(e) => {
+                    setFormData({ ...formData, position: e.target.value });
+                    if (errors.position) setErrors({ ...errors, position: "" });
+                  }}
+                  placeholder="請輸入職務"
+                  className={errors.position ? "border-destructive" : ""}
+                />
+                {errors.position && <p className="text-sm text-destructive">{errors.position}</p>}
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* 從業年限 */}
+              <div className="space-y-2">
+                <Label htmlFor="yearsOfService">
+                  從業年限 / Years of Service <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="yearsOfService"
+                  type="number"
+                  min="0"
+                  value={formData.yearsOfService}
+                  onChange={(e) => {
+                    setFormData({ ...formData, yearsOfService: parseInt(e.target.value) || 0 });
+                    if (errors.yearsOfService) setErrors({ ...errors, yearsOfService: "" });
+                  }}
+                  placeholder="請輸入年限"
+                  className={errors.yearsOfService ? "border-destructive" : ""}
+                />
+                {errors.yearsOfService && <p className="text-sm text-destructive">{errors.yearsOfService}</p>}
+              </div>
+
+              {/* 行業 */}
+              <div className="space-y-2">
+                <Label htmlFor="industry">
+                  行業 / Industry <span className="text-destructive">*</span>
+                </Label>
+                <Select 
+                  value={formData.industry} 
+                  onValueChange={(v) => {
+                    setFormData({ ...formData, industry: v });
+                    if (errors.industry) setErrors({ ...errors, industry: "" });
+                  }}
+                >
+                  <SelectTrigger className={errors.industry ? "border-destructive" : ""}>
+                    <SelectValue placeholder="請選擇行業" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {industries.map((industry) => (
+                      <SelectItem key={industry} value={industry}>
+                        {industry}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.industry && <p className="text-sm text-destructive">{errors.industry}</p>}
+              </div>
+            </div>
+
+            {/* 公司地址 */}
+            <div className="space-y-2">
+              <Label htmlFor="companyAddress">
+                {formData.employmentStatus === "employed" ? "公司地址 / Company Address" : "業務地址 / Business Address"} <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="companyAddress"
+                value={formData.companyAddress}
+                onChange={(e) => {
+                  setFormData({ ...formData, companyAddress: e.target.value });
+                  if (errors.companyAddress) setErrors({ ...errors, companyAddress: "" });
+                }}
+                placeholder="請輸入完整地址"
+                className={errors.companyAddress ? "border-destructive" : ""}
+              />
+              {errors.companyAddress && <p className="text-sm text-destructive">{errors.companyAddress}</p>}
+            </div>
+
+            {/* 辦公電話 */}
+            <div className="space-y-2">
+              <Label htmlFor="officePhone">
+                辦公電話 / Office Phone (可選)
+              </Label>
+              <Input
+                id="officePhone"
+                value={formData.officePhone}
+                onChange={(e) => setFormData({ ...formData, officePhone: e.target.value })}
+                placeholder="請輸入辦公電話"
+              />
+            </div>
+          </div>
+        )}
+
+        {(formData.employmentStatus === "student" || formData.employmentStatus === "unemployed") && (
+          <div className="p-6 bg-muted/50 rounded-lg text-center text-muted-foreground">
+            無需填寫額外信息
+          </div>
+        )}
+      </div>
+    </ApplicationWizard>
+  );
+}

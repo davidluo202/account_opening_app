@@ -5,31 +5,48 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import Applications from "./pages/Applications";
+import AccountSelection from "./pages/steps/AccountSelection";
+import PersonalBasicInfo from "./pages/steps/PersonalBasicInfo";
+import PersonalDetailedInfo from "./pages/steps/PersonalDetailedInfo";
+import OccupationInfo from "./pages/steps/OccupationInfo";
+import EmploymentDetails from "./pages/steps/EmploymentDetails";
+import FinancialAndInvestment from "./pages/steps/FinancialAndInvestment";
+import BankAccount from "./pages/steps/BankAccount";
+import TaxInfo from "./pages/steps/TaxInfo";
+import DocumentUpload from "./pages/steps/DocumentUpload";
+import FaceVerification from "./pages/steps/FaceVerification";
+import RegulatoryDeclaration from "./pages/steps/RegulatoryDeclaration";
+import ApplicationPreview from "./pages/ApplicationPreview";
 
 function Router() {
-  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path={"/applications"} component={Applications} />
+      <Route path={"/application/:id/step/1"} component={AccountSelection} />
+      <Route path={"/application/:id/step/2"} component={AccountSelection} />
+      <Route path={"/application/:id/step/3"} component={PersonalBasicInfo} />
+      <Route path={"/application/:id/step/4"} component={PersonalDetailedInfo} />
+      <Route path={"/application/:id/step/5"} component={OccupationInfo} />
+      <Route path={"/application/:id/step/6"} component={EmploymentDetails} />
+      <Route path={"/application/:id/step/7"} component={FinancialAndInvestment} />
+      <Route path={"/application/:id/step/8"} component={BankAccount} />
+      <Route path={"/application/:id/step/9"} component={TaxInfo} />
+      <Route path={"/application/:id/step/10"} component={DocumentUpload} />
+      <Route path={"/application/:id/step/11"} component={FaceVerification} />
+      <Route path={"/application/:id/step/12"} component={RegulatoryDeclaration} />
+      <Route path={"/application/:id/preview"} component={ApplicationPreview} />
       <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
-
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
+      <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
           <Router />
