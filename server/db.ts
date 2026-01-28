@@ -4,6 +4,7 @@ import {
   InsertUser, 
   users, 
   applications, 
+  applicationNumberSequences,
   accountSelections,
   personalBasicInfo,
   personalDetailedInfo,
@@ -107,6 +108,53 @@ export async function getUserById(id: number) {
   return result.length > 0 ? result[0] : undefined;
 }
 
+// ==================== 申请编号生成 ====================
+/**
+ * 生成申请编号: CMF-ACAPP-YYMMDD-XXX
+ */
+export async function generateApplicationNumber(): Promise<string> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  // 获取当前日期 YYMMDD
+  const now = new Date();
+  const year = now.getFullYear().toString().slice(-2); // 后两位
+  const month = (now.getMonth() + 1).toString().padStart(2, '0');
+  const day = now.getDate().toString().padStart(2, '0');
+  const dateStr = `${year}${month}${day}`;
+  
+  // 查找或创建当日的序列记录
+  const existing = await db
+    .select()
+    .from(applicationNumberSequences)
+    .where(eq(applicationNumberSequences.date, dateStr))
+    .limit(1);
+  
+  let sequence: number;
+  
+  if (existing.length > 0) {
+    // 更新序列号
+    sequence = existing[0].lastSequence + 1;
+    await db
+      .update(applicationNumberSequences)
+      .set({ lastSequence: sequence })
+      .where(eq(applicationNumberSequences.date, dateStr));
+  } else {
+    // 创建新的序列记录
+    sequence = 1;
+    await db.insert(applicationNumberSequences).values({
+      date: dateStr,
+      lastSequence: sequence,
+    });
+  }
+  
+  // 格式化序列号为3位数
+  const sequenceStr = sequence.toString().padStart(3, '0');
+  
+  // 返回完整的申请编号
+  return `CMF-ACAPP-${dateStr}-${sequenceStr}`;
+}
+
 // ==================== 邮箱验证码相关 ====================
 export async function createVerificationCode(email: string, code: string, expiresInMinutes: number = 10) {
   const db = await getDb();
@@ -201,14 +249,14 @@ export async function updateApplicationStep(applicationId: number, step: number)
     .where(eq(applications.id, applicationId));
 }
 
-export async function generateApplicationNumber(applicationId: number) {
+export async function assignApplicationNumber(applicationId: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   
-  const timestamp = Date.now().toString(36).toUpperCase();
-  const random = Math.random().toString(36).substring(2, 6).toUpperCase();
-  const applicationNumber = `APP-${timestamp}-${random}`;
+  // 生成新的CMF格式编号
+  const applicationNumber = await generateApplicationNumber();
   
+  // 更新申请记录
   await db
     .update(applications)
     .set({ applicationNumber })

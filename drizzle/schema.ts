@@ -17,6 +17,17 @@ export const users = mysqlTable("users", {
 });
 
 /**
+ * 申请编号序列追踪表 - 用于生成CMF-ACAPP-YYMMDD-XXX格式的编号
+ */
+export const applicationNumberSequences = mysqlTable("application_number_sequences", {
+  id: int("id").autoincrement().primaryKey(),
+  date: varchar("date", { length: 6 }).notNull().unique(), // YYMMDD
+  lastSequence: int("lastSequence").default(0).notNull(), // 当日最后一个序列号
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+/**
  * 邮箱验证码表
  */
 export const emailVerificationCodes = mysqlTable("email_verification_codes", {

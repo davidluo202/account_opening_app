@@ -101,19 +101,33 @@ export default function FaceVerification() {
       });
 
       setStream(mediaStream);
-      setCapturing(true);
       
       // 等待video元素准备好
       if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
+        const video = videoRef.current;
         
-        // 确保video元素开始播放
-        videoRef.current.onloadedmetadata = () => {
-          videoRef.current?.play().catch(err => {
+        // 先绑定事件处理器，再设置srcObject
+        video.onloadedmetadata = () => {
+          console.log("Video metadata loaded, starting playback");
+          video.play().then(() => {
+            console.log("Video playback started successfully");
+            setCapturing(true);
+          }).catch(err => {
             console.error("Video play error:", err);
             setCameraError("視頻播放失敗，請重試");
+            // 清理stream
+            mediaStream.getTracks().forEach(track => track.stop());
           });
         };
+        
+        // 添加错误处理
+        video.onerror = (e) => {
+          console.error("Video element error:", e);
+          setCameraError("視頻元素加載失敗，請重試");
+        };
+        
+        // 设置srcObject
+        video.srcObject = mediaStream;
       }
       
       setPermissionState("granted");

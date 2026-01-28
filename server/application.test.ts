@@ -107,7 +107,8 @@ describe("Application Management", () => {
 
     expect(result).toHaveProperty("applicationNumber");
     expect(typeof result.applicationNumber).toBe("string");
-    expect(result.applicationNumber).toMatch(/^APP-[A-Z0-9]+-[A-Z0-9]+$/);
+    // 新格式: CMF-ACAPP-YYMMDD-XXX
+    expect(result.applicationNumber).toMatch(/^CMF-ACAPP-\d{6}-\d{3}$/);
   });
 
   it("should submit application", async () => {

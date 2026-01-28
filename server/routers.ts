@@ -89,7 +89,7 @@ export const appRouter = router({
         if (!application || application.userId !== ctx.user.id) {
           throw new Error("申请不存在或无权访问");
         }
-        const applicationNumber = await db.generateApplicationNumber(input.id);
+        const applicationNumber = await db.assignApplicationNumber(input.id);
         return { applicationNumber };
       }),
     

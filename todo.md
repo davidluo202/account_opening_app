@@ -136,3 +136,31 @@
 - [x] 添加权限状态检测
 - [x] 添加video元素就绪检查
 - [x] 添加浏览器兼容性提示
+
+## 新需求：修复摄像头画面显示和增强表单校验
+
+### 修复摄像头画面显示问题 - 已完成
+- [x] 修复video元素stream绑定问题
+- [x] 添加loadedmetadata事件监听
+- [x] 修复stream就绪状态检查
+- [x] 确保video元素正确显示摄像头画面
+- [x] 先绑定事件处理器再设置srcObject
+- [x] 添加video.onerror错误处理
+- [x] 添加console.log调试信息
+
+### 实现申请编号生成规则 - 已完成
+- [x] 实现CMF-ACAPP-YYMMDD-XXX格式的申请编号生成
+- [x] 在数据库中添加每日顺序号追踪表
+- [x] 更新generateApplicationNumber函数
+- [x] 更新assignApplicationNumber函数
+- [x] 更新routers.ts中的调用
+- [ ] 更新application.create API以生成正确的申请编号
+
+### 增强表单校验规则
+- [ ] Case 3: 添加中文姓名格式校验（2-10个汉字）
+- [ ] Case 3: 添加英文姓名格式校验（字母、空格、连字符）
+- [ ] Case 3: 添加年龄≥18岁校验（基于出生日期）
+- [ ] Case 4: 添加香港身份证号码格式校验
+- [ ] Case 4: 添加大陆身份证号码格式校验（18位，包括性别校验）
+- [ ] Case 4: 添加证件有效期>1年校验
+- [ ] 编写所有校验规则的单元测试

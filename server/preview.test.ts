@@ -77,7 +77,8 @@ describe("预览页面功能测试", () => {
     const { applicationNumber } = await caller.application.generateNumber({ id: applicationId });
 
     expect(applicationNumber).toBeDefined();
-    expect(applicationNumber).toMatch(/^APP-[A-Z0-9]+-[A-Z0-9]+$/); // nanoid格式
+    // 新格式: CMF-ACAPP-YYMMDD-XXX
+    expect(applicationNumber).toMatch(/^CMF-ACAPP-\d{6}-\d{3}$/);
 
     // 验证申请编号已保存
     const application = await caller.application.getById({ id: applicationId });
