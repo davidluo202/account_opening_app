@@ -213,3 +213,11 @@
 - [x] 实现大陆银行账户号码格式校验
 - [ ] 在Case 8（银行账户）页面集成校验规则（后续实现）
 - [x] 编写银行账户校验的单元测试
+
+## Bug修复（2026-01-28 下午3）
+
+### accountSelection.get查询返回undefined错误
+- [x] 检查server/routers.ts中的accountSelection.get实现
+- [x] 确保查询返回默认值而不是undefined
+- [x] 修夏tRPC查询的返回类型
+- [x] 测试修复后的查询功能

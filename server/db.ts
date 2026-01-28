@@ -96,16 +96,16 @@ export async function upsertUser(user: InsertUser): Promise<void> {
 
 export async function getUserByOpenId(openId: string) {
   const db = await getDb();
-  if (!db) return undefined;
+  if (!db) return null;
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  return result.length > 0 ? result[0] : null;
 }
 
 export async function getUserById(id: number) {
   const db = await getDb();
-  if (!db) return undefined;
+  if (!db) return null;
   const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  return result.length > 0 ? result[0] : null;
 }
 
 // ==================== 申请编号生成 ====================
@@ -216,9 +216,9 @@ export async function createApplication(userId: number) {
 
 export async function getApplicationById(id: number) {
   const db = await getDb();
-  if (!db) return undefined;
+  if (!db) return null;
   const result = await db.select().from(applications).where(eq(applications.id, id)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  return result.length > 0 ? result[0] : null;
 }
 
 export async function getUserApplications(userId: number) {
@@ -291,9 +291,9 @@ export async function saveAccountSelection(applicationId: number, data: any) {
 
 export async function getAccountSelection(applicationId: number) {
   const db = await getDb();
-  if (!db) return undefined;
+  if (!db) return null;
   const result = await db.select().from(accountSelections).where(eq(accountSelections.applicationId, applicationId)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  return result.length > 0 ? result[0] : null;
 }
 
 export async function savePersonalBasicInfo(applicationId: number, data: any) {
@@ -308,9 +308,9 @@ export async function savePersonalBasicInfo(applicationId: number, data: any) {
 
 export async function getPersonalBasicInfo(applicationId: number) {
   const db = await getDb();
-  if (!db) return undefined;
+  if (!db) return null;
   const result = await db.select().from(personalBasicInfo).where(eq(personalBasicInfo.applicationId, applicationId)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  return result.length > 0 ? result[0] : null;
 }
 
 export async function savePersonalDetailedInfo(applicationId: number, data: any) {
@@ -325,9 +325,9 @@ export async function savePersonalDetailedInfo(applicationId: number, data: any)
 
 export async function getPersonalDetailedInfo(applicationId: number) {
   const db = await getDb();
-  if (!db) return undefined;
+  if (!db) return null;
   const result = await db.select().from(personalDetailedInfo).where(eq(personalDetailedInfo.applicationId, applicationId)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  return result.length > 0 ? result[0] : null;
 }
 
 export async function saveOccupationInfo(applicationId: number, data: any) {
@@ -342,9 +342,9 @@ export async function saveOccupationInfo(applicationId: number, data: any) {
 
 export async function getOccupationInfo(applicationId: number) {
   const db = await getDb();
-  if (!db) return undefined;
+  if (!db) return null;
   const result = await db.select().from(occupationInfo).where(eq(occupationInfo.applicationId, applicationId)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  return result.length > 0 ? result[0] : null;
 }
 
 export async function saveEmploymentDetails(applicationId: number, data: any) {
@@ -359,9 +359,9 @@ export async function saveEmploymentDetails(applicationId: number, data: any) {
 
 export async function getEmploymentDetails(applicationId: number) {
   const db = await getDb();
-  if (!db) return undefined;
+  if (!db) return null;
   const result = await db.select().from(employmentDetails).where(eq(employmentDetails.applicationId, applicationId)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  return result.length > 0 ? result[0] : null;
 }
 
 export async function saveFinancialAndInvestment(applicationId: number, data: any) {
@@ -376,9 +376,9 @@ export async function saveFinancialAndInvestment(applicationId: number, data: an
 
 export async function getFinancialAndInvestment(applicationId: number) {
   const db = await getDb();
-  if (!db) return undefined;
+  if (!db) return null;
   const result = await db.select().from(financialAndInvestment).where(eq(financialAndInvestment.applicationId, applicationId)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  return result.length > 0 ? result[0] : null;
 }
 
 export async function saveBankAccount(applicationId: number, data: any) {
@@ -417,9 +417,9 @@ export async function saveTaxInfo(applicationId: number, data: any) {
 
 export async function getTaxInfo(applicationId: number) {
   const db = await getDb();
-  if (!db) return undefined;
+  if (!db) return null;
   const result = await db.select().from(taxInfo).where(eq(taxInfo.applicationId, applicationId)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  return result.length > 0 ? result[0] : null;
 }
 
 export async function saveUploadedDocument(applicationId: number, data: any) {
@@ -452,9 +452,9 @@ export async function saveFaceVerification(applicationId: number, data: any) {
 
 export async function getFaceVerification(applicationId: number) {
   const db = await getDb();
-  if (!db) return undefined;
+  if (!db) return null;
   const result = await db.select().from(faceVerification).where(eq(faceVerification.applicationId, applicationId)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  return result.length > 0 ? result[0] : null;
 }
 
 export async function saveRegulatoryDeclarations(applicationId: number, data: any) {
@@ -469,9 +469,9 @@ export async function saveRegulatoryDeclarations(applicationId: number, data: an
 
 export async function getRegulatoryDeclarations(applicationId: number) {
   const db = await getDb();
-  if (!db) return undefined;
+  if (!db) return null;
   const result = await db.select().from(regulatoryDeclarations).where(eq(regulatoryDeclarations.applicationId, applicationId)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  return result.length > 0 ? result[0] : null;
 }
 
 // ==================== 获取完整申请数据 ====================
