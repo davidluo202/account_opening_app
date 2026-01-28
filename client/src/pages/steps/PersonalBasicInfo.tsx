@@ -7,6 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { convertToTraditional } from "@/lib/converter";
+import { validateChineseName, validateEnglishName, validateAge } from "@/lib/validators";
+import { useAutoSave } from "@/hooks/useAutoSave";
 
 const countries = [
   "中国", "香港", "澳门", "台湾", "美国", "加拿大", "英国", "澳大利亚", "新加坡", "日本", "韩国", "other"
@@ -46,6 +49,39 @@ export default function PersonalBasicInfo() {
     },
   });
 
+  // 自动保存功能（仅在有数据时启用）
+  const autoSaveMutation = trpc.personalBasic.save.useMutation({
+    onSuccess: () => {
+      // 自动保存成功不显示提示，避免干扰用户
+    },
+    onError: (error) => {
+      console.error('自动保存失败:', error);
+    },
+  });
+
+  const { isSaving, lastSavedAt } = useAutoSave({
+    onSave: async () => {
+      // 只有当表单有数据时才自动保存
+      if (formData.chineseName || formData.englishName) {
+        const nationality = formData.nationality === "other" 
+          ? formData.otherNationality 
+          : formData.nationality;
+
+        await autoSaveMutation.mutateAsync({
+          applicationId,
+          chineseName: formData.chineseName,
+          englishName: formData.englishName,
+          gender: formData.gender,
+          dateOfBirth: formData.dateOfBirth,
+          placeOfBirth: formData.placeOfBirth,
+          nationality,
+        });
+      }
+    },
+    interval: 30000, // 30秒
+    enabled: !!applicationId && !saveMutation.isPending, // 只在有applicationId且不在保存中时启用
+  });
+
   useEffect(() => {
     if (existingData) {
       const nationality = existingData.nationality;
@@ -67,32 +103,25 @@ export default function PersonalBasicInfo() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    // 中文姓名校验
-    if (!formData.chineseName.trim()) {
-      newErrors.chineseName = "請輸入中文姓名";
-    } else if (!/[\u4e00-\u9fa5]/.test(formData.chineseName)) {
-      newErrors.chineseName = "中文姓名必須包含中文字符";
+    // 使用validators.ts中的中文姓名校验
+    const chineseNameResult = validateChineseName(formData.chineseName);
+    if (!chineseNameResult.valid) {
+      newErrors.chineseName = chineseNameResult.message || '中文姓名格式不正確';
     }
 
-    // 英文姓名校验
-    if (!formData.englishName.trim()) {
-      newErrors.englishName = "請輸入英文姓名";
-    } else if (!/^[a-zA-Z\s]+$/.test(formData.englishName)) {
-      newErrors.englishName = "英文姓名只能包含英文字符";
+    // 使用validators.ts中的英文姓名校验
+    const englishNameResult = validateEnglishName(formData.englishName);
+    if (!englishNameResult.valid) {
+      newErrors.englishName = englishNameResult.message || '英文姓名格式不正確';
     }
 
-    // 出生日期校验（年龄必须>=18）
+    // 使用validators.ts中的年龄校验
     if (!formData.dateOfBirth) {
       newErrors.dateOfBirth = "請選擇出生日期";
     } else {
-      const birthDate = new Date(formData.dateOfBirth);
-      const today = new Date();
-      const age = today.getFullYear() - birthDate.getFullYear();
-      const monthDiff = today.getMonth() - birthDate.getMonth();
-      const dayDiff = today.getDate() - birthDate.getDate();
-      
-      if (age < 18 || (age === 18 && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)))) {
-        newErrors.dateOfBirth = "申請人年齡必須滿18周歲";
+      const ageResult = validateAge(formData.dateOfBirth);
+      if (!ageResult.valid) {
+        newErrors.dateOfBirth = ageResult.message || '年齡必須滿18周歲';
       }
     }
 
@@ -151,6 +180,19 @@ export default function PersonalBasicInfo() {
       isNextLoading={saveMutation.isPending}
     >
       <div className="space-y-6">
+        {/* 自动保存状态显示 */}
+        {(isSaving || lastSavedAt) && (
+          <div className="flex items-center justify-end text-sm text-muted-foreground">
+            {isSaving ? (
+              <span className="flex items-center gap-2">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                正在保存...
+              </span>
+            ) : lastSavedAt ? (
+              <span>已自动保存于 {lastSavedAt.toLocaleTimeString('zh-HK')}</span>
+            ) : null}
+          </div>
+        )}
         <div className="grid md:grid-cols-2 gap-6">
           {/* 中文姓名 */}
           <div className="space-y-2">
@@ -164,6 +206,13 @@ export default function PersonalBasicInfo() {
                 setFormData({ ...formData, chineseName: e.target.value });
                 if (errors.chineseName) {
                   setErrors({ ...errors, chineseName: "" });
+                }
+              }}
+              onBlur={() => {
+                // 失焦时自动转换简体为繁体
+                const converted = convertToTraditional(formData.chineseName);
+                if (converted !== formData.chineseName) {
+                  setFormData({ ...formData, chineseName: converted });
                 }
               }}
               placeholder="請輸入中文姓名"
@@ -241,18 +290,25 @@ export default function PersonalBasicInfo() {
           <Label htmlFor="placeOfBirth">
             出生地 / Place of Birth <span className="text-destructive">*</span>
           </Label>
-          <Input
-            id="placeOfBirth"
-            value={formData.placeOfBirth}
-            onChange={(e) => {
-              setFormData({ ...formData, placeOfBirth: e.target.value });
-              if (errors.placeOfBirth) {
-                setErrors({ ...errors, placeOfBirth: "" });
-              }
-            }}
-            placeholder="請輸入出生地"
-            className={errors.placeOfBirth ? "border-destructive" : ""}
-          />
+            <Input
+              id="placeOfBirth"
+              value={formData.placeOfBirth}
+              onChange={(e) => {
+                setFormData({ ...formData, placeOfBirth: e.target.value });
+                if (errors.placeOfBirth) {
+                  setErrors({ ...errors, placeOfBirth: "" });
+                }
+              }}
+              onBlur={() => {
+                // 失焦时自动转换简体为繁体
+                const converted = convertToTraditional(formData.placeOfBirth);
+                if (converted !== formData.placeOfBirth) {
+                  setFormData({ ...formData, placeOfBirth: converted });
+                }
+              }}
+              placeholder="請輸入出生地"
+              className={errors.placeOfBirth ? "border-destructive" : ""}
+            />
           {errors.placeOfBirth && (
             <p className="text-sm text-destructive">{errors.placeOfBirth}</p>
           )}
@@ -294,18 +350,25 @@ export default function PersonalBasicInfo() {
             <Label htmlFor="otherNationality">
               請輸入具體國籍 <span className="text-destructive">*</span>
             </Label>
-            <Input
-              id="otherNationality"
-              value={formData.otherNationality}
-              onChange={(e) => {
-                setFormData({ ...formData, otherNationality: e.target.value });
-                if (errors.otherNationality) {
-                  setErrors({ ...errors, otherNationality: "" });
-                }
-              }}
-              placeholder="請輸入國籍名稱"
-              className={errors.otherNationality ? "border-destructive" : ""}
-            />
+              <Input
+                id="otherNationality"
+                value={formData.otherNationality}
+                onChange={(e) => {
+                  setFormData({ ...formData, otherNationality: e.target.value });
+                  if (errors.otherNationality) {
+                    setErrors({ ...errors, otherNationality: "" });
+                  }
+                }}
+                onBlur={() => {
+                  // 失焦时自动转换简体为繁体
+                  const converted = convertToTraditional(formData.otherNationality);
+                  if (converted !== formData.otherNationality) {
+                    setFormData({ ...formData, otherNationality: converted });
+                  }
+                }}
+                placeholder="請輸入國籍名稱"
+                className={errors.otherNationality ? "border-destructive" : ""}
+              />
             {errors.otherNationality && (
               <p className="text-sm text-destructive">{errors.otherNationality}</p>
             )}

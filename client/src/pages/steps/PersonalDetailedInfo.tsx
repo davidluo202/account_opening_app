@@ -8,6 +8,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { convertToTraditional } from "@/lib/converter";
+import { validateHKID, validateChinaID, validateIDExpiry } from "@/lib/validators";
 
 const idTypes = [
   { value: "hkid", label: "香港身份證 / HKID" },
@@ -95,20 +97,34 @@ export default function PersonalDetailedInfo() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.idType) newErrors.idType = "請選擇證件類型";
-    if (!formData.idNumber.trim()) newErrors.idNumber = "請輸入證件號碼";
+    
+    // 證件號碼校驗
+    if (!formData.idNumber.trim()) {
+      newErrors.idNumber = "請輸入證件號碼";
+    } else {
+      // 根據證件類型進行格式校驗
+      if (formData.idType === 'hkid') {
+        const hkidResult = validateHKID(formData.idNumber);
+        if (!hkidResult.valid) {
+          newErrors.idNumber = hkidResult.message || '香港身份證格式不正確';
+        }
+      } else if (formData.idType === 'mainland_id') {
+        const cnidResult = validateChinaID(formData.idNumber);
+        if (!cnidResult.valid) {
+          newErrors.idNumber = cnidResult.message || '大陸身份證格式不正確';
+        }
+      }
+    }
     if (!formData.idIssuingPlace.trim()) newErrors.idIssuingPlace = "請輸入證件簽發地";
     
-    // 证件有效期校验
+    // 使用validators.ts中的證件有效期校驗
     if (!formData.idIsPermanent) {
       if (!formData.idExpiryDate) {
         newErrors.idExpiryDate = "請選擇證件有效期";
       } else {
-        const expiryDate = new Date(formData.idExpiryDate);
-        const today = new Date();
-        const oneYearLater = new Date(today.getFullYear() + 1, today.getMonth(), today.getDate());
-        
-        if (expiryDate < oneYearLater) {
-          newErrors.idExpiryDate = "證件有效期距離當前日期必須大於1年";
+        const expiryResult = validateIDExpiry(formData.idExpiryDate);
+        if (!expiryResult.valid) {
+          newErrors.idExpiryDate = expiryResult.message || '證件有效期必須大於1年';
         }
       }
     }
@@ -217,6 +233,13 @@ export default function PersonalDetailedInfo() {
               onChange={(e) => {
                 setFormData({ ...formData, idIssuingPlace: e.target.value });
                 if (errors.idIssuingPlace) setErrors({ ...errors, idIssuingPlace: "" });
+              }}
+              onBlur={() => {
+                // 失焦时自动转换简体为繁体
+                const converted = convertToTraditional(formData.idIssuingPlace);
+                if (converted !== formData.idIssuingPlace) {
+                  setFormData({ ...formData, idIssuingPlace: converted });
+                }
               }}
               placeholder="請輸入證件簽發地"
               className={errors.idIssuingPlace ? "border-destructive" : ""}
@@ -387,16 +410,23 @@ export default function PersonalDetailedInfo() {
           <Label htmlFor="residentialAddress">
             居住地址 / Residential Address <span className="text-destructive">*</span>
           </Label>
-          <Input
-            id="residentialAddress"
-            value={formData.residentialAddress}
-            onChange={(e) => {
-              setFormData({ ...formData, residentialAddress: e.target.value });
-              if (errors.residentialAddress) setErrors({ ...errors, residentialAddress: "" });
-            }}
-            placeholder="請輸入完整居住地址"
-            className={errors.residentialAddress ? "border-destructive" : ""}
-          />
+            <Input
+              id="residentialAddress"
+              value={formData.residentialAddress}
+              onChange={(e) => {
+                setFormData({ ...formData, residentialAddress: e.target.value });
+                if (errors.residentialAddress) setErrors({ ...errors, residentialAddress: "" });
+              }}
+              onBlur={() => {
+                // 失焦时自动转换简体为繁体
+                const converted = convertToTraditional(formData.residentialAddress);
+                if (converted !== formData.residentialAddress) {
+                  setFormData({ ...formData, residentialAddress: converted });
+                }
+              }}
+              placeholder="請輸入完整居住地址"
+              className={errors.residentialAddress ? "border-destructive" : ""}
+            />
           {errors.residentialAddress && <p className="text-sm text-destructive">{errors.residentialAddress}</p>}
         </div>
       </div>

@@ -6,6 +6,7 @@ import { z } from "zod";
 import * as db from "./db";
 import { storagePut } from "./storage";
 import { nanoid } from "nanoid";
+import { generateApplicationPDF, type ApplicationPDFData } from "./pdf-generator";
 
 export const appRouter = router({
   system: systemRouter,
@@ -103,6 +104,81 @@ export const appRouter = router({
         }
         await db.submitApplication(input.id);
         return { success: true };
+      }),
+    
+    // 生成PDF
+    generatePDF: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        const application = await db.getApplicationById(input.id);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
+        }
+        
+        // 获取完整的申请数据
+        const completeData = await db.getCompleteApplicationData(input.id);
+        
+        // 构造PDF数据
+        const pdfData: ApplicationPDFData = {
+          applicationNumber: application.applicationNumber || 'DRAFT',
+          customerType: completeData.accountSelection?.customerType || '',
+          accountType: completeData.accountSelection?.accountType || 'cash',
+          chineseName: completeData.basicInfo?.chineseName || '',
+          englishName: completeData.basicInfo?.englishName || '',
+          gender: completeData.basicInfo?.gender || '',
+          dateOfBirth: completeData.basicInfo?.dateOfBirth || '',
+          placeOfBirth: completeData.basicInfo?.placeOfBirth || '',
+          nationality: completeData.basicInfo?.nationality || '',
+          idType: completeData.detailedInfo?.idType || '',
+          idNumber: completeData.detailedInfo?.idNumber || '',
+          idIssuingPlace: completeData.detailedInfo?.idIssuingPlace || '',
+          idExpiryDate: completeData.detailedInfo?.idExpiryDate || undefined,
+          idIsPermanent: completeData.detailedInfo?.idIsPermanent || false,
+          maritalStatus: completeData.detailedInfo?.maritalStatus || '',
+          educationLevel: completeData.detailedInfo?.educationLevel || '',
+          email: completeData.detailedInfo?.email || '',
+          phoneCountryCode: completeData.detailedInfo?.phoneCountryCode || '',
+          phoneNumber: completeData.detailedInfo?.phoneNumber || '',
+          faxNo: completeData.detailedInfo?.faxNo || undefined,
+          residentialAddress: completeData.detailedInfo?.residentialAddress || '',
+          employmentStatus: completeData.occupation?.employmentStatus || '',
+          employerName: completeData.occupation?.companyName || undefined,
+          employerAddress: completeData.occupation?.companyAddress || undefined,
+          occupation: completeData.occupation?.position || undefined,
+          officePhone: completeData.occupation?.officePhone || undefined,
+          officeFaxNo: completeData.occupation?.officeFaxNo || undefined,
+          annualIncome: completeData.employment?.annualIncome || '',
+          netWorth: completeData.employment?.netWorth || '',
+          liquidAsset: completeData.employment?.liquidAsset || '',
+          investmentObjective: completeData.financial?.investmentObjectives || '',
+          investmentExperience: completeData.financial?.investmentExperience || '',
+          bankAccounts: (completeData.bankAccounts || []).map(account => ({
+            bankName: account.bankName,
+            accountNumber: account.accountNumber,
+            accountType: account.accountType || 'saving',
+          })),
+          taxCountry: completeData.tax?.taxResidency || '',
+          taxIdNumber: completeData.tax?.taxIdNumber || '',
+          uploadedDocuments: completeData.documents || [],
+          faceVerificationStatus: completeData.face?.verified ? 'verified' : 'pending',
+          isPEP: completeData.regulatory?.isPEP || false,
+          isUSPerson: completeData.regulatory?.isUSPerson || false,
+          agreementSigned: completeData.regulatory?.agreementAccepted || false,
+          signatureDate: completeData.regulatory?.signedAt ? new Date(completeData.regulatory.signedAt).toLocaleDateString() : '',
+        };
+        
+        // 生成PDF
+        const pdfBuffer = await generateApplicationPDF(pdfData);
+        
+        // 上传到S3
+        const fileName = `application-${application.applicationNumber || input.id}-${Date.now()}.pdf`;
+        const { url } = await storagePut(
+          `applications/${ctx.user.id}/${fileName}`,
+          pdfBuffer,
+          'application/pdf'
+        );
+        
+        return { success: true, pdfUrl: url };
       }),
   }),
   
