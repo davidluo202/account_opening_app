@@ -90,6 +90,12 @@ export default function FaceVerification() {
         return;
       }
 
+      // 先设置capturing=true，让video元素渲染
+      setCapturing(true);
+      
+      // 等待下一个render cycle，确俚video元素已经渲染
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       // 请求摄像头权限
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
@@ -133,14 +139,12 @@ export default function FaceVerification() {
         try {
           await video.play();
           console.log("Video playback started successfully");
-          setCapturing(true);
         } catch (playError) {
           console.error("Video play error:", playError);
           // 如果自动播放失败，尝试静音播放
           video.muted = true;
           await video.play();
           console.log("Video playback started (muted)");
-          setCapturing(true);
         }
       }
       
@@ -148,6 +152,9 @@ export default function FaceVerification() {
       
     } catch (error: any) {
       console.error("Camera error:", error);
+      
+      // 如果出错，重置capturing状态
+      setCapturing(false);
       
       let errorMessage = "無法訪問攝像頭";
       
