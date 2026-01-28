@@ -288,13 +288,20 @@ export default function FaceVerification() {
             {/* 攝像頭預覽或已拍攝照片 */}
             <div className="relative bg-muted rounded-lg overflow-hidden aspect-video flex items-center justify-center">
               {capturing ? (
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  className="w-full h-full object-cover"
-                />
+                <>
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                  {stream && (
+                    <div className="absolute top-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
+                      摄像头已启动
+                    </div>
+                  )}
+                </>
               ) : capturedImage ? (
                 <img
                   src={capturedImage}

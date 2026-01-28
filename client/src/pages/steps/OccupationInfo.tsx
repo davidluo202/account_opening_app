@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { convertToTraditional } from "@/lib/converter";
 
 const employmentStatuses = [
   { value: "employed", label: "受僱 / Employed" },
@@ -37,7 +38,7 @@ export default function OccupationInfo() {
     employmentStatus: "" as "employed" | "self_employed" | "student" | "unemployed" | "",
     companyName: "",
     position: "",
-    yearsOfService: 0,
+    yearsOfService: "",
     industry: "",
     companyAddress: "",
     officePhone: "",
@@ -69,7 +70,7 @@ export default function OccupationInfo() {
         ...existingData,
         companyName: existingData.companyName || "",
         position: existingData.position || "",
-        yearsOfService: existingData.yearsOfService || 0,
+        yearsOfService: existingData.yearsOfService?.toString() || "",
         industry: existingData.industry || "",
         companyAddress: existingData.companyAddress || "",
         officePhone: existingData.officePhone || "",
@@ -90,8 +91,9 @@ export default function OccupationInfo() {
     if (needsEmploymentDetails) {
       if (!formData.companyName?.trim()) newErrors.companyName = "請輸入公司名稱";
       if (!formData.position?.trim()) newErrors.position = "請輸入職務名稱";
-      if (!formData.yearsOfService || formData.yearsOfService <= 0) {
-        newErrors.yearsOfService = "請輸入從業年限";
+      const years = parseInt(formData.yearsOfService);
+      if (!formData.yearsOfService || isNaN(years) || years <= 0) {
+        newErrors.yearsOfService = "請輸入有效的從業年限";
       }
       if (!formData.industry) newErrors.industry = "請選擇行業";
       if (!formData.companyAddress?.trim()) newErrors.companyAddress = "請輸入公司地址";
@@ -112,7 +114,7 @@ export default function OccupationInfo() {
       employmentStatus: formData.employmentStatus as any,
       companyName: needsEmploymentDetails ? formData.companyName : undefined,
       position: needsEmploymentDetails ? formData.position : undefined,
-      yearsOfService: needsEmploymentDetails ? formData.yearsOfService : undefined,
+      yearsOfService: needsEmploymentDetails ? parseInt(formData.yearsOfService) : undefined,
       industry: needsEmploymentDetails ? formData.industry : undefined,
       companyAddress: needsEmploymentDetails ? formData.companyAddress : undefined,
       officePhone: needsEmploymentDetails ? formData.officePhone : undefined,
@@ -183,6 +185,12 @@ export default function OccupationInfo() {
                     setFormData({ ...formData, companyName: e.target.value });
                     if (errors.companyName) setErrors({ ...errors, companyName: "" });
                   }}
+                  onBlur={(e) => {
+                    const converted = convertToTraditional(e.target.value);
+                    if (converted !== e.target.value) {
+                      setFormData({ ...formData, companyName: converted });
+                    }
+                  }}
                   placeholder="請輸入名稱"
                   className={errors.companyName ? "border-destructive" : ""}
                 />
@@ -201,6 +209,12 @@ export default function OccupationInfo() {
                     setFormData({ ...formData, position: e.target.value });
                     if (errors.position) setErrors({ ...errors, position: "" });
                   }}
+                  onBlur={(e) => {
+                    const converted = convertToTraditional(e.target.value);
+                    if (converted !== e.target.value) {
+                      setFormData({ ...formData, position: converted });
+                    }
+                  }}
                   placeholder="請輸入職務"
                   className={errors.position ? "border-destructive" : ""}
                 />
@@ -215,15 +229,13 @@ export default function OccupationInfo() {
                   從業年限 / Years of Service <span className="text-destructive">*</span>
                 </Label>
                 <Input
-                  id="yearsOfService"
-                  type="number"
-                  min="0"
+                  type="text"
                   value={formData.yearsOfService}
                   onChange={(e) => {
-                    setFormData({ ...formData, yearsOfService: parseInt(e.target.value) || 0 });
+                    setFormData({ ...formData, yearsOfService: e.target.value });
                     if (errors.yearsOfService) setErrors({ ...errors, yearsOfService: "" });
                   }}
-                  placeholder="請輸入年限"
+                  placeholder="請輸入年限（例如：5）"
                   className={errors.yearsOfService ? "border-destructive" : ""}
                 />
                 {errors.yearsOfService && <p className="text-sm text-destructive">{errors.yearsOfService}</p>}
@@ -261,16 +273,22 @@ export default function OccupationInfo() {
               <Label htmlFor="companyAddress">
                 {formData.employmentStatus === "employed" ? "公司地址 / Company Address" : "業務地址 / Business Address"} <span className="text-destructive">*</span>
               </Label>
-              <Input
-                id="companyAddress"
-                value={formData.companyAddress}
-                onChange={(e) => {
-                  setFormData({ ...formData, companyAddress: e.target.value });
-                  if (errors.companyAddress) setErrors({ ...errors, companyAddress: "" });
-                }}
-                placeholder="請輸入完整地址"
-                className={errors.companyAddress ? "border-destructive" : ""}
-              />
+                <Input
+                  id="companyAddress"
+                  value={formData.companyAddress}
+                  onChange={(e) => {
+                    setFormData({ ...formData, companyAddress: e.target.value });
+                    if (errors.companyAddress) setErrors({ ...errors, companyAddress: "" });
+                  }}
+                  onBlur={(e) => {
+                    const converted = convertToTraditional(e.target.value);
+                    if (converted !== e.target.value) {
+                      setFormData({ ...formData, companyAddress: converted });
+                    }
+                  }}
+                  placeholder="請輸入地址"
+                  className={errors.companyAddress ? "border-destructive" : ""}
+                />
               {errors.companyAddress && <p className="text-sm text-destructive">{errors.companyAddress}</p>}
             </div>
 
