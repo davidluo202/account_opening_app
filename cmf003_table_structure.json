@@ -1,0 +1,348 @@
+[
+  {
+    "table_index": 0,
+    "rows": 3,
+    "cols": 1,
+    "content": [
+      [
+        "Account No. 賬戶號碼"
+      ],
+      [
+        "☐ Individual 個人賬戶"
+      ],
+      [
+        "Joint 聯名賬戶"
+      ]
+    ]
+  },
+  {
+    "table_index": 1,
+    "rows": 1,
+    "cols": 1,
+    "content": [
+      [
+        "Customer Information Form (Individual / Joint Account)\n客戶資料表（個人或聯名戶口）"
+      ]
+    ]
+  },
+  {
+    "table_index": 2,
+    "rows": 13,
+    "cols": 7,
+    "content": [
+      [
+        "Name of Customer 客户姓名       Mr.先生 / Mrs.太太 / Miss小姐*",
+        "Name of Customer 客户姓名       Mr.先生 / Mrs.太太 / Miss小姐*",
+        "Name of Customer 客户姓名       Mr.先生 / Mrs.太太 / Miss小姐*",
+        "Name of Customer 客户姓名       Mr.先生 / Mrs.太太 / Miss小姐*",
+        "Name of Customer 客户姓名       Mr.先生 / Mrs.太太 / Miss小姐*",
+        "Name of Customer 客户姓名       Mr.先生 / Mrs.太太 / Miss小姐*",
+        "Name of Customer 客户姓名       Mr.先生 / Mrs.太太 / Miss小姐*"
+      ],
+      [
+        "HKID/Passport No. \n身份證/護照號碼*：",
+        "Country of Issue \n簽發國家：",
+        "Nationality\n國籍：",
+        "Nationality\n國籍：",
+        "Date (DD/MM/YY) & Place of Birth \n出生日期及地點：",
+        "Date (DD/MM/YY) & Place of Birth \n出生日期及地點：",
+        "Date (DD/MM/YY) & Place of Birth \n出生日期及地點："
+      ],
+      [
+        "Marital Status 婚姻狀況：     \nMarried 已婚        Single 單身    Divorced 離婚    Separated 分居",
+        "Marital Status 婚姻狀況：     \nMarried 已婚        Single 單身    Divorced 離婚    Separated 分居",
+        "Marital Status 婚姻狀況：     \nMarried 已婚        Single 單身    Divorced 離婚    Separated 分居",
+        "Marital Status 婚姻狀況：     \nMarried 已婚        Single 單身    Divorced 離婚    Separated 分居",
+        "Marital Status 婚姻狀況：     \nMarried 已婚        Single 單身    Divorced 離婚    Separated 分居",
+        "Marital Status 婚姻狀況：     \nMarried 已婚        Single 單身    Divorced 離婚    Separated 分居",
+        "Marital Status 婚姻狀況：     \nMarried 已婚        Single 單身    Divorced 離婚    Separated 分居"
+      ],
+      [
+        "Residential Address 住宅地址：",
+        "Residential Address 住宅地址：",
+        "Residential Address 住宅地址：",
+        "Residential Address 住宅地址：",
+        "Residential Address 住宅地址：",
+        "Residential Address 住宅地址：",
+        "Residential Address 住宅地址："
+      ],
+      [
+        "Residential Phone No.\n住宅電話：",
+        "E-mail Address\n電郵地址：",
+        "E-mail Address\n電郵地址：",
+        "E-mail Address\n電郵地址：",
+        "Mobile Phone No.\n手提電話：",
+        "Mobile Phone No.\n手提電話：",
+        "Fax No. \n傳真號碼："
+      ],
+      [
+        "Employment就業情況：",
+        "Employment就業情況：",
+        "Employment就業情況：",
+        "Employment就業情況：",
+        "Employment就業情況：",
+        "Employment就業情況：",
+        "Employment就業情況："
+      ],
+      [
+        "Name of Employer\n雇主名稱：",
+        "Occupation/ Business nature*\n職業/工作性質*：",
+        "Occupation/ Business nature*\n職業/工作性質*：",
+        "Occupation/ Business nature*\n職業/工作性質*：",
+        "Position \n職位：",
+        "Years In Occupation \n工作年數：",
+        "Years In Occupation \n工作年數："
+      ],
+      [
+        "Office Address 辦公室地址：",
+        "Office Address 辦公室地址：",
+        "Office Address 辦公室地址：",
+        "Office Address 辦公室地址：",
+        "Office Address 辦公室地址：",
+        "Office Address 辦公室地址：",
+        "Office Address 辦公室地址："
+      ],
+      [
+        "Office Phone No. 公司號碼：",
+        "Office Phone No. 公司號碼：",
+        "Office Phone No. 公司號碼：",
+        "Office Fax No. 傳真號碼：",
+        "Office Fax No. 傳真號碼：",
+        "Office Fax No. 傳真號碼：",
+        "Office Fax No. 傳真號碼："
+      ],
+      [
+        "Correspondence Address 通訊地址：\n\n Residential Address 住宅      Office Address 公司        Other 其他",
+        "Correspondence Address 通訊地址：\n\n Residential Address 住宅      Office Address 公司        Other 其他",
+        "Correspondence Address 通訊地址：\n\n Residential Address 住宅      Office Address 公司        Other 其他",
+        "Correspondence Address 通訊地址：\n\n Residential Address 住宅      Office Address 公司        Other 其他",
+        "Correspondence Address 通訊地址：\n\n Residential Address 住宅      Office Address 公司        Other 其他",
+        "Correspondence Address 通訊地址：\n\n Residential Address 住宅      Office Address 公司        Other 其他",
+        "Correspondence Address 通訊地址：\n\n Residential Address 住宅      Office Address 公司        Other 其他"
+      ],
+      [
+        "Statements In \n結單語言：\n English 英文    \n Chinese 中文",
+        "Trading Confirmation & Statement to be sent by mail to your Correspondence Address\n交易確認檔及結單將以郵遞方式寄發予閣下通訊地址\n(Note: If you do not tick the box, trading confirmation & statement to be sent to your designated E-mail address above.)\n(注意：如不作剔選，閣下之交易確認檔及結單將發送至閣下上列的指定電郵地址）",
+        "Trading Confirmation & Statement to be sent by mail to your Correspondence Address\n交易確認檔及結單將以郵遞方式寄發予閣下通訊地址\n(Note: If you do not tick the box, trading confirmation & statement to be sent to your designated E-mail address above.)\n(注意：如不作剔選，閣下之交易確認檔及結單將發送至閣下上列的指定電郵地址）",
+        "Trading Confirmation & Statement to be sent by mail to your Correspondence Address\n交易確認檔及結單將以郵遞方式寄發予閣下通訊地址\n(Note: If you do not tick the box, trading confirmation & statement to be sent to your designated E-mail address above.)\n(注意：如不作剔選，閣下之交易確認檔及結單將發送至閣下上列的指定電郵地址）",
+        "Trading Confirmation & Statement to be sent by mail to your Correspondence Address\n交易確認檔及結單將以郵遞方式寄發予閣下通訊地址\n(Note: If you do not tick the box, trading confirmation & statement to be sent to your designated E-mail address above.)\n(注意：如不作剔選，閣下之交易確認檔及結單將發送至閣下上列的指定電郵地址）",
+        "Trading Confirmation & Statement to be sent by mail to your Correspondence Address\n交易確認檔及結單將以郵遞方式寄發予閣下通訊地址\n(Note: If you do not tick the box, trading confirmation & statement to be sent to your designated E-mail address above.)\n(注意：如不作剔選，閣下之交易確認檔及結單將發送至閣下上列的指定電郵地址）",
+        "Trading Confirmation & Statement to be sent by mail to your Correspondence Address\n交易確認檔及結單將以郵遞方式寄發予閣下通訊地址\n(Note: If you do not tick the box, trading confirmation & statement to be sent to your designated E-mail address above.)\n(注意：如不作剔選，閣下之交易確認檔及結單將發送至閣下上列的指定電郵地址）"
+      ],
+      [
+        "Secondary Joint A/C Holder Personal Information (For Joint A/C Only) \n聯名帳戶第二持有人個人資料（聯名帳戶適用）",
+        "Secondary Joint A/C Holder Personal Information (For Joint A/C Only) \n聯名帳戶第二持有人個人資料（聯名帳戶適用）",
+        "Secondary Joint A/C Holder Personal Information (For Joint A/C Only) \n聯名帳戶第二持有人個人資料（聯名帳戶適用）",
+        "Secondary Joint A/C Holder Personal Information (For Joint A/C Only) \n聯名帳戶第二持有人個人資料（聯名帳戶適用）",
+        "Secondary Joint A/C Holder Personal Information (For Joint A/C Only) \n聯名帳戶第二持有人個人資料（聯名帳戶適用）",
+        "Secondary Joint A/C Holder Personal Information (For Joint A/C Only) \n聯名帳戶第二持有人個人資料（聯名帳戶適用）",
+        "Secondary Joint A/C Holder Personal Information (For Joint A/C Only) \n聯名帳戶第二持有人個人資料（聯名帳戶適用）"
+      ],
+      [
+        "Name of Customer 客戶姓名           Mr.先生 / Mrs.太太 / Miss小姐*",
+        "Name of Customer 客戶姓名           Mr.先生 / Mrs.太太 / Miss小姐*",
+        "Name of Customer 客戶姓名           Mr.先生 / Mrs.太太 / Miss小姐*",
+        "Name of Customer 客戶姓名           Mr.先生 / Mrs.太太 / Miss小姐*",
+        "Name of Customer 客戶姓名           Mr.先生 / Mrs.太太 / Miss小姐*",
+        "Name of Customer 客戶姓名           Mr.先生 / Mrs.太太 / Miss小姐*",
+        "Name of Customer 客戶姓名           Mr.先生 / Mrs.太太 / Miss小姐*"
+      ]
+    ]
+  },
+  {
+    "table_index": 3,
+    "rows": 1,
+    "cols": 4,
+    "content": [
+      [
+        "HKID/Passport No. \n身份證/護照號碼*：",
+        "Country of Issue \n簽發國家：",
+        "Nationality\n國籍：",
+        "Date (DD/MM/YY) & Place of Birth \n出生日期及地點："
+      ]
+    ]
+  },
+  {
+    "table_index": 4,
+    "rows": 7,
+    "cols": 6,
+    "content": [
+      [
+        "Marital Status 婚姻狀況：     \n Married 已婚         Single 單身     Divorced 離婚     Separated 分居",
+        "Marital Status 婚姻狀況：     \n Married 已婚         Single 單身     Divorced 離婚     Separated 分居",
+        "Marital Status 婚姻狀況：     \n Married 已婚         Single 單身     Divorced 離婚     Separated 分居",
+        "Marital Status 婚姻狀況：     \n Married 已婚         Single 單身     Divorced 離婚     Separated 分居",
+        "Marital Status 婚姻狀況：     \n Married 已婚         Single 單身     Divorced 離婚     Separated 分居",
+        "Marital Status 婚姻狀況：     \n Married 已婚         Single 單身     Divorced 離婚     Separated 分居"
+      ],
+      [
+        "Residential Address 住宅地址 :",
+        "Residential Address 住宅地址 :",
+        "Residential Address 住宅地址 :",
+        "Residential Address 住宅地址 :",
+        "Residential Address 住宅地址 :",
+        "Residential Address 住宅地址 :"
+      ],
+      [
+        "Residential Phone No. \n住宅電話：",
+        "E-mail Address \n電郵地址:",
+        "E-mail Address \n電郵地址:",
+        "Mobile Phone No.\n手提電話 :",
+        "Mobile Phone No.\n手提電話 :",
+        "Fax No. \n傳真號碼："
+      ],
+      [
+        "Employment 就業狀況 :",
+        "Employment 就業狀況 :",
+        "Employment 就業狀況 :",
+        "Employment 就業狀況 :",
+        "Employment 就業狀況 :",
+        "Employment 就業狀況 :"
+      ],
+      [
+        "Name of Employer \n僱主名稱",
+        "Occupation/ Business nature*\n 職業/工作性質*：",
+        "Occupation/ Business nature*\n 職業/工作性質*：",
+        "Position \n職位:",
+        "Years In Occupation \n工作年數：",
+        "Years In Occupation \n工作年數："
+      ],
+      [
+        "Office Address 辦公室地址 :",
+        "Office Address 辦公室地址 :",
+        "Office Address 辦公室地址 :",
+        "Office Address 辦公室地址 :",
+        "Office Address 辦公室地址 :",
+        "Office Address 辦公室地址 :"
+      ],
+      [
+        "Office Phone No. 公司電話 :",
+        "Office Phone No. 公司電話 :",
+        "Office Fax No. 傳真號碼 :",
+        "Office Fax No. 傳真號碼 :",
+        "Office Fax No. 傳真號碼 :",
+        "Office Fax No. 傳真號碼 :"
+      ]
+    ]
+  },
+  {
+    "table_index": 5,
+    "rows": 2,
+    "cols": 1,
+    "content": [
+      [
+        "Bank Account Record (For fund deposit only) 銀行賬戶記錄 （只作存款用途）"
+      ],
+      [
+        "Bank Name 銀行名稱：                                \nAccount Name 賬戶名稱：                                       \nAccount No. 賬戶號碼：                                         \nA/C Type 賬戶類別："
+      ]
+    ]
+  },
+  {
+    "table_index": 6,
+    "rows": 2,
+    "cols": 2,
+    "content": [
+      [
+        "Individual/Primary Joint A/C Holder\n個人/聯名帳戶主要持有人",
+        "Secondary Joint A/C Holder \n(For Joint A/C Only) \n聯名帳戶第二持有人（聯名帳戶適用）"
+      ],
+      [
+        "Liquid Asset 流動資產：HK$                       \nNet Worth 資產凈值：HK$                         \nSource of Income 收入來源：\nAnnual Income (Pls. select one) \n每年收入 (請選其中一項)：",
+        "Liquid Asset流動資產：HK$                       \nNet Worth資產凈值：HK$                         \nSource of Income收入來源：\nAnnual Income (Pls. select one) \n每年收入 (請選其中一項)："
+      ]
+    ]
+  },
+  {
+    "table_index": 7,
+    "rows": 3,
+    "cols": 2,
+    "content": [
+      [
+        "Individual/Primary Joint A/C Holder\n個人/聯名帳戶主要持有人",
+        "Secondary Joint A/C Holder (For Joint A/C Only) \n聯名帳戶第二持有人（聯名帳戶適用）"
+      ],
+      [
+        "Investment Objectives 投資目的：  \n Capital Appreciation 資本增值           \n Hedging 對衝\n Speculation 投機       \n Children’s Education 子女升學\n Other (Pls. specify) \n其他 (請註明)",
+        "Investment Objectives投資目的：   \n Capital Appreciation資本增值        \n Hedging對衝\n Speculation投機  \n Children’s Education投機\n Other (Pls. specify) \n其他 (請註明)"
+      ],
+      [
+        "Investment Experience 投資經驗：\n(A) ☐ Shares/Debentures 股票/債券\n(B) Equity Options 股票期權\n(C) Warrants 認股權證\nMutual Fund/Unit Trust \n互惠基金/單位信託基金 \n (F) ☐ Others (Pls. specify) 其他 (請註明)",
+        "Investment Experience 投資經驗：\n(A) Shares/Debentures 股票/債券\n(B) Equity Options 股票期權\n(C) Warrants 認股權證\nMutual Fund/Unit Trust \n互惠基金/單位信託基金 \n(F) Others (Pls. specify) 其他 (請註明)"
+      ]
+    ]
+  },
+  {
+    "table_index": 8,
+    "rows": 1,
+    "cols": 1,
+    "content": [
+      [
+        "Are you the ultimate beneficial owner(s) in relation to the Account? \n(i.e. are you acting for your own and not for a third party? )\n   閣下是否此戶口之最終權益擁有人？ （即閣下是否為本人而非第三者運作此帳戶？ ）\nYes. 是。\nNo, detail s of the ultimate beneficial owner(s) is/are 不是，賬戶之最終權益擁有人是：\nName 姓名：                           ID/Passport No. 身分證/護照號碼：                \nCountry of Issue 簽發國家：                Address 地址：                                     \nAre you an employee or director of a Licensed Corporation or Registered Institution registered with the Securities and Futures Commission?\n    閣下是否證監會註冊持牌法團或註冊機構之雇員或董事？\nNo. 不是。\nYes. 是。\nPlease provide the name of the Licensed Corporation or Registered Institution.\n請提供有關持牌法團或註冊機構名稱：                                                          \nAre you an employee of Canton Mutual Financial Limited? 閣下是否誠港金融股份有限公司之雇員？\nNo. 不是。 Yes. 是。\nAre you the relative of an employee or director of Canton Mutual Financial Limited? \n   閣下是否誠港金融股份有限公司雇員或董事之親屬？\n No. 不是。 Yes. 是。\nName of employee 雇員姓名：                       Relationship 關係："
+      ]
+    ]
+  },
+  {
+    "table_index": 9,
+    "rows": 1,
+    "cols": 1,
+    "content": [
+      [
+        "You confirm that ( i ) you have received, read and understood the provisions of the Cash Account Agreement; ( ii ) agree to be bound by the Cash Account Agreement ; and (iii) agree that words and expressions which are defined in the Cash Account Agreement shall have the same meanings when used in this Customer Information Form unless otherwise stated or the context otherwise requires and that in the event of any inconsistency, the provisions of the Cash Account Agreement shall override this Customer Information Form. \n你確認（i）已收到、閱讀及明白本公司附上之現金賬戶協定; （ii） 同意接受該現金賬戶協定所約束; 及（iii）同意如客戶資料表內之詞彙表達與該現金帳戶協定有任何抵觸，該現金帳戶協定將淩駕於客戶資料表。\nYou represent that the information on the Customer Information Form is true, complete and correct and that the representation in the attached agreement is accurate. Canton Mutual Financial Limited is entitled to reply fully on such information and representations for all purposes, unless Canton Mutual Financial Limited receives notice in writing of any change. Canton Mutual Financial Limited is authorised at any time to contact anyone, including your banks, brokers or any credit agency for purposes of verifying the information provided on this Customer Information Form. Please refer to our Personal Information Collection Statement which is attached as schedule Ι of the Cash Account Agreement for further information.\n你確認聲明在客戶數據表格內的數據屬真實、完整及正確， 而附上的協定一切內容準確。 除非誠港金融股份有限公司接到更改有關聲明內容的書面通知，誠港金融股份有限公司有權在任何用途上完全依賴這些資料及聲明。 誠港金融股份有限公司有權隨時聯絡任何人，包括本人/吾等之銀行、經紀或任何信貸調查機構，以查證此客戶資料表格內所載之內容。 詳情請參閱現金帳戶協定附表Ι的個人資料收集聲明。\nYou declare and acknowledge that the Risk Disclosure Statements are provided in a language chosen by you (English or Chinese) and you have invited to read the Risk Disclosure Statements, to ask questions and advice to take independent advice if you wish.\n你謹此聲明及確認，已獲提供所選擇的語言（英文或中文）的風險披露聲明。 並已獲邀請閱讀該風險披露聲明，提出問題及徵求獨立意見（如有此意願）。\nYou confirm that you have received our Company’s Securities Fee Schedule. \n你確認收妥本公司之股票服務收費表。\nYou are aware that you shall not settle any trading transaction with third-party's cheques.\n    你確認不能以第三者支票作交收。\nWe intend to us your name, telephone number, email and address for direct marketing securities related products/services but we cannot so use your personal data without your consent.  Please sign at the end of this statement to indicate your agreement to such use.  Should you find such use of your personal data not acceptable, please indicate your objection before signing by ticking the box below.\n我們擬使用你的姓名、電話號碼、電郵及地址以促銷證券相關產品/服務，但我們在未得到你的同意之前不能如此使用你的個人資料。 請在本文最後份表示你同意使用你的個人資料。 如你不同意，請在以下空格加上「✓」號，然後簽署。  \n\n The customer named objects to the proposed use of his/her personal data in direct marketing. \n本人（姓名如下）反對使用個人資料於擬作出的直接促銷\n\nSigning Arrangement for Joint A/C 聯名帳戶簽署安排：\nThe       signature(s) above, of which any       will be effective. 所列       式簽署中， 任何      式簽署有效。 \n\nWitness 見證\n\nName of Witness 見證人姓名：                CE Number 中央編號：               \nSignature of Witness 見證人簽署：                Date Signed 簽署日期：               \nThe customer submits this form Without a personal cheque \n客戶並無連同個人支票與此表格一併遞交\nThe customer submits this form with a personal cheque, cheque number: _____________________\n客戶連同個人支票與此表格一併遞交，支票號碼：_________________________"
+      ]
+    ]
+  },
+  {
+    "table_index": 10,
+    "rows": 1,
+    "cols": 1,
+    "content": [
+      [
+        "I confirm that I have provided the Risk Disclosure Statements in the language of the Customer’s choice (English or Chinese) and that I have invited the Customer to read the Risk Disclosure Statements, to ask questions and advice to take independent advice if the customer wishes.\n本人確認已按照客戶所選擇的語言（英文或中文）向客戶提供風險披露聲明，及已邀請客戶閱讀該風險披露聲明，提出問題及徵求獨立意見（如客戶有此意願）。 \n\n\nLicensed Staff Name 持牌職員姓名 :                                    \n\nCE No. 中央編號:                      (In block letter 以英文大階或中文正階填寫）\n\nSignature of Licensed Staff  持牌职员签署 :                                \n\nDate 日期 :"
+      ]
+    ]
+  },
+  {
+    "table_index": 11,
+    "rows": 9,
+    "cols": 2,
+    "content": [
+      [
+        "For Official Use Only (只供內部使用)",
+        "For Official Use Only (只供內部使用)"
+      ],
+      [
+        "Referee介紹人：",
+        "No. of year(s) known by A/E\n與客戶主任相識年期："
+      ],
+      [
+        "A/E Name客戶主任姓名：",
+        "Commission Rate 佣金：          %"
+      ],
+      [
+        "Cash Trading Limit 現金交易限額：",
+        "Single Transaction Limit 單項交易限額："
+      ],
+      [
+        "Document Checked By 文件檢查人員：",
+        "Date 日期："
+      ],
+      [
+        "Information Inputted By 資料輸入人員：",
+        "Date 日期："
+      ],
+      [
+        "Inputted Verified By 開戶批核人員：",
+        "Date 日期："
+      ],
+      [
+        "Account Approved By 開戶批核人員：",
+        "Date 日期："
+      ],
+      [
+        "Remark 備註:",
+        "Remark 備註:"
+      ]
+    ]
+  }
+]
