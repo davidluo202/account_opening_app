@@ -70,10 +70,9 @@ export default function Applications() {
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <FileText className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold">誠港金融開戶系統</span>
-          </div>
+          <a href="/applications" className="flex items-center">
+            <img src="/logo-zh.png" alt="誠港金融" className="h-12" />
+          </a>
           <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground">歡迎, {user?.name || user?.email}</span>
             <Button variant="ghost" size="sm" onClick={handleLogout}>

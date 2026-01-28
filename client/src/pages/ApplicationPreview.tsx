@@ -196,14 +196,22 @@ export default function ApplicationPreview() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container max-w-5xl">
-        {/* 页面标题 */}
-        <div className="mb-6">
-          <Button variant="ghost" onClick={() => setLocation("/applications")} className="mb-4">
-            <ArrowLeft className="h-4 w-4 mr-2" />
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container py-4 flex justify-between items-center">
+          <a href="/applications" className="flex items-center">
+            <img src="/logo-zh.png" alt="誠港金融" className="h-12" />
+          </a>
+          <Button variant="ghost" onClick={() => setLocation("/applications")}>
             返回申请列表
           </Button>
+        </div>
+      </header>
+
+      <div className="container max-w-5xl py-8">
+        {/* 页面标题 */}
+        <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900">申请预览</h1>
           <p className="text-gray-600 mt-2">请仔细核对以下信息，确认无误后提交申请</p>
         </div>
