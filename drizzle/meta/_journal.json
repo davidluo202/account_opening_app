@@ -15,6 +15,13 @@
       "when": 1769592215257,
       "tag": "0001_familiar_phalanx",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1769599533576,
+      "tag": "0002_known_squadron_supreme",
+      "breakpoints": true
     }
   ]
 }

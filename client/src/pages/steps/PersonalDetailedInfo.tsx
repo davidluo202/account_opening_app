@@ -58,6 +58,7 @@ export default function PersonalDetailedInfo() {
     email: "",
     phoneCountryCode: "+852",
     phoneNumber: "",
+    faxNo: "", // 传真号码（可选）
     residentialAddress: "",
   });
 
@@ -85,6 +86,7 @@ export default function PersonalDetailedInfo() {
       setFormData({
         ...existingData,
         idExpiryDate: existingData.idExpiryDate || "",
+        faxNo: existingData.faxNo || "", // 处理可选字段
       });
     }
   }, [existingData]);
@@ -365,6 +367,19 @@ export default function PersonalDetailedInfo() {
             />
           </div>
           {errors.phoneNumber && <p className="text-sm text-destructive">{errors.phoneNumber}</p>}
+        </div>
+
+        {/* 传真号码 */}
+        <div className="space-y-2">
+          <Label htmlFor="faxNo">
+            传真号码 / Fax Number (可选)
+          </Label>
+          <Input
+            id="faxNo"
+            value={formData.faxNo}
+            onChange={(e) => setFormData({ ...formData, faxNo: e.target.value })}
+            placeholder="请输入传真号码（可选）"
+          />
         </div>
 
         {/* 居住地址 */}

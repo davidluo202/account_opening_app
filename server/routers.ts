@@ -192,6 +192,7 @@ export const appRouter = router({
         email: z.string().email(),
         phoneCountryCode: z.string(),
         phoneNumber: z.string(),
+        faxNo: z.string().optional(), // 传真号码（可选）
         residentialAddress: z.string(),
       }))
       .mutation(async ({ input, ctx }) => {
@@ -231,6 +232,7 @@ export const appRouter = router({
         industry: z.string().optional(),
         companyAddress: z.string().optional(),
         officePhone: z.string().optional(),
+        officeFaxNo: z.string().optional(), // 办公传真（可选）
       }))
       .mutation(async ({ input, ctx }) => {
         const { applicationId, ...data } = input;
@@ -264,6 +266,7 @@ export const appRouter = router({
         applicationId: z.number(),
         incomeSource: z.string(),
         annualIncome: z.string(),
+        liquidAsset: z.string(), // 流动资产（必填）
         netWorth: z.string(),
       }))
       .mutation(async ({ input, ctx }) => {
@@ -337,6 +340,7 @@ export const appRouter = router({
       .input(z.object({
         applicationId: z.number(),
         bankName: z.string(),
+        accountType: z.enum(["saving", "current", "others"]).optional(), // 账户类型（可选）
         accountCurrency: z.string(),
         accountNumber: z.string(),
         accountHolderName: z.string(),

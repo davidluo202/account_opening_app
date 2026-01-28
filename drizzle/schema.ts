@@ -87,6 +87,7 @@ export const personalDetailedInfo = mysqlTable("personal_detailed_info", {
   email: varchar("email", { length: 320 }).notNull(),
   phoneCountryCode: varchar("phoneCountryCode", { length: 10 }).notNull(),
   phoneNumber: varchar("phoneNumber", { length: 50 }).notNull(),
+  faxNo: varchar("faxNo", { length: 50 }), // 传真号码
   residentialAddress: text("residentialAddress").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -106,6 +107,7 @@ export const occupationInfo = mysqlTable("occupation_info", {
   industry: varchar("industry", { length: 100 }),
   companyAddress: text("companyAddress"),
   officePhone: varchar("officePhone", { length: 50 }),
+  officeFaxNo: varchar("officeFaxNo", { length: 50 }), // 办公传真
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -118,6 +120,7 @@ export const employmentDetails = mysqlTable("employment_details", {
   applicationId: int("applicationId").notNull().unique(),
   incomeSource: varchar("incomeSource", { length: 100 }).notNull(),
   annualIncome: varchar("annualIncome", { length: 50 }).notNull(), // 年收入范围
+  liquidAsset: varchar("liquidAsset", { length: 50 }), // 流动资产 HK$
   netWorth: varchar("netWorth", { length: 50 }).notNull(), // 净资产范围
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -143,6 +146,7 @@ export const bankAccounts = mysqlTable("bank_accounts", {
   id: int("id").autoincrement().primaryKey(),
   applicationId: int("applicationId").notNull(),
   bankName: varchar("bankName", { length: 200 }).notNull(),
+  accountType: mysqlEnum("accountType", ["saving", "current", "others"]), // 账户类型
   accountCurrency: varchar("accountCurrency", { length: 10 }).notNull(),
   accountNumber: varchar("accountNumber", { length: 100 }).notNull(),
   accountHolderName: varchar("accountHolderName", { length: 200 }).notNull(),

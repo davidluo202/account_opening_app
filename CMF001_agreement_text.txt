@@ -1,0 +1,1576 @@
+Canton Mutual Financial Limited
+
+誠港金融股份有限公司
+
+Licensed Corporation under the Securities & Futures Ordinance (CE No. BSU667)  
+
+根據《證券及期貨條例》下的持牌發團（CE編號BSU667）
+
+Cash Account Agreement
+
+現金賬戶協議
+
+Units 2304-5, 23/F, 308 Central Des Voeux, No. 308 Des Voeux Road Central, Hong Kong 
+
+香港上環德輔道中308號23樓2304-5室
+
+www.cmfinancial.com
+
+TEL: (852) 2598 1700 l FAX: (852) 2561 7028 l EMAIL: customer-services@cmfinancial.com
+
+電話: (852) 2598 1700 l 傳真: (852) 2561 7028 l 電郵: customer-services@cmfinancial.com
+
+Table of Contents: 
+
+CASH ACCOUNT AGREEMENT
+
+SCHEDULE 1 
+
+– PERSONAL DATA PROTECTION STATEMENT
+
+SCHEDULE 2 
+
+– EXPLANATION OF RISK ASSOCIATED WITH EXCHANGE-TRADED DERIVATIVE PRODUCTS
+
+CLIENT DECLARATION
+
+Cash Account Agreement 
+
+THIS AGREEMENT is made between the following parties on the date stated in the Client Information Form:
+
+Party A:   Canton Mutual Financial Limited (CE No. BSU667) , being a Licensed Corporation to carry on Type 1 (Dealing in Securities), Type 4 (Advising on Securities) and Type 9 (Asset Management) regulated activities pursuant to the Securities and Future Ordinance, whose registered address is Units 2304-5, 23/F, 308 Central Des Voeux, No. 308 Des Voeux Road Central, Hong Kong (the “Company” or “CMF”); 
+and  
+
+Party B:   The client with the name, address, and details information as stated in the Client Information Form
+
+WHEREAS:
+
+(1) The Client is desirous of opening one or more cash accounts (the “Account”) with the Company from time to time for the purpose of trading in securities. 
+
+and
+
+(2) The Company agrees that it will open and maintain such Account and act as an agent for the Client in purchase and sale of securities subject to the terms and conditions of this Agreement. 
+
+NOW IT IS HEREBY AGRRED as follows:  
+
+1.	  	Definition  
+
+1.1	 	In this Agreement, unless the context requires otherwise, the following expressions shall have the following meanings:
+
+“Access Codes” means together the Password and the Login Name (or any of them);
+
+“Account(s)” means one or more cash accounts maintained by the Client with the Company from time to time for the purchase or sale of securities.
+
+“Agreement” means the written agreement between the Client and the Company regarding the opening, maintenance and operation of the Account(s) as amended from time to time, including but not limited to the Client Information Form, the Terms and Conditions herein contained and any authority given by the Client to the Company with respect to the Account(s);
+
+“Business Day” means any day on which the Exchange opens for trading other than Saturdays, Sundays, public holidays and any other day declared by the Exchange to be a non-business day;
+
+“Business Hours” means the period during which on a Business Day the Company will be opened or trading as the Company may prescribe from time to time.
+
+“Company” means Canton Mutual Financial Limited(“CMF”);
+
+“Client Money Rules” means the Securities and Futures (Client Money) Rules made by the SFC under section 149 of the Securities and Futures Ordinance as amended from time to time;
+
+“Client Securities Rules” means the Securities and Futures (Client Securities) Rules made by the SFC under section 148 of the Securities and Futures Ordinance as amended from time to time;
+
+“Client Money Standing Authority” means the client money standing authority granted by the Client to the Company in the terms set out in Clause 16 as amended from time to time;
+
+“The Group” means Canton Mutual Financial Limited, its subsidiary, holding company and fellow subsidiary of such holding company, and refers to each or any one of them;
+
+“Mail” means the secure messaging facility operated by the Company for the delivery and receipt of confirmation, statement and other notices;
+
+“CMF Website” means [www.cmfinancial.com] and such other websites as CMF may from time to time add and notify the Client;
+
+“Electronic Trading Service” means any facility provided by the Company which enables the Client to give electronic instructions to purchase, sell or otherwise deal with securities, and information services;
+
+“HKSCC” means the Hong Kong Securities Clearing Company Limited.
+
+“Login Name” means the Client’s personal identification used in conjunction with the Password to gain access to the Electronic Trading Service, and to Mail and any other services offered by the Company;
+
+“Password” means the Client’s personal password(s) used in conjunction with the Login Name to gain access to the Electronic Trading Service and to Mail and any other services offered by the Company;
+
+“Securities and Futures Ordinance” means the Securities and Futures Ordinance (Chapter 571 of the Laws of Hong Kong) as amended or re-enacted from time to time;
+
+“SEHK” means The Stock Exchange of Hong Kong Limited;
+
+“SFC” means the Securities and Futures Commission;
+
+“SFC Code of Conduct” means Code of Conduct for Personal Licensed by or Registered with the SFC as amended from time to time;
+
+“Standing Order(s)”means instruction(s) given by the Client from time to time to take specified action when the conditions forming part of such instructions are met and the Client has requested the Company to carry out such instruction during Business Hours if the relevant conditions are met;
+
+1.2	In this Agreement: unless the context otherwise requested, Words and expressions defined in the Securities and Futures Ordinance, the Client Money Rules and the Client Securities Rules shall have the same meanings in this Agreement; references to the “Client”, wherever used, shall in the case where the client(s) is/are individual(s) include the Client(s) and his/their respective executors and administrators and in the case where the Client is a sole proprietorship firm include the sole proprietor and his executors and administrators and his/their successors in the business and in the case of a partnership firm include the partners who are the partners of the firm at the time when the Client’s said Account(s) is/are being maintained and their respective executors and administrators and any other person or persons who shall at any time hereafter be or have been a partner of and in the firm and his or their respective executors and administrators and the successors to such partnership business and where the Client is a company include such company and its successors; references to clauses, sub-clauses and schedule unless otherwise stated are to clauses and sub-clauses of, and the schedule to, this Agreement ;the headings to the Clauses are for convenience only and do not affect their interpretation and construction.	 
+
+2. 	Applicable Rules and Regulations
+
+2.1	All transactions for the Account(s) shall be subject to the relevant constitution, rules, regulations, by-laws, customs and usages, as amended from time to time, of SEHK, or such other stock exchange or markets or over-the-counter markets (“Exchange(s)”) and the HKSCC or such other clearing houses in or outside Hong Kong (“Clearing Houses(s)”)and of the laws of Hong Kong and other places in which the Company is dealing on the Client’s behalf, as amended from time to time.  
+
+2.2	The Rules of SEHK and the HKSCC, in particular those rules which relate to trading and settlement, shall be binding on both the Company and the Client in respect of transactions concluded on the instructions of the Client. 
+
+2.3	This Agreement shall be subject to the SFC Code of Conduct. In the event of any conflict between the SFC Code of Conduct and the terms and conditions hereof, the SFC Code of Conduct shall prevail.
+
+3.	Services
+
+3.1	The Client hereby instructs and authorizes the Company to open and maintain in its book one or more Account(s) in the name of the Client for the purpose of purchasing, investing in, selling, exchanging or otherwise disposing of and generally dealing in and with all kinds of securities in accordance with the terms and conditions of this Agreement from time to time. Unless otherwise indicated by the Company or specified in the Agreement (in the contract for the relevant transaction or otherwise), the Company shall act as agent for the Client in effecting transactions pursuant to this Agreement. 
+
+3.2	All transactions for the Account(s) may be effected by the Company directly on any Exchange where the Company is authorized to deal in securities, or, at its option, on any Exchanges indirectly through any other broker which the Company may, at its discretion, decide to appoint. 
+
+3.3	Where any securities are held in the Company’s name, the name of any associated entity of the Company or the name of any nominee of the Company in accordance with Clause 10.1, the Company will not attend any meeting or exercise any voting or other rights including the completion of proxies except in accordance with written instructions of the Client. Nothing in this Agreement shall in any way impose on the Company any duty to inform the Client or to take any action with regards the attendance of meetings and to vote at such meetings. The Company has no obligation  in respect of notices, communications, proxies and other documents relating to the securities received by the Company or to send such documents or to give any notice of the receipt of such documents to the Client. The Company has the right to charge the Client for its services in taking any action pursuant to the Client’s instruction. 
+
+3.4	If services are to be provided by the Company to the Client in relation to derivative products, including options, the Company shall provide to the Client upon request product specifications and any prospectus or other offering document covering such products. 
+
+4. 	Client Instructions
+
+4.1	The Company is hereby authorized to act upon the instructions of the Client to deposit, purchase and/or sell securities for the Account(s) and otherwise deal with securities, receivable or monies held in or for the Account(s) subject to the Client Money Rules and the Client Securities Rules. 
+
+4.2	The Client will operate his Account(s) by giving orders himself or if the Client will operate his Account by appointing another person to give orders on his behalf, then the Client will provide the Company with the name and address of the person appointed, to be accompanied by an appointment in writing. 
+
+4.3	None of the Company’s employees or representatives shall accept appointment by the Client as agent to operate the Client’s Account unless a separate agreement is entered into in accordance with Code 7 of the SFC Code of Conduct. 
+
+4.4	All instructions shall be given by the Client orally either in person or by telephone, or in writing, delivered by post, by hand, by e-mail using Mail or otherwise, or by facsimile transmission or through any of the Electronic Trading Services in accordance with the provisions of Clause 17 or by any other means acceptable to the Company. All orders and instructions given by telephone, in writing or otherwise will only be valid and effective if received by the Company within the Business Hours on a Business Day.
+
+4.5	The Company shall be entitled to rely on any instructions, directions, notices or other communication which the Company reasonably believes to be from the Client or a person authorized to act on the Client’s behalf and the Client shall be bound by such communication. The Company shall not be under any duty and obligations to verify the identity or authority of the person giving or making or purporting to give or make the instructions, directions, notices or other communications. The Company shall be entitled to treat such instructions, directions, notices or other communication as fully authorized by and absolutely and conclusively binding upon the Client and the Company shall be entitled (but not bound) to act on or take such steps in connection with or in reliance upon such instructions, directions, notices or other communication as the Company may consider appropriate regardless of the nature of the transaction or agreement or the value, type and quantity of securities involved and notwithstanding any error, in the terms of such instructions, directions, notices or other communication. The Client agrees to indemnify the Company and hold the Company harmless from and against all losses, costs and expenses (including legal costs) reasonably and properly incurred by the Company in reliance thereupon. 
+
+4.6	The Company may record all telephone conversations with the Client in order to verify the instructions of the Client. The Client agrees to accept the contents of any such recording as final and conclusive evidence of the instructions of the Client in case of dispute.
+
+4.7	Notwithstanding anything herein contained, the Company shall be entitled, at its absolute discretion, to act on any of the Client’s instructions and/or to refuse to accept any order for sale or purchase of securities from the Client and shall not be obliged to give any reason for such refusal. In particular and without prejudice to Clause 6.1, the Company may refuse to act on an instruction of the Client if at the time of such instruction, there are insufficient securities or, as the case may be, monies in the Account(s) in order to effect settlement of the relevant transaction on the due settlement date. 
+
+4.8	By reason of physical restraints on the Exchange and rapid changes in the prices of securities that frequently take place, there may, on occasions, be a delay in quoting prices or in dealing. The Company may not after using reasonable endeavors be able to trade at the prices quoted at any specific time. The Company is not liable for any loss arising by reason of its failing, or being unable, to comply with any terms of the Client’s instructions. Where the Company is unable after using reasonable endeavors to execute any instruction in full, the Company is entitled to effect partial performance only without prior reference to the Client’s confirmation. The Client shall in any event accept and be bound by the outcome when any request to execute orders is made. 
+
+4.9	Any day order for purchase or sale of securities placed by the Company at the request of the Client that has not been executed before the close business of the relevant Exchange or such other expiration date required by the relevant Exchange or such other later time as the Client and the Company may agree shall be deemed to have been cancelled automatically (to the extent not executed if executed in part). 
+
+4.10	The Company may, for the purpose of carrying out any instruction given by the Client, contract with or otherwise deal with or through any other agent, including any person or party associated in any manner with the Company, on such terms and conditions as the Company may in its absolute discretion determine. 
+
+4.11   	The Company may decline to act on instructions from the Client to effect any order which, in the Company’s sole judgment, is an order for short selling any securities.
+
+4.12   	The Client acknowledges that due to the trading practices of the Exchanges or other markets in which transactions are executed, it may not always be able to execute orders at the prices quoted “at best” or “at market” and the Client agrees in any event to be bound by transactions executed by the Company following instructions given by the Client.
+
+4.13   	Subject to applicable laws and regulations and market requirements, the Company may in its absolute discretion determine the priority in the execution of its client’s orders, having due regard to the sequence in which such orders were received, and the Client shall not have any claim of priority to another client in relation to the execution of any order received by the Company.
+
+5.	Trading Decisions
+
+5.1	Without prejudice to any rights or obligations arising under Clause 19, the Client acknowledges and agrees that the Client retains full responsibility for all trading decisions in the Account(s),which are made on the basis of the Client’s own judgment and analysis, and the Company is responsible only for the execution, clearing, and carrying out of transactions in the Account(s); that the Company has no responsibility or obligation regarding any conduct, action, representation or statement of any introducing firm, investment advisor or other third party in connection with the Account(s) or any transaction therein. 
+
+6.	Transaction Settlement
+
+6.1	Unless otherwise agreed, in respect of each sale and purchase transaction executed on the Client’s behalf, unless the Company is already holding cash or securities on the Client’s behalf to settle the transaction, the Client will:
+
+(a)	pay the Company cleared funds or deliver to it securities in deliverable form; and 
+
+(b)	otherwise ensure that the Company has received such funds or securities; by such time as the Company has notified (whether verbally or in writing) the Client in relation to the relevant transaction.
+
+6.2	Unless otherwise agreed, the Client agrees that should the Client fail to make such payment or delivery of securities by the due date as mentioned in Clause 6.1, the Company is hereby authorized to: 
+
+(a) 	in the case of a purchase transaction, to transfer or sell any such purchased to satisfy the Client’s obligations to the Company; or 
+
+(b)  	in the case of sale transaction, to borrow and/or purchase such securities to satisfy the Client’s obligations to the Company. 
+
+6.3	The Client hereby acknowledges that the Client shall be responsible to the Company for any loss, costs, fees and expenses incurred by the Company in connection with the Client’s failure to meet his obligations by the due date as described in Clause 6.1.
+
+7.	Commissions and Expenses
+
+7.1	All transactions executed in pursuance of the instructions of the Client on the Exchanges shall be subject to a transaction levy and any other levies that the relevant Exchange from time to time may impose. The Company is authorized to collect any such levies in accordance with the rules prescribed by the relevant Exchange from time to time.  
+
+7.2	The Client shall on demand pay the Company commissions on purchase, sale and other transactions or services for the Account(s) at such rate as the Company may from time to time have notified him, together with all stamp duties, bank charges, transfer fees, interest, custodial expenses and other expenses in respect of or connected with the Account(s) or any transaction or service s thereof or any securities therein. 
+
+7.3	The Company shall, at its absolute discretion, be entitled to solicit, accept and retain any benefit in connection with any transaction effected with any person for the Client pursuant to the terms and subject to the conditions of the Agreement, including any commissions, rebates or similar payments received in connection therewith, and rebates from standard commissions charges by brokers or other agents to their client. The Company shall also, at its absolute discretion, be entitled to offer any benefit in connection with any transaction effected with any person for the Client pursuant to the terms and subject to the conditions of this Agreement, including any benefit relating to commissions or similar payments in connection therewith. 
+
+8.	Interest
+
+8.1	Unless otherwise indicated, the Client undertakes to pay interest to the Company in respect of any debit balance on the Account(s) or any amount otherwise owing to the Company at any time at such rate as may be specified from time to time by the Company or failing any such specification at a rate equivalent to eight per cent per annum above the best lending rate quoted by Bank of China (Hong Kong) Limited from time to time. Such interest shall accrue on a day to day basis and shall be payable on the last day of each calendar month or upon any demand being made by the Company. 
+
+9.	Currencies in Transaction
+
+9.1	The Account(s) shall be in Hong Kong Dollars or such other currencies as the Company may agree from time to time and in the event that the Client instructs the Company to effect any sale or purchase of securities in a currency other than Hong Kong Dollars, any profit or loss arising as a result of fluctuation in the exchange rate of the relevant currencies will be for the account of the Client solely. Any conversion from one currency into another required to be made for performing any action or step taken by the Company under this Agreement may be effected by Company in such manner and at such time as it may in its absolute discretion decide. 
+
+9.2.	All payments to be made by the Client to the Company in a currency other than Hong Kong Dollars shall be in freely transferable and immediately available funds clear of any taxes, charges or payments of any nature when received by the Company.
+
+10.	Securities in the Account(s)
+
+10.1	The Client specifically authorizes the Company, in respect of all securities deposited by the Client with the Company or purchased or acquired by the Company on behalf of the Client, and held by the Company for safe keeping, to register the same in the name of an associated entity of the Company or in the Client’s name, or deposit in safe custody in a segregated account which is designated as a trust account or client account and established and maintained in Hong Kong by the Company or an associated entity of the Company with an authorized financial institution, an approved custodian or another intermediary licensed for dealing in securities.
+
+10.2	Any securities held by the Company, any associated entity of the Company, banker, institution, custodian or intermediary pursuant to Clause 10.1 shall be at the sole risk of the Client and the Company and the relevant associated entity, banker, institution, custodian and intermediary shall be under no obligation to insure the Client against any kind of risk, which obligation shall be the sole responsibility of the Client.
+
+10.3	If in relation to any securities deposited with the Company which are not registered in the Client’s name, any dividends or other distributions or benefits accrue in respect of such securities, the Account(s) shall be credited (or payment made to the Client as may be agreed) with the proportion of such benefit equal to the proportion of the securities held on behalf of the Client out of the total number or amount of such securities.
+
+10.4	If in relation to any securities deposited with the Company but which are not registered in the name of the Client, and loss is suffered by the Company, the Account(s) may be debited (or payment made by the Client as may be agreed) with the proportion of such loss equal to the proportion of the securities held on behalf of the Client out of the total number or amount of such securities.
+
+10.5	Except provided in Clause 6.2 and 10.6, the Company shall not, without the Client’s oral or written direction or standing authority under the Client Securities Rules, deposit, transfer, lend, pledge, re-pledge or otherwise deal with any securities of the Client for any purpose.
+
+10.6	The Company is authorized, pursuant to section 6(3) of the Client Securities Rules, to dispose or initiate a disposal by its associated entity of any of the Client’s securities or securities collateral (and the Company shall have absolute discretion to determine which securities or securities collateral are to be disposed of) for the purpose of settling any liability owed by or on behalf of the Client to the Company, the associated entity or a third person.
+
+10.7	The Company’s obligations to deliver, to hold in safe custody or otherwise or to register in the Client’s name, securities purchased or acquired by the Company on the Client’s behalf shall be satisfied by the delivery, the holding or registration in the Client’s name or the Client’s nominee of securities of the same class, denomination and nominal amount as, and rank pari passu with, those originally deposited with, transferred to or acquired by the Company on the Client’s behalf (subject always to any capital reorganization which may have may have occurred in the meantime) and the Company shall not be bound to deliver or return securities which are identical with such securities in terms of number, class denomination, nominal amount and rights attached thereto.
+
+11.	Monies in the Account(s)
+
+11.1	The Company shall be entitled to deposit all monies held in the Account(s) and all monies received for or on the account of the Client with one or more segregated account(s) in Hong Kong, each of which shall be designated as a trust account or client account, at one or more authorized financial institution(s) or any other person approved by the SFC for the purposes of section 4 of the Client Money Rules. Unless otherwise agreed between the Client and the Company, any interest accrued on such monies shall belong to Company absolutely.
+
+12.	New Listings
+
+12.1	In the event that the Client requests and authorizes the Company to apply for securities in respect of a new listing and/or issue of securities on the Exchange as his agent and for his benefit of any other person, the Client hereby warrants to and for the Company’s benefit that the Company have authority to make such application on the Client’s behalf.
+
+12.2	The Client shall familiarize himself and comply with all the terms and conditions governing the securities of the new listing and/or issue and the application for such new securities set out in any prospectus and/or offering document and the application form or any other relevant document in respect of such new listing and/or issue and the Client agrees to be bound by such terms and conditions in any such transaction the Client may have with the Company.
+
+12.3	The Client hereby gives to the Company all the representations, warranties and undertakings which an applicant for securities in a new listing and/or issue is required to give (whether to the issuer, sponsors, underwriters or placing agents of the relevant securities, the SEHK or any other relevant regulator or person).
+
+12.4	The Client hereby declares and warrants, and authorizes the Company to disclose and warrant to SEHK on any application form (or otherwise) and to any other person as appropriate, that any such application made by the Company as his agent is the only application made, and the only application intended to be made, by the Client or on the Client’s behalf, to benefit the Client or the person for whose benefit the Client is applying.  The Client acknowledges and accepts that the aforesaid declaration and warranty will be relied upon by the Company and by the issuer, sponsors, underwriters or placing agents of the relevant securities, SEHK or any other relevant regulator or person in respect of any application made by the Company as the Client’s agent.
+
+12.5	The Client acknowledges that any application made by an unlisted company which does not carry on any business other than dealing in securities and in respect of which the Client exercises statutory control shall be deemed to be an application made for the benefit of the Client.
+
+12.6	The Client recognizes and understands that the legal, regulatory requirements and market practice in respect of applications for securities may from time to time as may the requirements of any particular new listing or issue of securities. The Client undertakes to provide to the Company such information and take such additional steps and makes such additional representations, warranties and undertakings may be required in accordance with such legal, regulatory requirements and market practice as the Company may in the Company’s absolute discretion determine from time to time.
+
+12.7	In relation to a bulk application to be made by the Company or the Company’s agent on the Company’s own account and/or on behalf of the Client and /or the Company’s other client, the Client acknowledges and agrees:
+
+(a)	that such bulk application may be rejected for reasons which are unrelated to the Client and the Client’s application and neither the Company nor the Company’s agent shall, in the absence of fraud, negligence or willful default, be liable to the Client or any other person in consequence to such rejection; and 
+
+(b)	to indemnify the Company in accordance with Clause 20 if such bulk application is rejected either in circumstances where the representations and warranties have been breached or otherwise because of factors relating to the Client. The Client acknowledges that the Client may also be liable in damages to other persons affected by such breach or other factors. 
+
+13.	Event of Default
+
+13.1	Any one of the following events shall constitute an event of default (“Event of Default”):
+
+(a)	the Client’s failure to pay any deposits or any other sums payable to the Company or submit to the Company any documents or deliver any securities to the Company hereunder, when called upon to do so or on due date; 
+
+(b)	default by the Client in the due performance of any of the terms of this Agreement and the observance of any by laws, rules and regulations of the appropriate Exchange and/or Clearing Houses;
+
+(c)	the filing of a petition in bankruptcy, winding up or the commencement of other analogous proceedings against the Client; 
+
+(d)	the death of the Client (being an individual); 
+
+(e)	the levy or enforcement of any attachment, execution or other process against the Client; 
+
+(f)	any representation or warranty made by the Client to the Company in this Agreement or in any document being or becoming incorrect or misleading; 
+
+(g)	any consent, authorization or board resolution required by the Client (being a corporation or a partnership) to enter into this Agreement being wholly or partly revoked, suspended, terminated or ceasing to remain in full force and effect; 
+
+(h)	the occurrence of any event which, in the sole reasonable opinion of the Company, might jeopardize any of its rights under this Agreement; 
+
+(i)	the Company has made at least two reasonable attempts to demand from the Client any sums of monies, but for whatever reason, has not been able to communicate directly with the Client; and 
+
+(j)	the receipt by the Company of notice of any dispute as to the validity of any order or instruction from the Client.
+
+13.2	If an Event of Default occurs, without prejudice to any other rights or remedies that the Company may have against the Client and without further notice to the Client, the Company shall be entitled to: 
+
+(a)	immediately close the Account(s); 
+
+(b)	terminate all or any part of the services provided under this Agreement; 
+
+(c)	cancel any or all outstanding orders or any other commitments made on behalf of the Client; 
+
+(d)	subject to Clause 10.5 and 10.6, dispose of any or all securities held for or on behalf of the Client and to apply the proceeds thereof and any cash deposit(s) to settle all outstanding balance owing to the Company; and 
+
+(e)	combine, consolidate and set off any or all account of the Client in accordance with Clause 15.
+
+13.3	In the event of any sale pursuant to this Clause:
+
+(a)	the Company shall not be responsible for any loss occasioned thereby howsoever arising if the Company has already used reasonable endeavors to sell or dispose of the securities or any part thereof at the then available market price; 
+
+(b)	the Company will exercise its own judgment in determining the reasonable time to sell or dispose of the securities and the Company shall not be responsible for any loss occasioned thereby; 
+
+(c)	the Company shall be entitled to appropriate to itself or sell or dispose of the securities at the price to any Group Member without being in any way responsible for loss occasioned thereby howsoever arising and without being accountable for any profit made by the Company and/or any Group Member; and 
+
+(d)	the Client undertakes to pay the Company any deficiency if the net proceeds of sale shall be insufficient to cover all the outstanding balances owing by the Client to the Company.
+
+14. 	Proceeds of Sale
+
+14.1	Subject to Clause 10.5 and 10.6, the proceeds of sale made under Clause 13.2 (d) shall be applied in the following order of priority and any residue shall be paid to the Client or to his/its order:
+
+(a)	payment of all costs, charges, legal fees and expenses including stamp duty, commission and brokerage properly incurred by the Company in transferring and /or selling all or any of the securities or properties in the Account(s) and/or in perfecting title thereto; 
+
+(b)	payment of all interest due;
+
+(c)	payments of all monies and liabilities due, owing or incurred by the Client, to the Company; and 
+
+(d)	payments of all monies and liabilities due, owing or incurred by the Client to any Group Member. 
+
+14.2	Subject to the Client Money Rules, any dividends, interest or other payments which may be received or receivable by the Company in respect of any of the securities may be applied by the Company as though they were proceeds of sale hereunder notwithstanding that the power of sale may not have arisen and notwithstanding that subsequent to the execution of the Agreement the Company may have paid of the said dividends, interest or other payments to the Client.
+
+15.	Rights of Set-off and Lien
+
+15.1	In addition and without prejudice to any general liens, rights of set-off or other similar rights to which the Company may be entitled under law or this Agreement, all securities, receivable, monies (in any currency) and other property of the Client (held by the Client either individually or jointly with others) held by or in the possession of the Company at any time shall be subject to general lien in favor of the Company as continuing security to offset and discharge all of the Client’s obligations, arising from the business of dealing in securities or otherwise, to the Company and any Group Member.
+
+15.2 	In addition and without prejudice to any general liens or other similar rights which the Company may be entitled under law or this Agreement and subject to applicable rules and regulations, including without limitation, the Client Money Rules and the Client Securities Rules, the Company may for itself and as agent for any Group Member, at any time without notice to the Client, any combine or consolidate any or all accounts, of any nature whatsoever and either individually or jointly with others, with the Company or any Group Member and the Company may set off or transfer any monies (in any currency), securities or other property in and/or between, any such accounts so as to satisfy obligations or liabilities of the Client to the Company or any Group Member, whether such obligations and liabilities are actual or contingent, primary or collateral, secured or unsecured, or joint or several.
+
+15.3  	Without limiting or modifying the general provisions of the Agreement and subject to applicable rules and regulations, including without limitation, the Client Money Rule and the Client Securities Rules, the Company may, without notice, transfer all or any sum or properties interchangeably between any of the accounts maintained at any time by the Client with the Company and any Group Member.
+
+16.	Client Money Standing Authority
+
+16.1	The Client Money Standing Authority covers money held or received by the Company in Hong Kong (including any interest derived from the holding of the money) in one or more segregated account(s) on the Client’s behalf (“Monies”). 
+
+16.2	The Client authorizes the Company to:
+
+(a)	combine or consolidate any or all segregated accounts, of any nature whatsoever and either individually or jointly with others, maintained by the Company or any Group Member and the Company may transfer any sum of Monies to and between such segregated account(s) of the Client to satisfy the Client’s obligations or liabilities to the Company or any Group Member , whether such obligations and liabilities are actual or contingent, primary or collateral, secured or unsecured, or joint or several: and
+
+(b)	transfer any sum of Monies interchangeably between any of the segregated accounts maintained at any time with the Company or any Group Member.
+
+16.3	The Client acknowledges and agrees that the Company may do any of the things mentioned in Clause 16.2 without giving the Client notice. 
+
+16.4	The Client Money Standing Authority is given without prejudice to other authorities or rights which the Company or any Group Member may have in relation to dealing in Monies in the segregated account.
+
+16.5	The Client Money Standing Authority shall be valid for a period of 12 months from the date of this Agreement, subject to renewal by the Client or deemed renewal under the Client Money Rules as referred to in Clause 16.7.
+
+16.6  	The Client Money Standing Authority may be revoked by giving the Company written notice addressed to the Company at the Company address specified in the Agreement or such other address which the Company may notify the Client in writing for this purpose. Such notice shall take effect upon the expiry of 14 days from the date of the Company’s actual receipt of such notice.
+
+16.7  	The Client understands that the Client Money Standing Authority shall be deemed to be renewed on a continuing basis without the Client’s written consent if the Company issues the Client a written reminder at least 14 days prior to the expiry date of the Client Money Standing Authority, and the Client does not object to such deemed renewal before such expiry date.
+
+17.	Electronic Trading Services to the Client
+
+17.1	Unless otherwise specified, this Clause is made without prejudice and in addition to all the provisions in the Agreement. 
+
+17.2	The Company may provide the Client with Electronic Trading Services, and the Client hereby requests the provision of such services, upon the terms and conditions as embodied in the Agreement, as modified, amended or expanded by any notice, letter, publication or such other document as may be issued from time to time by the Company. 
+
+17.3	The Client may from time to time instruct the Company, acting as the Clients agent to deposit, purchase and/or sell securities for the Account(s) or otherwise deal with securities, receivables or monies on behalf of the Client through the Electronic Trading Services. 
+
+17.4	The Client agrees that the Client shall be the only authorized user of the Electronic Trading Services under this Agreement. The Client shall be wholly and solely responsible for the confidentiality, security and use of the Access Codes issued to the Client by the Company. 
+
+17.5 	The Client acknowledges and agrees that the Client shall be wholly and solely responsible for all instructions entered through the Electronic Trading Services. The Client further acknowledges that the Electronic Trading Services, Mail, the Company’s website, and the software comprised in them, are proprietary to the Company. The Client undertakes and warrants that the Client shall not, and shall not attempt to, tamper with, modify, decompile, reverse engineer, damage, destroy or otherwise alter in any way, and shall not attempt to gain unauthorized access to, any part of the Electronic Trading Services, Mail, the Company’s website, and any of the software comprised in them. The Client agrees that the Company shall be entitled to close any or all of the Account(s) immediately without notice to the Client, and the Client acknowledges that the Company may take legal action against the Client, if the Client at any time breaches this warranty and undertaking or if the Company at any time reasonably suspects that the Client has breached the same. The Client undertakes to notify the Company immediately if the Client becomes aware that any of the actions described above in this paragraph is being perpetrated by any other person. 
+
+17.6 	As and when the Company allows the Client to open an Account on line with the Company, the Client agrees to return to the Company the hard copy of the Client Information Form and related documents and any authority given by the Client to the Company with respect to the Account(s) duly completed and executed.
+
+17.7	Unless otherwise agreed between the Company and the Client, the Company will not execute any trading orders of the Client until there are sufficient cleared funds, securities or other assets acceptable to the Company in the Client’s Account(s) to settle the Client’s transactions and upon receipt of the documents as stated in Clause 17.6.
+
+17.8	The Company will not be deemed to have received the Client’s instructions or have executed the Client’s orders unless and until the Client is in receipt of the Company’s message acknowledging receipt or confirming execution of the Client’s orders, either electronically or by hard copy. 
+
+17.9	The Client acknowledges and agrees that, as a condition of using the Electronic Trading Services to give instructions, the Client shall immediately notify the Company if: 
+
+(a)	an instruction has been placed through the Electronic Trading Services and the Client has not received an instruction number or has not received an accurate acknowledgement of the instruction or of its execution (whether by hard copy, electronic or verbal means); 
+
+(b)	the Client has received acknowledgement (whether by hard copy, electronic or verbal means) of a transaction which the Client did not instruct or any similar nature; 
+
+(c)	the Client becomes aware of any of the acts stated in Clause 17.5 being done or attempted by any person; 
+
+(d)	the Client becomes aware of any unauthorized use of the Client’s Access Codes; or 
+
+(e)	the Client has difficulties with regard to the use of the Electronic Trading Services.  
+
+17.10	The Client agrees to review every order before entering it as it may not be possible to cancel the Client’s instructions once given through the Electronic Trading Services. 
+
+17.11	The Client agrees that the Company shall not be liable for any loss or damage the Client or any other person may suffer as a result of using or attempting to use the Electronic Trading Services unless such loss or damage are caused by fraud, willful default or gross negligence on the part of the Company. The Client further undertakes to indemnify the Company, on a full indemnity basis, on demand, for any loss or damage the Comp any may suffer as a result of the use of the Electronic Trading Services, except to the extent that such loss or damage is outside the Client’s control.
+
+17.12	The Client acknowledges and agrees that if the mode of communication used by the Client in the course of the Electronic Trading Services becomes temporarily unavailable, the Client can during such period continue to operate the relevant Account subject to the right of the Company to obtain such information regarding the verification of the Client’s identity as it may from time to time think fit.
+
+17.13	The Client acknowledges that the Exchanges and certain associations may assert proprietary interests and rights over all market data they furnish to parties who disseminate such data and agrees not to do any act which would constitute any infringement of such rights or interests. The Client also understands that the Company does not guarantee the timeliness, sequence, accuracy or completeness of market data or any mark et information (including any information provided to the Client through the Electronic Trading Services). The Company shall not be liable in any way for any loss arising from or caused by: 
+
+(a)  any inaccuracy, error in or omission from any such data, information or message;
+
+(b)  any delay in the transmission or delivery thereof;
+
+(c)  any suspension or congestion in communication;
+
+(d)  any unavailability or interruption of any such data, massage or information whether due to any act of the Company; or
+
+(e)  by any forces beyond the control of the Company. 
+
+18. 	Independence
+
+18.1	The Company is NOT an independent intermediary because:
+
+(a)  we receive fees, commissions, or other monetary benefits from other parties (which may include product issuers) in relation to our distribution of investment products to you. For details, you should refer to our disclosure on monetary benefits which we are required to deliver to you prior to or at the point of entering into any transaction in investment products; and/or 
+
+(b)  we receive non-monetary benefits from other parties, or have close links or other legal or economic relationship with issuers of products that we may distribute to you. 
+
+19.	Risk Disclosure Statement
+
+19.1	The Client acknowledges that the prices of securities fluctuate, sometimes dramatically. The price of a security may move up or down, and may become valueless. It is as likely that losses will be incurred rather than profit made as a result of buying and selling securities. This is a risk that the Client is prepared to accept.
+
+19.2	The Client acknowledges that Growth Enterprise Market (GEM) stocks involve a high investment risk. In particular, companies may list on GEM with neither a track record of profitability nor any obligation to forecast future profitability. GEM stocks may be very volatile and illiquid. The Client acknowledges and understands that he/she should make the decision to invest only after due and careful consideration. The greater risk profile and other characteristics of GEM mean that it is a market more suited to professional and other sophisticated investors. The Client acknowledges and understands that current information on GEM stocks may only be found on the internet website operate by SEHK. Gem companies are usually not required to issue paid announcements in gazetted newspapers. This sub clause does not purport to disclose all the risks and other significant aspects of GEM. The Client understands and acknowledges that he should undertake his own research and study on the trading of securities on GEM before commencing any trading activities, and that should seek independent professional advice if he is uncertain of or has not understood any aspect of this sub clause or the nature and risks involved in trading of GEM stocks. 
+
+19.3	The Client acknowledges that client assets received or held by the Company outside Hong Kong are subject to the applicable laws and regulations of the relevant overseas jurisdiction which may be different from the Securities and Futures Ordinance and the rules made thereunder. Consequently, such client assets may not enjoy the same protection as that conferred on client assets received or held in Hong Kong. 
+
+19.4 	The Client also acknowledges that there are risks in leaving securities in the custody of the Company, its associated entities or its agent. For example if the Company is holding the Client’s securities and becomes insolvent, the Client may experience significant delay in recovering securities. These are risks that the Client is prepared to accept.
+
+19.5	The Client also understands and acknowledges the following: 
+
+(a)	Unless the Client is a professional investor, the Client’s authority must specify the period for which it is current and be limited to not more than 12 months. If the Client is a professional investor, these restrictions do not apply. 
+
+(b)	Additionally, the Client’s authority may be deemed to be renewed (i.e. without the Client’s consent) if the Company issues the Client a reminder at least 14 days prior to the expiry of the authority, and the Client does not object to such deemed renewal before the expiry date of the then existing authority. 
+
+(c)	The Client is not required by any law to sign the authorities referred to in Clause 19.5(a).
+
+19.6	If the Company commits a default as defined in Part XII of the Securities and Futures Ordinance and a qualifying client thereby suffers a pecuniary loss, the qualifying client shall have a right to claim under the compensation fund established under the Securities and Futures Ordinance, subject to the terms of the compensation fund from time to time. The qualifying client’s right to claim under the compensation fund shall be restricted to the extent provided for in the Securities and Futures Ordinance and its rules and regulations.
+
+19.7	The Client also understands and acknowledges the following:
+
+(a)	Electronic trading facilities are supported by computer-based component systems for the order routing, execution, matching, registration or clearing of trades. As with all facilities and systems, they are vulnerable to temporary disruption or failure. The Client’s ability to recover certain losses may be subject to limits on liability imposed by the system provider, the market, the clearing house and/or participant firms 
+
+(b)	The Client acknowledges and accepts that if he undertakes transaction on an electronic trading system, he will be exposed to risks associated with the system including the failure of hardware and software, and that the result of any system failure may be that his order is either not executed according to his instructions or not executed at all. 
+
+19.8	The Client acknowledges and accepts that due to unpredictable traffic congestion and other reasons, electronic transmission may not be a reliable medium of communication, that transactions conducted via electronic means are subject to delays in transmission and receipt of his instructions or other information, delays in execution or execution of his instructions at price different from those prevailing at the time his instruction were given, transmission interruption or blackout, that there are risks of misunderstanding or errors in communication, and that there is also usually not possible to cancel an instruction after it has been given. 
+
+19.9	The Client acknowledges and accepts that if he provides the Company with an authority to hold mail or direct mail to third parties, it is important for the Client to promptly collect in person all contract notes and statement of his Account and review them in detail to ensure that any anomalies or mistakes can be detected in a timely fashion.
+
+19.10	The Client acknowledges and accepts that the securities under the Nasdaq Amex Pilot Program (“PP”) are aimed at sophisticated investors. The Client understands and acknowledges that he should consult his dealer and become familiarized with the PP before trading in the PP securities and that should be aware that the PP securities are not regulated as a primary or secondary listing on the Main Board or GEM of SEHK. 
+
+19.11	In the event that the Client wishes to have transactions pursuant to this Agreement executed on Exchange other than the SEHK, the Client acknowledges and recognizes that, since such transactions will be subject to the rules and regulations of those Exchanges, and applicable local laws, and not those of the SEHK, the Client may have a markedly different level and type of protection in relation to those transactions compared to the level and type of protection afforded by the rules and regulations of the SEHK and Hong Kong law and the Client acknowledges and recognizes, without limitation, that such transactions executed on exchanges other than the SEHK will not be subject to a right to claim under the compensation fund established under the Securities and Futures Ordinance where the Client suffers a pecuniary loss. 
+
+19.12	The Client understands and acknowledges that the following risks associated with Derivative Warrants and Callable Bull/Bear Contracts (“Structured Product”) that traded on exchanges: 
+
+(a)	In the event that a structured product issuer becomes insolvent and defaults on their listed securities, the client will be considered as unsecured creditors and will have no preferential claims to any assets held by the issuer. The client should therefore pay close attention to the financial strength and credit worthiness of structured product issuers; 
+
+(b)	Uncollateralized structured products are not asset backed. In the event of issuer bankruptcy, the client can lose their entire investment. The client should read the listing documents to determine if a product is uncollateralized; 
+
+(c)	Structured products such as derivative warrants and callable bull/bear contracts are leveraged and can change in value rapidly according to the gearing ratio relative to the underlying assets. The client should be aware that the value of a structured product may fall to zero resulting in a total loss of the initial investment;
+
+(d)	Structured products have an expiry date after which the issue may become worthless. The client should be aware of the expiry time horizon and choose a product with an appropriate life span for their trading strategy; 
+
+(e)	The price of a structured product may not match its theoretical price due to outside influences such as market supply and demand factors. As a result, actual traded prices can be higher or lower than the theoretical price; 
+
+(f)	The client trading structured products with underlying assets not denominated in Hong Kong dollars are also exposed to exchange rate risk. Currency rate fluctuations can adversely affect the underlying asset value, also affecting the structured product price;  
+
+(g)	The SEHK requires all structured product issuers to appoint a liquidity provider for each individual issue. The role of liquidity providers is to provide two ways quotes to facilitate trading of their products. In the event that a liquidity provider defaults or ceases to fulfill its role, the client may not be able to buy or sell the product until a new liquidity provider has been assigned;
+
+(h)	The Client further understands and acknowledges that the following additional risks involved in trading Derivative Warrants:
+
+(1)	All things being equal, the value of a derivative warrant will decay over time as it approaches its expiry date. The client should therefore not view derivative warrants as long-term investments.
+
+(2)	Prices of derivative warrants can increase or decrease in line with the implied volatility of underlying asset price. The client should be aware of the underlying asset volatility.
+
+The Client also understands and acknowledges that the following additional risks involved in trading Callable Bull/Bear Contracts: 
+
+(1)	The client trading Callable Bull/Bear Contracts should be aware of their intraday “knockout” or mandatory call feature. A Callable Bull/Bear Contract will cease trading when the underlying asset value equals the mandatory call price/level as stated in the listing documents. The client will only be entitled to the residual value of the terminated Callable Bull/Bear Contract as calculated by the product issuer in accordance with the listing documents. The client should also note that the residual value can be zero.
+
+(2)	The issue price of a Callable Bull/Bear Contract includes funding costs. Funding costs are gradually reduced over time as the Callable Bull/Bear Contract moves towards expiry. The longer the duration of the Callable Bull/Bear Contract, the higher the total funding costs. In the event that a Callable Bull/Bear Contract is called, the client will lose the funding costs for the entire lifespan of the Callable Bull/Bear Contract. The formula for calculating the funding costs are stated in the listing documents.
+
+(j)	The Client also understands and acknowledges that the following additional risks involved in trading in Shanghai and Shenzhen Hong Kong Stock Connect:
+
+(1)	Investors should note that any Northbound or Southbound trading will not be covered by Hong Kong’s Investor Compensation Fund. Hong Kong’s Investor Compensation Fund is established to pay compensation to investors of any nationality who suffer pecuniary losses as a result of default of a licensed intermediary or authorized financial institution in relation to exchange traded products in Hong Kong. Examples of default are insolvency, in bankruptcy or winding up, breach of trust, defalcation, fraud, or misfeasance. As far as Southbound trading is concerned, since Mainland securities brokers are neither licensees nor registered institutions with the SFC in Hong Kong and they are not regulated by the SFC, the Investor Compensation Fund will not cover Southbound trading. As for Northbound trading, according to the Securities and Futures Ordinance, the Investor Compensation Fund will only cover products traded in Hong Kong’s recognized securities market (SEHK) and recognized futures market (Hong Kong Futures Exchange Limited, HKFE). Since default matters in Northbound trading do not involve products listed or traded in SEHK or HKFE, so similar to the case of investors trading overseas securities, they will not be covered by the Investor Compensation Fund. For further information on Hong Kong’s Investor Compensation Fund, please refer to the website of Investor Compensation Company Limited. For information on licensees and registered institutions under the SFC, please consult the Public Register of Licensed Persons & Registered Institutions in the SFC website. On the other hand, according to the Measures for the Administration of Securities Investor Protection Fund the functions of China Securities Investor Protection Fund (CSIPF include“indemnifying creditors as required by China’s relevant policies in case a securities company is subjected to compulsory regulatory measures including dissolution, closure, bankruptcy and administrative takeover by China Securities Regulatory Commission (CS RC) and custodian operation” or “other functions approved by the State Council””. As far as Hong Kong investors participating in Northbound trading are concerned, since they are carrying out Northbound trading through securities brokers in Hong Kong and these brokers are not Mainland brokers, therefore they are not protected by CSIPF on the Mainland;
+
+(2)	When the respective aggregate quota balance for Northbound and Southbound trading is less than the daily quota, the corresponding buy orders will be suspended on the next trading day (sell orders will still be accepted) until the aggregate quota balance returns to the daily quota le vel. Once the daily quota is used up, acceptance of the corresponding buy orders will also be immediately suspended and no further buy orders will be accepted for the remainder of the day. Buy orders which have been accepted will not be affected by the using up of the daily quota, while sell orders will be continued to be accepted. Depending on the aggregate quota balance situation, buying services will be resumed on the following trading day;
+
+(3)	As mentioned above, it will only operate on days when both markets are open for trading and when banks in both markets are open on the corresponding settlement days. So it is possible that there are occasions when it is a normal trading day for the Mainland market but Hong Kong investors cannot carry out any A-share trading. Investors should take note of the days open for business and decide according to their own risk tolerance capability whether or not to take on the risk of price fluctuations in A-shares during the time when it is not trading;
+
+(4)	For investors who usually keep their A-shares outside of their brokers, if they want to sell certain A-shares they hold, they must transfer those A-shares to the respective accounts of their brokers before the market opens on the day of selling (T day). If they fail to meet this deadline, they will not be able to sell those A-shares on T day;
+
+(5)	When a stock is recalled from the scope of eligible stocks for trading for above mentioned reasons, the stock can only be sold but restricted from being bought. This may affect the investment portfolio or strategies of investors. Investors should therefore pay close attention to the list of eligible stocks as provided and renewed from time to time by SSE and SEHK;
+
+(6)	Hong Kong and overseas investor who holds a local currency other than RMB will be exposed to currency risk if he/she invests in a RMB product due to the need for the conversion of the local currency into RMB. During the conversion, you will also incur currency conversion costs. Even if the price of the RMB asset remains the same when you purchase it and when you redeem / sell it, you will still incur a loss when you convert the redemption / sale proceeds into local currency if RMB has depreciated;
+
+(7)	No day trading is allowed in Northbound trading;
+
+(8)	For the Northbound trading, pre trade checking is in place so that a client must have his/her shares transferred to the EP’s corresponding CCASS account before the commencement of trading on a trading day if he/she intends to sell the shares during a trading day; 
+
+(9)	All trade in Northbound trading must be conducted on SSE, i.e. no over the counter (OTC) or manual trades are allowed;
+
+(10)	Naked short selling is not allowed in Northbound trading;
+
+(11)	For the Northbound trading, foreign shareholding restriction (including the forced sale arrangement) is in place and EPs should have the right to “force sell” client’s shares upon receiving the forced sale notification from SEHK; 
+
+(12)	For the Northbound trading, investors should understand fully the Mainland rules and regulations in relation to short swing profits, disclosure obligations and follow such rules 17 and regulations accordingly;
+
+(13)	The Company may have the right to cancel client’s orders in case of contingency such as hoisting of Typhoon Signal No 8 in Hong Kong;
+
+(14)	The Company may not be able to send in client’s order cancellation requests in case of contingency such as when SEHK loses all its communication lines with SSE, etc. and investors should still bear the settlement obligations if the orders are matched and executed;
+
+(15)	The Client must comply with SSE Rules and other applicable laws of Mainland China relating to Northbound trading;
+
+(16)	The Company may forward the client’s identity to SEHK which may on forward to SSE for surveillance and investigation purposes;
+
+(17)	If the SSE Rules are breached, or the disclosure and other obligations referred to in the SSE Listing Rules or SSE Rules is breached, SSE has the power to carry out an investigation, and may, through SEHK, require Company to provide relevant information and materials and to assist in its investigation;
+
+(18)	SEHK may upon SSE’s request, require the Company to reject orders from the client;
+
+(19)	Client needs to accept the risks concerned in Northbound trading, including but not limited to prohibition of trading SSE Securities, being liable or responsible for breaching the SSE Listing Rules, SSE Rules and other applicable laws and regulations; 
+
+(20)	SSE may request SEHK to require Company to issue warning statements (verbally or in writing) to their clients, and not to extend Northbound trading service to their clients; 
+
+(21)	HKEX, SEHK, SEHK Subsidiary, SSE and SSE Subsidiary and their respective directors, employees and agents shall not be responsible or held liable for any loss or damage directly or indirectly suffered by Company, its clients or any third parties arising from or in connection with Northbound trading or the CSC.  
+
+20. 	Suitability
+
+20.1	If we solicit the sale of or recommend any financial product to you, the financial product must be reasonably suitable for you having regard to your financial situation, investment experience and investment objectives. No other provision of this agreement or any other document we may ask you to sign and no statement we may ask you to make derogates from this clause. 
+
+21.       Client’s Representation and Warranties
+
+21.1	The Client hereby represents and warrants to the Company on a continuing basis that:
+
+(a)	(in case of a corporation) it is validly incorporated and existing under the laws of its country of incorporation and has full power and capacity to enter into and perform its obligations hereunder; its entry into this Agreement has been duly authorized by its governing body and is in accordance with the memorandum and articles of association or by laws as the case may be of the Client;
+
+(b)	neither the signing, delivery or performance of this Agreement nor any instructions given hereunder will contravene or constitute a default under any existing applicable law, statute, ordinance, rule or regulation or judgment or cause to be exceeded any limit by which the Client or any of the Client’s asset is bound;
+
+(c)	save as otherwise disclosed to the Company in writing, all transactions to be effected under this Agreement are for the benefit of the Client and no other party has any interest therein; 
+
+(d)	subject to any security interest of any Group Member created pursuant to any agreement between the Client and such Group Member, all securities provided by the Client for selling or crediting into the Account(s) are fully paid with valid and good title and whose legal and beneficial titles are owned by the Client; 
+
+(e)	the information contained in the Client Information Form or other information supplied by or on behalf of the Client to the Company in connection with the Account(s) is complete, true and correct. The Company is entitled to rely on such information until written notice from the Client of any changes therein has been received by the Company; and 
+
+21.2	If the Client effects transactions for the account of his clients, whether on a discretionary or non-discretionary basis, and whether as agent or by entering into matching transactions as principal with any client of the Client, the Client hereby agrees that, in relation to a transaction where the Company has received an enquiry from SEHK and/or SFC (“Hong Kong Regulators”), the following provisions shall apply; 
+
+(a)	Subject to as provided below, the Client shall, immediately upon request by the Company (which request shall include the relevant contact details of the Hong Kong Regulators), inform the Hong Kong Regulators of the identity, address, occupation and contact detail of the client for whose account the transaction was affected and (so far as known to the Client) of the person with the ultimate beneficial interest in the transaction. The Client shall also inform the Hong Kong Regulators of the identity, address, occupation and contact detail of any third party (if different from the client/the ultimate beneficiary) who originated the transaction. 
+
+(b)  (1)  If the Client effected the transaction for a collective investment scheme, discretionary account or discretionary trust, the Client shall, immediately upon request by the Company (which request shall include the relevant contact details of the Hong Kong Regulators), inform the Hong Kong Regulators of the identity, address, occupation and contact details of the person(s) who, on behalf of the scheme, account or trust, instructed the Client to effect the transaction.
+
+(2)	If the Client effected the transaction for a collective investment scheme, discretionary account or discretionary trust, the Client shall, as soon as practicable, inform the Company when his discretion to invest on behalf of the scheme, account or trust has been overridden. In the case where the Client’s investment discretion has been overridden, the Client shall immediately upon request by the Company (which request shall include the relevant contact details of the Hong Kong Regulators), inform the Hong Kong Regulators of the identity, address, occupation and contact details of the person(s) who has or have given the instruction. 
+
+(3) 	If the Client is a collective investment scheme, discretionary account or discretionary trust and in respect of a particular transaction the discretion of the Client or its officers or employees has been overridden, the Client shall, as soon as practicable, inform the Company when his discretion to invest on behalf of the beneficiary of such scheme, account or trust has been overridden. In case where the Client’s investment discretion has been overridden, the Client shall, immediately upon request by the Company (which request shall include the relevant contact details of the Hong Kong Regulators), inform the Hong Kong Regulators of the identity, address, occupation and contact details of the person(s) who has or have given the instruction in relation to the relevant transaction. 
+
+(c)	If the Client is aware that his client is acting as intermediary for its underlying client(s), and the Client does not  know the identity, address, occupation and contact details of the underlying client for whom the transaction was effected, the Client confirms that: 
+
+(1)	the Client has arrangements in place with his client which entitle the Client to obtain the information set out in sub clause 21.2 (a) and/or 21.2 (b) from his client immediately upon request or procure that it be so obtained; 
+
+and
+
+(2)	the Client will, upon request from the Company in relation to a transaction, promptly request the information set out in sub clauses 21.2 (a) and/or 21.2 (b) from his client on whose instructions the transaction was effected, and provide the information to the Hong Kong Regulators as soon as it is received from his client or procure that it be so provided. 
+
+(d)	The above terms shall continue in effect notwithstanding the termination of this Agreement.
+
+21.3       The Client undertakes to perform such acts, sign and execute all such agreements or documents whatsoever as may be required by the Company for the performance or implementation of this Agreement or any part thereof. 
+
+21.4       The Client must notify the Company when a sale order relates to securities which the Client does not own i.e. where it involves short selling (including where the Client has borrowed stock for the purposes of the sale). The Client acknowledges and agrees that no short selling orders will be accepted by the Company unless the Client provides the Company with such confirmation, documentary evidence and assurance as the Company in the Company’s opinion considers necessary to show that the Client has a presently exercisable and unconditional right to vest such securities in the purchaser before placing any short selling order. 
+
+21.5	The Client agrees not to pledge or charge any securities or monies forming part of any Account(s) without the prior consent of the Company, or to sell, grant an option over, or otherwise deal in any securities or monies forming part of the Account(s). 
+
+21.6	The Company and the Client undertake to inform each other of any material change to the information provided in accordance with this Agreement. In particular, the Company and the Client agree that:
+
+(a)	the Company will notify the Client of any material change to its licensing or registration status and its business, the nature of services provided or fees charged by the Company to the Client; and
+
+(b)	the Client will notify the Company of any change of name and, address and identification documents and provide supporting documents as reasonably required by the Company. 
+
+22.	Liabilities
+
+22.1	Nether the Company nor any of its directors, employees or agents shall have any liability whatsoever (whether in negligence or otherwise) for any loss, expense or damage suffered by the Client as a result of:
+
+(a)	the Company acting or relying on any instruction given by the Client whether or not such instruction was given following any recommendation, advice or opinion given by the Company or by any of its directors, employees or agents; or 
+
+(b)	any condition or circumstances which are beyond the reasonable control or anticipation of the Company, its directors, officers, employees and agents, including but not limited to any delays in the transmission of orders due to disruption, breakdown, failure, unauthorized use of Access Codes, prevailing fast market conditions, governmental agency or exchange actions, theft, war (whether declared or not), severe weather, earthquakes and strikes; or 
+
+(c)	the Company exercising any or all of its rights conferred by the terms of this Agreement; or
+
+(d)	any conversion of one currency to another pursuant to, in relation to or arising from this Agreement.
+
+22.2	Without limiting the generality of Clause 22.1 above, neither the Company nor any of its directors, employees or agents shall have any liability whatsoever (whether in negligence or otherwise) for losses, expenses or damages suffered by the Client arising out of or alleged to arise out of or in connection with any inconvenience, delay or loss of use of the Electronic Trading Services or any delay or alleged delay in acting or any failure to act on any instruction given by the Client to the Company, even if the Company has been advised of the possibility of any costs, claims, damage.
+
+22.3	The Client undertakes to indemnify and keep indemnified the Company in respect of any costs, claim, demands, damages and expenses whatsoever which may be reasonably and properly suffered or incurred by the Company directly or indirectly arising out of or in connection with any transaction entered into by the Company as agent on behalf of the Client or otherwise whatsoever or howsoever arising out of anything done or omitted to be done by the Company in accordance with the terms of the Agreement or pursuant to any Client’s instruction or communication. The Client also agrees to pay promptly to the Company, on demand, all damages, costs and expenses (including legal expenses on a full indemnity basis) reasonably and properly incurred by the Company in the enforcement of any of the provisions of this Agreement.
+
+22.4	The Client undertakes to indemnify and keep indemnified the Company and its officers, employees and agents for and loss, cost, claim, liability or expenses arising out of or connected with any breach by the Client of its obligations hereunder, including any costs reasonably and necessarily incurred by the Company in collecting any debts due to the Company or in connection with the closure of the Account(s). 
+
+22.5	The above terms shall continue to take effect notwithstanding the termination of this Agreement.
+
+23.	Confirmations and Statement
+
+23.1	Reports, written confirmations, statements of the Client’s Account(s), notices, and any other communications may be transmitted to the Client (who, in the case of a joint account without nominating a person therefore, will be deemed for these purposes to be the Client whose name first appears in this Agreement) at the address, telephone, fax or telex number given in the Client Information Form , or at such other address, telephone, fax or telex number as the Client hereafter shall notify the Company in writing; and all communications so transmitted, whether by mail, telegraph, telephone, messenger or otherwise, shall be deemed transmitted when telephoned, when deposited in the mail, or when received by a transmitting agent, whether actually received by the Client or not. 
+
+23.2	Written confirmation of the execution of the Client’s orders and statements of the Client’s Account shall be conclusive and deemed to be accepted if not objected to in writing by the Client directed to the address stated in this Agreement (or such other address communicated in writing by the Company) within 2 business days after transmittal thereof to the Client, by mail or otherwise. 
+
+23.3	Any notice or other communications including, but not limited to, written confirmations and statements of the Client’s Account(s) delivered to the Client by Company under this Agreement if by electronic devices through Mail or otherwise shall be deemed made or given upon transmission of the message to the Client. 
+
+23.4	Where applicable the Client can access account information via the Electronic Trading Service, the Client hereby consents to accept the posting of such information on the Electronic Trading Services as delivery of confirmation and account statements in lieu of postal mail or electronic mail. The Client may revoke this consent at any time upon written notice to CMF. 
+
+24. 				Amendment
+
+24.1	The Company shall have absolute rights to amend, delete or substitute any of the terms herein or add new terms to this Agreement. An amendment notice and the revised Agreement will be posted at the “Download Forms” column of CMF Website. The Client should visit the CMF Website from time to time for obtaining the latest Agreement and read the terms thereof. Such amendment, deletion, substitution or addition shall be deemed as effective and incorporated herein (and shall form part of this Agreement) on the date of publication of such amendment notice. The Client may raise written objection within fourteen (14) Business Days after the publication of such amendment notice at the CMF Website, failing which it shall be deemed an acceptance of such amendment, deletion, substitution or addition. 
+
+25.	Joint Clients
+
+25.1	Where the Client consists of more than one person:
+
+(a)	the liability and obligations of each of them shall be joint and several and references to the Client shall be construed, as the context requires, to any or each of them; 
+
+(b)	the Company shall be entitled to, but shall not be obliged to, act on instructions or requests from any of them; 
+
+(c)	each of them shall be bound though any other Client or any other person intended to be bound is not, for whatever reason, so bound; and 
+
+(d)	the Company shall be entitled to deal separately with any of the Client on any matter including the discharge of any liability to any extent without affecting the liability of any others. 
+
+25.2	Where the Client consists of more than one person, on the death of any of such persons (being survived by any other such persons), this Agreement shall not be terminated and the interest in the Account(s) of the deceased will thereupon vest in and ensure for the benefit of the survivor(s) provided that any liabilities incurred by the deceased Client shall be enforceable by the Company against such deceased Client’s estate. The surviving Client(s) shall give the Company written notice immediately upon any of them becoming aware of any such death. 
+
+26.	Possibilities of Conflict of Interest
+
+26.1	The Company and its directors, officers or employees may trade on its/their own account or on the account of any Group Member subject to any applicable regulatory requirements. 
+
+26.2	The Company may buy, sell, hold or deal in any securities or take the opposite position to the Client’s order whether it is on the Company’s own account or on behalf of other clients. 
+
+26.3	The Company may match the Client’s orders with those of other clients. 
+
+26.4	The Company may effect transactions in securities where the Company or any Group Member has a position in the Securities or is involved with those securities as underwriter, sponsor or otherwise. 
+
+26.5	In any of the above mentioned events the Company shall not be obliged to account for any profits or benefits obtained. 
+
+27.	Termination of Agreement
+
+27.1	Without prejudice to Clause 13, 21.2 and 22, this Agreement shall continue in effect until terminated by either party giving not less than seven (7) business days (being days on which banks in Hong Kong are open for general business (other than a Saturday or Sunday)) prior written notice to the other. 
+
+27.2	Service of notice of termination by the Client pursuant to Clause 27.1 shall not affect any transaction entered into by the Company pursuant to this Agreement before the notice has actually been received by the Company. 
+
+27.3	Termination of this Agreement shall not affect any outstanding orders or any legal rights or obligations which may already have arisen. 
+
+28.	General Provisions
+
+28.1	Each of the provisions of this Agreement is severable and distinct from the others and, if one or more of such provisions is or becomes illegal, invalid or unenforceable, the remaining provisions shall not be affected in any way. In the event that any provision would be invalid if part of the wordings thereof were not deleted, the provision shall apply as if the relevant wordings were deleted. 
+
+28.2 	The provisions of this Agreement shall be binding on and endure to the benefit of the successors, assigns and personal representative (where applicable) of each party hereto provided that the Client may not assign, transfer, charge or otherwise dispose of any of the Client’s rights or obligations hereunder without the prior written consent of the Company. The Company may assign all or a part only of its rights and obligations under this Agreement to any person without the prior consent or approval of the Client 
+
+28.3	The Client hereby authorizes the Company to conduct a credit enquiry (or a personal credit enquiry in case of an in dividual client) or check on the Client for the purpose of ascertaining the financial situation and investment objectives of the Client. 
+
+28.4	Nothing herein contained shall place the Company under any duty to disclose to the Client any fact or thing which comes to its notice in the course of acting in any capacity for any other person or in its own capacity. 
+
+28.5	Whenever the Company deals with the Client, it will always be on the basis that only the Client is the Company’s client and is acting as principal in all respects and so, if the Client acts on behalf of another person, whether or not the Client identifies him to the Company, he will not be the Company’s client and the Company doe s not and will not have or accept in any circumstances whatsoever any responsible towards any person on whose behalf the Client may act and the Client hereby acknowledges and agrees that the Client shall be solely responsible for settling all liabilities resulting from transactions effected pursuant to and in accordance with this Agreement in connection with or on behalf of any such person. 
+
+28.6	Whilst the Client expects the Company to keep confidential all matters relating to the Account(s), the Client hereby expressly agrees that the Company may make such disclosure of all matters relating to the Account(s) as may be required under any laws, orders, lawful requests or regulations of any relevant market, banking or governmental authority without further consent from or notification to the Client. 
+
+28.7	Time shall in all respects be of essence in the performance of all of the Client’s obligations under this Agreement. 
+
+28.8	A failure or delay in exercising any right, power or privilege in respect of this Agreement will not be presumed to operate a s a waiver, and a single on partial exercise of any right, power or privilege will not be presumed to preclude any subsequent or future exercise of that right, power or privilege. 
+
+28.9	The Client hereby declares that he has read the English/Chinese version of this Agreement and that the contents of this Agreement have been fully explained to him by the Company in language that the Client understands and that the Client accepts and agrees to be bound by this Agreement. 
+
+28.10	In the event of any difference in interpretation or meaning between the Chinese and English versions of this Agreement, the Client and the Company agree that the English version shall prevail.
+
+28.11	This Agreement and all rights, obligations and liabilities shall be governed by and construed in accordance with the laws of the Hong Kong Special Administrative Region. 
+
+28.12	The Client hereby submits to the non-exclusive jurisdiction of the courts of Hong Kong in relation to all matters arising from or in connection with this Agreement. 
+
+28.13	At the sole option of the Company and in its absolute discretion, any dispute, controversy or claim arising out of or relating to this Agreement, or the breach, termination or invalidity thereof, shall be settled by arbitration in accordance with the UNCITRAL Arbitration Rules as at present in force and as may be amended by the rest of this Clause. The appointing authority and the place of arbitration shall be Hong Kong International Arbitration Centre (HKIAC) in Hong Kong. There shall be only one arbitrator. The language to be used in the arbitral proceedings shall be English. 
+
+Schedule 1 – Personal Data Protection Statement 
+
+The Client understands that the Client may have been or may in future be requested to supply personal information from time to time to the Company relating to the Client, and in the carrying out of transactions contemplated under this Agreement, further information shall or may be collected by the Company (all such information is referred to as “Data” in this Schedule 1).
+
+The Client understands that a request for the Data on the “Client Information Form or otherwise shall oblige the Client to complete the same, and any failure so to do may result in the Company being unable to open or continue the Account, or unable to effect transactions under the Account. 
+
+The Client understands that the Company may provide the Data received from the Client to the following person:
+
+(a)	any Canton Mutual Financial Limited Group Member；  
+
+(b)	any nominees in whose name securities or other assets may be registered;
+
+(c)	any contractor, agent or service provider which provides administrative, data processing, financial, computer, telecommunication, payment or securities clearing, financial, professional or other services to any Group Member or to any other person to whom the Data is passed; 
+
+(d)	any person with whom the Company enters into or proposes to enter into transaction on the Client’s behalf or account, or persons representing the same; 
+
+(e)	any assignee, transferee, participant, sub participant, delegate, successor or person to whom this Agreement is novated; and 
+
+(f)	Governmental, regulatory or other bodies or institutions, whether as required by law, regulations applicable to any Group Member, or otherwise. 
+
+4.	The Client understands that the purposes for which the Data provided by the Client from time to time may be used are: 
+
+(a)	Giving effect to the Client’s orders relating to transactions or otherwise, and carrying out the Client’s other instructions; 
+
+(b)	Providing services in connection with the Account, whether the services are provided by or through any Group Member or any other person; 
+
+(c)	Conducting credit enquiries or checks on the Client and ascertaining the Client’s financial situation and investment objectives, and enabling or assisting any other person to do; 
+
+(d)	Collection of amounts due, enforcement of security, charge or other rights and interests in favour of the Company and any Group Member;
+
+(e)	Marketing existing and future services or products of any Group Member; 
+
+(f)	Forming part of the records of the persons or any Group Member to whom the Data may be passed; 
+
+(g)	Observing any legal, regulatory or other requirements to which any Group Member or any other persons may be subject; and 
+
+(h)	Other purposes related or incidental to any one or more of the above.
+
+5.	The Client understands that the Client may request a copy of such Data. The Client also understands that the Client may request the correction of the Data. Any such request may be addressed to the Data Protection Officer of Canton Mutual Financial Limited at the address of Units 2304-5, 23/F, 308 Central Des Voeux, No. 308 Des Voeux Road Central, Hong Kong. The Client understands that a fee shall be charged by the Company for any such request.
+
+Schedule 2 – Explanation of Risk Associated with Exchange-Traded Derivative Products 
+
+If you wish to trade exchange traded derivative products (as defined below) mentioned below, you should read carefully and understand fully the relevant risks
+
+associated with the products as mentioned herein. 
+
+Common Types of Exchange-Traded Derivative Products and Relevant Risks
+
+Derivative Warrants (“DWs”)
+
+DWs are issued by third parties such as financial institutions and are generally divided into Calls and Puts. Holders of call warrants have the rights, but not obligation, to purchase from the warrant issuer a given amount of the underlying asset at a predetermined price (also known as the exercise price) within a certain time period. Conversely, holders of put warrants have the right, but not obligation, to sell to warrant issuer a given amount of the underlying asset at a predetermined price within a certain time period. DWs in Hong Kong are usually settled in cash when they are exercised at expiry and are likely to have an unique expiry date.
+
+The time value of a DW decreases over time. All things being equal, the value of a DW will decrease over time as it approaches its expiry date. DWs are not principal protected and the price of DWs may fall in value as rapidly as they may rise and investors may not be able to get back the principal and may lose all the investment. 
+
+Equity Warrants / Subscription Warrants
+
+They are issued by a listed company and give holders the rights to buy the underlying shares of the company. They are either attached to new shares sold in initial public offerings, or distributed together with declared dividends, bonus shares or rights issues. Upon exercise, the underlying company will issue new shares and deliver them to the warrant holders.
+
+The time value of an equity warrant decreases over time. All things being equal, the value of an equity warrant/subscription warrant will decrease over time as it approaches its expiry date. Investors may not be able to get back the principal and may lose all the investment.
+
+Callable Bull / Bear Contracts (“CBBCs”)
+
+CBBCs are a type of structured product that tracks the performance of an underlying asset without requiring investors to pay the full price required to own the actual asset. They are issued either as Bull or Bear contracts with a fixed expiry date, allowing investors to take bullish or bearish positions on the underlying asset.
+
+CBBCs have a call price and a mandatory call feature –For bull contracts, the call price must be either equal to or above the Strike Price. For bear contracts, the call price must be equal to or below the Strike Price. If the underlying asset’s price reaches the Call Price at any time prior to expiry, the CBBCs will expire early. The issuer must call the CBBCs and trading of the CBBCs will be terminated immediately. Such an event is referred to as a mandatory call event (“MCE”). However, when the underlying asset of a CBBC is trading at a price close to its call price, the change in the value of CBBCs may be more volatile and disproportionate with the change in the value of the underlying asset.
+
+There are two categories of CBBCs, namely Category N CBBC and Category R CBBC. A Category N CBBC refers to a CBBC where its call price is equal to its Strike Price, and the CBBC holder will not receive any cash payment once the price of the underlying asset reaches or goes beyond the call price. A Category R CBBC refers to a CBBC where its call price is different from its Strike Price, and the CBBC holder may receive a small amount of cash payment (“Residual Value”) upon the occurrence of an MCE but in the worst case, no Residual Value will be paid. CBBCs can be held until maturity (if not called before expiry) or sold on the HKEX (as defined below) before expiry. Investors should not trade in CBBCs unless he/she understands the nature of the product and is prepared to lose his/her total investment.
+
+The issue price of a CBBC includes funding costs. Funding costs are gradually reduced over time as the CBBC moves towards expiry. The longer the duration of the CBBC, the higher the total funding costs. In the event that a CBBC is called, investors will lose the funding costs for the entire lifespan of the CBBC. The formula for calculating the funding costs are stated in the listing documents.
+
+Although the price of a CBBC tends to follow closely the price of its underlying asset, but in some situations it may not (i.e. delta may not always be close to one). Prices of CBBCs are affected by a number of factors, including its own demand and supply, funding costs and time to expiry.
+
+Exchange Traded Funds (“ETFs”)
+
+ETFs are passively managed and open-ended funds. All listed ETFs on the HKEX securities market are authorized by the SFC (as defined below) as collective investment schemes. ETFs are designed to track the performance of their underlying benchmarks (e.g. an index, a commodity such as gold, etc.) and offer investors an efficient way to obtain cost-effective exposure to a wide range of underlying market themes. Synthetic ETFs utilizing a synthetic replication strategy use swaps or other derivative instruments to gain exposure to a benchmark.
+
+Investors are exposed to the political, economic, currency and other risks related to the underlying asset pool or index or market that the ETF tracks. There may be disparity between the performance of the ETF and the performance of the underlying asset pool or index or market due to, for instance, failure of the tracking strategy, currency differences, fees and expenses. Where the underlying asset pool/index/market that the ETF tracks is subject to restricted access, the efficiency in unit creation or redemption to keep the price of the ETF in line with its net asset value (NAV) may be disrupted, causing the synthetic ETF to trade at a higher premium or discount to its NAV. Investors who buy an ETF at a premium may not be able to recover the premium in the event of the termination. Where a synthetic ETF invests in derivatives to replicate the index performance, customers are exposed to the credit risk of the counterparties who issued the derivatives, in addition to the risks relating to the index. Further, potential contagion and concentration risks of the derivative issuers should be taken into account (e.g. since derivative issuers are predominantly international financial institutions, the failure of one derivative counterparty of a synthetic ETF may have a “knock-on” effect on other derivative counterparties of the synthetic ETF). Some synthetic ETFs have collateral to reduce the counterparty risk, but there may be a risk that the market value of the collateral has fallen substantially when the synthetic ETF seeks to realize the collateral. A higher liquidity risk is involved if a synthetic ETF involves derivatives which do not have an active secondary market. Wider bid-offer spreads in the price of the derivatives may result in losses.
+
+Rights Issue
+
+For exercising and trading of the rights issue, investors have to pay attention to the deadline and other timelines. Rights issues that are not exercised will have no value upon expiry. But if investors decide to let the rights lapse, then investors will not need to take any action unless investors want to sell the rights in the market. In that case, the rights must be sold during the specified trading period within the subscription period, after which they will become worthless. If investors pass up the rights, the shareholding in the expanded capital of the company will be diluted.
+
+Leveraged and Inverse Investment Product
+
+Certain Products are collective investment scheme falling within Chapters 8.6 and 8.4A and Appendix I of the Code on Unit Trusts and Mutual Funds (the “Code”). Certain Products may also be subject to additional Chapters of the Code. Certain Trust and Products are authorized by the SFC in Hong Kong under Section 104 of the Securities and Futures Ordinance. 
+
+The Leveraged Products will utilize leverage to achieve a daily return equivalent to (x) times the return of the Index. Both gains and losses will be magnified. The risk of loss resulting from an investment in the Products in certain circumstances including a bear market will be substantially more than a fund that does not employ leverage. 
+
+The Inverse Products track the inverse daily performance of the Index. Should the value of the underlying securities of the Index increase, it could have a negative effect on the performance of the Products. Unitholders could, in certain circumstances including a bull market, face minimal or no returns, or may even suffer a complete loss, on such investments.
+
+Futures 
+
+Futures are financial contracts for underlying assets, such as stock, market index, currency or commodity. The underlying assets are bought or sold at an agreed price today, for a set date in the future. Investors can trade futures on the HKEX. Investors can buy or sell them with a margin deposit, which only partly covers the value of the contract. Going into leverage can increase the size of their gain or loss. Trading futures can be risky as a broker can make a margin call. This means investors must put in more cash or securities to cover the shortfall of their margin deposit in case the price of the underlying asset moves against your view. The loss could be much more than their margin deposit.
+
+Options 
+
+Options are financial contracts that give the buyer the right to buy or sell an underlying asset (stock, market index, currency or commodity) from the seller at a set price within a certain time. 
+
+Investors can trade options on the HKEX. The risks and returns of the option buyer and seller are different. If investors are the buyer, the maximum loss is the premium they pay to the seller. If investors are the seller, they get the premium. But they must also make a deposit as a guarantee to go ahead to buy or sell the underlying asset. Like futures trading, the option seller faces the risk of a margin call. Again, the loss for the seller could be much more than the premium.
+
+General Major Risks Associated with Exchange-Traded Derivative Products (including but not limited to the following) 
+
+1.	Issuer default risk
+
+In the event that an exchange traded derivative product issuer becomes insolvent and defaults on their issued products, investors will be considered as unsecured creditors and will have no preferential claims to any assets held by the issuer. Investors should therefore pay close attention to the financial strength and credit worthiness of exchange traded derivative product issuers. Since exchange traded derivative products are not asset backed, in the event of issuer bankruptcy, investors can lose their entire investment. 
+
+2.	Gearing rick
+
+Exchange traded derivative products such as DWs, CBBCs and Leveraged and Inverse Investment Products are leveraged and can change in value rapidly according to the gearing ratio relative to the underlying assets. Investors should be aware that the value of an exchange traded derivative product may fall to zero resulting in a total loss of the initial investment. 
+
+3.	Limited Life
+
+Most of the exchange traded derivative products have an expiry date after which the products may become worthless. Investors should be aware of the expiry time horizon and choose a product with an appropriate lifespan for their trading strategy. 
+
+Extraordinary price movements
+
+The price of an exchange-traded derivative product may not match its theoretical price due to outside influences such as market supply and demand factors. As a result, actual traded prices can be higher or lower than the theoretical price.
+
+Foreign exchange risk
+
+Investors trading exchange traded derivative products with underlying assets not denominated in Hong Kong dollars are also exposed to exchange rate risk. Currency rate fluctuations can adversely affect the underlying asset value and thereby also affect the exchange traded derivative product price. 
+
+Liquidity risk
+
+HKEX requires all exchange traded derivative product issuers to appoint a liquidity provider for each individual issue. The role of liquidity providers is to provide two way quotes to facilitate trading of their products. In the event that a liquidity provider defaults or ceases to fulfill its role, investors may not be able to buy or sell the product until a new liquidity provider has been assigned.
+
+7.	Volatility risk
+
+Prices of DWs and CBBCs can increase or decrease in line with the implied volatility of underlying asset price. Investors should be aware of the underlying asset volatility.
+
+8.	Intraday investment risk
+
+Leveraged and Inverse Investment Products are normally rebalanced at day end. As such, return for investors that invest for period less than a full trading day will generally be greater than or less than (x) times leveraged investment exposure to the Index, depending upon the movement of the Index from the end of one trading day until the time of purchase. 
+
+9.	Portfolio turnover risk
+
+Daily rebalancing of Leveraged and Inverse Investment Products’ holdings causes a higher level of portfolio transactions than compared to the conventional ETFs. High levels of transactions increase brokerage and other transaction costs.
+
+10.	Difference in price limit risk
+
+Leveraged and Inverse Investment Products’ investment objective is to provide investment results that closely correspond to (x) times the daily performance of the Index. Although the Index is an equity index, the Products will invest in Index Futures. For example, the daily price limit for individual stocks of the Index at present is +/ 30% while the daily price limit for Index Futures is +/ 20%. As such, should the Index’s daily price movement be greater than the price limit of the Index Futures, the Products may not be able to achieve its investment objective as the Index Futures are unable to deliver a return beyond their price limit. 
+
+11.	Trading suspension risk
+
+During the suspension of trading of the Products, investors and potential investors cannot buy and sell units in the Stock Exchange. In terms of providing a fair and orderly market with regarding the interests of investors, the Exchange may suspend the units trading whenever it is appropriate. If the trading of units is suspended, the subscription and redemption of units may also be suspended. 
+
+12.	Inverse performance risk
+
+Inverse Investment Products track the inverse daily performance of the Index. Should the value of the underlying securities of the Index increase, it could have a negative effect on the performance of the Products. Unitholders could, in certain circumstances including a bull market, face minimal or no returns, or may even suffer a complete loss, on such investments.
+
+13.	Inverse product vs. short selling risk
+
+Investing in Inverse Investment Products is different from taking a short position. Because of rebalancing, the return profile of the Products is not the same as that of a short position. In a volatile market with frequent directional swings, the performance of the Products may deviate from a short position. 
+
+14.	Long term holding risk
+
+Some Products are not intended for holding longer than one day as the performance of the Products over a period longer than one day will very likely differ in amount and possibly direction from the leveraged performance of the Index over that same period (e.g. the loss may be more than (X) times the fall in the Index). The effect of compounding becomes more pronounced on the Product’s performance as the Index experiences volatility. With higher Index volatility, the deviation of the Product’s performance from the inverse performance of the Index will increase, and the performance of the Products will generally be adversely affected. As a result of daily rebalancing, the Index’s volatility and the effects of compounding of each day’s return over time, it is even possible that the Products will lose money over time while the Index’s performance falls or is flat. 
+
+15.	Futures contracts risks
+
+Some Products are futures based products. Investment in futures contracts involves specific risks such as high volatility, leverage, rollover and margin risks. The leverage component of futures contracts can result in a loss significantly greater than the amount invested in the futures contracts by the Products. Exposures to futures contracts may lead to a high risk of significant loss by the Products. A “roll” occurs when an existing futures contract is about to expire and is replaced with a futures contract representing the same underlying but with a later expiration date. The value of the Product’s portfolio (and so the Net Asset Value per Unit) may be adversely affected by the cost of rolling positions forward (due to the higher price of the futures contract with a later expiration date) as the futures contracts approach expiry. There may be imperfect correlation between the value of the underlying reference asset s and the futures contracts, which may prevent the Products from achieving its investment objective. 
+
+16.	Passive investment risks
+
+Some Products are not “actively managed” and therefore the Manager will not adopt any temporary defensive position when the Index moves in an unfavourable direction. In such circumstances the Products will also decrease in value.
+
+Disclaimer
+
+This document does not disclose all risks and features of the common types of derivative products (“exchange -traded derivative products”) mentioned herein which are traded on the Hong Kong Exchanges and Clearing Limited (the “HKEX”). This document has been issued by Canton Mutual Financial Limited (“CMF”) for reference and information purposes only. You should not rely on this document alone to make any investment decision but should read carefully the related offering documentation and any other relevant documentation, in particular, detailed risks relating to each product contained in such documents. You should not deal in exchange -traded derivative products unless you understand the nature of the product and the extent of the exposure to risk. CMF will not be responsible or liable for any loss caused by the investment in any products mentioned herein. You should not only consider the information contained neither in this document nor in the offering documentation but should also consider your own financial position and particular circumstances before making any investment decision. In case of doubt, you are strongly advised to obtain independent professional advice.
+
+The information contained in this document regarding exchange -traded derivative products are based on the information available on the websites of The Securities and Futures Commission (the “SFC”), the HKEX and the Hong Kong Monetary Authority (the “HKMA ”)etc. For more detailed information regarding financial derivative products, you can refer to the websites of the SFC (www.sfc.hk/sfc/html/EN), the HKEX (www.hkex.com.hk/eng/index.htm) and the HKMA (www.info.gov.hk/hkma/).
+
+This document does not constitute, nor is it intended to be nor should it be construed as offer or solicitation to invest in any of the products mentioned herein. This document is not intended to be distributed to persons in the jurisdiction or countries that will violate the law or regulation, and it is not intended to be used by such persons.
+
+現金客戶協議書
+
+本協議由下列雙方於客戶資料表格所載的日期簽訂：
+
+甲方: 誠港金融股份有限公司（CE 編號BSU667），是根據《證券及期貨條例》（第571 章）獲發牌進行第1 類（證券交易）受規管活動的持牌法團，其註冊辦事
+
+處設於香港上環德輔道中308號23樓2304-5室（下稱「本公司」或「CMF」）；
+
+及
+
+乙方: 姓名、地址及詳細資料載於客戶資料表格中的客戶。
+
+鑒於:
+
+(1) 客戶欲於本公司不時開立一個或多個現金戶口（「賬戶」），用以進行證券買賣；及
+
+(2) 本公司同意開立及維持上述戶口，並在證券買賣中根據本協議之條款擔任客戶之代理人。
+
+雙方謹此協議下：
+
+1. 定義
+
+1.1 在本協議中，除非文意另有所指，否則下述用語具有以下涵義：
+
+「存取密碼」指密碼和登入名稱（或其中之一）；
+
+「賬戶」指客戶不時於本公司維持，用作買賣證券的一個或多個現金賬戶，「賬戶」與「戶口」同義；
+
+「本協議」指客戶與本公司就賬戶之開立、維持及運作而訂立且不時修訂之書面協議，包括但不限於客戶資料表格、本協議所載條款和條件及客戶
+
+就賬戶給予本公司之任何授權；
+
+「營業日」指交易所開市進行買賣的任何日子，但星期六、星期日、公眾假期和交易所宣佈為非營業日的任何其他日子除外；
+
+「營業時間」指本公司不時指定本公司在營業日內開門或進行交易的期間；
+
+「本公司」指誠港金融股份有限公司（"CMF"）
+
+「《客戶款項規則》」指證監會根據《證券及期貨條例》第149 條訂立並且經不時修訂之《證券及期貨（客戶款項）規則》；
+
+「《客戶證券規則》」指證監會根據《證券及期貨條例》第148 條訂立並且經不時修訂之《證券及期貨（客戶證券）規則》；
+
+「客戶款項常設授權」指由客戶按照第16 條所載並且經不時修訂的條款授予本公司的客戶款項常設授權；
+
+「本集團」指誠港金融股份有限公司（"CMF"）及其控股公司、附屬公司、代表辦事處及附屬成員，不論其所在地。附屬成員包括附屬公司、代表辦事處及附屬成員，不論其所在地;
+
+「郵件設施」指由本公司操作，用於交付和收取確認書、結單和其他通知的安全訊息設施；
+
+「CMF網站」指 [www.cmfinancial.com] 及本公司不時增設並通知客戶的其他網站；
+
+「電子交易服務」指由本公司提供，使客戶能藉以發出電子指示購買、出售或以其他方式買賣證券的任何設施和資訊服務；
+
+「中央結算」指香港中央結算有限公司；
+
+「登入名稱」指與密碼一並使用，以供客戶取得電子交易服務、CMF郵件及本公司提供的任何其他服務的客戶個人身分識認；
+
+「密碼」指與登入名稱一並使用，以供客戶取得電子交易服務、CMF郵件及本公司提供的任何其他服務的客戶個人密碼；
+
+「《證券及期貨條例》」指不時經修訂或重新制定的《證券及期貨條例》（香港法例第571 章）；
+
+「聯交所」指香港聯合交易所有限公司；
+
+「證監會」指證券及期貨事務監察委員會；
+
+「《證監會操守准則》」指不時經修訂的《證監會持牌人或註冊人操守准則》；
+
+「常設指示」指客戶不時發出要求在符合構成指示一部份的條件時，以及在客戶已要求本公司在符合有關條件時在營業時間內執行該等指示的情況下採取特定行動的指示；
+
+1.2 在本協議中：除非文意另有所指，否則《證券及期貨條例》、《客戶款項規則》及《客戶證券規則》中界定的字詞及用語，在本協議中具有相同意思。
+
+提述「客戶」之處，如屬個人，則包括客戶及其遺囑執行人及遺產管理人；如屬獨資經營商號，則包括該獨資經營者及其遺囑執行人、遺產管理人及業務繼承人；如屬合伙經營商號，則包括客戶持有上述賬戶時該商號之合伙人、各合伙人之遺囑執行人及遺產管理人，亦包括任何此後或曾經於任何時間是該商號合伙人之人士及其各自之遺囑執行人、遺產管理人及該合伙業務之繼承人；如屬公司，則包括該公司及其繼承人；除非另有指明，否則提述條、款及附表之處，均指本協議內之條、款及附表；條款之標題只為方便查閱而設，並不影響該條款之釋義和解釋；
+
+2. 適用的規則和規例
+
+2.1 賬戶之一切交易均須依照聯交所、其他證券交易所或市場或場外交易市場（「交易所」）及中央結算或香港內外其他結算所（「結算所」）不時經修訂之有關章程、規則、規例、附例、常規和慣例，以及香港和本公司代客戶進行買賣的其他地方不時經修訂之法例辦理。
+
+2.2 就根據客戶指示完成之交易而言，本公司及客戶均受聯交所和中央結算的規則約束，特別是有關買賣和交收之規則。
+
+2.3 本協議應受《證監會操守准則》約束。假如《證監會操守准則》與本協議條款及條件之間有任何抵觸，則應以《證監會操守准則》為準。
+
+3. 服務
+
+3.1 客戶謹此指示並授權本公司在其帳冊以客戶名義開立並維持一個或多個賬戶，不時按照本協議之條款和條件購買、投資、出售、交換或以其他方式處置並一般地經營和處理各類的證券。除非本公司另有表示或本協議另有指明（在有關交易的成交單據或以其他方式），否則本公司必須以客戶代理人之身分依照本協議完成交易。
+
+3.2 賬戶之一切交易可以由本公司在其獲授權買賣證券之任何交易所直接進行，或依本公司選擇，間接透過由本公司酌情委聘的任何其他經紀在任何交易所進行。
+
+3.3 若任何證券是根據第10.1 條以本公司名義、本公司任何有聯繫實體的名義或本公司任何代名人的名義持有，除非是按照客戶的書面指示，否則本公司不會出席任何會議或行使任何投票權或其他權利，包括填寫代表委託書。本協議並無以任何方式規定本公司須負責就出席會議及在會上投票而通知客戶或就此採取任何行動。本公司無須就收到關於任何證券的通知、通訊、代表委任書及其他文件而負責，亦無責任將該等文件發送給客戶或通知客戶收到該等文件。本公司有權就根據客戶指示採取的任何行動向客戶收取服務費。
+
+3.4 若本公司向客戶提供有關衍生產品(包括期權)的服務，本公司應按照客戶的要求向客戶提供有關該產品的規格或章程或其他要約文件。
+
+4. 客戶指示
+
+4.1 本公司謹此獲授權按照客戶的指示，在《客戶款項規則》及《客戶證券規則》的規定下，為賬戶存入、購買及／或出售證券，及以其他方式處置在或為賬戶持有的證券、應收賬項或款項。
+
+4.2 客戶將自行發出指示操作賬戶，如客戶委任另一人士代其發出指示操作其賬戶，客戶將向本公司提供該獲委任人士的姓名及地址，並附上委任書。
+
+4.3 本公司的僱員或代表一概不得接受客戶委任為操作客戶賬戶的代理人，除非根據《證監會操守准則》的守則七另訂協議，則屬例外。
+
+4.4 所有指示必須由客戶當面或透過電話口頭髮出，或以郵寄、專人遞送、使用郵件設施或其他電郵、傳真或透過第17 條規定的任何電子服務以書面方式交付，或以本公司接納的其他方式交付。所有以電話、書面或其他方式發出的指令和指示，必須於營業日的營業時間內由本公司收妥，方為有效。
+
+4.5 本公司有權倚賴本公司合理相信是由客戶或一名獲授權代表客戶行事的人士所發出之任何指示、指令、通知或其他通訊，而客戶須受該等通訊約束本公司無任何責任及義務核證給予、作出或意圖給予或作出指示、指令、通知或其他通訊之入士的身份或授權。本公司有權將該等指示、指令、通知或其他通訊視為已獲客戶充分授權及對客戶絕對而不可推翻地具約束力，而且本公司有權（但非必須）就或倚賴該等指示、指令、通知或其他通訊作出或採取本公司認為適當的行為或步驟，而不論所涉及的交易或協議性質或證券的價值、種類或數量，亦不論該等指示、指令、通知或其他通訊有任何表面上或實際的錯誤。客戶同意，就本公司合理及恰當地因倚賴該等通訊而招致之所有損失、費用及開支（包括法律費用），向本公司作出彌償並確保本公司免受該等損失。
+
+4.6 本公司可以將與客戶的所有電話對話錄音，以核證客戶的指示。客戶同意，假如出現糾紛，將接受上述錄音內容為客戶所給指示之最終及不可推翻之證據。
+
+4.7 不論本協議有任何規定，本公司可以行使其絕對酌情權，按照客戶的任何指示行事及／或拒絕接受客戶任何出售或購買證券的指示，而且不須解釋拒絕的理由。特別是且在不損害第6.1 條的原則下，若客戶發出指示的時候，賬戶內並沒有足夠的證券或（視乎屬何情況而定）款項以便在到期交收日就有關交易進行交收，本公司則可以拒絕執行該指示。
+
+4.8 由於交易所的實際條件限制和證券價格時常出現迅速的變化，報價或買賣偶爾會出現延誤。即使本公司已作出合理努力，亦未必能夠按照任何指定時間所報之價格交易。對於未有或未能遵照客戶發出的指示中之任何條款而導致任何損失，本公司概不負責。倘若本公司作出合理努力後，仍未能完全執行任何指示，本公司有權在未經客戶事先確認的情況下，局部執行該指示。無論如何，客戶在要求執行指示後，必須接受執行的結果並受其約束。
+
+4.9 在有關交易所收市前，或有關交易所規定的其他屆滿日期前，或客戶與本公司可能同意的其他較後時間之前，倘若本公司按照客戶要求發出任何證券買賣的即日指示尚未執行，該等即日指示（如部分已被執行，則未被執行的部分）須被視作已經自動取消。
+
+4.10 本公司可以為了執行客戶發出的任何指示，而按其絕對酌情決定的條款和條件，與任何其他代理人（包括以任何形式與本公司有聯繫的任何人士）訂立合約或以其他方式交易。
+
+4.11 倘若本公司按其單獨判斷認為客戶發出的是賣空證券的指示，本公司有權拒絕執行該等指示。
+
+4.12 客戶確認，由於受交易所或其他執行買賣的市場的交易常規所限，本公司不一定能夠以報出之「最佳」價格或「市價」執行指示；客戶同意，無論如何均受本公司依照客戶指示執行的交易約束。
+
+4.13 在遵守適用法律、規例和市場規定的前提下，本公司在恰當地考慮收到客戶指令的次序之後，可以全權決定執行客戶指示的先後次序，就執行本公司收到的任何指令而言，客戶不得要求較另一客戶享有優先權。
+
+5. 交易決定
+
+5.1 在不損害第19 條規定之前提下，客戶確認並同意，由客戶根據其個人判斷作出的投資決定，客戶須就賬戶的所有交易決定負上全責，而本公司只負責執行、結算和進行賬戶的交易；對於任何介紹商號、投資顧問或其他第三方就賬戶或賬戶的任何交易作出的任何行為、作為、陳述或聲明，本公司並無任何責任或義務。
+
+6. 交易之交收
+
+6.1 就每一項代客戶執行的買賣交易而言，除非另有協議或本公司已經代客戶持有用作交收的現金或證券，否則當本公司就有關交易通知客戶時（不論口頭或書面），客戶會：
+
+(a) 向本公司支付可即時動用的資金或將證券以可交付之形式交付本公司；或
+
+(b) 以其他方式確保本公司已經收到該等資金或證券。
+
+6.2 除非另有協定，否則客戶同意，倘若客戶未有按照第6.1 條在到期日付款或交付證券，本公司謹此獲授權：
+
+(a) (如屬買入交易）轉讓或出售所購買之任何證券，以履行客戶對本公司之責任；或
+
+(b) (如屬出售交易）借入及／或購買所出售之任何證券，以履行客戶對本公司之責任。
+
+6.3 客戶謹此確認，對於客戶未能按第6.1 條規定在到期日履行責任而導致本公司承擔任何損失、費用、收費和開支，客戶必須向本公司負責。
+
+7. 傭金及開支
+
+7.1 所有按客戶指示在交易所完成之交易，須支付交易徵費和有關交易所不時徵收的其他徵費。本公司獲授權按照有關交易所不時訂明之規則向客戶收取任何此等徵費。
+
+7.2 客戶須應要求按照本公司不時通知客戶的收費率，支付本公司關於在賬戶進行買入、出售及其他交易或服務之傭金，連同關於或有關賬戶或在賬戶內任何交易、服務或證券的所有印花稅、銀行收費、轉讓費用、利息、托管費用及其他開支。
+
+7.3 本公司有權按其絕對酌情權，索取、接受及保留任何按照及根據本協議的條款及條件為客戶而與任何人士進行之任何交易的有關利益，包括為此等交易而收取的任何傭金、回傭或類似的費用，以及經紀或其他代理人向其客人收取的標準傭金內的回傭。本公司有權完全自行斟酌決定，提供為了客戶而與任何人士進行交易所產生的任何利益，包括與由此產生的傭金及類似付款有關的任何利益。
+
+8. 利息
+
+8.1 除另有指明外，客戶承諾按本公司不時規定的利率，就賬戶內任何時間的任何借方結餘或結欠本公司之任何款項，向本公司支付利息。倘若本公司未有規定此利率，則按中國銀行(香港)有限公司不時報出的最優惠貸款利率加年息百分之八計息。此利息每日計算，並且必須於每個歷月最後一日或於本公司催收時支付。
+
+9. 交易貨幣
+
+9.1 賬戶必須以港元或本公司不時同意之其他貨幣為單位，倘若客戶指示本公司以港幣以外之其他貨幣進行證券買賣，由有關貨幣匯率波動而導致之任何利潤或損失，均由客戶單獨享有或承擔。本公司可按其全權決定之形式和時間將一種貨幣兌換為另一種貨幣，以進行其於本協議下須採取之任何行動或步驟。
+
+9.2. 倘若客戶以港幣以外之其他貨幣向本公司付款，當本公司收到此等款項時，此等款項必須是可以自由轉讓和即時動用的，並已經清繳任何稅項、收費或任何性質的付款。
+
+10. 賬戶內之證券
+
+10.1 對於客戶存放在本公司或本公司代客戶購入或取得並由本公司保管之所有證券，客戶謹此授權本公司以本公司的一個有聯繫實體或客戶之名義登記此等證券，或將此等證券存放在一個獨立賬戶保管，而該賬戶是指定為信託賬戶或客戶賬戶，並由本公司或本公司的一個有聯繫實體在認可財務機構、核准保管人或另一獲發牌進行證券交易的中介人在香港開立及維持的。
+
+10.2 客戶必須單獨承擔根據第10.1 條將任何證券交托本公司、本公司的任何有聯繫實體、銀行、機構、托管人或中介人持有之風險。本公司和有關有聯繫實體、銀行、機構、托管人或中介人均無責任就任何風險替客戶購買保險，購買保險全屬客戶之責任。
+
+10.3 倘若存放於本公司但不以客戶名義登記之證券產生任何股息、分派或利益，本公司須按其代客戶所持證券佔此等證券總數或總額之比例，將該等利益撥入賬戶（或按協定付款給客戶）。
+
+10.4 倘若本公司就任何存放於本公司但不以客戶名義登記之證券蒙受損失，本公司須按其代客戶所持證券佔此等證券總數或總額之比例，在賬戶扣減損失（或按協定由客戶付款給本公司）。
+
+10.5 除第6.2 及10.6 條的規定外，本公司在未經客戶根據《客戶證券規則》作出口頭或書面指示或常設授權前，不得為任何目的將客戶的任何證券存放、移轉、借出、質押、再質押或以其他方式處理。
+
+10.6 根據《客戶證券規則》第6(3) 條，本公司獲授權為履行由客戶或代客戶對本公司、有聯繫實體或其他第三方負有的任何責任，而處置或促使本公司的有聯繫實體處置客戶的任何證券或證券抵押品（而且本公司有絕對酌情權決定處置客戶的哪些證券或證券抵押品）。
+
+10.7 本公司交付、保管或以客戶名義登記其代客戶購入或取得之證券的責任，只要本公司將跟原先存放於或轉讓予本公司或本公司代客戶取得之證券具有相同等級、面值、面額和享有同等權益之證券交付、持有或以客戶名義或客戶之代名人名義登記，本公司即已履行前述之責任（但受當時可能進行的資本重組規限），本公司不須交付或歸還在數量、級別、面價、面額和附帶權益方面跟該等證券完全一樣的證券。
+
+11. 賬戶內之款項
+
+11.1 本公司有權將賬戶內持有的所有款項及為或代客戶收取的所有款項，存入一個或多個在香港的獨立賬戶，而每個該等賬戶須指定為信託賬戶或客戶賬戶，並開設於一間或多間認可財務機構或證監會就《客戶款項規則》第4 條核准的任何其他人士。除非客戶與本公司另有協定，否則該等款項產生之任何利息必須絕對歸本公司所有。
+
+12. 新上市或發行的證券
+
+12.1 倘若客戶要求並授權本公司以客戶代理人的身分為客戶或任何其他人士的利益申請於交易所新上市及／或發行的證券，客戶為及向本公司保證，本公司有權代表客戶作出該等申請。
+
+12.2 客戶應熟悉並遵守任何招股說明書及／或發行文件、申請表格或其他有關文件內所載之管轄新上市及／或發行的證券及其申請之全部條款和條件，客戶同意在與本公司進行的任何交易中受該等條款和條件約束。
+
+12.3 客戶謹此向本公司作出新上市及／或發行證券的申請人（不論是向有關證券的發行人、保薦人、承銷商或配售代理人、聯交所或任何其他有關監管機構或人士）必須作出的所有陳述、保證和承諾。
+
+12.4 客戶謹此進一步聲明和保證，並授權本公司在任何申請表格（或以其他方式）向聯交所和任何其他適當人士披露和保證，本公司以客戶代理人的身分提出的上述任何申請，是由客戶或代表客戶為了客戶或客戶於申請中指明的受益人士的利益，而提出及打算提出的唯一申請。客戶確認和接受，就本公司以客戶代理人的身分提出的任何申請而言，本公司和有關證券的發行人、保薦人、承銷商或配售代理人、聯交所或任何其他有關監管機構人士將倚賴上述聲明和保證。
+
+12.5 客戶確認，倘若一間非上市公司除證券交易外並無從事其他業務，而客戶對該公司具法定控制權，則該公司提出的申請應被視為是為客戶的利益而提出的。
+
+12.6 客戶確認和明白，證券申請的法律和監管規定及市場慣例不時變化，而任何一種新上市或發行證券的規定亦會不時變更。客戶承諾會按本公司不時絕對酌情決定的該等法律和監管規定及市場慣例的要求，向本公司提供資料、採取額外的步驟和作出額外的陳述、保證和承諾。
+
+12.7 有關本公司或其代理人為本公司本身及／或代表客戶及／或代表本公司之其他客戶作出的大額申請，客戶確認和同意：
+
+(a) 該大額申請可能會因與客戶和客戶的申請無關的理由而遭到拒絕，而在沒有欺詐、疏忽或故意違約的情況下，本公司和其代理人無須因申請被拒絕而向客戶或任何其他人士負責；及
+
+(b) 倘若該大額申請因陳述和保證被違反或任何與客戶有關的因素而遭到拒絕，則按第21 條向本公司作出彌償。客戶確認，客戶亦可能須向其他受上述違反或其他因素影響的人士的損失負責。
+
+13. 違約事件
+
+13.1 下述任何一件事情均構成違約事件（「違約事件」）：
+
+(a) 當被要求或到期時，客戶未能向本公司繳付按金或應繳付給本公司之任何其他款項，或未能按本協議向本公司提交任何文件或交付任何證券；
+
+(b) 客戶未有恰當履行本協議任何條款及遵守適當的交易所及／或結算所之任何附例、規例和規則；
+
+(c) 任何人士針對客戶向法院申請其破產、清盤或展開其他相類似的法律程序；
+
+(d) 客戶死亡（如屬個人）；
+
+(e) 針對客戶徵取或強制執行任何扣押、判決之執行或其他程序；
+
+(f) 客戶在本協議或任何文件內向本公司作出之任何陳述或保證是或變成不正確或有誤導成份；
+
+(g) 客戶（如屬法團或合伙商號）簽訂本協議所須之任何同意、授權或董事會決議案全部或部分被撤回、暫停、終止或不再具有十足效力和作用；
+
+(h) 發生任何本公司單獨認為可能會損害本公司於本協議下任何權利之事件；
+
+(i) 本公司已經就任何金額的款項嘗試向客戶提出最少兩次催收，但因某些原因無法直接與客戶聯絡；及
+
+(j) 本公司收到對任何客戶指令或指示之有效性提出任何爭議的通知。
+
+13.2 若發生違約事件，在不會影響本公司針對客戶享有的任何其他權利或補救方法的前提下，本公司有權無須向客戶發出進一步通知而採取下述行動：
+
+(a) 立即終止賬戶；
+
+(b) 終止本協議之全部或任何部分；
+
+(c) 取消任何或全部尚未執行之指令或任何其他代客戶作出的承諾；
+
+(d) 在第10.5 及10.6 條的規限下，出售為或代客戶持有的任何或全部證券，並將所得款項和任何現金存款用來清繳結欠本公司之一切未償還餘額；及
+
+(e) 根據第15 條結合、合併和抵銷客戶之任何或全部賬戶
+
+13.3 假如根據本條進行任何出售或斬倉：
+
+(a) 無論由於任何原因導致任何損失，只要本公司已經作出合理的努力，以當日的市價出售或處置該等證券或其任何部分，本公司則不須為此等損失負責；
+
+(b) 本公司將自行判斷，決定何時出售或處置證券，如因此導致任何損失，本公司概不負責；
+
+(c) 本公司有權以現價為將部分或全部證券撥歸其本身或出售或轉讓給本集團成員，而無須為任何原因導致的損失負責，亦無須交代本公司及／或任何本集團成員的任何利潤；及
+
+(d) 倘若出售或斬倉的所得款項淨額不足以抵償客戶結欠本公司之所有未償還餘額，客戶承諾向本公司支付任何不足之數。
+
+14. 出售所得款項
+
+14.1 在第10.5 及10.6 條的規限下，按第13 條在賬戶進行出售或斬倉的所得款項必須按以下次序分配，任何餘額必須支付給客戶或按客戶指示支付：
+
+(a) 支付本公司在轉讓及/或出售賬戶內全部或任何證券及/或財產或完善此等證券或財產之所有權時，正當產生的一切費用、收費、法律費用和開支， 包括印花稅、傭金和經紀費；
+
+(b) 支付所有到期利息；
+
+(c) 向本公司支付客戶結欠、欠下或招致的一切款項和債務；及
+
+(d) 向任何本集團成員支付客戶結欠、欠下或招致的一切款項和債務。
+
+14.2 在《客戶款項規則》的規限下，即使出售證券之權力尚未產生，或本公司簽訂本協議之後可能曾經向客戶支付任何股息、利息或其他款項，但本公司就上述任何證券已收取或應收取的任何股息、利息或其他款項，本公司可視之為本條所述的出售所得款項而運用。
+
+15. 抵銷及留置權
+
+15.1 在不損害並附加於本公司根據法律或本協議享有之任何一般留置權、抵銷權或類似權利的前提下，對於本公司在任何時間持有或管有客戶之所有證券、應收帳項、款項（任何貨幣）及其他財產（不論是客戶個人或與其他人士聯名持有），本公司均享有一般留置權，作為持續的抵押，用以抵銷及解除客戶因進行證券交易業務或其他原因而對本公司及任何本集團成員的所有債務。
+
+15.2 在不損害並附加於本公司根據法律或本協議享有之任何一般留置權或其他類似權利的前提下，及在適用規則與規例(包括但不限於《客戶款項規則》及 《客戶款項規則》規限下，本公司可以為其本身及以任何招銀國際集團成員代理人身分，在無須通知客戶的情況下，隨時結合或合併客戶 （個人或與其他人士聯名）在本公司或任何本集團成員開立的任何性質的任何或全部賬戶，而本公司可以將上述任何賬戶內之任何貨幣的款項、證券或其他財產抵銷或轉讓予本公司或任何本集團成員，用以解除客戶之債務或負債，不論是實際或或然、基本或附帶、有抵押或無抵押、共同或各別的義務或負債。
+
+15.3 在不限制或修改本協議一般條文的前提下，及在適用規則與規例（包括但不限於《客戶款項規則》及《客戶證券規則》）的規限下，本公司可以無須發出通知，而在客戶於任何時間在本公司或任何本集團成員維持的任何賬戶之間，來回調動全部或任何款項或財產。
+
+16. 客戶款項常設授權
+
+16.1 客戶款項常設授權涵蓋本公司代表客戶在香港一個或多個獨立賬戶內收取或持有的款項（包括因持有款項而產生之任何利息）（「款項」）。
+
+16.2 客戶授權本公司：
+
+(a) 結合或合併（個人或與其他人士聯名）在本公司或任何本集團成員維持的任何性質的任何或全部獨立賬戶，而本公司可以在客戶的上述獨立賬戶之間往來轉讓任何數額的款項，用以解除客戶對本公司或任何本集團成員之義務或負債，不論是實際或或然、基本或附帶、有抵押或無抵押、共同或各別的義務或負債；及
+
+(b) 在本公司或任何本集團成員於任何時間維持的任何獨立賬戶之間來回調動任何數額之款項。
+
+16.3 客戶確認及同意，本公司可無須向客戶發出通知而採取第16.2 條所述的任何行動。
+
+16.4 作出此項客戶款項常設授權，並不損害本公司或任何本集團成員就處理該等獨立賬戶內款項可享有的其他授權或權利。
+
+16.5 客戶款項常設授權的有效期為十二個月，自本協議之日起生效，但客戶可以續期或按第16.7 條所述之《客戶款項規則》被當作已續期。
+
+16.6 客戶可向本公司發出書面通知，致送到列於本協議的本公司地址或本公司為此目的而書面通知客戶的其他地址，以撤回客戶款項常設授權。上述通於本公司實際收到之日起計14 日屆滿後生效。
+
+16.7 客戶明白，本公司若在客戶款項常設授權的屆滿日期前最少14 日向客戶發出書面通知提醒客戶，而客戶在屆滿日期前並無反對該客戶款項常設授權被當作已續期，該常設授權則無需客戶書面同意而被當作已持續地續期。
+
+17. 為客戶提供電子服務
+
+17.1 除非另有說明，本條之規定乃不損害並附加於本協議所有其他條款。
+
+17.2 本公司可根據本協議所載條款和條件為客戶提供電子服務，客戶謹此根據本協議所載條款和條件要求獲提供上述服務，而上述條款和條件可由本公司不時發出的通知、信函、出版物或其他文件予以修改、修訂或擴展。
+
+17.3 客戶可以不時指示本公司以客戶代理人的身分，透過電子服務代表客戶在賬戶存入購買及／或出售證券或以其他方式處理證券、應收帳項或款項。
+
+17.4 客戶同意，客戶為本協議項下唯一獲授權的電子服務使用者。客戶須就本公司向客戶發出的存取密碼之保密、安全和使用單獨承擔全部責任。
+
+17.5 客戶確認並同意，客戶須就透過電子服務發出的所有買賣指示單獨承擔全部責任。客戶進一步確認，電子服務、郵件設施、本公司的網站以及構成上述服務的軟件，均為本公司專有。客戶承諾和保證，客戶不會（亦不會嘗試）擾亂、修改、破解、反向編程、破壞、毀壞或以其他方式更改或嘗試未經授權使用電子服務、郵件設施、本公司的網站以及構成上述服務的軟件的任何部分。客戶同意，倘若客戶在任何時間違反上述承諾和保證，或本公司於任何時間合理懷疑客戶已違反上述承諾和保證，本公司有權無須通知而立即終止客戶的任何或所有賬戶，客戶亦確認本公司可對客戶採取法律行動。客戶承諾在知悉任何其他人士從事本段所述的任何行為時，立即通知本公司。
+
+17.6 若本公司允許客戶在網上開立賬戶，客戶同意屆時向本公司交回已填妥並簽署之客戶資料表格、相關文件和客戶就賬戶授予本公司的任何授權之印刷本。
+
+17.7 除非客戶的賬戶有足夠的可動用款項、證券或本公司接受的其他資產以供客戶的交易交收之用，並且已收到第17.6 條所述的文件，否則本公司不會執行客戶的任何交易指示，但本公司與客戶另有協議除外。
+
+17.8 除非及直至客戶已收到本公司以電子或印刷形式發出的訊息，表示收到或確認已執行客戶的買賣指示，否則本公司不得被視為已收到或已執行客戶的買賣指示。
+
+17.9 客戶確認並同意，使用電子服務發出指示的一項條件是，倘若發生下述事項，客戶會立即通知本公司：
+
+(a) 客戶已經透過電子服務發出指示，但並無收到指示編號或該指示或其執行的準確確認（不論是以印刷、電子還是口頭方式作出）；
+
+(b) 客戶收到一項客戶並無發出指示的交易確認（不論是以印刷、電子還是口頭方式作出）或有類似衝突；
+
+(c) 客戶獲悉有人正在進行或嘗試進行第17.5 條所述的任何行為；
+
+(d) 客戶獲悉客戶的存取密碼有未經授權使用的情況；或
+
+(e) 客戶在使用電子服務時遇到困難。
+
+17.10 客戶同意在輸入每個指示之前會加以復核，因為指示一經發出，便可能無法取消。
+
+17.11 客戶同意，本公司不會就客戶或任何其他人士因使用或嘗試使用電子服務而可能遭受的任何損失或損害承擔責任，除非該等損失或損害是由於本公司故意違約或嚴重疏忽所導致，則屬例外。客戶進一步承諾，在本公司要求時，對於因使用電子服務而可能使本公司遭受的任何損失或損害，向本公司作出十足彌償，但在客戶控制範疇以外的損失或損害除外。
+
+17.12 客戶確認及同意，倘若客戶在使用電子服務時所採用的通訊方法暫時無法使用，客戶仍可在此段期間繼續操作有關賬戶，但本公司有權索取本公司不時認為適合的核證客戶身分的資料。
+
+17.1 客戶確認，交易所和某些機構可能就其提供給數據發放者之一切市場數據擁有所有權權益和權利，並同意不會作出任何可能構成侵犯上述權利或權益的行為。客戶亦明白，本公司不會保證該等市場數據或任何市場資料（包括透過電子服務提供給客戶的任何資料）的及時性、次序、準確性或完整性。本公司對下述事項所引起或造成之任何損失概不承擔任何責任：
+
+(a) 任何上述數據、資料或訊息不準確、錯誤或遺漏；
+
+(b) 上述數據、資料或訊息傳送或傳達延誤；
+
+(c) 通訊暫停或阻塞；
+
+(d) 不論是否由於本公司的行為所引致之該等數據、資料或訊息的無法提供或中斷；或
+
+(e) 本公司無法控制的外力。
+
+18. 獨立性
+
+18.1 本公司並非獨立的中介人，理由如下：
+
+(a) 我們有收取由其他人士（可能包括產品發行人）就我們向閣下分銷投資產品而提供的費用、傭金或其他金錢收益。詳情請參閱我們按規定在訂立任何投資產品交易前或在訂立任何投資產品交易時須向閣下提供的金錢收益披露；及／或
+
+(b) 由其他人士提供的非金錢收益，或與我們可能向閣下分銷的產品的發行人有緊密聯繫或其他法律或經濟關係。
+
+19. 風險披露聲明
+
+19.1 客戶確認，證券價格會有波動，有時波幅甚大。證券價格可升亦可跌，而且可能變得毫無價值。買賣證券很可能會虧損而非獲利。客戶已準備承擔此項風險。
+
+19.2 客戶確認，創業板股份涉及很高的投資風險。尤其是該等公司可在無需具備盈利往績及無需預測未來盈利的情況下在創業板上市。創業板股份可能非常波動及流通性很低。客戶確認並明白，客戶只應在審慎及仔細考慮後，才作出有關的投資決定。創業板市場因為有較高風險及其他特點，所以這個市場較適合專業及其他經驗豐富的投資者。客戶確認並明白，創業板股份的現時資料只可在聯交所操作的網站找到。創業板公司一般無須在憲報指定的報章刊登付費公告。本條款並無聲稱披露創業板的一切相關風險及其他重要事項。客戶明白及確認，在開始任何有關創業板交易之前，客戶應自行研究在創業板買賣證券的事宜，並且假如客戶對本條款任何方面或買賣創業板股份的性質及所涉風險有疑問或不明白之處，應尋求獨立的專業意見。
+
+19.3 客戶確認，本公司在香港以外地方收取或持有的客戶資產，是受到有關海外司法管轄區的適用法律及規例所監管的，這些法律及規例與《證券及期貨條例》及根據該條例制訂的規則可能有所不同。因此，有關客戶資產享有的保障與在香港收取或持有的客戶資產的保障未必相同。
+
+19.4 客戶亦確認，將證券交予本公司、其有聯繫實體或其代理人保管，均存在風險。例如，若本公司在持有客戶證券期間變成無力償債，客戶可能遲遲不能取回證券。客戶已準備接受此等風險。
+
+19.5 客戶亦明白並確認：
+
+(a) 除非客戶是專業投資者，否則客戶的授權書必須指明有效期，而該段有效期不得超逾12 個月。若客戶是專業投資者，則有關限制並不適用。
+
+(b) 此外，假如本公司在有關授權的屆滿日期前最少14 日向客戶發出通知提醒客戶，而客戶在當時的授權期限屆滿日期前並無反對該授權被當作已續期（即無須客戶同意），客戶的授權則會被當作已續期。
+
+(c) 法例並無規定客戶必須簽署第18.5(1) 條所指的授權書。
+
+19.6 倘若本公司作出《證券及期貨條例》第XII 部所述的違約行為，而且合資格客戶因此蒙受金錢損失，合資格客戶有權向根據《證券及期貨條例》成立之賠償基金索償，但必須符合賠償基金不時規定之條款限制。合資格客戶向賠償基金索償的權利，僅限於《證券及期貨條例》及其規則與規例所規定的範圍。
+
+19.7 客戶亦明白並確認：
+
+(a) 電子交易服務，包括買賣盤路徑選擇、交易執行、對盤、登記或結算等，均由電腦組件系統支援。它們與所有設施及系統一樣，容易發生暫時的中斷或故障。客戶能夠就某些損失追討的賠償，亦只限於系統提供商、市場、結算所及／或參與商號所規定的責任範圍。
+
+(b) 客戶確認並接受，倘若其透過電子交易系統進行交易，客戶將會承受與系統相關的風險，包括硬件和軟件故障的風險，而任何系統故障，後果可能是客戶的指示不能按其指令執行或根本沒有被執行。
+
+19.8 客戶確認並接受，由於無法預計的通訊阻塞或其他原因，電子傳送未必是可靠的通訊方法，透過電子方式進行的交易，可能會延遲傳送和接收客戶指示或其他資料、延遲執行客戶指示或以不同於客戶發出指示時的價格執行其指示、通訊設施亦會出現故障或中斷、通訊有誤解或錯誤的風險，而且指示發出後通常不能取消。
+
+19.9 客戶確認並接受，假如客戶向本公司提供授權書，允許本公司代存郵件或將郵件轉交予第三方，客戶便須盡速親身收取所有關於客戶的賬戶之成交單據及結單，並仔細檢閱，以確保可及時發現任何差異或錯誤。
+
+19.10 客戶確認並接受，在「納斯達克－美國證券交易所試驗計劃」（「試驗計劃」）下的證券是為經驗豐富的投資者而設的。客戶明白及確認，客戶在買賣試驗計劃的證券之前，應先徵詢交易商的意見和熟悉該項試驗計劃。客戶應知悉，試驗計劃下的證券並非以聯交所主板或創業板為第一或第二上市而受監管的證券。
+
+19.11 倘客戶希望在聯交所以外的其他交易所進行根據本協議的交易，客戶確認並認識到，由於該等交易須遵從其他交易所的規則、條例和適用的地方法律（而非聯交所的規則），客戶在交易中得到的保護程度和種類，可能與根據聯交所的規則、條例和香港法例所提供的保護截然不同，客戶確認並認識到（但並不限於），倘客戶在聯交所以外的其他交易所進行的交易中蒙受金錢損失，客戶將不享有向根據《證券及期貨條例》成立的賠償基金索償的權利。
+
+19.12 客戶亦明白並確認買賣交易所上市的衍生權證及牛熊證結構性產品(“結構性產品”)時的相關風險包括：
+
+(a) 倘若結構性產品發行商破產而未能履行其對所發行證券的責任，客戶只被視為無抵押債權人，對發行商任何資產均無優先索償權。因此，客戶須特別留意結構性產品發行商的財力及信用；
+
+(b) 非抵押結構性產品並沒有資產擔保。倘若發行商破產，客戶可以損失其全數投資。要確定產品是否非抵押，客戶須細閱上市文件；
+
+(c) 結構性產品如衍生權證及牛熊證均是槓桿產品，其價值可按相對相關資產的槓桿比率而快速改變。客戶須留意，結構性產品的價值可以跌至零，屆時當初投資的資金將會盡失；
+
+(d) 結構性產品設有到期日，到期後的產品即一文不值。客戶須留意產品的到期時間，確保所選產品尚余的有效期能配合其交易策略；
+
+(e) 結構性產品的價格或會因為外來因素(如市場供求)而有別於其理論價，因此實際成交價可以高過亦可以低過理論價；
+
+(f) 若客戶所買賣結構性產品的相關資產並非以港幣為單位，其尚要面對外匯風險。貨幣兌換率的波動可對相關資產的價值造成負面影響，連帶影響結構性產品的價格；
+
+(g) 聯交所規定所有結構性產品發行商要為每一隻個別產品委任一名流通量提供者。流通量提供者的職責在為產品提供兩邊開盤方便買賣。若有流通量提供者失責或停止履行職責，有關產品的客戶或就不能進行買賣，直至有新的流通量提供者委任出來止；
+
+(h) 客戶另亦明白並確認買賣衍生權證的一些額外風險：
+
+(1) 假若其他情況不變，衍生權證愈接近到期日，價值會愈低，客戶因此不能視為長線投資。
+
+(2) 衍生權證的價格可隨相關資產價格的引申波幅而升跌，客戶須注意相關資產的波幅。
+
+(i) 客戶另亦明白並確認買賣牛熊證的一些額外風險：
+
+(1) 客戶買賣牛熊證，須留意牛熊證可以即日「取消」或強制收回的特色。若牛熊證的相關資產值等同上市文件所述的強制收回價/ 水平，牛熊證即停止買賣。屆時，客戶只能收回已停止買賣的牛熊證由產品發行商按上市文件所述計算出來的剩餘價值(注意：剩餘價值可以是零)。
+
+(2) 牛熊證的發行價已包括融資成本。融資成本會隨牛熊證接近到期日而逐漸減少。牛熊證的年期愈長，總融資成本愈高。若一天牛熊證被收回，客戶即損失牛熊證整個有效期的融資成本。融資成本的計算程式載於牛熊證的上市文件。
+
+(j) 客戶另亦明白並確認買賣滬港通及深港通股票的一些額外風險：
+
+(1) 投資者須注意，香港的投資者賠償基金並不涵蓋任何北向交易和南向交易。香港的投資者賠償基金主要保障任何因持牌中介人或認可財務機構因為違責事項，例如無償債能力、破產或清盤、違反信託、虧空、欺詐或不當行為，而導致任何國籍的投資者因涉及香港交易所上市或買賣的產品而蒙受的金錢損失。就港股通南向交易而言，由於中國內地的證券商並非香港證監會的持牌人或註冊機構，亦不受到證監會的規管，因此投資者賠償基金將不涵蓋港股通南向交易。就北向交易而言，根據《證券及期貨條例》，投資者賠償基金僅涵蓋在認可股票市場（聯交所）及認可期貨市場（期交所）上買賣的產品。由於北向交易違責事項並不涉及聯交所和期交所上市或買賣的產品，因此一如買賣海外證券的投資者，投資者賠償基金亦不涵蓋北向交易。有關香港的投資者賠償基金的進一步資料，可參閱投資者賠償有限公司網站。至於有關香港的證監會持牌人或註冊機構的資料，則可到證監會網站的持牌人及註冊機構的紀錄冊查詢。另一方面，根據《證券投資者保護基金管理辦法》，中國投資者保護基金的用途為證券公司被撤銷、關閉和破產或被證監會實施行政接管、托管經營等強制性監管措施時，按照國家有關政策規定對債權人予以「償付」或「國務院批准的其他用途」。對於參與北向交易的香港投資者而言，由於他們是通過香港本地券商進行北向交易，該券商並非內地證券公司，因此中國內地投資者保護基金亦不涵蓋北向交易；
+
+(2) 當北向交易和南向交易分別的總額度餘額少於每日額度時，相應買盤會於下一個交易日暫停(但仍可接受賣盤訂單)，直至總額度餘額重上每日額度水平。而每日額度用完時，亦會即時暫停相應買盤交易訂單(已獲接受的買盤訂單不會因每日額度用盡而受到影響，此外仍可繼續接受賣盤訂單)，當日不會再次接受買盤訂單，但會視乎總額度餘額狀況於下一個交易日恢復買盤交易；
+
+(3) 如前所述由於只有在兩地市場均為交易日、而且兩地市場的銀行在相應的款項交收日均開放時才會開放，所以有可能出現內地市場為正常交易日、而香港投資者卻不能買賣A 股的情況。投資者應該注意兩地市場的開放日期，並因應自身的風險承受能力決定是否在不交易的期間承擔A 股價格波動的風險；
+
+(4) 對於那些一般將A 股存放於券商以外的投資者而言，如果需要沽出所持有的某些A 股股票，必須在不晚於沽出當天（T 日）開市前成功把該A 股股票轉至券商賬戶中。如果投資者錯過了此期限，他/她將不能於T 日沽出該A 股；
+
+(5) 當一些原本為合資格股票由於前述原因被調出範圍時，該股票只能被賣出而不能被買入。這對投資者的投資組合或策略可能會有影響。
+
+投資者需要密切關注兩地交易所提供及不時更新的合資格股票名單；
+
+(6) 香港及海外的投資者若以人民幣以外的本地貨幣投資人民幣資產，由於要將本地貨幣轉換為人民幣，便需承受匯率風險。在匯兌過程中，將會牽涉轉換貨幣的成本。即使該人民幣資產的價格不變，於轉換貨幣的過程中，如果人民幣貶值，亦會有所損失；
+
+(7) 不容許回轉交易；
+
+(8) 設有交易前檢查：如客戶擬於個別交易日出售股份，須於該交易日開市前將股份轉移至交易所參與者的相應中央結算系統戶口；
+
+(9) 所有交易必須在上交所進行，不設場外交易或非自動對盤交易；
+
+(10) 不得進行無備兌賣空活動；
+
+(11) 實施境外持股量限制（包括強制出售安排）：本公司有權於接獲聯交所的強制出售通知時「強制出售」客戶股份；
+
+(12) 投資者應完全瞭解並遵守內地有關短線交易利潤及披露責任的法規；
+
+(13) 本公司有權於緊急情況（如香港懸掛八號颱風訊號）下取消客戶訂單；
+
+(14) 在緊急情況（例如聯交所失去與上交所的所有聯絡渠道等）下，本公司或未能發出客戶的取消買賣盤指令；在該等情況下，如訂單經已配對及執行，投資者須承擔交收責任；
+
+(15) 客戶須遵守上交所規則及中國內地有關交易的適用法律；
+
+(16) 本公司將向聯交所轉發客戶身份資料，聯交所可能繼而轉發予上交所以作監察及調查之用；
+
+(17) 倘有違反上交所規則、或上交所的上市規則或上交所規則所述的披露及其他責任的情況，上交所有權進行調查，並可能透過聯交所要求本公司提供相關資料及材料協助調查；
+
+(18) 聯交所或會應上交所要求，要求交易所參與者拒絕處理客戶訂單；
+
+(19) 客戶須接納所涉及的風險，包括但不限於買賣股票的禁限、對違反上交所上市規則、上交所規則及其他適用法律及規例負責或承擔法律責任；
+
+(20) 上交所或會要求聯交所要求其參與者向客戶發出口頭或書面警告，以及不向客戶提供交易服務；
+
+(21) 交易所參與者、其客戶或任何第三方若因為交易或 CSC 而直接或間接蒙受任何損失或損害，香港交易所、聯交所、聯交所子公司、上交所及上交所子公司以及其各自的董事、僱員及代理人概不負責。
+
+20. 合適性
+
+20.1 假如我們向閣下招攬銷售或建議任何金融產品，該金融產品必須是我們經考慮閣下的財政狀況、投資經驗及投資目標後而認為合理地適合閣下的。本協議的其他條文或任何其他我們可能要求閣下簽署的文件及我們可能要求閣下作出的聲明概不會減損本條款的效力。
+
+21. 客戶之陳述及保證
+
+21.1 客戶謹此向本公司作出以下持續的陳述及保證：
+
+(a) 客戶（如為法團）已有效地根據其成立所在國之法律成立並存在，並有充分權力和行為能力以訂立及履行其於本協議的責任；其簽訂本協議之事亦已獲其管治組織妥當授權，並且符合其組織章程大綱及細則或則例（視乎屬何情況而定）之規定；
+
+(b) 本協議之簽署、交付或履行及按本協議發出之任何指示，均不會觸犯或構成違反任何現有適用法律、法規、條例、規則、規例或判決，亦不會超越客戶或其任何資產受約束之範圍；
+
+(c) 除非另行向本公司作出書面披露，否則本協議下一切交易均為客戶之利益而進行，並無任何第三者在當中有任何利益；
+
+(d) 除了根據客戶與任何本集團成員之間任何協議產生的該本集團成員之抵押權益一切由客戶提供用作出售或貸入賬戶之證券均已繳足價款，且具有效及妥當之所有權，其法定及實益所有權由客戶擁有；
+
+(e) 客戶資料表格所載的資料，或由或代表客戶就賬戶向本公司提供的其他資料，均是完整、真實和正確的。在收到客戶任何更改資料的書面通知前，本公司有權倚賴上述資料；及
+
+21.2 若客戶是為其客人進行交易，不論是否受客戶全權委託、以代理人身分抑或以當事人身分與客戶之客人進行對盤交易，客戶謹此同意，就本公司收到聯交所及／或證監會（「香港監管機構」）查詢的交易而言，下列規定適用：
+
+(a) 在符合下列規定下，客戶須按本公司要求(此要求須載有香港監管機構的聯絡詳情)，立即知會監管機構進行有關交易之賬戶所屬的客人及(以客戶所知）交易最終實益受益人的身分、地址、職業及聯絡資料。客戶亦須知會香港監管機構任何發起有關交易的第三方（如與客人／最終受益人不同）的身分、地址、職業及聯絡資料。
+
+(b) (1) 若客戶是為集體投資計劃、全權委託賬戶或全權信託進行交易，客戶須按本公司要求（該要求須載有香港監管機構的聯絡詳情）立即知會香港監管機構代表該計劃、賬戶或信託向客戶發出進行交易指示的人士的身分、地址、職業及聯絡資料。
+
+(2) 若客戶是為集體投資計劃、全權委託賬戶或全權信託進行交易，客戶在其代表該計劃、賬戶或信託進行投資的酌情權被撤銷時，須在切實可行的情況下盡快通知本公司。在客戶的投資酌情權已被撤銷的情況下，客戶須按本公司要求（該要求須載有香港監管機構的聯絡詳情），立即知會香港監管機構曾向客戶發出指示的人士的身分、地址、職業及聯絡資料。
+
+(3) 若客戶是集體投資計劃、全權委託賬戶或全權信託，而客戶、其高級職員或僱員就某一交易的酌情權已被撤銷，客戶在其代表該計劃、賬戶或信託的受益人投資的酌情權被撤銷時，須在切實可行的情況下盡快通知本公司。如客戶的投資酌情權已被撤銷，客戶須按本公司要求（該要求須載有香港監管機構的聯絡詳情），立即知會香港監管機構曾就有關交易向客戶發出指示的人士的身分、地址、職業及聯絡資料。
+
+(c) 若客戶知悉其客人是其相關客人之中介人，但客戶並不知道有關交易涉及的相關客人之身分、地址、職業及聯絡資料，則客戶確認：
+
+(1) 客戶與其客人已作出安排，讓客戶可按要求立即向其客人取得第20.2.a 及／或20.2.b 條列明的資料，或促使取得有關資料；及
+
+(2) 客戶將按本公司就有關交易提出的要求，盡速向其發出進行交易指示的客人索取第20.2.a 及／或20.2.b 條列明的資料，及在收到其客人提交的資料後盡快提供或促使提供予香港監管機構。
+
+(d) 即使在本協議終止後，上述條款仍繼續生效。
+
+21.3 客戶承諾會履行、簽署和簽立本公司為履行或執行本協議或其任何部分而要求的所有行為、協議或任何文件。
+
+21.4 倘客戶出售任何並非其所有之證券（即涉及賣空），包括客戶為出售而借入證券，則客戶必須通知本公司。客戶確認並同意，除非客戶向本公司提供本公司認為必要之確認書、證明文件及保證，以證明客戶在發出賣空指示前，確有即時可行使及無條件之權利，可將該等證券轉歸於購買人的名下，否則本公司將不會接納賣空指示。
+
+21.5 客戶同意，未經本公司事先同意，不會質押或押記組成任何賬戶一部分之任何證券或款項，或出售、授予期權或以其他方式處置組成該等賬戶一部分之任何證券或款項。
+
+21.6 本公司及客戶承諾，倘若根據本協議提供之資料有任何重大變動，將通知對方。本公司及客戶尤其同意：
+
+(a) 倘本公司的持牌或註冊情況、業務、向客戶提供之服務性質及收費出現任何重大變動，本公司將會通知客戶；及
+
+(b) 客戶將通知本公司有關其姓名或名稱、地址及身分證明文件之任何變動，並按本公司的合理規定提供證明文件。
+
+22. 責任
+
+22.1 本公司、其任何董事、僱員或代理人均無須就客戶因以下事情蒙受之任何損失、開支或損害而負責（不論疏忽或其他責任）：
+
+(a) 本公司根據或倚賴客戶發出的任何指示行事，不論客戶是否聽從本公司或其任何董事、僱員或代理人之建議、忠告或意見發出該等指示；或
+
+(b) 任何超越本公司、其董事、高級職員、僱員及代理人合理控制或預期之狀況或情況，包括但不限於中斷、故障、失靈引致之指示傳送延誤，或未經授權使用存取密碼、市況急劇變化、政府機構或交易所的行動、盜竊、戰爭（不論宣戰與否）、惡劣天氣、地震及罷工；或
+
+(c) 本公司行使本協議條款授予的任何或全部權利；或
+
+(d) 根據、關於或出於本協議而將一種貨幣兌換成另一種貨幣。
+
+22.2 在不限制上述第21.1 條概括性原則之前提下，本公司、其任何董事、僱員或代理人均無須負責（不論疏忽或其他責任）客戶由於或聲稱由於或關於電子服務之不便、延遲或未能使用，或本公司執行客戶向本公司發出之任何指示的延遲或聲稱延遲或未能執行上述指示，而蒙受的任何損失、開支或損害，即使本公司已獲告知可能會出現上述任何費用、索償或損害亦然。
+
+22.3 客戶承諾，就本公司直接或間接由於或關於本公司以客戶代理人的身分進行的任何交易，或由於本公司依照本協議條款或客戶的任何指示或通訊而作出或不作出的任何事情，而可能合理及恰當地蒙受或招致的任何費用、索償、要求、損害賠償和開支，向本公司作出彌償和使之獲得彌償。客戶亦同意應要求立即支付本公司在強制執行本協議任何條款時合理及恰當地招致的所有損害賠償、費用和開支（包括按十足彌償基準計算的法律費用）。
+
+22.4 客戶承諾，就任何由於或關於客戶違反其於本協議之責任而引起的損失、費用、索償、法律責任或開支，包括本公司在追討客戶結欠本公司之任何債務或結束賬戶時合理和有必要招致的任何費用，向本公司及其高級職員、僱員和代理人作出彌償和使之獲得彌償。
+
+22.5 即使在本協議終止後，上述條款仍繼續生效。
+
+23. 確認書和結單
+
+23.1 送交客戶之報告、確認書、客戶賬戶之結單、通知及任何其他通訊，可根據客戶（如屬聯名賬戶而並無指明一人的話，則指本協議中名列首位的客戶) 在客戶資料表格內提供之地址、電話、傳真或電傳號碼，或客戶此後書面通知本公司之其他地址、電話、傳真或電傳號碼交予客戶；所有文件，無論是以郵遞、電報、電話、信差或其他方式傳遞，一經電話發出、投寄或由傳遞代理收妥後，不論客戶實際收到與否，均視作已送達。
+
+23.2 客戶的指示獲執行的確認書及客戶賬戶結單均屬不可推翻，並且在郵遞或以其他方式發送後兩日內，如客戶沒有按照本協議所載地址（或本公司書面告知之其他地址）向本公司提出書面反對，即視作已獲客戶接納。
+
+23.3 本公司根據本協議向客戶發出的任何通知或其他通訊，包括但不限於確認書和客戶賬戶結單，若是郵件設施或其他方式以電子設備發出，於訊息傳送予客戶時即視作已作出或發出。
+
+23.4 如適用者，倘客戶能夠通過網絡設施參閱賬戶資訊，客戶已同意接受以網絡設施上顯示的賬戶資料，代替郵件作為買賣確認和賬戶結單。客戶可以書面形式通知本公司隨時撤銷該同意。
+
+24. 修訂
+
+24.1 本公司有絕對的權利，可修訂、刪除或替代本協議任何條款或在本協議增加新條款。修訂通知及經修訂的本協議會張貼於CMF網站的「表格下載」欄位，客戶應不時瀏覽CMF網站，以取得本協議的最新版本及閱讀其條款。上述修訂、刪除、替代或增補被視作在上述修訂通知的刊登日期起生效及已納入本協議內（並構成本協議一部分）。客戶可於CMF網站刊登上述修訂通知後十四（14）個營業日內書面提出反對，否則客戶將被視作接受上述修訂、刪除、替代或增補。
+
+25. 聯名客戶
+
+25.1 如客戶包括多於一人：
+
+(a) 各人之法律責任和義務是共同及各別的，而提述客戶之處，須按文意所指，理解為他們任何一人或每一人；
+
+(b) 本公司有權但無義務按照他們任何一人的指示或請求行事；
+
+(c) 他們每人均受約束，即使任何原本應受約束的其他客戶或其他人士由於種種原因未受約束亦然；及
+
+(d) 本公司有權個別地與他們任何一人處理任何事情，包括在不影響任何其他人的法律責任的前提下，在任何程度上解除任何法律責任。
+
+25.2 倘若客戶包括多於一人，他們任何一人死亡（而仍有一人或多人尚存）時，本協議不得終止，死者在賬戶內之權益將轉歸尚存者名下，但本公司可向已故客戶之遺產強制執行該已故客戶招致之任何法律責任。尚存客戶的任何一人得悉任何死訊時，必須立即書面通知本公司。
+
+26. 可能發生之利益衝突
+
+26.1 本公司及其董事、高級職員或僱員均可為其本身或為任何本集團成員進行買賣交易，但須遵守任何適用的監管規定。
+
+26.2 本公司可以購買、出售、持有或交易任何證券，或持有與客戶指令相反的倉位，而不論本公司是為其本身或為本公司其他客人進行。
+
+26.3 本公司可以將客戶之指令與其他客人之指令進行配對。
+
+26.4 即使本公司或任何本集團成員持有證券倉位，或以包銷商、保薦人或其他身分牽涉該等證券，本公司仍然可以進行該等證券之交易。
+
+26.5 在上述任何事件中，本公司均無須為獲取的任何利潤或利益作出交代。
+
+27. 本協議之終止
+
+27.1 在不損害第13、20.2 和21 條規定之前提下，在本協議任何一方向另一方發出不少於七（7）日（指星期六及星期日以外一般香港的銀行處理一般
+
+業務的日子）事先書面通知終止本協議前，本協議將一直有效。
+
+27.2 客戶根據第26.1 條發出終止通知不影響本公司在實際收到通知前根據本協議進行的任何交易。
+
+27.3 本協議之終止不影響任何可能已發出但未執行的指令或任何已產生的法律權利或責任。
+
+28. 一般規定
+
+28.1 本協議各項條文均獨立於其他條文，並可與其他條文分割，即使任何一項或多項條文是或變成不合法、無效或不能強制執行，其餘條文概不受任何影響。倘若任何條文之部分字眼若不刪除即會令該條文無效的話，該項條文應被視為已刪去該等字眼。
+
+28.2 本協議之條文對本協議各方之繼承人、受讓人及遺產代理人（如適用）具約束力，並為上述人士之利益執行，但未經本公司事先書面同意，客戶不得轉讓、轉移、押記或以其他方式處置客戶在本協議的任何權利或義務。本公司可將其於本協議之全部或部分權利和義務轉讓予任何人士，而無須得到客戶事先同意或批准。
+
+28.3 客戶謹此授權本公司調查或查核客戶之信用狀況（若客戶為個人，則查詢其個人之信用狀況），以確定其財政狀況和投資目標。
+
+28.4 本協議並無任何內容規定本公司向客戶披露本公司在以任何身分為任何其他人士或其本身行事過程中獲悉的任何事實或事情。
+
+28.5 本公司每次與客戶交易的基礎均為：僅客戶是本公司之客人，而且客戶在所有方面均是以主事人身分行事。因此，若客戶代表其他人士行事，不論客戶有否向本公司指明該其他人士的身分，該人士均不會被視作本公司之客人，而且本公司在任何情況下，對於由客戶代為進行交易的任何其他人士均沒有或將不會負有或承擔任何責任。客戶謹此確定並同意，客戶須獨自負責解決關於或代表該等其他人士依照及根據本協議進行之交易所引致的所有法律責任。
+
+28.6 雖然客戶期望本公司保密一切關於賬戶之事宜，但客戶謹此明確同意，本公司可按照任何法律、命令、任何有關市場、銀行業或政府監管機構之合法要求或規例，披露一切關於賬戶之事宜，而無須另行知會或取得客戶同意。
+
+28.7 就客戶履行其於本協議之一切責任而言，時間在所有方面均是要素。
+
+28.8 未有或延遲行使關於本協議之任何權利、權力或特權，不會被推定為已放棄該等權利、權力或特權，而單一或局部行使任何權利、權力或特權，亦不會被推定為禁止隨後或將來行使該權利、權力或特權。
+
+28.9 客戶謹此聲明，客戶已閱讀本協議的中／英文版本，本公司已用客戶明白的語言向客戶完全解釋本協議的內容，而客戶接受並同意受本協議約束。
+
+28.10 倘若本協議的中文與英文版本在解釋或意義方面有任何歧義，客戶和本公司同意應以英文版本為準。
+
+28.11 本協議及一切權利、義務及法律責任均受香港特別行政區法律管轄，並按之解釋。
+
+28.12 在本協議引起或有關之一切事項方面，客戶謹此接受香港法院之非專有司法管轄權管轄。
+
+28.13 按照本公司的全權選擇和絕對酌情決定，由於或關於本協議的任何爭議、爭論和索償，或本協議之違約、終止或無效問題，應根據現時有效並可由本條余下規定修訂之《聯合國國際貿易法委員會仲裁規則》通過仲裁解決。委任機構為香港國際仲裁中心，仲裁地點為香港的香港國際仲裁中心（HKIAC），仲裁員為一人，仲裁程序所用之語言為英文。
+
+附表1、個人資料保障聲明
+
+1. 客戶明白，客戶過去或日後可能需要不時應要求向本公司提供個人資料，而在進行本協議預期的交易時，本公司亦必須或可能進一步收集資料。(本附表1 中，該等個人資料稱為「資料」）。
+
+2. 客戶明白，如「客戶資料表格」或其他文件要求提供資料，客戶則須必填寫資料，否則本公司可能無法開立或維持賬戶，或無法在賬戶進行交易。
+
+3. 客戶明白，本公司從客戶收到之資料，可以提供予以下人士：
+
+(a) 任何本集團成員；
+
+(b) 任何代名人，而證券或其他資產是以該代名人的名義註冊的；
+
+(c) 為任何本集團成員或為其他經辦資料之人士提供行政、數據處理、財政、電腦、電訊、付款或證券結算、財務、專業服務或其他服務的任何承辦商、代理人或服務供應商；
+
+(d) 代或為客戶與本公司進行或提議進行交易之任何人士，或代表該等人士之人士；
+
+(e) 本協議之任何受讓人、承讓人、參與者、次參與者、受委人、繼承人或獲更替本協議的人士；及
+
+(f) 政府、監管機構或其他團體或機構，不論是因為適用於任何本集團成員的法律或規例要求或其他原因。
+
+4. 客戶明白，客戶不時提供之資料可作下列用途：
+
+(a) 執行客戶關於交易或其他事情的指令，及執行客戶之其他指示；
+
+(b) 提供關於賬戶之服務，無論該等服務是否由或透過任何本集團成員或其他人士提供；
+
+(c) 查詢或覈實客戶之信用狀況，及確定客戶之財政狀況及投資目標，及協助其他人或使其他人能夠對客戶作出上述查證；
+
+(d) 收取到期款項、強制執行抵押、押記或其他惠及本公司及任何本集團成員之權利與權益；
+
+(e) 推廣任何本集團成員現時及未來之服務或產品；
+
+(f) 構成經辦資料的人士或任何本集團成員的紀錄之一部分；
+
+(g) 遵守規限任何本集團成員或任何其他人士的法律、監管及其他要求；及
+
+(h) 與以上任何一項或多項用途有關或附帶的其他用途。
+
+5. 客戶明白，客戶有權索取該等資料的副本。客戶亦明白，客戶有權要求更正該等資料。如欲提出上述要求，請致函「香港上環德輔道中308號23樓2304-5室，誠港金融股份有限公司，資料保護主任收」。客戶明白，本公司會就上述要求徵收費用。
+
+附表2、就在交易所買賣的衍生產品所附帶的風險作出解釋
+
+貴客戶如有意就以下所述交易所買賣衍生產品（按下述所定義）進行交易，應仔細閱續及完全明白本檔所述該產品所附帶的相關風險。
+
+常見交易所買賣衍生產品的種類及相關風險
+
+衍生權證
+
+衍生權證是由第三者（如金融機構）發行，一般分為認購權證和認沽權證。認購權證的持有人有權（但沒有責任）在某段期間以預定價格（稱為「行使價」）向發行商購入特定數量的相關資產。相反，認沽權證的持有人有權（但沒有責任）在某段期間以預定價格向發行商沽售特定數量的相關資產。在香港買賣的衍生權證均有其指定到期日，衍生權證到期被行使時，一般均以現金結算。
+
+衍生權證的時間值會隨時間而逐漸降低。假若其他情況不變，衍生權證愈接近到期日，價值會愈低。衍生權證不保本，且價格可急升亦可急跌，投資者可能無法取回任何本金，並可能損失所有投資金額。
+
+股本認股權證
+
+股本認股權證由上市公司發行，賦予持有人認購該公司股份的權利。這類認股證往往與首次公開招股出售的新股一併發行，又或隨有關公司派發股息、紅股或供股時買入的股份一並分派。這類認股證被行使時，上市公司會發行新股，並將股份給予認股證持有人。
+
+股本認股權證的時間值亦會隨時間而逐漸降低。假若其他情況不變，股本認股權證愈接近到期日，價值會愈低。投資者可能無法取回任何本金，並可能損失所有投資金額。
+
+牛熊證
+
+牛熊證類屬結構性產品，能追蹤相關資產的表現而毋須支付購入實際資產的全數金額。牛熊證有牛證和熊證之分，設有固定到期日，投資者可以看好或看淡相關資產而選擇買入牛證或熊證。
+
+牛熊證設有收回價及強制收回機制 - 牛證的收回價必定等同或高於行使價，熊證的收回價則必定等同或低於行使價。若相關資產價格在到期前任何時候觸及收回價，牛熊證即會提早到期，必須由發行商收回，其買賣亦會即時終止。整個過程稱為「強制收回事件」。然而，在牛熊證相關資產的價格接近收回價時，牛熊證價格的波動可能會較大，甚至與相關資產價格的變動不成比例。
+
+牛熊證的類別分有N 類和R 類。N 類牛熊證指收回價等同行使價的牛熊證，一旦相關資產的價格觸及或超越收回價，牛熊證持有人將不會收到任何現金款項。R 類牛熊證指收回價有別於行使價的牛熊證，若出現強制收回事件，牛熊證持有人可收回少量現金款項（稱為「剩餘價值」），但在最壞的情況下，可能沒有剩餘價值。若到期前沒有被收回，牛熊證可持有至到期或於到期前在交易所（按下述所定義）沽出。除非投資者明白此產品的特性並作好損失所有投資金額的準備，否則投資者不應買賣此產品。
+
+牛熊證的發行價已包括融資成本。融資成本會隨牛熊證接近到期日而逐漸減少。牛熊證的年期愈長，總融資成本愈高。若牛熊證被收回，投資者即損失該牛熊證整個有效期的融資成本。融資成本的計算程式載於牛熊證的上市檔。
+
+儘管牛熊證的價格趨向貼近相關資產的價格，但在一些情況下可能並非如此（即對衝值可能未必接近一）。牛熊證價格受多個因素影響，包括其本身的供求、融資成本及距離到期的時限。
+
+交易所買賣基金
+
+交易所買賣基金是被動型管理開放式基金。所有在香港交易所上市的交易所買賣基金均為證監會（按下述所定義）認可的集體投資計畫。交易所買賣基金旨在追蹤相關基準（例如指數及商品如黃金等）的表現，讓投資者可投資於不同類型的市場而又符合成本效益。合成交易所買賣基金採用綜合復寫原則，主要透過掉期或其他衍生工具去追蹤基準的表現。
+
+投資者會承受與交易所買賣基金所追蹤的相關資產組合或指數或市場有關的政治、經濟、貨幣及其他風險。交易所買賣基金及相關資產組合或指數或市場的表現可能不一致，原因舉例來說可能是模擬策略失效、匯率、收費及支出等因素。若交易所買賣基金所追蹤的資產組合或指數或市場對投資者的參與設有限制，則為使交易所買賣基金的價格與其資產淨值一致而設的增設或贖回單位機制的效能可能會受到影響，令合成交易所買賣基金的價格相對其資產淨值出現溢價或折讓。投資者若以溢價買入交易所買賣基金，在基金終止時可能無法收回溢價。若合成交易所買賣基金投資於衍生工具以複製指數表現，投資者除了會承受與指數有關的風險外，亦會承受發行有關衍生工具的交易對手的信貸風險。此外，投資者亦應考慮有關衍生工具發行人的潛在連鎖影響及集中風險（例如由於衍生工具發行人主要是國際金融機構，因此，若合成交易所買賣基金的其中一個衍生工具交易對手倒閉，便可能對該合成交易所買賣基金的其他衍生工具交易對手產生「連鎖」影響）。有些合成交易所買賣基金備有抵押品以減低交易對手風險，但仍要面對當合成交易所買賣基金的抵押品被變現時，抵押品的市值可能已大幅下跌的風險。若合成交易所買賣基金涉及的衍生工具沒有活躍的第二市場，流動性風險會較高；而衍生工具的買賣差價較大，亦會引致虧損。
+
+供股權益
+
+若投資者要行使及買賣供股權益，應留意有關的期限。未被行使的供股權益在到期時將沒有任何價值。但若投資者決定不行使供股權益，除非投資者打算在市場上轉讓這項權利，否則無需採取任何行動。如要轉售供股權益，應留意認購期內設有指定的買賣期，在此之後供股權益將會變得毫無價值。若投資者決定放棄供股權益，其持股比例將會因公司增發新股而被攤薄。
+
+槓桿及反向投資產品
+
+部份產品為《單位信託及互惠基金守則》 (「守則」）第8.6 條及8.4A 條及附錄I 所界定的集體投資計畫。若干產品亦可能受《守則》的附加章節規限。部份信託及產品由香港證監會根據《證券及期貨條例》第104 條認可。
+
+槓桿投資產品將利用槓桿效應達到相等於指數回報X 倍的每日回報。不論是收益和虧損都會倍增。投資於產品的損失風險在若干情況下（包括熊市）將遠超過不運用槓桿的基金。
+
+反向投資產品跟蹤指數的每日反向表現。如指數的相關證券增值，可能對產品的表現有負面的影響。在若干情況下（包括牛市），單位持有人可能就該等投資取得些微或零回報，或甚至蒙受全盤損失。
+
+期貨
+
+期貨是一份金融合約，買賣雙方承諾於未來某個指定日期，以預先釐定的價格，買入或沽出某種相關資產，可以是股票、市場指數、貨幣或商品。投資者可以在香港交易所買賣不同相關資產的期貨合約。投資者只需要繳付合約總值的一部分作為按金，就可以買入或沽出期貨合約，這種槓桿特點，能夠倍大投資者的回報和虧損。當相關資產價格的走勢與投資者的看法相反時，投資者可能會因為按金水準下跌，而要面對被經紀行追繳按金(即補倉)的風險 損失有可能超過投資者所繳付的按金。
+
+期權
+
+期權是一份金融合約，賦予期權合約的買方一項權利，在某段時間內以既定的價格，向期權合約的賣方購買或出售某種相關資產，可以是股票、市場指數、 貨幣或商品。投資者可以在香港交易所買賣不同相關資產的期權合約。期權合約的買方和賣方面對不同的風險回報。簡單來說，如果投資者是期權合約的買方，投資者須向賣方支付期權金，最大的損失亦只限於期權金。如果投資者是期權賣方，在收取期權金的同時，亦須繳付一筆按金，作為投資者履行購買或出售資產的保證。一如買賣期貨合約，期權合約的賣方需要面對補倉的風險，損失有可能會遠超過已收取的期權金。
+
+交易所買賣衍生產品附帶的一般主要風險(包括但不限於以下所列)
+
+1. 發行商違約風險
+
+倘若交易所買賣衍生產品發行商破產而未能履行其對所發行產品的責任，投資者只被視為無抵押債權人，對發行商任何資產均無優先索償權。因此，投資者必須特別留意交易所買賣衍生產品發行商的財力及信用。由於交易所買賣衍生產品並沒有資產擔保，若發行商破產，投資者便會損失其全部投資。
+
+2. 槓桿風險
+
+交易所買賣衍生產品如衍生權證、牛熊證及槓桿及反向投資產品均為槓桿產品，其價值可按其相對於相關資產的槓桿比率而快速改變。投資者須留意，交易所買賣衍生產品的價值可以跌至零，令當初的投資資金盡失。
+
+3. 有效期限
+
+大部分交易所買賣衍生產品均設有到期日，到期後產品將會變得毫無價值。投資者須留意產品的到期時間，確保所選產品尚余的有效期能配合其交易策略。
+
+4. 異常價格變動
+
+交易所買賣衍生產品的價格或會因為外來因素(如市場供求)而有別於其理論價，因此，實際成交價可以高於亦可以低於其理論價。
+
+5. 外匯風險
+
+若投資者所買賣的交易所買賣衍生產品的相關資產並非以港元為單位，投資者尚需面對外匯風險。貨幣兌換率的波動可對相關資產的價值造成負面影響，連帶影響交易所買賣衍生產品的價格。
+
+6. 流通量風險
+
+交易所規定所有交易所買賣衍生產品發行商要為每一隻個別產品委任一名流通量提供者。流通提供者的職責是為產品提供兩邊開盤，以方便買賣 。若流通量提供者失責或停止履行職責，有關產品的投資者或不能進行買賣，直至委任新的流通量提供者。
+
+7. 波幅風險
+
+衍生權證及牛熊證的價格可隨相關資產價格的引伸波幅而升跌，投資者須注意相關資產的波幅。
+
+8. 即日投資風險
+
+槓桿及反向投資產品通常於一日終結時重新調整。因此，投資時間不足整個交易日的投資者，其回報一般會大於或小於指數槓桿投資比率，視乎從一個交易日結束時起直至購入之時為止的指數走勢而定。
+
+9. 投資組合週轉率風險
+
+槓桿及反向投資產品每日重新調整投資組合會令其涉及的交易宗數較傳統ETF 為多。較多交易宗數會增加經紀傭金及其他交易費用。
+
+10. 限價差額風險
+
+槓桿及反向投資產品的投資目標是為了提供緊貼指數每日表現X 倍的投資業績。雖然指數是股票指數，但產品將投資於指數期貨。例如指數個別成分股現時的每日限價為+/-30%，而該指數期貨的每日限價是+/-20%。因此，如指數的每日價格走勢大於該指數期貨的限價，產品可能無法達到其投資目標，因為該指數期貨並不能提供超出其限價的回報。
+
+11. 暫停買賣的風險
+
+在產品暫停買賣期間，投資者與潛在投資者將不能在聯交所購買及出售單位。在聯交所認為就公正有序的市場可保障投資者利益而言，暫停買賣是適當之時，聯交所可暫停單位的買賣。若單位暫停買賣，單位的認購及贖回亦可能會暫停。
+
+12. 反向表現的風險
+
+反向產品跟蹤指數的每日反向表現。如指數的相關證券增值，可能對產品的表現有負面的影響。在若干情況下（包括牛市），單位持有人可能就該等投資取得些微或零回報，或甚至蒙受全盤損失。
+
+13. 反向產品相對於賣空的風險
+
+反向產品有別於持有短倉。由於進行重新調整，產品的回報概況與短倉並不相同。在市場波動，經常轉換投資方向的情況下，產品的表現可能偏離於持有的短倉。
+
+14. 長期持有風險
+
+部份產品並非為持有超過一日而設，因為產品超過一日期間的表現無論在數額及可能方向上都很可能與指數在同一期間的槓桿表現不同（例如損失可能超出指數跌幅的倍數）。在指數出現波動時，復合效應對產品的表現有更顯著的影響。指數波動性更高，產品的表現偏離於指數槓桿表現的程度將增加，而產品的表現一般會受到不利的影響。基於每日進行重新調整、指數的波動性及隨著時間推移指數每日回報的復合效應，在指數的表現增強或呆滯時，產品甚至可能會隨著時間推移而損失金錢。
+
+15. 期貨合約風險
+
+部份產品是以期貨為基礎的產品。投資於期貨合約涉及特定風險，例如高波動性、槓桿作用、轉倉及保證金風險。期貨合約的槓桿成分引致的損失，可能大大超過產品所投資於期貨合約的款額。對期貨合約的投資可能導致產品須承受高度的巨額損失風險。在現有期貨合約即將到期，並由代表同一相關商品但到期日較遲的期貨合約替換，即屬「轉倉」。產品的投資組合的價值（以及每單位的資產淨值）可能在期貨合約即將到期下，因向前轉倉（因到期日較遲的期貨合約價格較高）的費用而受到不利影響。相關參考資產與期貨合約的價值之間可能有不完全的相關性，或會阻礙產品達到其投資目標。
+
+16. 被動式投資風險
+
+部份產品並不是「以主動方式管理」，因此管理人不會在指數向不利方向移動時採取臨時防禦措施。在此等情況下產品的價值也會減少。
+
+免責聲明
+
+本檔未盡披露在此提及在香港交易及結算所有限公司(“交易所”)進行交易的常見衍生產品(“交易所買賣衍生產品”)種類的所有風險及特點。本檔由誠港金融股份有限公司（"CMF"）提供作參考之用。您不應只倚賴本檔而作出任何投資決定，而應仔細閱讀有關發售文件及任何其他相關文件，特別是該些檔中列載關於各種產品的風險詳情。除非您明白交易所買賣衍生產品的性質及以風險暴露的程度，否則您不應對交易所買賣衍生產品進行交易。CMF對任何此文所述產品的投資導致的任何損失，概不承擔任何責任。在作出投資決定前，您不應只考慮本檔以及發售檔所載的資料，亦應考慮您本身的財務狀況及個別情況。如有疑問，您應尋求獨立的專業意見。本檔所載有關交易所買賣衍生產品的資料是依據證券及期貨事務監察委員會(“證監會”)、交易所及香港金融管理局等(“金管局”)網站所提供的資料，有關金融衍生產品的詳情，您可流覽證監會(www.sfc.hk/sfc/html/EN)、交易所(www.hkex.com.hk/eng/index.htm) 以及金管局 (www.info.gov.hk/hkma/)的網站。
+
+本檔並不構成、亦無意構成、也不應被解釋為要約或遊說投資於本檔所述的任何產品。本檔無意向派發本檔即觸犯法例或規例的司法權區或國家的任何人士派發，亦無意供該等人士使用。
+
+-完-
+
+Client Declaration
+
+I/We, the undersigned Client, acknowledge and confirm that I/We have read and understood and accepted the provisions of the Cash Account Agreement, including the Risk Disclosure Statement and Personal Data Protection Statement, and agree to be bound by each of the above as amended and/or supplemented from time to time. I/We have been referred to the Cash Account Agreement, including the Risk Disclosure Statement and Personal Data Protection Statement, in both English and Chinese and have been explained by a staff named below in a language of my/our choice and that I am /We are invited to read the Cash Account Agreement, including the Risk Disclosure Statement and Personal Data Protection Statement, ask questions and take independent advice if I/We wish.  
+
+本人/吾等為下述簽署客戶已閱讀過、明白及接受貴公司的現金客戶協議書及其他相關文件和條款，包括但不限於風險披露聲明及個人資料保障聲明，並且同意受不時經修改及／或補充的該等文件所約束。本人／吾等並已獲展示中英文本的現金客戶協議書及其他相關文件和條款，包括但不限於風險披露聲明及個人資料保障聲明，及獲以下職員按照本人/吾等所選擇的語言解釋明白；及本人／吾等已獲邀閱讀現金客戶協議書及其他相關文件和條款，包括但不限於風險披露聲明及個人資料保障聲明，提出問題及徵求獨立的意見（如本人/吾等有此意願）。
+
+Client Signature with Company Chop (if necessary) 
+
+客戶簽署及公司蓋章(如適用) 
+
+職員/持牌代表的聲明 Declaration By Staff/ Licensed Representative
+
+I confirm that I have provided the Risk Disclosure Statements in the language of the Customer’s choice (English or Chinese) and that I have invited the Customer to read the Risk Disclosure Statements, to ask questions and advice to take independent advice if the customer wishes. 
+
+本人確認已按照客戶所選擇的語言提供及解釋上述之風險披露聲明；及邀請客戶閱讀上述風險披露聲明、提出問題及徵求獨立的意見（如客戶有此意願）。

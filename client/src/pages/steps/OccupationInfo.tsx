@@ -41,6 +41,7 @@ export default function OccupationInfo() {
     industry: "",
     companyAddress: "",
     officePhone: "",
+    officeFaxNo: "", // 办公传真（可选）
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -72,6 +73,7 @@ export default function OccupationInfo() {
         industry: existingData.industry || "",
         companyAddress: existingData.companyAddress || "",
         officePhone: existingData.officePhone || "",
+        officeFaxNo: existingData.officeFaxNo || "", // 处理可选字段
       });
     }
   }, [existingData]);
@@ -272,17 +274,32 @@ export default function OccupationInfo() {
               {errors.companyAddress && <p className="text-sm text-destructive">{errors.companyAddress}</p>}
             </div>
 
-            {/* 辦公電話 */}
-            <div className="space-y-2">
-              <Label htmlFor="officePhone">
-                辦公電話 / Office Phone (可選)
-              </Label>
-              <Input
-                id="officePhone"
-                value={formData.officePhone}
-                onChange={(e) => setFormData({ ...formData, officePhone: e.target.value })}
-                placeholder="請輸入辦公電話"
-              />
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* 辦公电话 */}
+              <div className="space-y-2">
+                <Label htmlFor="officePhone">
+                  辦公电话 / Office Phone (可选)
+                </Label>
+                <Input
+                  id="officePhone"
+                  value={formData.officePhone}
+                  onChange={(e) => setFormData({ ...formData, officePhone: e.target.value })}
+                  placeholder="请输入辦公电话"
+                />
+              </div>
+
+              {/* 辦公传真 */}
+              <div className="space-y-2">
+                <Label htmlFor="officeFaxNo">
+                  辦公传真 / Office Fax (可选)
+                </Label>
+                <Input
+                  id="officeFaxNo"
+                  value={formData.officeFaxNo}
+                  onChange={(e) => setFormData({ ...formData, officeFaxNo: e.target.value })}
+                  placeholder="请输入辦公传真"
+                />
+              </div>
             </div>
           </div>
         )}

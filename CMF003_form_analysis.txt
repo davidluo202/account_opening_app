@@ -1,0 +1,50 @@
+=== CMF003 表单字段分析 ===
+
+Licensed Corporation under the Securities & Futures Ordinance (CE No. BSU667)   
+根據《證券及期貨條例》下的持牌法團 （CE編號BSU667） 
+Personal Information 個人資料
+Bank Reference 銀行參考
+Financial Situation 財務狀況
+Investment Objectives and Experience 投資目的及經驗
+Declaration 客戶聲明
+Acknowledgement By Customer 客戶確認
+Declaration By Staff 職員聲明
+Note 注意事項 :
+Please provide a copy of valid passport or ID card and proof of residential address (e.g. recent 3 month’s water bill, electric bill) with this Customer Information Form.
+請隨本客戶資料表附上有效護照或身分證明檔副本，及現居住地址證明（如最近三個月之水費單、電費單）。
+P.O. Box is not accepted as a Correspondence Address.
+            不接受郵政信箱作為通訊地址。
+Any deletion or amendment must be initialled by all account holders.
+任何刪改必須由帳戶持有人簽署作實。
+If this Customer Information Form is not executed in the presence of an employee of Canton Mutual Financial Limited, customer shall comply with one of the following requirements:
+如客戶資料表並非於誠港金融股份有限公司之雇員面前簽立，客戶必須符合以下其中一項要求：
+Customer should provide a cheque in the amount of not less than HK$10,000 bearing your name as shown in the ID card or passport and drawn on your account with a licensed bank in Hong Kong with the same signature(s) as shown on this Customer Information Form in favour of Canton Mutual Financial Limited. Account will not be activated unless the cheque is cleared; or 
+客戶須提交以其名下於香港註冊銀行開立帳戶所簽發不少於港幣一萬元之支票，支票抬頭為誠港金融股份有限公司。 該支票上須載有客戶於身分證明檔上所顯示之姓名。 而有關支票簽署式樣，必須與客戶資料表上之簽署相符。 帳戶必須在支票兌現后才可正式使用。
+The signing of this Customer Information Form and sighting of related identity documents should be certified by any other licensed or registered person, an affiliate of us, a Justice of the Peace, or a profession person such as a branch manager of a bank, a certified public accountant, a lawyer or a notary public.
+此客戶資料表及有關身分證明文件的見證，須由其他持牌人或註冊人、本公司之聯繫人士、太平紳士、銀行分行經理、執業會計師、律師或公證人加以核證。
+
+=== 字段对比 ===
+
+A. Personal Information 个人资料:
+- Name (English + Chinese)
+- HKID/Passport No., Country of Issue, Nationality
+- Date & Place of Birth
+- Marital Status
+- Residential Address
+- Phone, Email, Mobile, Fax
+- Employment情况
+
+B. Bank Reference 银行参考:
+- Bank Name
+- Account Name
+- Account No.
+- A/C Type (Saving/Current/Others)
+
+C. Financial Situation 财务状况:
+- Liquid Asset 流动资产 HK$
+- Net Worth 资产净值 HK$
+- Source of Income (Salary/Rent/Interest/Others)
+- Annual Income (多个范围选项)
+
+D. Investment Objectives and Experience:
+- Investment Objectives (Capital Appreciation/Hedging/Speculation/Children's Education/Other)

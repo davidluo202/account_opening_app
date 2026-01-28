@@ -19,6 +19,12 @@ const currencies = [
   { value: "JPY", label: "日元 / JPY" },
 ];
 
+const accountTypes = [
+  { value: "saving", label: "储蓄账户 / Saving" },
+  { value: "current", label: "活期账户 / Current" },
+  { value: "others", label: "其他 / Others" },
+];
+
 export default function BankAccount() {
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
@@ -27,6 +33,7 @@ export default function BankAccount() {
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({
     bankName: "",
+    accountType: "saving", // 默认为Saving
     accountCurrency: "HKD",
     accountNumber: "",
     accountHolderName: "",
@@ -50,6 +57,7 @@ export default function BankAccount() {
       toast.success("銀行賬戶已添加");
       setFormData({
         bankName: "",
+        accountType: "saving",
         accountCurrency: "HKD",
         accountNumber: "",
         accountHolderName: basicInfo?.englishName || "",
@@ -102,7 +110,11 @@ export default function BankAccount() {
 
     addMutation.mutate({
       applicationId,
-      ...formData,
+      bankName: formData.bankName,
+      accountType: formData.accountType as "saving" | "current" | "others",
+      accountCurrency: formData.accountCurrency,
+      accountNumber: formData.accountNumber,
+      accountHolderName: formData.accountHolderName,
     });
   };
 
@@ -151,7 +163,10 @@ export default function BankAccount() {
                       賬戶號碼: {account.accountNumber}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      幣種: {account.accountCurrency}
+                      账户类型: {account.accountType === "saving" ? "储蓄" : account.accountType === "current" ? "活期" : "其他"}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      币种: {account.accountCurrency}
                     </div>
                     <div className="text-sm text-muted-foreground">
                       持有人: {account.accountHolderName}
@@ -197,10 +212,10 @@ export default function BankAccount() {
               </Button>
             </div>
 
-            {/* 銀行名稱 */}
+            {/* 银行名称 */}
             <div className="space-y-2">
               <Label htmlFor="bankName">
-                銀行名稱 / Bank Name <span className="text-destructive">*</span>
+                银行名称 / Bank Name <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="bankName"
@@ -209,16 +224,38 @@ export default function BankAccount() {
                   setFormData({ ...formData, bankName: e.target.value });
                   if (errors.bankName) setErrors({ ...errors, bankName: "" });
                 }}
-                placeholder="請輸入銀行名稱"
+                placeholder="请输入银行名称"
                 className={errors.bankName ? "border-destructive" : ""}
               />
               {errors.bankName && <p className="text-sm text-destructive">{errors.bankName}</p>}
             </div>
 
-            {/* 賬戶幣種 */}
+            {/* 账户类型 */}
+            <div className="space-y-2">
+              <Label htmlFor="accountType">
+                账户类型 / Account Type (可选)
+              </Label>
+              <Select 
+                value={formData.accountType} 
+                onValueChange={(v) => setFormData({ ...formData, accountType: v as "saving" | "current" | "others" })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {accountTypes.map((type) => (
+                    <SelectItem key={type.value} value={type.value}>
+                      {type.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* 账户币种 */}
             <div className="space-y-2">
               <Label htmlFor="accountCurrency">
-                賬戶幣種 / Currency <span className="text-destructive">*</span>
+                账户币种 / Currency <span className="text-destructive">*</span>
               </Label>
               <Select 
                 value={formData.accountCurrency} 
