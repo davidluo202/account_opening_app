@@ -86,7 +86,7 @@ export default function FaceVerification() {
     try {
       // 检查浏览器是否支持getUserMedia
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        setCameraError("您的浏览器不支持攝像頭功能，請使用Chrome、Firefox或Safari瀏覽器");
+        setCameraError("您的瀏覽器不支持攝像頭功能，請使用Chrome、Firefox或Safari瀏覽器");
         return;
       }
 
@@ -100,34 +100,48 @@ export default function FaceVerification() {
         audio: false
       });
 
+      console.log("Media stream obtained:", mediaStream);
+      console.log("Video tracks:", mediaStream.getVideoTracks());
+      
       setStream(mediaStream);
       
       // 等待video元素准备好
       if (videoRef.current) {
         const video = videoRef.current;
         
-        // 先绑定事件处理器，再设置srcObject
-        video.onloadedmetadata = () => {
-          console.log("Video metadata loaded, starting playback");
-          video.play().then(() => {
-            console.log("Video playback started successfully");
-            setCapturing(true);
-          }).catch(err => {
-            console.error("Video play error:", err);
-            setCameraError("視頻播放失敗，請重試");
-            // 清理stream
-            mediaStream.getTracks().forEach(track => track.stop());
-          });
-        };
-        
-        // 添加错误处理
-        video.onerror = (e) => {
-          console.error("Video element error:", e);
-          setCameraError("視頻元素加載失敗，請重試");
-        };
-        
         // 设置srcObject
         video.srcObject = mediaStream;
+        
+        // 使用Promise等待metadata加载
+        await new Promise<void>((resolve, reject) => {
+          video.onloadedmetadata = () => {
+            console.log("Video metadata loaded");
+            console.log("Video dimensions:", video.videoWidth, "x", video.videoHeight);
+            resolve();
+          };
+          
+          video.onerror = (e) => {
+            console.error("Video element error:", e);
+            reject(new Error("視頻元素加載失敗"));
+          };
+          
+          // 超时处理
+          setTimeout(() => reject(new Error("視頻加载超时")), 5000);
+        });
+        
+        // 尝试播放视频
+        try {
+          await video.play();
+          console.log("Video playback started successfully");
+          setCapturing(true);
+        } catch (playError) {
+          console.error("Video play error:", playError);
+          // 如果自动播放失败，尝试静音播放
+          video.muted = true;
+          await video.play();
+          console.log("Video playback started (muted)");
+          setCapturing(true);
+        }
       }
       
       setPermissionState("granted");

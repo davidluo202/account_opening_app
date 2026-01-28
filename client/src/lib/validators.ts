@@ -107,6 +107,25 @@ export function validateChinaID(idNumber: string): {
   gender?: 'male' | 'female';
   birthDate?: string;
 } {
+  return validateChinaIDWithMatch(idNumber);
+}
+
+/**
+ * 校验大陆身份证号码格式，并匹配用户输入的出生日期和性别
+ * @param idNumber 身份证号码
+ * @param userBirthDate 用户输入的出生日期（YYYY-MM-DD格式）
+ * @param userGender 用户输入的性别
+ */
+export function validateChinaIDWithMatch(
+  idNumber: string,
+  userBirthDate?: string,
+  userGender?: 'male' | 'female' | 'other'
+): { 
+  valid: boolean; 
+  message?: string; 
+  gender?: 'male' | 'female';
+  birthDate?: string;
+} {
   if (!idNumber || idNumber.trim() === '') {
     return { valid: false, message: '请输入大陆身份证号码' };
   }
@@ -152,7 +171,154 @@ export function validateChinaID(idNumber: string): {
     return { valid: false, message: '身份证号码校验码不正确' };
   }
   
+  // 如果提供了用户输入的出生日期，验证是否匹配
+  if (userBirthDate) {
+    // 解析用户输入的日期
+    const userDate = new Date(userBirthDate);
+    const idDate = new Date(birthDate);
+    
+    // 比较年月日
+    if (userDate.getFullYear() !== idDate.getFullYear() ||
+        userDate.getMonth() !== idDate.getMonth() ||
+        userDate.getDate() !== idDate.getDate()) {
+      return { 
+        valid: false, 
+        message: `身份证上的出生日期（${birthDate}）与您输入的出生日期不匹配`,
+        gender,
+        birthDate
+      };
+    }
+  }
+  
+  // 如果提供了用户输入的性别，验证是否匹配
+  if (userGender && userGender !== 'other') {
+    if (gender !== userGender) {
+      const genderText = gender === 'male' ? '男性' : '女性';
+      const userGenderText = userGender === 'male' ? '男性' : '女性';
+      return { 
+        valid: false, 
+        message: `身份证上的性别（${genderText}）与您输入的性别（${userGenderText}）不匹配`,
+        gender,
+        birthDate
+      };
+    }
+  }
+  
   return { valid: true, gender, birthDate };
+}
+
+/**
+ * 校验香港银行账户号码格式
+ * 香港银行账户号码通常为6-12位数字，可能包含连字符
+ */
+export function validateHKBankAccount(accountNumber: string, bankName?: string): {
+  valid: boolean;
+  message?: string;
+} {
+  if (!accountNumber || accountNumber.trim() === '') {
+    return { valid: false, message: '请输入银行账户号码' };
+  }
+
+  // 移除空格和连字符
+  const cleaned = accountNumber.replace(/[\s-]/g, '');
+
+  // 香港银行账户号码通常为6-12位数字
+  if (!/^\d{6,12}$/.test(cleaned)) {
+    return { 
+      valid: false, 
+      message: '香港银行账户号码应为6-12位数字' 
+    };
+  }
+
+  // 特定银行的额外校验（可扩展）
+  if (bankName) {
+    // 汇丰银行：12位数字
+    if (bankName.includes('汇丰') || bankName.toUpperCase().includes('HSBC')) {
+      if (cleaned.length !== 12) {
+        return { 
+          valid: false, 
+          message: '汇丰银行账户号码应为12位数字' 
+        };
+      }
+    }
+    // 恒生银行：9-12位数字
+    else if (bankName.includes('恒生') || bankName.toUpperCase().includes('HANG SENG')) {
+      if (cleaned.length < 9 || cleaned.length > 12) {
+        return { 
+          valid: false, 
+          message: '恒生银行账户号码应为9-12位数字' 
+        };
+      }
+    }
+    // 中银香港：12位数字
+    else if (bankName.includes('中银') || bankName.toUpperCase().includes('BOC')) {
+      if (cleaned.length !== 12) {
+        return { 
+          valid: false, 
+          message: '中银香港账户号码应为12位数字' 
+        };
+      }
+    }
+  }
+
+  return { valid: true };
+}
+
+/**
+ * 校验大陆银行账户号码格式
+ * 大陆银行账户号码通常为16-19位数字
+ */
+export function validateCNBankAccount(accountNumber: string, bankName?: string): {
+  valid: boolean;
+  message?: string;
+} {
+  if (!accountNumber || accountNumber.trim() === '') {
+    return { valid: false, message: '请输入银行账户号码' };
+  }
+
+  // 移除空格
+  const cleaned = accountNumber.replace(/\s/g, '');
+
+  // 大陆银行账户号码通常为16-19位数字
+  if (!/^\d{16,19}$/.test(cleaned)) {
+    return { 
+      valid: false, 
+      message: '大陆银行账户号码应为16-19位数字' 
+    };
+  }
+
+  // 特定银行的额外校验（可扩展）
+  if (bankName) {
+    // 工商银行：19位数字
+    if (bankName.includes('工商') || bankName.toUpperCase().includes('ICBC')) {
+      if (cleaned.length !== 19) {
+        return { 
+          valid: false, 
+          message: '工商银行账户号码应为19位数字' 
+        };
+      }
+    }
+    // 建设银行：16-17位数字
+    else if (bankName.includes('建设') || bankName.toUpperCase().includes('CCB')) {
+      if (cleaned.length < 16 || cleaned.length > 17) {
+        return { 
+          valid: false, 
+          message: '建设银行账户号码应为16-17位数字' 
+        };
+      }
+    }
+    // 中国银行：19位数字
+    else if (bankName.includes('中国银行') || bankName.toUpperCase().includes('BANK OF CHINA')) {
+      if (cleaned.length !== 19) {
+        return { 
+          valid: false, 
+          message: '中国银行账户号码应为19位数字' 
+        };
+      }
+    }
+  }
+
+  return { valid: true };
 }
 
 /**

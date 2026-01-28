@@ -9,7 +9,7 @@ import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { convertToTraditional } from "@/lib/converter";
-import { validateHKID, validateChinaID, validateIDExpiry } from "@/lib/validators";
+import { validateHKID, validateChinaIDWithMatch, validateIDExpiry } from "@/lib/validators";
 
 const idTypes = [
   { value: "hkid", label: "香港身份證 / HKID" },
@@ -48,6 +48,12 @@ export default function PersonalDetailedInfo() {
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
+
+  // 获取用户基本信息（用于匹配身份证信息）
+  const { data: basicInfo } = trpc.personalBasic.get.useQuery(
+    { applicationId },
+    { enabled: !!applicationId }
+  );
 
   const [formData, setFormData] = useState({
     idType: "",
@@ -109,7 +115,12 @@ export default function PersonalDetailedInfo() {
           newErrors.idNumber = hkidResult.message || '香港身份證格式不正確';
         }
       } else if (formData.idType === 'mainland_id') {
-        const cnidResult = validateChinaID(formData.idNumber);
+        // 使用增强的校验函数，匹配出生日期和性别
+        const cnidResult = validateChinaIDWithMatch(
+          formData.idNumber,
+          basicInfo?.dateOfBirth,
+          basicInfo?.gender as 'male' | 'female' | 'other' | undefined
+        );
         if (!cnidResult.valid) {
           newErrors.idNumber = cnidResult.message || '大陸身份證格式不正確';
         }
