@@ -2,10 +2,13 @@ import sgMail from '@sendgrid/mail';
 
 // 初始化SendGrid
 const apiKey = process.env.SENDGRID_API_KEY;
+const senderEmail = process.env.SENDGRID_SENDER_EMAIL || 'noreply@cmfinancial.com';
+
 if (!apiKey) {
   console.warn('SENDGRID_API_KEY is not set');
 } else {
   sgMail.setApiKey(apiKey);
+  console.log(`SendGrid initialized with sender: ${senderEmail}`);
 }
 
 /**
@@ -22,7 +25,7 @@ export async function sendVerificationCode(to: string, code: string): Promise<bo
   try {
     const msg = {
       to,
-      from: 'noreply@cmfinancial.com', // 使用您的发件人邮箱
+      from: senderEmail, // 使用配置的发件人邮箱
       subject: '誠港金融 - 郵箱驗證碼',
       text: `您的驗證碼是：${code}，有效期為5分鐘。請勿將此驗證碼告訴他人。`,
       html: `
@@ -82,7 +85,7 @@ export async function sendCustomerConfirmationEmail(
   try {
     const msg = {
       to,
-      from: 'noreply@cmfinancial.com',
+      from: senderEmail,
       subject: `誠港金融 - 開戶申請確認函 (申請編號：${applicationNumber})`,
       text: `尊敬的${customerName}先生/女士，
 
@@ -203,7 +206,7 @@ export async function sendInternalNotificationEmail(
   try {
     const msg = {
       to: 'onboarding@cmfinancial.com',
-      from: 'noreply@cmfinancial.com',
+      from: senderEmail,
       subject: `新開戶申請 - ${applicationNumber} (${customerName})`,
       text: `新開戶申請通知
 
