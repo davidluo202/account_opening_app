@@ -115,10 +115,9 @@ export const appRouter = router({
         // 提交申请
         await db.submitApplication(input.id);
         
-        // 生成PDF（暂时跳过，因为PDF生成需要中文字体支持）
-        // const { generateApplicationPDF } = await import('./pdf-generator');
-        // const completeData = await db.getCompleteApplicationData(input.id);
-        // const pdfBuffer = await generateApplicationPDF(completeData);
+        // 生成PDF
+        const { generateApplicationPDF } = await import('./pdf-generator-v2');
+        let pdfBuffer: Buffer | undefined;
         
         // 获取申请数据用于邮件发送
         const completeData = await db.getCompleteApplicationData(input.id);
@@ -131,34 +130,60 @@ export const appRouter = router({
         const customerEmail = completeData.detailedInfo?.email;
         const customerName = completeData.basicInfo?.chineseName || completeData.basicInfo?.englishName || '客户';
         
-        // 暂时使用空的PDF Buffer，后续实现PDF生成后替换
-        const pdfBuffer = Buffer.from('PDF generation coming soon');
+        console.log(`Preparing to send emails for application ${application.applicationNumber}`);
+        console.log(`Customer email: ${customerEmail}`);
+        console.log(`Customer name: ${customerName}`);
+        
+        // 生成PDF
+        try {
+          console.log('Generating PDF...');
+          pdfBuffer = await generateApplicationPDF(completeData);
+          console.log(`PDF generated successfully, size: ${pdfBuffer.length} bytes`);
+        } catch (error) {
+          console.error('Failed to generate PDF:', error);
+          // PDF生成失败不影响邮件发送，只是不附带PDF
+        }
         
         // 发送邮件（暂时不附带PDF，等待PDF生成功能完善后添加附件）
         if (customerEmail && application.applicationNumber) {
+          console.log(`Condition met: customerEmail=${customerEmail}, applicationNumber=${application.applicationNumber}`);
           try {
-            await sendCustomerConfirmationEmail(
+            console.log(`Calling sendCustomerConfirmationEmail...`);
+            const result = await sendCustomerConfirmationEmail(
               customerEmail,
               application.applicationNumber,
-              customerName
-              // pdfBuffer // 暂时不附带PDF
+              customerName,
+              pdfBuffer // 附带PDF
             );
-            console.log(`Customer confirmation email sent to ${customerEmail}`);
+            console.log(`sendCustomerConfirmationEmail result: ${result}`);
+            if (result) {
+              console.log(`Customer confirmation email sent to ${customerEmail}`);
+            } else {
+              console.error(`Failed to send customer confirmation email to ${customerEmail}`);
+            }
           } catch (error) {
             console.error('Failed to send customer confirmation email:', error);
           }
           
           try {
-            await sendInternalNotificationEmail(
+            console.log(`Calling sendInternalNotificationEmail...`);
+            const result = await sendInternalNotificationEmail(
               application.applicationNumber,
               customerName,
-              customerEmail
-              // pdfBuffer // 暂时不附带PDF
+              customerEmail,
+              pdfBuffer // 附带PDF
             );
-            console.log(`Internal notification email sent for application ${application.applicationNumber}`);
+            console.log(`sendInternalNotificationEmail result: ${result}`);
+            if (result) {
+              console.log(`Internal notification email sent for application ${application.applicationNumber}`);
+            } else {
+              console.error(`Failed to send internal notification email for application ${application.applicationNumber}`);
+            }
           } catch (error) {
             console.error('Failed to send internal notification email:', error);
           }
+        } else {
+          console.log(`Email sending skipped: customerEmail=${customerEmail}, applicationNumber=${application.applicationNumber}`);
         }
         
         console.log(`Application ${application.applicationNumber} submitted successfully. Email notifications sent (without PDF attachment).`);
