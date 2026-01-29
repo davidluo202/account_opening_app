@@ -116,7 +116,7 @@ export const appRouter = router({
         await db.submitApplication(input.id);
         
         // 生成PDF
-        const { generateApplicationPDF } = await import('./pdf-generator-v2');
+        const { generateApplicationPDF } = await import('./pdf-generator-v4');
         let pdfBuffer: Buffer | undefined;
         
         // 获取申请数据用于邮件发送
