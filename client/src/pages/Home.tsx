@@ -3,10 +3,13 @@ import { Button } from "@/components/ui/button";
 import { getLoginUrl } from "@/const";
 import { useLocation } from "wouter";
 import { FileText, Shield, Zap, Users } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useState } from "react";
 
 export default function Home() {
   const { user, loading, isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
+  const [agreedToPrivacy, setAgreedToPrivacy] = useState(false);
 
   if (loading) {
     return (
@@ -53,9 +56,73 @@ export default function Home() {
           <p className="text-base text-muted-foreground mb-12 max-w-2xl mx-auto">
             Complete, compliant, and modern customer account opening system
           </p>
+          
+          {/* 隐私声明 */}
+          <div className="max-w-3xl mx-auto mb-8 p-6 bg-white rounded-lg shadow-sm border">
+            <h3 className="text-lg font-semibold mb-4">個人資料私隱保護聲明</h3>
+            <div className="text-sm text-muted-foreground space-y-3 text-left">
+              <p>
+                誠港金融股份有限公司（以下簡稱「本公司」）及其關聯機構承諾尊重並保護閣下的個人資料私隱。閣下在開戶申請過程中提供的所有個人資料將僅用於以下目的：
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>處理閣下的開戶申請</li>
+                <li>進行客戶身份識別及盡職調查（KYC）</li>
+                <li>遵守香港證券及期貨事務監察委員會（SFC）的監管要求</li>
+                <li>提供相關的金融服務及產品資訊</li>
+              </ul>
+              <p>
+                本公司保證：
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>不會將閣下的個人資料用於未經閣下同意的市場推銷活動</li>
+                <li>不會將閣下的個人資料出售、出租或交換給第三方</li>
+                <li>將採取合理的安全措施保護閣下的個人資料免受未經授權的查閱、使用或披露</li>
+                <li>僅在法律要求或監管需要的情況下向相關機構披露閣下的資料</li>
+              </ul>
+              <p>
+                閣下有權查閱、更正或刪除閣下的個人資料。如需了解更多關於個人資料私隱保護的資訊，請瀏覽
+                <a 
+                  href="https://www.pcpd.org.hk" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline mx-1"
+                >
+                  香港個人資料私隱專員公署官網
+                </a>
+                。
+              </p>
+            </div>
+            <div className="flex items-start gap-3 mt-6 p-4 bg-blue-50 rounded-lg">
+              <Checkbox 
+                id="privacy-agreement" 
+                checked={agreedToPrivacy}
+                onCheckedChange={(checked) => setAgreedToPrivacy(checked === true)}
+                className="mt-1"
+              />
+              <label 
+                htmlFor="privacy-agreement" 
+                className="text-sm cursor-pointer select-none"
+              >
+                我已閱讀並同意上述個人資料私隱保護聲明，並同意本公司按照聲明所述的目的收集、使用及儲存我的個人資料。
+                <br />
+                <span className="text-muted-foreground text-xs">
+                  I have read and agree to the above Personal Data Privacy Statement, and consent to the collection, use and storage of my personal data by the Company for the purposes stated in the Statement.
+                </span>
+              </label>
+            </div>
+          </div>
+
           <div className="flex gap-4 justify-center">
-            <Button size="lg" asChild>
-              <a href={getLoginUrl()}>開始使用 / Get Started</a>
+            <Button 
+              size="lg" 
+              asChild={agreedToPrivacy}
+              disabled={!agreedToPrivacy}
+            >
+              {agreedToPrivacy ? (
+                <a href={getLoginUrl()}>開始使用 / Get Started</a>
+              ) : (
+                <span>開始使用 / Get Started</span>
+              )}
             </Button>
           </div>
         </section>
@@ -119,8 +186,17 @@ export default function Home() {
             <p className="text-lg mb-8 opacity-90">
               立即開始您的開戶申請流程
             </p>
-            <Button size="lg" variant="secondary" asChild>
-              <a href={getLoginUrl()}>立即開始 / Start Now</a>
+            <Button 
+              size="lg" 
+              variant="secondary" 
+              asChild={agreedToPrivacy}
+              disabled={!agreedToPrivacy}
+            >
+              {agreedToPrivacy ? (
+                <a href={getLoginUrl()}>立即開始 / Start Now</a>
+              ) : (
+                <span>立即開始 / Start Now</span>
+              )}
             </Button>
           </div>
         </section>

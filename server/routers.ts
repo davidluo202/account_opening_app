@@ -111,7 +111,58 @@ export const appRouter = router({
         if (!application || application.userId !== ctx.user.id) {
           throw new Error("申请不存在或无权访问");
         }
+        
+        // 提交申请
         await db.submitApplication(input.id);
+        
+        // 生成PDF（暂时跳过，因为PDF生成需要中文字体支持）
+        // const { generateApplicationPDF } = await import('./pdf-generator');
+        // const completeData = await db.getCompleteApplicationData(input.id);
+        // const pdfBuffer = await generateApplicationPDF(completeData);
+        
+        // 获取申请数据用于邮件发送
+        const completeData = await db.getCompleteApplicationData(input.id);
+        if (!completeData || !completeData.detailedInfo) {
+          throw new Error("申请数据不存在");
+        }
+        
+        // 发送客户确认邮件
+        const { sendCustomerConfirmationEmail, sendInternalNotificationEmail } = await import('./email');
+        const customerEmail = completeData.detailedInfo?.email;
+        const customerName = completeData.basicInfo?.chineseName || completeData.basicInfo?.englishName || '客户';
+        
+        // 暂时使用空的PDF Buffer，后续实现PDF生成后替换
+        const pdfBuffer = Buffer.from('PDF generation coming soon');
+        
+        // 发送邮件（暂时禁用，等待PDF生成功能完善）
+        // if (customerEmail && application.applicationNumber) {
+        //   try {
+        //     await sendCustomerConfirmationEmail(
+        //       customerEmail,
+        //       application.applicationNumber,
+        //       customerName,
+        //       pdfBuffer
+        //     );
+        //     console.log(`Customer confirmation email sent to ${customerEmail}`);
+        //   } catch (error) {
+        //     console.error('Failed to send customer confirmation email:', error);
+        //   }
+        //   
+        //   try {
+        //     await sendInternalNotificationEmail(
+        //       application.applicationNumber,
+        //       customerName,
+        //       customerEmail,
+        //       pdfBuffer
+        //     );
+        //     console.log(`Internal notification email sent for application ${application.applicationNumber}`);
+        //   } catch (error) {
+        //     console.error('Failed to send internal notification email:', error);
+        //   }
+        // }
+        
+        console.log(`Application ${application.applicationNumber} submitted successfully. Email notification will be enabled after PDF generation is implemented.`);
+        
         return { success: true };
       }),
     

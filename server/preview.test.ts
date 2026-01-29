@@ -92,6 +92,21 @@ describe("预览页面功能测试", () => {
     // 创建申请
     const { applicationId } = await caller.application.create();
 
+    // 添加必要的个人详细信息（邮箱是必须的）
+    await caller.personalDetailed.save({
+      applicationId,
+      idType: '香港身份证',
+      idNumber: 'A123456(7)',
+      idIssuingPlace: '香港',
+      idIsPermanent: true,
+      maritalStatus: '未婚',
+      educationLevel: '大学',
+      email: 'test@example.com',
+      phoneCountryCode: '+852',
+      phoneNumber: '12345678',
+      residentialAddress: '香港中環干诺道中璱1号',
+    });
+
     // 生成申请编号
     await caller.application.generateNumber({ id: applicationId });
 
