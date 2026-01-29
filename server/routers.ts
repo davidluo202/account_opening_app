@@ -7,6 +7,7 @@ import * as db from "./db";
 import { storagePut } from "./storage";
 import { nanoid } from "nanoid";
 import { generateApplicationPDF, type ApplicationPDFData } from "./pdf-generator";
+import { sendVerificationCode as sendEmail, generateVerificationCode } from "./email";
 
 export const appRouter = router({
   system: systemRouter,
@@ -23,13 +24,21 @@ export const appRouter = router({
     sendVerificationCode: publicProcedure
       .input(z.object({ email: z.string().email() }))
       .mutation(async ({ input }) => {
-        const code = Math.floor(100000 + Math.random() * 900000).toString();
-        await db.createVerificationCode(input.email, code, 10);
+        const code = generateVerificationCode();
+        const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5分钟后过期
         
-        // TODO: 集成邮件发送服务
-        console.log(`[Verification Code] ${input.email}: ${code}`);
+        // 保存验证码到数据库
+        await db.saveVerificationCode(input.email, code, expiresAt);
         
-        return { success: true, message: "验证码已发送" };
+        // 发送邮件
+        const sent = await sendEmail(input.email, code);
+        if (!sent) {
+          throw new Error("邮件发送失败，请稍后重试");
+        }
+        
+        console.log(`[Verification Code] Sent to ${input.email}`);
+        
+        return { success: true, message: "验证码已发送至您的邮箱" };
       }),
     
     // 验证邮箱验证码

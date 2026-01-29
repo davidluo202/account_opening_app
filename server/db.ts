@@ -522,3 +522,26 @@ export async function getCompleteApplicationData(applicationId: number) {
     regulatory
   };
 }
+
+// ==================== 邮箱验证码相关 ====================
+
+/**
+ * 保存邮箱验证码
+ */
+export async function saveVerificationCode(email: string, code: string, expiresAt: Date) {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    const [result] = await db.insert(emailVerificationCodes).values({
+      email,
+      code,
+      expiresAt,
+      verified: false,
+    });
+    return result.insertId;
+  } catch (error) {
+    console.error('Error saving verification code:', error);
+    return null;
+  }
+}

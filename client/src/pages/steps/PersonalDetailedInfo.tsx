@@ -71,6 +71,11 @@ export default function PersonalDetailedInfo() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [showVerificationInput, setShowVerificationInput] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+  const [isSendingCode, setIsSendingCode] = useState(false);
 
   const { data: existingData, isLoading: isLoadingData } = trpc.personalDetailed.get.useQuery(
     { applicationId },
@@ -98,6 +103,64 @@ export default function PersonalDetailedInfo() {
       });
     }
   }, [existingData]);
+
+  // 倒计时器
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown]);
+
+  const sendVerificationCodeMutation = trpc.auth.sendVerificationCode.useMutation({
+    onSuccess: () => {
+      toast.success("验证码已发送至您的邮箱");
+      setShowVerificationInput(true);
+      setCountdown(300); // 5分钟倒计时
+      setIsSendingCode(false);
+    },
+    onError: (error) => {
+      toast.error(`发送失败: ${error.message}`);
+      setIsSendingCode(false);
+    },
+  });
+
+  const verifyCodeMutation = trpc.auth.verifyCode.useMutation({
+    onSuccess: () => {
+      toast.success("邮箱验证成功");
+      setEmailVerified(true);
+      setShowVerificationInput(false);
+      setCountdown(0);
+    },
+    onError: (error) => {
+      toast.error(`验证失败: ${error.message}`);
+    },
+  });
+
+  const handleSendVerificationCode = () => {
+    if (!formData.email.trim()) {
+      toast.error("请先输入邮箱地址");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      toast.error("请输入有效的邮箱地址");
+      return;
+    }
+    setIsSendingCode(true);
+    sendVerificationCodeMutation.mutate({ email: formData.email });
+  };
+
+  const handleVerifyCode = () => {
+    if (!verificationCode.trim()) {
+      toast.error("请输入验证码");
+      return;
+    }
+    if (verificationCode.length !== 6) {
+      toast.error("验证码必须为6位数字");
+      return;
+    }
+    verifyCodeMutation.mutate({ email: formData.email, code: verificationCode });
+  };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -148,6 +211,8 @@ export default function PersonalDetailedInfo() {
       newErrors.email = "請輸入電子郵箱";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "請輸入有效的電子郵箱地址";
+    } else if (!emailVerified) {
+      newErrors.email = "請先驗證郵箱地址";
     }
 
     if (!formData.phoneNumber.trim()) newErrors.phoneNumber = "請輸入電話號碼";
@@ -354,18 +419,89 @@ export default function PersonalDetailedInfo() {
           <Label htmlFor="email">
             電子郵箱 / Email <span className="text-destructive">*</span>
           </Label>
-          <Input
-            id="email"
-            type="email"
-            value={formData.email}
-            onChange={(e) => {
-              setFormData({ ...formData, email: e.target.value });
-              if (errors.email) setErrors({ ...errors, email: "" });
-            }}
-            placeholder="example@email.com"
-            className={errors.email ? "border-destructive" : ""}
-          />
+          <div className="flex gap-2">
+            <Input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => {
+                setFormData({ ...formData, email: e.target.value });
+                if (errors.email) setErrors({ ...errors, email: "" });
+                setEmailVerified(false);
+              }}
+              placeholder="example@email.com"
+              className={errors.email ? "border-destructive" : ""}
+              disabled={emailVerified}
+            />
+            {!emailVerified && (
+              <button
+                type="button"
+                onClick={handleSendVerificationCode}
+                disabled={isSendingCode || countdown > 0}
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              >
+                {isSendingCode ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : countdown > 0 ? (
+                  `${Math.floor(countdown / 60)}:${String(countdown % 60).padStart(2, '0')}`
+                ) : (
+                  "驗證"
+                )}
+              </button>
+            )}
+            {emailVerified && (
+              <span className="flex items-center text-green-600 whitespace-nowrap">
+                ✓ 已驗證
+              </span>
+            )}
+          </div>
           {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
+          
+          {/* 验证码输入 */}
+          {showVerificationInput && !emailVerified && (
+            <div className="space-y-2 mt-2">
+              <Label htmlFor="verificationCode">
+                驗證碼 <span className="text-destructive">*</span>
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  id="verificationCode"
+                  type="text"
+                  maxLength={6}
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ''))}
+                  placeholder="請輸入6位數字驗證碼"
+                />
+                <button
+                  type="button"
+                  onClick={handleVerifyCode}
+                  disabled={verifyCodeMutation.isPending}
+                  className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                >
+                  {verifyCodeMutation.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    "確認"
+                  )}
+                </button>
+                {countdown > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleSendVerificationCode}
+                    disabled={countdown > 0 || isSendingCode}
+                    className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                  >
+                    重發
+                  </button>
+                )}
+              </div>
+              {countdown > 0 && (
+                <p className="text-sm text-muted-foreground">
+                  驗證碼將在 {Math.floor(countdown / 60)}:{String(countdown % 60).padStart(2, '0')} 後過期
+                </p>
+              )}
+            </div>
+          )}
         </div>
 
         {/* 電話號碼 */}
