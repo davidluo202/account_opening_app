@@ -1,0 +1,1 @@
+ALTER TABLE `personal_detailed_info` ADD `emailVerified` boolean DEFAULT false NOT NULL;

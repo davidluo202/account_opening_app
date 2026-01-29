@@ -172,15 +172,31 @@ export async function sendCustomerConfirmationEmail(
         },
       ] : undefined,
     };
-
-    await sgMail.send(msg);
-    console.log(`Customer confirmation email sent to ${to}`);
-    return true;
-  } catch (error: any) {
-    console.error('SendGrid error:', error);
-    if (error.response) {
-      console.error('SendGrid response:', error.response.body);
+    
+    // 添加详细日志
+    console.log(`[Customer Email] Preparing to send email to ${to}`);
+    console.log(`[Customer Email] PDF Buffer exists: ${!!pdfBuffer}`);
+    console.log(`[Customer Email] PDF Buffer size: ${pdfBuffer ? pdfBuffer.length : 0} bytes`);
+    console.log(`[Customer Email] Has attachments: ${!!msg.attachments}`);
+    if (msg.attachments) {
+      console.log(`[Customer Email] Attachment count: ${msg.attachments.length}`);
+      console.log(`[Customer Email] Attachment filename: ${msg.attachments[0].filename}`);
+      console.log(`[Customer Email] Attachment base64 length: ${msg.attachments[0].content.length}`);
     }
+    
+    try {
+      await sgMail.send(msg);
+      console.log(`Customer confirmation email sent to ${to} with PDF attachment`);
+      return true;
+    } catch (error: any) {
+      console.error('SendGrid error:', error);
+      if (error.response) {
+        console.error('SendGrid response:', error.response.body);
+      }
+      return false;
+    }
+  } catch (error: any) {
+    console.error('Error in sendCustomerConfirmationEmail:', error);
     return false;
   }
 }
@@ -215,7 +231,7 @@ export async function sendInternalNotificationEmail(
 客戶郵箱：${customerEmail}
 提交時間：${new Date().toLocaleString('zh-HK', { timeZone: 'Asia/Hong_Kong' })}
 
-請查閱附件中的申請表PDF文件，並儘快處理此申請。
+請查閱附件中的申請表PDF文件，並盡快處理此申請。
 
 ---
 此郵件由系統自動發送。`,
@@ -244,7 +260,7 @@ export async function sendInternalNotificationEmail(
             </table>
           </div>
           
-          <p style="color: #374151;">請查閱附件中的申請表PDF文件，並儘快處理此申請。</p>
+          <p style="color: #374151;">請查閱附件中的申請表PDF文件，並盡快處理此申請。</p>
           
           <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
           <p style="color: #9ca3af; font-size: 12px;">此郵件由系統自動發送。</p>
@@ -259,9 +275,20 @@ export async function sendInternalNotificationEmail(
         },
       ] : undefined,
     };
-
+    
+    // 添加详细日志
+    console.log(`[Internal Email] Preparing to send email to onboarding@cmfinancial.com`);
+    console.log(`[Internal Email] PDF Buffer exists: ${!!pdfBuffer}`);
+    console.log(`[Internal Email] PDF Buffer size: ${pdfBuffer ? pdfBuffer.length : 0} bytes`);
+    console.log(`[Internal Email] Has attachments: ${!!msg.attachments}`);
+    if (msg.attachments) {
+      console.log(`[Internal Email] Attachment count: ${msg.attachments.length}`);
+      console.log(`[Internal Email] Attachment filename: ${msg.attachments[0].filename}`);
+      console.log(`[Internal Email] Attachment base64 length: ${msg.attachments[0].content.length}`);
+    }
+    
     await sgMail.send(msg);
-    console.log(`Internal notification email sent for application ${applicationNumber}`);
+    console.log(`Internal notification email sent to onboarding@cmfinancial.com with PDF attachment`);
     return true;
   } catch (error: any) {
     console.error('SendGrid error:', error);
@@ -271,3 +298,5 @@ export async function sendInternalNotificationEmail(
     return false;
   }
 }
+
+

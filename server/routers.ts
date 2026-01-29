@@ -188,7 +188,24 @@ export const appRouter = router({
         
         console.log(`Application ${application.applicationNumber} submitted successfully. Email notifications sent (without PDF attachment).`);
         
-        return { success: true };
+        // 如果PDF生成成功，上传到S3并返回URL
+        let pdfUrl: string | undefined;
+        if (pdfBuffer) {
+          try {
+            const { storagePut } = await import('./storage');
+            const result = await storagePut(
+              `applications/${application.applicationNumber}/application.pdf`,
+              pdfBuffer,
+              'application/pdf'
+            );
+            pdfUrl = result.url;
+            console.log(`PDF uploaded to S3: ${pdfUrl}`);
+          } catch (error) {
+            console.error('Failed to upload PDF to S3:', error);
+          }
+        }
+        
+        return { success: true, pdfUrl };
       }),
     
     // 生成PDF
@@ -354,6 +371,7 @@ export const appRouter = router({
         phoneCountryCode: z.string(),
         phoneNumber: z.string(),
         faxNo: z.string().optional(), // 传真号码（可选）
+        emailVerified: z.boolean().optional().default(false), // 邮箱验证状态
         residentialAddress: z.string(),
       }))
       .mutation(async ({ input, ctx }) => {

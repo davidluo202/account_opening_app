@@ -99,6 +99,7 @@ export const personalDetailedInfo = mysqlTable("personal_detailed_info", {
   phoneCountryCode: varchar("phoneCountryCode", { length: 10 }).notNull(),
   phoneNumber: varchar("phoneNumber", { length: 50 }).notNull(),
   faxNo: varchar("faxNo", { length: 50 }), // 传真号码
+  emailVerified: boolean("emailVerified").default(false).notNull(), // 邮箱验证状态
   residentialAddress: text("residentialAddress").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

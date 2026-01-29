@@ -1,6 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
 import { ArrowLeft, Check, Save } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -17,6 +18,8 @@ export default function ApplicationPreview() {
   const { isAuthenticated, loading: authLoading } = useAuth();
 
   const [hasGeneratedNumber, setHasGeneratedNumber] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
   // 获取完整申请数据
   const { data: completeData, isLoading, refetch } = trpc.application.getComplete.useQuery(
@@ -38,9 +41,12 @@ export default function ApplicationPreview() {
 
   // 提交申请
   const submitMutation = trpc.application.submit.useMutation({
-    onSuccess: () => {
-      toast.success("申请已成功提交！");
-      setLocation("/applications");
+    onSuccess: (data) => {
+      // 显示成功对话框，而不是直接跳转
+      if (data.pdfUrl) {
+        setPdfUrl(data.pdfUrl);
+      }
+      setShowSuccessDialog(true);
     },
     onError: (error) => {
       toast.error(`提交失败: ${error.message}`);
@@ -676,11 +682,72 @@ export default function ApplicationPreview() {
         {!application?.applicationNumber && (
           <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
             <p className="text-sm text-yellow-800">
-              <strong>提示：</strong>请先点击"保存并生成申请编号"按钮，生成申请编号后才能提交申请。
+              <strong>提示：</strong>请先点击“保存并生成申请编号”按钮，生成申请编号后才能提交申请。
             </p>
           </div>
         )}
       </div>
+      
+      {/* 提交成功对话框 */}
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl text-green-600 flex items-center">
+              <Check className="h-6 w-6 mr-2" />
+              申请已成功提交！
+            </DialogTitle>
+            <DialogDescription className="text-base">
+              感谢您的申请，我们已收到您的开户申请。
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <h4 className="font-semibold mb-2">申请编号：{application?.applicationNumber}</h4>
+              <p className="text-sm text-gray-600">
+                我们已将确认邮件发送至您的邮箱：<strong>{personalDetailed?.email}</strong>
+              </p>
+              <p className="text-sm text-gray-600 mt-2">
+                邮件中包含您的申请表PDF文件，请注意查收。
+              </p>
+            </div>
+            
+            {pdfUrl && (
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h4 className="font-semibold mb-2">下载申请表PDF</h4>
+                <p className="text-sm text-gray-600 mb-3">
+                  您也可以直接下载申请表PDF文件供存档使用。
+                </p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => window.open(pdfUrl, '_blank')}
+                  className="w-full"
+                >
+                  下载申请表PDF
+                </Button>
+              </div>
+            )}
+            
+            <div className="text-sm text-gray-600">
+              <p className="mb-2">后续流程：</p>
+              <ol className="list-decimal list-inside space-y-1 ml-2">
+                <li>我们的客户服务团队将在<strong>1-2个工作日</strong>内审核您的申请</li>
+                <li>审核通过后，我们将通过邮件通知您</li>
+                <li>如需补充资料，我们会及时与您联系</li>
+              </ol>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button onClick={() => {
+              setShowSuccessDialog(false);
+              setLocation("/applications");
+            }}>
+              返回申请列表
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -101,6 +101,10 @@ export default function PersonalDetailedInfo() {
         idExpiryDate: existingData.idExpiryDate || "",
         faxNo: existingData.faxNo || "", // 处理可选字段
       });
+      // 从数据库读取邮箱验证状态
+      if (existingData.emailVerified) {
+        setEmailVerified(true);
+      }
     }
   }, [existingData]);
 
@@ -232,6 +236,7 @@ export default function PersonalDetailedInfo() {
       applicationId,
       ...formData,
       idExpiryDate: formData.idIsPermanent ? undefined : formData.idExpiryDate,
+      emailVerified, // 保存邮箱验证状态
     });
   };
 
