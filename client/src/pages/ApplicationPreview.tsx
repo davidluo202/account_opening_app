@@ -108,6 +108,14 @@ export default function ApplicationPreview() {
     return d.toLocaleDateString("zh-CN");
   };
 
+  // 格式化金额（添加千分号）
+  const formatAmount = (amount: string | number | null | undefined) => {
+    if (!amount) return "-";
+    const num = typeof amount === "string" ? parseFloat(amount) : amount;
+    if (isNaN(num)) return "-";
+    return num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  };
+
   // 翻译函数
   const translateCustomerType = (type: string | null | undefined) => {
     if (!type) return "-";
@@ -241,8 +249,8 @@ export default function ApplicationPreview() {
         <Card className="p-0 mb-6 overflow-hidden">
           {/* 标题 */}
           <div className="bg-primary text-white p-4 text-center">
-            <h2 className="text-xl font-bold">Customer Information Form (Individual / Joint Account)</h2>
-            <p className="text-sm">客户资料表（个人或联名户口）</p>
+            <h2 className="text-xl font-bold">客户開戶申請表（個人/聯名）</h2>
+            <p className="text-sm">Customer Account Opening Form (Ind/Joint)</p>
           </div>
 
           {/* 账户类型 */}
@@ -409,14 +417,14 @@ export default function ApplicationPreview() {
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">收入来源 Income Source</td>
                   <td className="p-3 w-1/4 border-r">{employment?.incomeSource || "-"}</td>
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">年收入 Annual Income</td>
-                  <td className="p-3 w-1/4">{employment?.annualIncome || "-"}</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">年收入 Annual Income (HKD)</td>
+                  <td className="p-3 w-1/4">{formatAmount(employment?.annualIncome)}</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold border-r">流动资产 Liquid Asset</td>
-                  <td className="p-3 border-r">{employment?.liquidAsset || "-"}</td>
-                  <td className="p-3 bg-gray-50 font-semibold border-r">净资产 Net Worth</td>
-                  <td className="p-3">{employment?.netWorth || "-"}</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">流动资产 Liquid Asset (HKD)</td>
+                  <td className="p-3 border-r">{formatAmount(employment?.liquidAsset)}</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">净资产 Net Worth (HKD)</td>
+                  <td className="p-3">{formatAmount(employment?.netWorth)}</td>
                 </tr>
               </tbody>
             </table>
@@ -611,7 +619,23 @@ export default function ApplicationPreview() {
                 {regulatory?.signatureName && (
                   <tr className="border-b">
                     <td className="p-3 bg-gray-50 font-semibold border-r">签名 Signature</td>
-                    <td className="p-3" colSpan={3}>{regulatory.signatureName}</td>
+                    <td className="p-3" colSpan={3}>
+                      <div className="flex flex-col">
+                        <span className="font-semibold">{regulatory.signatureName}</span>
+                        {regulatory.signedAt && (
+                          <span className="text-sm text-gray-500 mt-1">
+                            签署时间: {new Date(regulatory.signedAt).toLocaleString('zh-CN', { 
+                              year: 'numeric', 
+                              month: '2-digit', 
+                              day: '2-digit', 
+                              hour: '2-digit', 
+                              minute: '2-digit', 
+                              second: '2-digit' 
+                            })}
+                          </span>
+                        )}
+                      </div>
+                    </td>
                   </tr>
                 )}
               </tbody>

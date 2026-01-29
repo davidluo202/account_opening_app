@@ -76,7 +76,7 @@ export async function sendCustomerConfirmationEmail(
   to: string,
   applicationNumber: string,
   customerName: string,
-  pdfBuffer: Buffer
+  pdfBuffer?: Buffer
 ): Promise<boolean> {
   if (!apiKey) {
     throw new Error('SendGrid API密钥未配置');
@@ -163,14 +163,14 @@ export async function sendCustomerConfirmationEmail(
           </p>
         </div>
       `,
-      attachments: [
+      attachments: pdfBuffer ? [
         {
           content: pdfBuffer.toString('base64'),
-          filename: `${applicationNumber}_Application.pdf`,
+          filename: `申請表_${applicationNumber}.pdf`,
           type: 'application/pdf',
           disposition: 'attachment',
         },
-      ],
+      ] : undefined,
     };
 
     await sgMail.send(msg);
@@ -197,7 +197,7 @@ export async function sendInternalNotificationEmail(
   applicationNumber: string,
   customerName: string,
   customerEmail: string,
-  pdfBuffer: Buffer
+  pdfBuffer?: Buffer
 ): Promise<boolean> {
   if (!apiKey) {
     throw new Error('SendGrid API密钥未配置');
@@ -250,14 +250,14 @@ export async function sendInternalNotificationEmail(
           <p style="color: #9ca3af; font-size: 12px;">此郵件由系統自動發送。</p>
         </div>
       `,
-      attachments: [
+      attachments: pdfBuffer ? [
         {
           content: pdfBuffer.toString('base64'),
           filename: `${applicationNumber}_Application.pdf`,
           type: 'application/pdf',
           disposition: 'attachment',
         },
-      ],
+      ] : undefined,
     };
 
     await sgMail.send(msg);

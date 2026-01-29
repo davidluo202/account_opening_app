@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2, Plus, Trash2, Edit } from "lucide-react";
+import { convertToTraditional } from "@/lib/converter";
 
 const currencies = [
   { value: "HKD", label: "港幣 / HKD" },
@@ -90,6 +91,14 @@ export default function BankAccount() {
       }));
     }
   }, [basicInfo]);
+
+  // 简繁体转换处理函数
+  const handleChineseBlur = (field: string, value: string) => {
+    const converted = convertToTraditional(value);
+    if (converted !== value) {
+      setFormData(prev => ({ ...prev, [field]: converted }));
+    }
+  };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -224,6 +233,7 @@ export default function BankAccount() {
                   setFormData({ ...formData, bankName: e.target.value });
                   if (errors.bankName) setErrors({ ...errors, bankName: "" });
                 }}
+                onBlur={(e) => handleChineseBlur('bankName', e.target.value)}
                 placeholder="请输入银行名称"
                 className={errors.bankName ? "border-destructive" : ""}
               />

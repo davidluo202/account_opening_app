@@ -134,34 +134,34 @@ export const appRouter = router({
         // 暂时使用空的PDF Buffer，后续实现PDF生成后替换
         const pdfBuffer = Buffer.from('PDF generation coming soon');
         
-        // 发送邮件（暂时禁用，等待PDF生成功能完善）
-        // if (customerEmail && application.applicationNumber) {
-        //   try {
-        //     await sendCustomerConfirmationEmail(
-        //       customerEmail,
-        //       application.applicationNumber,
-        //       customerName,
-        //       pdfBuffer
-        //     );
-        //     console.log(`Customer confirmation email sent to ${customerEmail}`);
-        //   } catch (error) {
-        //     console.error('Failed to send customer confirmation email:', error);
-        //   }
-        //   
-        //   try {
-        //     await sendInternalNotificationEmail(
-        //       application.applicationNumber,
-        //       customerName,
-        //       customerEmail,
-        //       pdfBuffer
-        //     );
-        //     console.log(`Internal notification email sent for application ${application.applicationNumber}`);
-        //   } catch (error) {
-        //     console.error('Failed to send internal notification email:', error);
-        //   }
-        // }
+        // 发送邮件（暂时不附带PDF，等待PDF生成功能完善后添加附件）
+        if (customerEmail && application.applicationNumber) {
+          try {
+            await sendCustomerConfirmationEmail(
+              customerEmail,
+              application.applicationNumber,
+              customerName
+              // pdfBuffer // 暂时不附带PDF
+            );
+            console.log(`Customer confirmation email sent to ${customerEmail}`);
+          } catch (error) {
+            console.error('Failed to send customer confirmation email:', error);
+          }
+          
+          try {
+            await sendInternalNotificationEmail(
+              application.applicationNumber,
+              customerName,
+              customerEmail
+              // pdfBuffer // 暂时不附带PDF
+            );
+            console.log(`Internal notification email sent for application ${application.applicationNumber}`);
+          } catch (error) {
+            console.error('Failed to send internal notification email:', error);
+          }
+        }
         
-        console.log(`Application ${application.applicationNumber} submitted successfully. Email notification will be enabled after PDF generation is implemented.`);
+        console.log(`Application ${application.applicationNumber} submitted successfully. Email notifications sent (without PDF attachment).`);
         
         return { success: true };
       }),

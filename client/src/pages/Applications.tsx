@@ -4,8 +4,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import { useLocation } from "wouter";
-import { Plus, FileText, Loader2, LogOut } from "lucide-react";
+import { Plus, FileText, Loader2, LogOut, Filter } from "lucide-react";
 import { getLoginUrl } from "@/const";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState } from "react";
 
 const statusLabels: Record<string, { zh: string; en: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   draft: { zh: "草稿", en: "Draft", variant: "secondary" },
@@ -30,6 +32,8 @@ const accountSubTypeLabels: Record<string, { zh: string; en: string }> = {
 export default function Applications() {
   const { user, loading: authLoading, isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<"createdAt" | "submittedAt">("createdAt");
   const { data: applications, isLoading } = trpc.application.list.useQuery(undefined, {
     enabled: isAuthenticated,
   });
@@ -99,13 +103,67 @@ export default function Applications() {
           </Button>
         </div>
 
+        {/* 筛选和排序控件 */}
+        <div className="flex gap-4 mb-6">
+          <div className="flex-1">
+            <label className="text-sm font-medium mb-2 block">申請状态</label>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">全部</SelectItem>
+                <SelectItem value="draft">草稿</SelectItem>
+                <SelectItem value="submitted">已提交</SelectItem>
+                <SelectItem value="approved">已审批</SelectItem>
+                <SelectItem value="rejected">拒绝申請</SelectItem>
+                <SelectItem value="returned">退回修改</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex-1">
+            <label className="text-sm font-medium mb-2 block">排序方式</label>
+            <Select value={sortBy} onValueChange={(v) => setSortBy(v as "createdAt" | "submittedAt")}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="createdAt">创建时间</SelectItem>
+                <SelectItem value="submittedAt">提交时间</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center mb-4 hidden">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">我的開戶申請</h1>
+            <p className="text-muted-foreground">管理您的開戶申請記錄</p>
+          </div>
+          <Button onClick={handleCreateApplication} disabled={createMutation.isPending}>
+            {createMutation.isPending ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Plus className="h-4 w-4 mr-2" />
+            )}
+            新開戶申請
+          </Button>
+        </div>
+
         {isLoading ? (
           <div className="flex justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         ) : applications && applications.length > 0 ? (
           <div className="grid gap-4">
-            {applications.map((app) => (
+            {applications
+              .filter(app => statusFilter === "all" || app.status === statusFilter)
+              .sort((a, b) => {
+                const dateA = sortBy === "createdAt" ? new Date(a.createdAt) : (a.submittedAt ? new Date(a.submittedAt) : new Date(0));
+                const dateB = sortBy === "createdAt" ? new Date(b.createdAt) : (b.submittedAt ? new Date(b.submittedAt) : new Date(0));
+                return dateB.getTime() - dateA.getTime();
+              })
+              .map((app) => (
               <Card key={app.id} className="hover:shadow-md transition-shadow">
                 <CardHeader>
                   <div className="flex justify-between items-start">
@@ -117,7 +175,14 @@ export default function Applications() {
                         </Badge>
                       </CardTitle>
                       <CardDescription>
-                        創建於 {new Date(app.createdAt).toLocaleDateString("zh-HK")}
+                        創建於 {new Date(app.createdAt).toLocaleString("zh-CN", {
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          second: '2-digit'
+                        })}
                       </CardDescription>
                     </div>
                     <Button
@@ -138,7 +203,14 @@ export default function Applications() {
                   <div className="flex gap-4 text-sm text-muted-foreground">
                     <span>當前步驟: {app.currentStep}/12</span>
                     {app.submittedAt && (
-                      <span>提交於 {new Date(app.submittedAt).toLocaleDateString("zh-HK")}</span>
+                      <span>提交於 {new Date(app.submittedAt).toLocaleString("zh-CN", {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                      })}</span>
                     )}
                   </div>
                 </CardContent>

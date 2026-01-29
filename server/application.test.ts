@@ -120,6 +120,34 @@ describe("Application Management", () => {
     // Generate application number first
     await caller.application.generateNumber({ id: applicationId });
 
+    // Add required data for submission
+    await caller.personalBasic.save({
+      applicationId,
+      chineseName: "張三",
+      englishName: "Zhang San",
+      gender: "male" as const,
+      dateOfBirth: "1990-01-01",
+      placeOfBirth: "Hong Kong",
+      nationality: "China",
+    });
+
+    await caller.personalDetailed.save({
+      applicationId,
+      idType: "hkid",
+      idNumber: "A123456(7)",
+      idIssuingPlace: "Hong Kong",
+      idExpiryDate: "2030-12-31",
+      idIsPermanent: true,
+      maritalStatus: "single",
+      educationLevel: "bachelor",
+      residentialAddress: "123 Test Street",
+      mailingAddress: "123 Test Street",
+      phoneCountryCode: "+852",
+      phoneNumber: "12345678",
+      email: "test@example.com",
+      emailVerified: true,
+    });
+
     // Submit application
     const result = await caller.application.submit({ id: applicationId });
 
