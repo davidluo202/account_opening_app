@@ -351,3 +351,84 @@
 - [x] 检查SendGrid附件格式（base64编码、content-type）
 - [x] 添加详细日志诊断问题
 - [x] 测试客户邮件和onboarding邮件都包含PDF附件
+
+## 新需求（2026-01-29 晚上）
+
+### 银行账户功能增强
+- [x] 在账户类型列表中添加"Checking（支票账户）"选项
+- [x] 实现大陆银行账号位数校验（16-19位）
+- [x] 实现香港银行账号位数校验（9-12位）
+- [x] 添加账号格式验证提示
+- [x] 添加银行所在地选择器（香港/大陆/其他）
+
+### PDF生成和下载问题
+- [x] 诊断PDF文件无法生成的根本原因（数据映射问题）
+- [x] 修复PDF生成逻辑（添加applicationNumber到dataForPDF）
+- [x] 确俜PDF上传到S3并返回URL
+- [x] 添加详细的PDF生成日志
+- [ ] 测试提交后的PDF文件可访问（需要实际测试）
+
+### 后台审批管理系统
+- [ ] 设计审批人员表（员工姓名、CE No.）
+- [ ] 设计审批记录表（审批操作、审批人、时间戳）
+- [ ] 扩展申请表状态（pending/approved/rejected/revision_required）
+- [ ] 实现审批人员登录和权限控制
+- [ ] 开发待审批申请列表页面
+- [ ] 开发申请详情预览页面（只读模式）
+- [ ] 实现附件文件查看功能
+- [ ] 添加审批操作按钮（同意、退回修改、拒绝）
+- [ ] 记录审批人信息和审批时间
+- [ ] 发送审批结果通知邮件给客户
+
+
+## 后台审批管理系统实施计划
+
+### Phase 1: 数据库设计
+- [ ] 创建审批人员表（approvers）
+  - id, userId, employeeName, ceNumber, role, createdAt, updatedAt
+- [ ] 创建审批记录表（approval_records）
+  - id, applicationId, approverId, action (approved/rejected/returned), comments, createdAt
+- [ ] 更新applications表的status枚举，添加"returned"状态
+- [ ] 运行数据库迁移
+
+### Phase 2: 后端API开发
+- [ ] 实现审批人员管理API
+  - approver.list: 获取所有审批人员列表
+  - approver.add: 添加审批人员（仅管理员）
+  - approver.update: 更新审批人员信息
+  - approver.delete: 删除审批人员
+- [ ] 实现审批操作API
+  - approval.getPendingApplications: 获取待审批申请列表
+  - approval.getApplicationDetail: 获取申请详情（包含所有表单数据和附件）
+  - approval.approve: 审批通过
+  - approval.reject: 拒绝申请
+  - approval.return: 退回修改
+- [ ] 实现审批记录API
+  - approval.getHistory: 获取申请的审批历史记录
+
+### Phase 3: 前端界面开发
+- [ ] 创建审批管理主页面（/admin/approvals）
+  - 待审批申请列表（表格形式）
+  - 筛选和搜索功能
+  - 申请状态标签
+- [ ] 创建申请详情页面（/admin/approvals/:id）
+  - 完整的申请信息展示（只读模式）
+  - 附件预览和下载功能
+  - 审批操作按钮（同意/退回/拒绝）
+  - 审批意见输入框
+  - 审批历史记录时间线
+- [ ] 创建审批人员管理页面（/admin/approvers）
+  - 审批人员列表
+  - 添加/编辑/删除审批人员
+- [ ] 更新DashboardLayout添加审批管理导航项
+
+### Phase 4: 权限控制
+- [ ] 实现审批人员角色检查中间件
+- [ ] 前端路由守卫（仅审批人员可访问）
+- [ ] 后端API权限验证
+
+### Phase 5: 测试和优化
+- [ ] 编写审批流程测试用例
+- [ ] 测试审批操作和状态流转
+- [ ] 测试附件预览功能
+- [ ] 性能优化和用户体验改进

@@ -36,6 +36,20 @@
       "when": 1769659253094,
       "tag": "0004_free_crystal",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1769660714120,
+      "tag": "0005_rainy_jetstream",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1769660784525,
+      "tag": "0006_wandering_christian_walker",
+      "breakpoints": true
     }
   ]
 }

@@ -1,0 +1,1 @@
+ALTER TABLE `bank_accounts` ADD `bankLocation` enum('HK','CN','OTHER') DEFAULT 'HK' NOT NULL;

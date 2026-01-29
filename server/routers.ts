@@ -125,6 +125,13 @@ export const appRouter = router({
           throw new Error("申请数据不存在");
         }
         
+        // 添加applicationNumber到completeData以便PDF生成器使用
+        const dataForPDF = {
+          ...completeData,
+          applicationNumber: application.applicationNumber,
+          submittedAt: new Date(),
+        };
+        
         // 发送客户确认邮件
         const { sendCustomerConfirmationEmail, sendInternalNotificationEmail } = await import('./email');
         const customerEmail = completeData.detailedInfo?.email;
@@ -136,11 +143,18 @@ export const appRouter = router({
         
         // 生成PDF
         try {
-          console.log('Generating PDF...');
-          pdfBuffer = await generateApplicationPDF(completeData);
-          console.log(`PDF generated successfully, size: ${pdfBuffer.length} bytes`);
+          console.log('[PDF Generation] Starting PDF generation...');
+          console.log('[PDF Generation] Application data:', JSON.stringify({
+            applicationNumber: application.applicationNumber,
+            hasBasicInfo: !!completeData.basicInfo,
+            hasDetailedInfo: !!completeData.detailedInfo,
+            hasOccupation: !!completeData.occupation,
+          }));
+          pdfBuffer = await generateApplicationPDF(dataForPDF);
+          console.log(`[PDF Generation] PDF generated successfully, size: ${pdfBuffer.length} bytes`);
         } catch (error) {
-          console.error('Failed to generate PDF:', error);
+          console.error('[PDF Generation] Failed to generate PDF:', error);
+          console.error('[PDF Generation] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
           // PDF生成失败不影响邮件发送，只是不附带PDF
         }
         
@@ -519,7 +533,8 @@ export const appRouter = router({
       .input(z.object({
         applicationId: z.number(),
         bankName: z.string(),
-        accountType: z.enum(["saving", "current", "others"]).optional(), // 账户类型（可选）
+        bankLocation: z.enum(["HK", "CN", "OTHER"]).default("HK"), // 银行所在地
+        accountType: z.enum(["saving", "current", "checking", "others"]).optional(), // 账户类型（可选）
         accountCurrency: z.string(),
         accountNumber: z.string(),
         accountHolderName: z.string(),

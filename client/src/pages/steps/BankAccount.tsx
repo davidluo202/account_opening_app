@@ -23,6 +23,7 @@ const currencies = [
 const accountTypes = [
   { value: "saving", label: "储蓄账户 / Saving" },
   { value: "current", label: "活期账户 / Current" },
+  { value: "checking", label: "支票账户 / Checking" },
   { value: "others", label: "其他 / Others" },
 ];
 
@@ -38,6 +39,7 @@ export default function BankAccount() {
     accountCurrency: "HKD",
     accountNumber: "",
     accountHolderName: "",
+    bankLocation: "HK", // 默认香港
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -62,6 +64,7 @@ export default function BankAccount() {
         accountCurrency: "HKD",
         accountNumber: "",
         accountHolderName: basicInfo?.englishName || "",
+        bankLocation: "HK",
       });
       setIsAdding(false);
       refetch();
@@ -104,7 +107,26 @@ export default function BankAccount() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.bankName.trim()) newErrors.bankName = "請輸入銀行名稱";
-    if (!formData.accountNumber.trim()) newErrors.accountNumber = "請輸入賬戶號碼";
+    
+    // 验证账号
+    if (!formData.accountNumber.trim()) {
+      newErrors.accountNumber = "請輸入賬戶號碼";
+    } else {
+      const accountNum = formData.accountNumber.replace(/[^0-9]/g, ''); // 只保留数字
+      
+      if (formData.bankLocation === "CN") {
+        // 大陆银行账号：16-19位
+        if (accountNum.length < 16 || accountNum.length > 19) {
+          newErrors.accountNumber = "大陸銀行賬戶號碼應為16-19位數字";
+        }
+      } else if (formData.bankLocation === "HK") {
+        // 香港银行账号：9-12位
+        if (accountNum.length < 9 || accountNum.length > 12) {
+          newErrors.accountNumber = "香港銀行賬戶號碼應為9-12位數字";
+        }
+      }
+    }
+    
     if (!formData.accountHolderName.trim()) newErrors.accountHolderName = "請輸入賬戶持有人姓名";
 
     setErrors(newErrors);
@@ -120,7 +142,8 @@ export default function BankAccount() {
     addMutation.mutate({
       applicationId,
       bankName: formData.bankName,
-      accountType: formData.accountType as "saving" | "current" | "others",
+      bankLocation: formData.bankLocation as "HK" | "CN" | "OTHER",
+      accountType: formData.accountType as "saving" | "current" | "checking" | "others",
       accountCurrency: formData.accountCurrency,
       accountNumber: formData.accountNumber,
       accountHolderName: formData.accountHolderName,
@@ -172,7 +195,7 @@ export default function BankAccount() {
                       賬戶號碼: {account.accountNumber}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      账户类型: {account.accountType === "saving" ? "储蓄" : account.accountType === "current" ? "活期" : "其他"}
+                      账户类型: {account.accountType === "saving" ? "储蓄" : account.accountType === "current" ? "活期" : account.accountType === "checking" ? "支票" : "其他"}
                     </div>
                     <div className="text-sm text-muted-foreground">
                       币种: {account.accountCurrency}
@@ -238,6 +261,30 @@ export default function BankAccount() {
                 className={errors.bankName ? "border-destructive" : ""}
               />
               {errors.bankName && <p className="text-sm text-destructive">{errors.bankName}</p>}
+            </div>
+
+            {/* 银行所在地 */}
+            <div className="space-y-2">
+              <Label htmlFor="bankLocation">
+                银行所在地 / Bank Location <span className="text-destructive">*</span>
+              </Label>
+              <Select 
+                value={formData.bankLocation} 
+                onValueChange={(v) => {
+                  setFormData({ ...formData, bankLocation: v });
+                  // 清除账号验证错误，因为所在地改变了
+                  if (errors.accountNumber) setErrors({ ...errors, accountNumber: "" });
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="HK">香港 / Hong Kong</SelectItem>
+                  <SelectItem value="CN">大陆 / Mainland China</SelectItem>
+                  <SelectItem value="OTHER">其他 / Other</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             {/* 账户类型 */}

@@ -158,7 +158,8 @@ export const bankAccounts = mysqlTable("bank_accounts", {
   id: int("id").autoincrement().primaryKey(),
   applicationId: int("applicationId").notNull(),
   bankName: varchar("bankName", { length: 200 }).notNull(),
-  accountType: mysqlEnum("accountType", ["saving", "current", "others"]), // 账户类型
+  bankLocation: mysqlEnum("bankLocation", ["HK", "CN", "OTHER"]).default("HK").notNull(), // 银行所在地
+  accountType: mysqlEnum("accountType", ["saving", "current", "checking", "others"]), // 账户类型
   accountCurrency: varchar("accountCurrency", { length: 10 }).notNull(),
   accountNumber: varchar("accountNumber", { length: 100 }).notNull(),
   accountHolderName: varchar("accountHolderName", { length: 200 }).notNull(),
