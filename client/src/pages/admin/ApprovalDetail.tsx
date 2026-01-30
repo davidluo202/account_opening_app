@@ -369,7 +369,11 @@ export default function ApprovalDetail() {
                             'none': '无',
                             'limited': '有限',
                             'moderate': '中等',
-                            'extensive': '丰富'
+                            'extensive': '丰富',
+                            'less_than_1': '<1 Years/年',
+                            '1_to_3': '1-3 Years/年',
+                            '3_to_5': '3-5 Years/年',
+                            'more_than_5': '>5 Years/年'
                           };
                           return Object.keys(experience).length > 0
                             ? Object.entries(experience).map(([key, value]) => (
@@ -413,15 +417,15 @@ export default function ApprovalDetail() {
                   </div>
                   <div>
                     <Label>年收入范围</Label>
-                    <p>{employmentDetails.annualIncome || "-"}</p>
+                    <p>{employmentDetails.annualIncome ? `${Number(employmentDetails.annualIncome).toLocaleString()} 港币` : "-"}</p>
                   </div>
                   <div>
                     <Label>流动资产范围</Label>
-                    <p>{employmentDetails.liquidAsset || "-"}</p>
+                    <p>{employmentDetails.liquidAsset ? `${Number(employmentDetails.liquidAsset).toLocaleString()} 港币` : "-"}</p>
                   </div>
                   <div>
                     <Label>净资产范围</Label>
-                    <p>{employmentDetails.netWorth || "-"}</p>
+                    <p>{employmentDetails.netWorth ? `${Number(employmentDetails.netWorth).toLocaleString()} 港币` : "-"}</p>
                   </div>
                 </div>
               </div>
