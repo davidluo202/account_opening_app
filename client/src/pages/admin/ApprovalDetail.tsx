@@ -154,6 +154,7 @@ export default function ApprovalDetail() {
   const employmentDetails = applicationData.employment;
   const financialAndInvestment = applicationData.financial;
   const bankAccounts = applicationData.bankAccounts;
+  const taxInformation = applicationData.tax;
   const documents = applicationData.documents;
 
   return (
@@ -216,12 +217,20 @@ export default function ApprovalDetail() {
                   <p>{personalBasicInfo?.englishName || "-"}</p>
                 </div>
                 <div>
-                  <Label>身份证号</Label>
-                  <p>{personalDetailedInfo?.idNumber || "-"}</p>
+                  <Label>性别</Label>
+                  <p>{personalBasicInfo?.gender === 'male' ? '男' : personalBasicInfo?.gender === 'female' ? '女' : personalBasicInfo?.gender || "-"}</p>
                 </div>
                 <div>
                   <Label>出生日期</Label>
                   <p>{personalBasicInfo?.dateOfBirth ? new Date(personalBasicInfo.dateOfBirth).toLocaleDateString() : "-"}</p>
+                </div>
+                <div>
+                  <Label>出生地</Label>
+                  <p>{personalBasicInfo?.placeOfBirth || "-"}</p>
+                </div>
+                <div>
+                  <Label>国籍</Label>
+                  <p>{personalBasicInfo?.nationality || "-"}</p>
                 </div>
               </div>
             </div>
@@ -232,15 +241,43 @@ export default function ApprovalDetail() {
                 <h3 className="font-semibold text-lg mb-2">个人详细信息</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
+                    <Label>证件类型</Label>
+                    <p>{personalDetailedInfo.idType || "-"}</p>
+                  </div>
+                  <div>
+                    <Label>证件号码</Label>
+                    <p>{personalDetailedInfo.idNumber || "-"}</p>
+                  </div>
+                  <div>
+                    <Label>证件签发地</Label>
+                    <p>{personalDetailedInfo.idIssuingPlace || "-"}</p>
+                  </div>
+                  <div>
+                    <Label>证件有效期</Label>
+                    <p>{personalDetailedInfo.idIsPermanent ? '永久有效' : personalDetailedInfo.idExpiryDate ? new Date(personalDetailedInfo.idExpiryDate).toLocaleDateString() : "-"}</p>
+                  </div>
+                  <div>
+                    <Label>婚姻状况</Label>
+                    <p>{personalDetailedInfo.maritalStatus || "-"}</p>
+                  </div>
+                  <div>
+                    <Label>学历状况</Label>
+                    <p>{personalDetailedInfo.educationLevel || "-"}</p>
+                  </div>
+                  <div>
                     <Label>电话</Label>
-                    <p>{personalDetailedInfo.phoneNumber || "-"}</p>
+                    <p>{personalDetailedInfo.phoneCountryCode ? `+${personalDetailedInfo.phoneCountryCode} ${personalDetailedInfo.phoneNumber}` : personalDetailedInfo.phoneNumber || "-"}</p>
+                  </div>
+                  <div>
+                    <Label>传真</Label>
+                    <p>{personalDetailedInfo.faxNo || "-"}</p>
                   </div>
                   <div>
                     <Label>邮箱</Label>
                     <p>{personalDetailedInfo.email || "-"}</p>
                   </div>
                   <div className="col-span-2">
-                    <Label>地址</Label>
+                    <Label>居住地址</Label>
                     <p>{personalDetailedInfo.residentialAddress || "-"}</p>
                   </div>
                 </div>
@@ -254,10 +291,10 @@ export default function ApprovalDetail() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label>就业状态</Label>
-                    <p>{occupationInfo.employmentStatus || "-"}</p>
+                    <p>{occupationInfo.employmentStatus === 'employed' ? '受雇' : occupationInfo.employmentStatus === 'self_employed' ? '自雇' : occupationInfo.employmentStatus === 'student' ? '学生' : occupationInfo.employmentStatus === 'unemployed' ? '失业' : occupationInfo.employmentStatus || "-"}</p>
                   </div>
                   <div>
-                    <Label>公司名称</Label>
+                    <Label>公司/业务名称</Label>
                     <p>{occupationInfo.companyName || "-"}</p>
                   </div>
                   <div>
@@ -265,8 +302,24 @@ export default function ApprovalDetail() {
                     <p>{occupationInfo.position || "-"}</p>
                   </div>
                   <div>
+                    <Label>从业年期</Label>
+                    <p>{occupationInfo.yearsOfService ? `${occupationInfo.yearsOfService}年` : "-"}</p>
+                  </div>
+                  <div>
                     <Label>行业</Label>
                     <p>{occupationInfo.industry || "-"}</p>
+                  </div>
+                  <div>
+                    <Label>办公电话</Label>
+                    <p>{occupationInfo.officePhone || "-"}</p>
+                  </div>
+                  <div>
+                    <Label>办公传真</Label>
+                    <p>{occupationInfo.officeFaxNo || "-"}</p>
+                  </div>
+                  <div className="col-span-2">
+                    <Label>业务/公司地址</Label>
+                    <p>{occupationInfo.companyAddress || "-"}</p>
                   </div>
                 </div>
               </div>
@@ -348,6 +401,31 @@ export default function ApprovalDetail() {
                 </div>
               </div>
             )}
+            
+            {/* Employment Details */}
+            {employmentDetails && (
+              <div>
+                <h3 className="font-semibold text-lg mb-2">财务状况</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>收入来源</Label>
+                    <p>{employmentDetails.incomeSource || "-"}</p>
+                  </div>
+                  <div>
+                    <Label>年收入范围</Label>
+                    <p>{employmentDetails.annualIncome || "-"}</p>
+                  </div>
+                  <div>
+                    <Label>流动资产范围</Label>
+                    <p>{employmentDetails.liquidAsset || "-"}</p>
+                  </div>
+                  <div>
+                    <Label>净资产范围</Label>
+                    <p>{employmentDetails.netWorth || "-"}</p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Bank Accounts */}
             {bankAccounts && bankAccounts.length > 0 && (
@@ -363,7 +441,15 @@ export default function ApprovalDetail() {
                       </div>
                       <div>
                         <Label>账户类型</Label>
-                        <p>{account.accountType || "-"}</p>
+                        <p>{account.accountType === 'saving' ? '储蓄账户' : account.accountType === 'current' ? '活期账户' : account.accountType === 'checking' ? '支票账户' : account.accountType === 'others' ? '其他' : account.accountType || "-"}</p>
+                      </div>
+                      <div>
+                        <Label>账户币种</Label>
+                        <p>{account.accountCurrency || "-"}</p>
+                      </div>
+                      <div>
+                        <Label>开户人姓名</Label>
+                        <p>{account.accountHolderName || "-"}</p>
                       </div>
                       <div>
                         <Label>账号</Label>
@@ -372,6 +458,23 @@ export default function ApprovalDetail() {
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+
+            {/* Tax Information */}
+            {taxInformation && (
+              <div>
+                <h3 className="font-semibold text-lg mb-2">税务信息</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>税务居民地</Label>
+                    <p>{taxInformation.taxResidency || "-"}</p>
+                  </div>
+                  <div>
+                    <Label>税务编号</Label>
+                    <p>{taxInformation.taxIdNumber || "-"}</p>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -395,6 +498,54 @@ export default function ApprovalDetail() {
                       </Button>
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* Regulatory Declarations */}
+            {applicationData.regulatory && (
+              <div>
+                <h3 className="font-semibold text-lg mb-2">监管声明</h3>
+                <div className="space-y-4">
+                  <div>
+                    <Label>PEP声明（政治公众人物）</Label>
+                    <p className="mt-1">
+                      {applicationData.regulatory.isPEP ? '是' : '否'}
+                    </p>
+                  </div>
+                  <div>
+                    <Label>US Person声明（美国税务居民）</Label>
+                    <p className="mt-1">
+                      {applicationData.regulatory.isUSPerson ? '是' : '否'}
+                    </p>
+                  </div>
+                  <div>
+                    <Label>开户协议书同意</Label>
+                    <p className="mt-1">
+                      {applicationData.regulatory.agreementAccepted ? '已同意' : '未同意'}
+                      {applicationData.regulatory.signedAt && (
+                        <span className="ml-2 text-gray-500 text-sm">
+                          签署时间：{new Date(applicationData.regulatory.signedAt).toLocaleString('zh-CN')}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                  <div>
+                    <Label>签署姓名</Label>
+                    <p className="mt-1">{applicationData.regulatory.signatureName || '-'}</p>
+                  </div>
+                  <div>
+                    <Label>电子签名同意</Label>
+                    <p className="mt-1">
+                      {applicationData.regulatory.electronicSignatureConsent ? '已同意' : '未同意'}
+                    </p>
+                  </div>
+                  <div>
+                    <Label>AML合规同意</Label>
+                    <p className="mt-1">
+                      {applicationData.regulatory.amlComplianceConsent ? '已同意' : '未同意'}
+                    </p>
+                  </div>
                 </div>
               </div>
             )}
