@@ -14,6 +14,7 @@ interface EmailVerificationProps {
   isApprover?: boolean;
   requiredDomain?: string;
   disabled?: boolean;
+  autoCompleteDomain?: boolean; // 是否自动补全域名
 }
 
 export default function EmailVerification({
@@ -23,6 +24,7 @@ export default function EmailVerification({
   isApprover = false,
   requiredDomain = "",
   disabled = false,
+  autoCompleteDomain = false,
 }: EmailVerificationProps) {
   const [emailError, setEmailError] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
@@ -69,20 +71,30 @@ export default function EmailVerification({
     }
   }, [countdown, showCodeInput]);
   
+  // 获取完整邮箱地址（如果启用自动补全）
+  const getFullEmail = (inputEmail: string): string => {
+    if (autoCompleteDomain && requiredDomain && !inputEmail.includes('@')) {
+      return inputEmail + requiredDomain;
+    }
+    return inputEmail;
+  };
+  
   // 验证邮箱格式
-  const validateEmail = (email: string): boolean => {
-    if (!email) {
+  const validateEmail = (inputEmail: string): boolean => {
+    const fullEmail = getFullEmail(inputEmail);
+    
+    if (!fullEmail) {
       setEmailError("请输入邮箱地址");
       return false;
     }
     
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(fullEmail)) {
       setEmailError("请输入有效的邮箱地址");
       return false;
     }
     
-    if (requiredDomain && !email.endsWith(requiredDomain)) {
+    if (requiredDomain && !fullEmail.endsWith(requiredDomain)) {
       setEmailError(`邮箱必须使用${requiredDomain}域名`);
       return false;
     }
@@ -93,10 +105,16 @@ export default function EmailVerification({
   
   // 发送验证码
   const handleSendCode = () => {
+    const fullEmail = getFullEmail(email);
     if (!validateEmail(email)) return;
     
+    // 如果启用自动补全，更新email状态为完整邮箱
+    if (autoCompleteDomain && !email.includes('@')) {
+      onEmailChange(fullEmail);
+    }
+    
     sendCodeMutation.mutate({
-      email,
+      email: fullEmail,
       isApprover,
     });
   };
@@ -114,8 +132,9 @@ export default function EmailVerification({
       return;
     }
     
+    const fullEmail = getFullEmail(email);
     verifyCodeMutation.mutate({
-      email,
+      email: fullEmail,
       code: verificationCode,
     });
   };
@@ -138,8 +157,8 @@ export default function EmailVerification({
             <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               id="email"
-              type="email"
-              placeholder={requiredDomain ? `your.name${requiredDomain}` : "your.email@example.com"}
+              type={autoCompleteDomain ? "text" : "email"}
+              placeholder={autoCompleteDomain ? "输入邮箱前缀（系统自动补全" + requiredDomain + "）" : (requiredDomain ? `your.name${requiredDomain}` : "your.email@example.com")}
               value={email}
               onChange={(e) => {
                 onEmailChange(e.target.value);

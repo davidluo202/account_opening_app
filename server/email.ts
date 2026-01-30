@@ -300,3 +300,258 @@ export async function sendInternalNotificationEmail(
 }
 
 
+
+/**
+ * 发送审批通过邮件到operation@cmfinancial.com
+ * @param applicationNumber 申请编号
+ * @param customerName 客户姓名
+ * @param approverName 审批人员姓名
+ * @param isProfessionalInvestor 是否为专业投资者
+ * @param approvedRiskProfile 审批评定的风险等级
+ * @returns Promise<boolean> 发送成功返回true，失败返回false
+ */
+export async function sendApprovalNotificationEmail(
+  applicationNumber: string,
+  customerName: string,
+  approverName: string,
+  isProfessionalInvestor: boolean,
+  approvedRiskProfile: string
+): Promise<boolean> {
+  if (!apiKey) {
+    throw new Error('SendGrid API密钥未配置');
+  }
+
+  const complianceEmail = 'compliance@cmfinancial.com';
+  const operationEmail = 'operation@cmfinancial.com';
+
+  const riskMap: Record<string, string> = {
+    'low': '低风险',
+    'medium': '中等风险',
+    'high': '高风险'
+  };
+
+  try {
+    const msg = {
+      to: operationEmail,
+      from: complianceEmail, // 使用compliance@cmfinancial.com作为发件人
+      subject: `开户申请已批准 - ${applicationNumber}`,
+      text: `申请编号：${applicationNumber}
+客户姓名：${customerName}
+审批人员：${approverName}
+审批结果：批准
+专业投资者（PI）：${isProfessionalInvestor ? '是' : '否'}
+风险评级：${riskMap[approvedRiskProfile] || approvedRiskProfile}
+
+请运营部门跟进后续开户流程。`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h2 style="color: #16a34a;">开户申请已批准</h2>
+          <div style="background-color: #f0fdf4; border-left: 4px solid #16a34a; padding: 15px; margin: 20px 0;">
+            <p style="margin: 0; font-weight: bold;">申请编号：${applicationNumber}</p>
+          </div>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;"><strong>客户姓名：</strong></td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${customerName}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;"><strong>审批人员：</strong></td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${approverName}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;"><strong>审批结果：</strong></td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; color: #16a34a; font-weight: bold;">批准</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;"><strong>专业投资者（PI）：</strong></td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${isProfessionalInvestor ? '是' : '否'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;"><strong>风险评级：</strong></td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${riskMap[approvedRiskProfile] || approvedRiskProfile}</td>
+            </tr>
+          </table>
+          <p style="margin-top: 20px;">请运营部门跟进后续开户流程。</p>
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+          <p style="color: #6b7280; font-size: 12px;">此邮件由合规部门自动发送。</p>
+        </div>
+      `,
+    };
+
+    await sgMail.send(msg);
+    console.log(`Approval notification sent to ${operationEmail} for application ${applicationNumber}`);
+    return true;
+  } catch (error: any) {
+    console.error('SendGrid error:', error);
+    if (error.response) {
+      console.error('SendGrid response:', error.response.body);
+    }
+    return false;
+  }
+}
+
+/**
+ * 发送审批拒绝邮件到Customer-services@cmfinancial.com
+ * @param applicationNumber 申请编号
+ * @param customerName 客户姓名
+ * @param customerEmail 客户邮箱
+ * @param approverName 审批人员姓名
+ * @param rejectReason 拒绝理由
+ * @returns Promise<boolean> 发送成功返回true，失败返回false
+ */
+export async function sendRejectionNotificationEmail(
+  applicationNumber: string,
+  customerName: string,
+  customerEmail: string,
+  approverName: string,
+  rejectReason: string
+): Promise<boolean> {
+  if (!apiKey) {
+    throw new Error('SendGrid API密钥未配置');
+  }
+
+  const complianceEmail = 'compliance@cmfinancial.com';
+  const customerServiceEmail = 'Customer-services@cmfinancial.com';
+
+  try {
+    const msg = {
+      to: customerServiceEmail,
+      from: complianceEmail, // 使用compliance@cmfinancial.com作为发件人
+      subject: `开户申请已拒绝 - ${applicationNumber}`,
+      text: `申请编号：${applicationNumber}
+客户姓名：${customerName}
+客户邮箱：${customerEmail}
+审批人员：${approverName}
+审批结果：拒绝
+拒绝理由：${rejectReason}
+
+请客户服务部门通知客户并提供必要的说明。`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h2 style="color: #dc2626;">开户申请已拒绝</h2>
+          <div style="background-color: #fef2f2; border-left: 4px solid #dc2626; padding: 15px; margin: 20px 0;">
+            <p style="margin: 0; font-weight: bold;">申请编号：${applicationNumber}</p>
+          </div>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;"><strong>客户姓名：</strong></td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${customerName}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;"><strong>客户邮箱：</strong></td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${customerEmail}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;"><strong>审批人员：</strong></td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${approverName}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;"><strong>审批结果：</strong></td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; color: #dc2626; font-weight: bold;">拒绝</td>
+            </tr>
+          </table>
+          <div style="margin-top: 20px; padding: 15px; background-color: #f9fafb; border-radius: 5px;">
+            <p style="margin: 0; font-weight: bold;">拒绝理由：</p>
+            <p style="margin: 10px 0 0 0;">${rejectReason}</p>
+          </div>
+          <p style="margin-top: 20px;">请客户服务部门通知客户并提供必要的说明。</p>
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+          <p style="color: #6b7280; font-size: 12px;">此邮件由合规部门自动发送。</p>
+        </div>
+      `,
+    };
+
+    await sgMail.send(msg);
+    console.log(`Rejection notification sent to ${customerServiceEmail} for application ${applicationNumber}`);
+    return true;
+  } catch (error: any) {
+    console.error('SendGrid error:', error);
+    if (error.response) {
+      console.error('SendGrid response:', error.response.body);
+    }
+    return false;
+  }
+}
+
+/**
+ * 发送审批退回邮件到Customer-services@cmfinancial.com
+ * @param applicationNumber 申请编号
+ * @param customerName 客户姓名
+ * @param customerEmail 客户邮箱
+ * @param approverName 审批人员姓名
+ * @param returnReason 退回理由
+ * @returns Promise<boolean> 发送成功返回true，失败返回false
+ */
+export async function sendReturnNotificationEmail(
+  applicationNumber: string,
+  customerName: string,
+  customerEmail: string,
+  approverName: string,
+  returnReason: string
+): Promise<boolean> {
+  if (!apiKey) {
+    throw new Error('SendGrid API密钥未配置');
+  }
+
+  const complianceEmail = 'compliance@cmfinancial.com';
+  const customerServiceEmail = 'Customer-services@cmfinancial.com';
+
+  try {
+    const msg = {
+      to: customerServiceEmail,
+      from: complianceEmail, // 使用compliance@cmfinancial.com作为发件人
+      subject: `开户申请需补充材料 - ${applicationNumber}`,
+      text: `申请编号：${applicationNumber}
+客户姓名：${customerName}
+客户邮箱：${customerEmail}
+审批人员：${approverName}
+审批结果：退回补充材料
+退回理由：${returnReason}
+
+请客户服务部门通知客户补充所需材料。`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h2 style="color: #ea580c;">开户申请需补充材料</h2>
+          <div style="background-color: #fff7ed; border-left: 4px solid #ea580c; padding: 15px; margin: 20px 0;">
+            <p style="margin: 0; font-weight: bold;">申请编号：${applicationNumber}</p>
+          </div>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;"><strong>客户姓名：</strong></td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${customerName}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;"><strong>客户邮箱：</strong></td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${customerEmail}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;"><strong>审批人员：</strong></td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${approverName}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;"><strong>审批结果：</strong></td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; color: #ea580c; font-weight: bold;">退回补充材料</td>
+            </tr>
+          </table>
+          <div style="margin-top: 20px; padding: 15px; background-color: #f9fafb; border-radius: 5px;">
+            <p style="margin: 0; font-weight: bold;">需要补充的材料：</p>
+            <p style="margin: 10px 0 0 0;">${returnReason}</p>
+          </div>
+          <p style="margin-top: 20px;">请客户服务部门通知客户补充所需材料。</p>
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+          <p style="color: #6b7280; font-size: 12px;">此邮件由合规部门自动发送。</p>
+        </div>
+      `,
+    };
+
+    await sgMail.send(msg);
+    console.log(`Return notification sent to ${customerServiceEmail} for application ${applicationNumber}`);
+    return true;
+  } catch (error: any) {
+    console.error('SendGrid error:', error);
+    if (error.response) {
+      console.error('SendGrid response:', error.response.body);
+    }
+    return false;
+  }
+}

@@ -46,11 +46,18 @@ export default function AdminHome() {
   });
 
   const handleSendCode = () => {
-    if (!email || !email.endsWith("@cmfinancial.com")) {
+    // 自动补全邮箱域名
+    let fullEmail = email;
+    if (!email.includes('@')) {
+      fullEmail = email + '@cmfinancial.com';
+      setEmail(fullEmail);
+    }
+    
+    if (!fullEmail || !fullEmail.endsWith("@cmfinancial.com")) {
       toast.error("请输入有效的@cmfinancial.com邮箱地址");
       return;
     }
-    sendCodeMutation.mutate({ email, isApprover: true });
+    sendCodeMutation.mutate({ email: fullEmail, isApprover: true });
   };
 
   const handleVerify = () => {
@@ -99,12 +106,15 @@ export default function AdminHome() {
               <Label htmlFor="email">审批人员邮箱</Label>
               <Input
                 id="email"
-                type="email"
-                placeholder="your.name@cmfinancial.com"
+                type="text"
+                placeholder="输入邮箱前缀（系统自动补全@cmfinancial.com）"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={codeSent}
               />
+              <p className="text-xs text-muted-foreground mt-1">
+                例如：输入 "xluo" 即可，系统会自动补全为 xluo@cmfinancial.com
+              </p>
             </div>
 
             {!codeSent ? (

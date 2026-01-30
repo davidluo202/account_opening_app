@@ -610,3 +610,35 @@
 - [x] 更新后端API支持原因参数（rejectReason和returnReason）
 - [x] 为拒绝和退回对话框创建独立的reason状态
 - [ ] 测试完整的审批流程（批准/拒绝/退回）
+
+
+## 审批系统优化和邮件通知功能（2026-01-30 下午2）
+
+### 审批人员登录优化
+- [x] 修改审批人员登录页面的邮箱输入框
+- [x] 只需输入@前面的部分，系统自动补全@cmfinancial.com
+- [x] 添加输入框提示文字说明（AdminHome.tsx和EmailVerification.tsx）
+- [x] 更新登录逻辑处理邮箱补全（AdminHome和ApproverRegister）
+
+### 申请详情页面优化
+- [x] 将投资目的（investmentObjectives）转换为中文显示（资本保值/收益/增值/投机）
+- [x] 将投资经验（investmentExperience）转换为中文显示（股票/债券/基金/衡生品/外汇/商品）
+- [x] 将风险等级（riskTolerance）转换为中文显示（低风险/中等风险/高风险）
+- [x] 优化投资信息的排版布局（使用space-y-4垂直布局）
+- [x] 使用合适的间距和分组展示（每个字段独立显示带背景色）
+
+### 风险评级不一致提示
+- [x] 比较审批人员选择的风险评级与客户选择的风险等级
+- [x] 当两者不一致时弹出提示对话框（黄色警告样式）
+- [x] 提示内容说明差异，但仍以审批人员选择为准
+- [x] 用户可选择返回修改或确认批准
+
+### 审批结果邮件通知功能
+- [x] 在email.ts中添加审批结果邮件发送函数（sendApprovalNotificationEmail/sendRejectionNotificationEmail/sendReturnNotificationEmail）
+- [x] 批准邮件：发送到operation@cmfinancial.com（包含PI和风险评级）
+- [x] 拒绝邮件：发送到Customer-services@cmfinancial.com（包含拒绝理由）
+- [x] 退回邮件：发送到Customer-services@cmfinancial.com（包含退回理由）
+- [x] 所有审批邮件使用compliance@cmfinancial.com作为发件人
+- [x] 设计专业的审批邮件模板（HTML格式带表格）
+- [x] 在routers.ts的审批API中集成邮件发送（approve/reject/return）
+- [ ] 测试所有审批邮件发送功能（需要实际审批操作测试）

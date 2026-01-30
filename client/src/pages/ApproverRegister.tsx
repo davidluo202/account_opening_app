@@ -33,6 +33,7 @@ export default function ApproverRegister() {
                 onVerified={handleVerified}
                 isApprover={true}
                 requiredDomain="@cmfinancial.com"
+                autoCompleteDomain={true}
               />
               
               <Alert>

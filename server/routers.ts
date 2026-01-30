@@ -7,7 +7,13 @@ import * as db from "./db";
 import { storagePut } from "./storage";
 import { nanoid } from "nanoid";
 import { generateApplicationPDF, type ApplicationPDFData } from "./pdf-generator";
-import { sendVerificationCode as sendEmail, generateVerificationCode } from "./email";
+import { 
+  sendVerificationCode as sendEmail, 
+  generateVerificationCode,
+  sendApprovalNotificationEmail,
+  sendRejectionNotificationEmail,
+  sendReturnNotificationEmail
+} from "./email";
 
 export const appRouter = router({
   system: systemRouter,
@@ -882,6 +888,23 @@ export const appRouter = router({
           comments: input.comments,
         });
         
+        // 发送审批通过邮件到operation@cmfinancial.com
+        try {
+          const applicationData = await db.getCompleteApplicationData(input.applicationId);
+          if (applicationData) {
+            await sendApprovalNotificationEmail(
+              applicationData.application?.applicationNumber || '',
+              applicationData.basicInfo?.chineseName || applicationData.basicInfo?.englishName || '未知',
+              ctx.user.name || ctx.user.email || '审批人员',
+              input.isProfessionalInvestor,
+              input.approvedRiskProfile
+            );
+          }
+        } catch (emailError) {
+          console.error('Failed to send approval notification email:', emailError);
+          // 邮件发送失败不影响审批流程
+        }
+        
         return { success: true };
       }),
     
@@ -910,6 +933,23 @@ export const appRouter = router({
           rejectReason: input.rejectReason,
         });
         
+        // 发送拒绝通知邮件到Customer-services@cmfinancial.com
+        try {
+          const applicationData = await db.getCompleteApplicationData(input.applicationId);
+          if (applicationData) {
+            await sendRejectionNotificationEmail(
+              applicationData.application?.applicationNumber || '',
+              applicationData.basicInfo?.chineseName || applicationData.basicInfo?.englishName || '未知',
+              applicationData.detailedInfo?.email || '',
+              ctx.user.name || ctx.user.email || '审批人员',
+              input.rejectReason
+            );
+          }
+        } catch (emailError) {
+          console.error('Failed to send rejection notification email:', emailError);
+          // 邮件发送失败不影响审批流程
+        }
+        
         return { success: true };
       }),
     
@@ -937,6 +977,23 @@ export const appRouter = router({
           comments: input.comments,
           returnReason: input.returnReason,
         });
+        
+        // 发送退回通知邮件到Customer-services@cmfinancial.com
+        try {
+          const applicationData = await db.getCompleteApplicationData(input.applicationId);
+          if (applicationData) {
+            await sendReturnNotificationEmail(
+              applicationData.application?.applicationNumber || '',
+              applicationData.basicInfo?.chineseName || applicationData.basicInfo?.englishName || '未知',
+              applicationData.detailedInfo?.email || '',
+              ctx.user.name || ctx.user.email || '审批人员',
+              input.returnReason
+            );
+          }
+        } catch (emailError) {
+          console.error('Failed to send return notification email:', emailError);
+          // 邮件发送失败不影响审批流程
+        }
         
         return { success: true };
       }),

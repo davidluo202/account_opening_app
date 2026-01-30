@@ -29,6 +29,7 @@ export default function ApprovalDetail() {
   const [returnReason, setReturnReason] = useState("");
   const [showRejectDialog, setShowRejectDialog] = useState(false);
   const [showReturnDialog, setShowReturnDialog] = useState(false);
+  const [showRiskWarningDialog, setShowRiskWarningDialog] = useState(false);
 
   const { data: applicationData, isLoading } = trpc.approval.getApplicationDetail.useQuery(
     { id: Number(id) },
@@ -78,6 +79,18 @@ export default function ApprovalDetail() {
       toast.error("请完成所有审批选项");
       return;
     }
+    
+    // 检查风险评级是否与客户自评一致
+    const customerRisk = applicationData?.financial?.riskTolerance;
+    if (customerRisk && customerRisk !== approvedRiskProfile) {
+      setShowRiskWarningDialog(true);
+    } else {
+      confirmApprove();
+    }
+  };
+  
+  const confirmApprove = () => {
+    setShowRiskWarningDialog(false);
     approveMutation.mutate({
       applicationId: Number(id),
       isProfessionalInvestor: isProfessionalInvestor === "yes",
@@ -257,18 +270,74 @@ export default function ApprovalDetail() {
             {financialAndInvestment && (
               <div>
                 <h3 className="font-semibold text-lg mb-2">财务及投资信息</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
                   <div>
-                    <Label>投资目标</Label>
-                    <p>{financialAndInvestment.investmentObjectives || "-"}</p>
+                    <Label className="font-medium">投资目标</Label>
+                    <div className="mt-1 p-3 bg-gray-50 rounded-md">
+                      {(() => {
+                        try {
+                          const objectives = JSON.parse(financialAndInvestment.investmentObjectives || '[]');
+                          const objectiveMap: Record<string, string> = {
+                            'capital_preservation': '资本保值',
+                            'income': '收益',
+                            'growth': '增值',
+                            'speculation': '投机'
+                          };
+                          return objectives.length > 0 
+                            ? objectives.map((obj: string) => objectiveMap[obj] || obj).join('、')
+                            : '-';
+                        } catch {
+                          return financialAndInvestment.investmentObjectives || '-';
+                        }
+                      })()}
+                    </div>
                   </div>
                   <div>
-                    <Label>投资经验</Label>
-                    <p>{financialAndInvestment.investmentExperience || "-"}</p>
+                    <Label className="font-medium">投资经验</Label>
+                    <div className="mt-1 p-3 bg-gray-50 rounded-md space-y-2">
+                      {(() => {
+                        try {
+                          const experience = JSON.parse(financialAndInvestment.investmentExperience || '{}');
+                          const experienceMap: Record<string, string> = {
+                            'stocks': '股票',
+                            'bonds': '债券',
+                            'funds': '基金',
+                            'derivatives': '衡生品',
+                            'forex': '外汇',
+                            'commodities': '商品'
+                          };
+                          const levelMap: Record<string, string> = {
+                            'none': '无',
+                            'limited': '有限',
+                            'moderate': '中等',
+                            'extensive': '丰富'
+                          };
+                          return Object.keys(experience).length > 0
+                            ? Object.entries(experience).map(([key, value]) => (
+                                <div key={key} className="flex justify-between">
+                                  <span>{experienceMap[key] || key}:</span>
+                                  <span className="font-medium">{levelMap[value as string] || String(value)}</span>
+                                </div>
+                              ))
+                            : <span>-</span>;
+                        } catch {
+                          return <span>{financialAndInvestment.investmentExperience || '-'}</span>;
+                        }
+                      })()}
+                    </div>
                   </div>
                   <div>
-                    <Label>风险承受能力</Label>
-                    <p>{financialAndInvestment.riskTolerance || "-"}</p>
+                    <Label className="font-medium">客户自评风险承受能力</Label>
+                    <div className="mt-1 p-3 bg-gray-50 rounded-md">
+                      {(() => {
+                        const riskMap: Record<string, string> = {
+                          'low': '低风险',
+                          'medium': '中等风险',
+                          'high': '高风险'
+                        };
+                        return riskMap[financialAndInvestment.riskTolerance || ''] || financialAndInvestment.riskTolerance || '-';
+                      })()}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -446,6 +515,69 @@ export default function ApprovalDetail() {
               disabled={returnMutation.isPending || !returnReason.trim()}
             >
               {returnMutation.isPending ? "处理中..." : "确认退回"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Risk Warning Dialog */}
+      <Dialog open={showRiskWarningDialog} onOpenChange={setShowRiskWarningDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>风险评级不一致提示</DialogTitle>
+            <DialogDescription>
+              审批人员评定的风险等级与客户自评不一致
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+              <div className="flex items-start gap-3">
+                <div className="text-yellow-600 mt-0.5">
+                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium text-yellow-800">风险评级差异</p>
+                  <div className="mt-2 text-sm text-yellow-700 space-y-1">
+                    <p>客户自评风险等级：
+                      <span className="font-semibold">
+                        {(() => {
+                          const riskMap: Record<string, string> = {
+                            'low': '低风险',
+                            'medium': '中等风险',
+                            'high': '高风险'
+                          };
+                          return riskMap[applicationData?.financial?.riskTolerance || ''] || '-';
+                        })()}
+                      </span>
+                    </p>
+                    <p>审批人员评定风险等级：
+                      <span className="font-semibold">
+                        {(() => {
+                          const riskMap: Record<string, string> = {
+                            'low': '低风险',
+                            'medium': '中等风险',
+                            'high': '高风险'
+                          };
+                          return riskMap[approvedRiskProfile] || '-';
+                        })()}
+                      </span>
+                    </p>
+                  </div>
+                  <p className="mt-3 text-sm text-yellow-700">
+                    请确认您的评定是否正确。最终将以审批人员的评定为准。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowRiskWarningDialog(false)}>
+              返回修改
+            </Button>
+            <Button onClick={confirmApprove} disabled={approveMutation.isPending}>
+              {approveMutation.isPending ? "处理中..." : "确认批准"}
             </Button>
           </DialogFooter>
         </DialogContent>
