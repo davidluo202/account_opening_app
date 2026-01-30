@@ -66,10 +66,36 @@ export const appRouter = router({
           throw new Error("验证码无效或已过期");
         }
         
-        // 如果当前用户已登录，更新其emailVerified状态
-        if (ctx.user && ctx.user.email === input.email) {
-          await db.updateUserEmailVerified(ctx.user.id, true);
+        // 查找或创建用户记录（使用邮箱作为openId）
+        let user = await db.getUserByEmail(input.email);
+        if (!user) {
+          // 创建新用户（使用邮箱作为openId）
+          await db.upsertUser({
+            openId: input.email, // 使用邮箱作为openId
+            email: input.email,
+            name: input.email.split('@')[0], // 使用邮箱前缀作为姓名
+            loginMethod: 'email',
+            lastSignedIn: new Date(),
+          });
+          user = await db.getUserByEmail(input.email);
         }
+        
+        if (!user) {
+          throw new Error("创建用户失败");
+        }
+        
+        // 更新emailVerified状态
+        await db.updateUserEmailVerified(user.id, true);
+        
+        // 创建session token
+        const { sdk } = await import('./_core/sdk');
+        const sessionToken = await sdk.createSessionToken(user.openId, {
+          name: user.name || user.email || '',
+        });
+        
+        // 设置session cookie
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.cookie(COOKIE_NAME, sessionToken, cookieOptions);
         
         return { success: true };
       }),

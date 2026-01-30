@@ -760,3 +760,20 @@
 - [ ] 在App.tsx中添加用户管理页面路由（/admin/users）
 - [ ] 在ApprovalList.tsx或ApproverManagement.tsx中添加"用户管理"导航链接
 - [ ] 确保只有管理员可以访问用户管理页面
+
+
+## 审批人员登录状态和列表显示修复（2026-01-30 晚上）
+
+### 问题描述
+- 审批人员邮箱验证登录后，重新进入审批系统时被重定向到开户系统登录页
+- 审批列表显示"无待审批记录"，即使有已提交的申请
+- 系统未正确保持审批人员的登录状态
+
+### 修复任务
+- [x] 检查审批人员登录后的session创建逻辑（发现auth.verifyCode没有创建session）
+- [x] 检查审批人员身份验证逻辑（ApprovalList使用useAuth需要session）
+- [x] 检查审批列表API的权限验证逻辑（使用protectedProcedure需要session）
+- [x] 修复审批人员登录状态保持问题（在auth.verifyCode中创建session cookie）
+- [x] 添加getUserByEmail函数支持邮箱查询用户
+- [x] 修复TypeScript类型错误
+- [ ] 测试完整流程：登录 → 关闭浏览器 → 重新打开 → 直接进入审批列表
