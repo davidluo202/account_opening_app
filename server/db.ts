@@ -16,7 +16,9 @@ import {
   uploadedDocuments,
   faceVerification,
   regulatoryDeclarations,
-  emailVerificationCodes
+  emailVerificationCodes,
+  approvers,
+  approvalRecords
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -543,5 +545,117 @@ export async function saveVerificationCode(email: string, code: string, expiresA
   } catch (error) {
     console.error('Error saving verification code:', error);
     return null;
+  }
+}
+
+// ==================== 审批人员管理 ====================
+
+/**
+ * 获取所有审批人员列表
+ */
+export async function getAllApprovers() {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    const result = await db
+      .select()
+      .from(approvers)
+      .leftJoin(users, eq(approvers.userId, users.id))
+      .orderBy(desc(approvers.createdAt));
+    
+    return result.map(row => ({
+      ...row.approvers,
+      user: row.users
+    }));
+  } catch (error) {
+    console.error('Error getting approvers:', error);
+    return [];
+  }
+}
+
+/**
+ * 添加审批人员
+ */
+export async function addApprover(data: {
+  userId: number;
+  employeeName: string;
+  ceNumber: string;
+  role?: string;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error('数据库连接失败');
+
+  try {
+    const [result] = await db.insert(approvers).values({
+      userId: data.userId,
+      employeeName: data.employeeName,
+      ceNumber: data.ceNumber,
+      role: data.role || 'approver',
+      isActive: true,
+    });
+    return { id: result.insertId, success: true };
+  } catch (error) {
+    console.error('Error adding approver:', error);
+    throw new Error('添加审批人员失败');
+  }
+}
+
+/**
+ * 更新审批人员信息
+ */
+export async function updateApprover(data: {
+  id: number;
+  employeeName?: string;
+  ceNumber?: string;
+  role?: string;
+  isActive?: boolean;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error('数据库连接失败');
+
+  try {
+    const { id, ...updateData } = data;
+    const filteredData = Object.fromEntries(
+      Object.entries(updateData).filter(([_, v]) => v !== undefined)
+    );
+    
+    await db.update(approvers).set(filteredData).where(eq(approvers.id, id));
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating approver:', error);
+    throw new Error('更新审批人员失败');
+  }
+}
+
+/**
+ * 删除审批人员
+ */
+export async function deleteApprover(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error('数据库连接失败');
+
+  try {
+    await db.delete(approvers).where(eq(approvers.id, id));
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting approver:', error);
+    throw new Error('删除审批人员失败');
+  }
+}
+
+/**
+ * 更新用户的emailVerified状态
+ */
+export async function updateUserEmailVerified(userId: number, verified: boolean) {
+  const db = await getDb();
+  if (!db) throw new Error('数据库连接失败');
+
+  try {
+    await db.update(users).set({ emailVerified: verified }).where(eq(users.id, userId));
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating user email verified status:', error);
+    throw new Error('更新邮箱验证状态失败');
   }
 }

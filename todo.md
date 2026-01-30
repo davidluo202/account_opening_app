@@ -432,3 +432,44 @@
 - [ ] 测试审批操作和状态流转
 - [ ] 测试附件预览功能
 - [ ] 性能优化和用户体验改进
+
+
+## 审批管理系统开发（2026-01-30）
+
+### Phase 1: 数据库设计
+- [ ] 创建审批人员表（approvers）
+- [ ] 创建审批记录表（approval_records）
+- [ ] 更新applications表的status枚举添加"returned"状态
+- [ ] 运行数据库迁移
+
+### Phase 2: 审批人员管理后端API
+- [x] approver.list - 获取所有审批人员列表
+- [x] approver.add - 添加审批人员（仅管理员）
+- [x] approver.update - 更新审批人员信息
+- [x] approver.delete - 删除审批人员
+- [x] 审批人员邮箱域名限制（@cmfinancial.com）
+- [x] 审批人员注册时邮箱验证功能
+
+### Phase 3: 审批人员管理前端界面
+- [x] 创建审批人员管理页面（/admin/approvers）
+- [x] 实现审批人员列表展示
+- [x] 实现添加审批人员对话框
+- [x] 实现编辑审批人员功能
+- [x] 实现删除审批人员功能
+- [ ] 添加邮箱验证功能到前端界面
+
+### Phase 4: 审批操作后端API
+- [ ] approval.getPendingApplications - 获取待审批申请列表
+- [ ] approval.getApplicationDetail - 获取申请详情
+- [ ] approval.approve - 审批通过
+- [ ] approval.reject - 拒绝申请
+- [ ] approval.return - 退回修改
+- [ ] approval.getHistory - 获取审批历史记录
+
+### Phase 5: 审批管理前端界面
+- [ ] 创建审批管理主页面（/admin/approvals）
+- [ ] 实现待审批申请列表
+- [ ] 实现申请详情页面（/admin/approvals/:id）
+- [ ] 实现审批操作按钮和对话框
+- [ ] 实现审批历史记录时间线
+- [ ] 更新DashboardLayout添加审批管理导航项

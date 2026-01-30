@@ -46,7 +46,7 @@ export const applications = mysqlTable("applications", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
   applicationNumber: varchar("applicationNumber", { length: 50 }).unique(),
-  status: mysqlEnum("status", ["draft", "submitted", "under_review", "approved", "rejected"]).default("draft").notNull(),
+  status: mysqlEnum("status", ["draft", "submitted", "under_review", "approved", "rejected", "returned"]).default("draft").notNull(),
   currentStep: int("currentStep").default(1).notNull(),
   completedSteps: text("completedSteps"), // JSON array of completed step numbers
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -223,6 +223,32 @@ export const regulatoryDeclarations = mysqlTable("regulatory_declarations", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
+/**
+ * 审批人员表
+ */
+export const approvers = mysqlTable("approvers", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(), // 关联users表
+  employeeName: varchar("employeeName", { length: 200 }).notNull(), // 员工姓名
+  ceNumber: varchar("ceNumber", { length: 50 }).notNull(), // CE No.
+  role: varchar("role", { length: 50 }).default("approver").notNull(), // 角色：approver/manager
+  isActive: boolean("isActive").default(true).notNull(), // 是否激活
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+/**
+ * 审批记录表
+ */
+export const approvalRecords = mysqlTable("approval_records", {
+  id: int("id").autoincrement().primaryKey(),
+  applicationId: int("applicationId").notNull(), // 关联applications表
+  approverId: int("approverId").notNull(), // 关联approvers表
+  action: mysqlEnum("action", ["approved", "rejected", "returned"]).notNull(), // 审批操作
+  comments: text("comments"), // 审批意见
+  createdAt: timestamp("createdAt").defaultNow().notNull(), // 审批时间
+});
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type Application = typeof applications.$inferSelect;
@@ -238,3 +264,7 @@ export type TaxInfo = typeof taxInfo.$inferSelect;
 export type UploadedDocument = typeof uploadedDocuments.$inferSelect;
 export type FaceVerification = typeof faceVerification.$inferSelect;
 export type RegulatoryDeclaration = typeof regulatoryDeclarations.$inferSelect;
+export type Approver = typeof approvers.$inferSelect;
+export type InsertApprover = typeof approvers.$inferInsert;
+export type ApprovalRecord = typeof approvalRecords.$inferSelect;
+export type InsertApprovalRecord = typeof approvalRecords.$inferInsert;

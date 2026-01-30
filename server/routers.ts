@@ -22,8 +22,15 @@ export const appRouter = router({
     
     // 发送邮箱验证码
     sendVerificationCode: publicProcedure
-      .input(z.object({ email: z.string().email() }))
+      .input(z.object({ 
+        email: z.string().email(),
+        isApprover: z.boolean().optional() // 标记是否为审批人员注册
+      }))
       .mutation(async ({ input }) => {
+        // 如果是审批人员注册，验证邮箱域名
+        if (input.isApprover && !input.email.endsWith('@cmfinancial.com')) {
+          throw new Error('审批人员必须使用@cmfinancial.com邮箱');
+        }
         const code = generateVerificationCode();
         const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5分钟后过期
         
@@ -47,11 +54,17 @@ export const appRouter = router({
         email: z.string().email(),
         code: z.string().length(6)
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const verified = await db.verifyEmailCode(input.email, input.code);
         if (!verified) {
           throw new Error("验证码无效或已过期");
         }
+        
+        // 如果当前用户已登录，更新其emailVerified状态
+        if (ctx.user && ctx.user.email === input.email) {
+          await db.updateUserEmailVerified(ctx.user.id, true);
+        }
+        
         return { success: true };
       }),
   }),
@@ -729,6 +742,78 @@ export const appRouter = router({
           throw new Error("申请不存在或无权访问");
         }
         return await db.getRegulatoryDeclarations(input.applicationId);
+      }),
+  }),
+  
+  // 审批人员管理
+  approver: router({
+    // 获取所有审批人员列表
+    list: protectedProcedure.query(async ({ ctx }) => {
+      // 检查用户是否为管理员
+      if (ctx.user.role !== 'admin') {
+        throw new Error('没有权限访问审批人员列表');
+      }
+      
+      return await db.getAllApprovers();
+    }),
+    
+    // 添加审批人员（仅管理员）
+    add: protectedProcedure
+      .input(z.object({
+        userId: z.number(),
+        employeeName: z.string(),
+        ceNumber: z.string(),
+        role: z.enum(['approver', 'manager']).default('approver'),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // 检查用户是否为管理员
+        if (ctx.user.role !== 'admin') {
+          throw new Error('没有权限添加审批人员');
+        }
+        
+        // 验证用户邮箱域名
+        const user = await db.getUserById(input.userId);
+        if (!user) {
+          throw new Error('用户不存在');
+        }
+        if (!user.email || !user.email.endsWith('@cmfinancial.com')) {
+          throw new Error('审批人员必须使用@cmfinancial.com邮箱');
+        }
+        if (!user.emailVerified) {
+          throw new Error('邮箱尚未验证，请先完成邮箱验证');
+        }
+        
+        return await db.addApprover(input);
+      }),
+    
+    // 更新审批人员信息
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        employeeName: z.string().optional(),
+        ceNumber: z.string().optional(),
+        role: z.enum(['approver', 'manager']).optional(),
+        isActive: z.boolean().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // 检查用户是否为管理员
+        if (ctx.user.role !== 'admin') {
+          throw new Error('没有权限更新审批人员');
+        }
+        
+        return await db.updateApprover(input);
+      }),
+    
+    // 删除审批人员
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        // 检查用户是否为管理员
+        if (ctx.user.role !== 'admin') {
+          throw new Error('没有权限删除审批人员');
+        }
+        
+        return await db.deleteApprover(input.id);
       }),
   }),
 });
