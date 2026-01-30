@@ -110,6 +110,11 @@ export default function AdminHome() {
                 placeholder="输入邮箱前缀（系统自动补全@cmfinancial.com）"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !codeSent && email) {
+                    handleSendCode();
+                  }
+                }}
                 disabled={codeSent}
               />
               <p className="text-xs text-muted-foreground mt-1">
@@ -136,6 +141,11 @@ export default function AdminHome() {
                     placeholder="请输入6位验证码"
                     value={verificationCode}
                     onChange={(e) => setVerificationCode(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && verificationCode) {
+                        handleVerify();
+                      }
+                    }}
                     maxLength={6}
                   />
                   <p className="text-sm text-gray-500">

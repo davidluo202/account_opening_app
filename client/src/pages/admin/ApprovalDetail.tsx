@@ -425,10 +425,6 @@ export default function ApprovalDetail() {
                           <span className="font-medium">{latestApproval.approverEmail ? latestApproval.approverEmail.split('@')[0] : '-'}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">审批人员姓名：</span>
-                          <span className="font-medium">{latestApproval.approverName || '-'} (CE: {latestApproval.approverCeNumber || '-'})</span>
-                        </div>
-                        <div className="flex justify-between">
                           <span className="text-gray-600">专业投资者（PI）：</span>
                           <span className="font-medium">{applicationData.application.isProfessionalInvestor ? '是' : '否'}</span>
                         </div>

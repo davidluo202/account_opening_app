@@ -681,3 +681,23 @@
 - [x] 在ApprovalDetail.tsx中显示审批人员ID（邮箱@前面部分）
 - [x] 同时显示审批人员姓名和CE号码
 - [x] 确保显示的是审批人员登录时输入的邮箱前缀
+
+
+## 审批系统显示和交互修复（2026-01-30 下午6）
+
+### 审批人员ID显示修复
+- [x] 修改ApprovalDetail.tsx，只显示审批人员ID（邮箱前缀），不显示姓名
+- [x] 确认CE号码在审批人员权限管理页面中设置和显示
+- [x] 每个审批人员都应该有对应的CE号码（在approvers表中存储）
+
+### 审批系统logo链接修复
+- [x] 检查AdminHome.tsx的logo链接是否指向/（AdminHome是登录页，无logo）
+- [x] 检查ApprovalList.tsx的logo链接是否指向/（已确认指向/）
+- [x] 检查ApprovalDetail.tsx的logo链接是否指向/（已确认指向/）
+- [x] 确保审批系统通过主页导航按钮进入，logo始终返回开户主页
+
+### 审批人员登录流程优化
+- [x] AdminHome.tsx的邮箱输入框支持回车键进入验证（添加onKeyDown事件）
+- [x] AdminHome.tsx的验证码输入框支持回车键验证并进入审批系统（添加onKeyDown事件）
+- [x] EmailVerification组件的邮箱输入框支持回车键（已在前面实现）
+- [x] EmailVerification组件的验证码输入框支持回车键验证（已在前面实现）
