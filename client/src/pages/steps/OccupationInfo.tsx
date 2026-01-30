@@ -118,6 +118,7 @@ export default function OccupationInfo() {
       industry: needsEmploymentDetails ? formData.industry : undefined,
       companyAddress: needsEmploymentDetails ? formData.companyAddress : undefined,
       officePhone: needsEmploymentDetails ? formData.officePhone : undefined,
+      officeFaxNo: needsEmploymentDetails ? formData.officeFaxNo : undefined, // 添加办公传真字段
     });
   };
 

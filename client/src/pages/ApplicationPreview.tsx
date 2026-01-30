@@ -8,6 +8,56 @@ import { useEffect, useState } from "react";
 import { useLocation, useRoute } from "wouter";
 import { toast } from "sonner";
 
+// 投资经验映射函数
+const formatInvestmentExperience = (experience: string | Record<string, string> | null | undefined): string => {
+  if (!experience) return "-";
+  
+  const experienceMap: Record<string, string> = {
+    none: "無經驗 / None",
+    less_than_1: "少於1年 / Less than 1 year",
+    "1_to_3": "1-3 Years/年",
+    "3_to_5": "3-5 Years/年",
+    more_than_5: "5年以上 / More than 5 years"
+  };
+  
+  // 如果是字符串，尝试解析为JSON
+  if (typeof experience === 'string') {
+    try {
+      const parsed = JSON.parse(experience);
+      if (typeof parsed === 'object') {
+        experience = parsed;
+      }
+    } catch (e) {
+      // 如果不是JSON，直接返回
+      return String(experience);
+    }
+  }
+  
+  // 如果是对象，格式化为列表
+  if (typeof experience === 'object' && experience !== null) {
+    const productMap: Record<string, string> = {
+      stocks: "股票 / Stocks",
+      bonds: "債券 / Bonds",
+      funds: "基金 / Funds",
+      derivatives: "衍生品 / Derivatives",
+      forex: "外匁 / Forex",
+      commodities: "商品 / Commodities"
+    };
+    
+    const items = Object.entries(experience)
+      .filter(([_, value]) => value && value !== 'none')
+      .map(([key, value]) => {
+        const productName = productMap[key] || key;
+        const experienceLevel = experienceMap[value as string] || value;
+        return `${productName}: ${experienceLevel}`;
+      });
+    
+    return items.length > 0 ? items.join('; ') : "-";
+  }
+  
+  return String(experience);
+};
+
 /**
  * 申请预览页面 - 参照CMF003申请表的专业表格布局
  */
@@ -472,7 +522,7 @@ export default function ApplicationPreview() {
                 </tr>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">投资经验 Investment Experience</td>
-                  <td className="p-3" colSpan={3}>{financial?.investmentExperience || "-"}</td>
+                  <td className="p-3" colSpan={3}>{formatInvestmentExperience(financial?.investmentExperience)}</td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">风险承受能力 Risk Tolerance</td>

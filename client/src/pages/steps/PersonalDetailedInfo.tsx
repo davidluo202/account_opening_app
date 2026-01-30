@@ -120,7 +120,7 @@ export default function PersonalDetailedInfo() {
     onSuccess: () => {
       toast.success("验证码已发送至您的邮箱");
       setShowVerificationInput(true);
-      setCountdown(300); // 5分钟倒计时
+      setCountdown(90); // 90秒倒计时
       setIsSendingCode(false);
     },
     onError: (error) => {

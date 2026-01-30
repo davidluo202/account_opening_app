@@ -39,7 +39,7 @@ export default function AdminHome() {
     onSuccess: () => {
       toast.success("验证码已发送到您的邮箱");
       setCodeSent(true);
-      setCountdown(300); // 5分钟倒计时
+      setCountdown(90); // 90秒倒计时
       const timer = setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 1) {

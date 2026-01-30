@@ -97,11 +97,14 @@ export default function FaceVerification() {
       await new Promise(resolve => setTimeout(resolve, 100));
       
       // 请求摄像头权限
+      // 检测是否为移动设备
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
-          facingMode: "user",
-          width: { ideal: 640 },
-          height: { ideal: 480 }
+          facingMode: "user", // 使用前置摄像头
+          width: isMobile ? { ideal: 1280, max: 1920 } : { ideal: 640 },
+          height: isMobile ? { ideal: 720, max: 1080 } : { ideal: 480 }
         },
         audio: false
       });
@@ -293,7 +296,7 @@ export default function FaceVerification() {
             <h4 className="font-semibold text-lg text-center">人臉識別 / Face Verification</h4>
 
             {/* 攝像頭預覽或已拍攝照片 */}
-            <div className="relative bg-muted rounded-lg overflow-hidden aspect-video flex items-center justify-center">
+            <div className="relative bg-muted rounded-lg overflow-hidden aspect-video flex items-center justify-center" style={{ maxHeight: '70vh' }}>
               {capturing ? (
                 <>
                   <video
