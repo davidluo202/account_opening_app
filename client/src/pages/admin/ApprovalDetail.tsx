@@ -25,16 +25,17 @@ export default function ApprovalDetail() {
   const { logout } = useAuth();
   const [isProfessionalInvestor, setIsProfessionalInvestor] = useState<string>("");
   const [approvedRiskProfile, setApprovedRiskProfile] = useState<string>("");
-  const [reason, setReason] = useState("");
+  const [rejectReason, setRejectReason] = useState("");
+  const [returnReason, setReturnReason] = useState("");
   const [showRejectDialog, setShowRejectDialog] = useState(false);
   const [showReturnDialog, setShowReturnDialog] = useState(false);
 
   const { data: applicationData, isLoading } = trpc.approval.getApplicationDetail.useQuery(
-    { applicationId: Number(id) },
+    { id: Number(id) },
     { enabled: !!id }
   );
 
-  const approveMutation = trpc.approval.approveApplication.useMutation({
+  const approveMutation = trpc.approval.approve.useMutation({
     onSuccess: () => {
       toast.success("申请已批准");
       setLocation("/admin/approvals");
@@ -44,7 +45,7 @@ export default function ApprovalDetail() {
     },
   });
 
-  const rejectMutation = trpc.approval.rejectApplication.useMutation({
+  const rejectMutation = trpc.approval.reject.useMutation({
     onSuccess: () => {
       toast.success("申请已拒绝");
       setShowRejectDialog(false);
@@ -55,7 +56,7 @@ export default function ApprovalDetail() {
     },
   });
 
-  const returnMutation = trpc.approval.returnApplication.useMutation({
+  const returnMutation = trpc.approval.return.useMutation({
     onSuccess: () => {
       toast.success("申请已退回");
       setShowReturnDialog(false);
@@ -80,29 +81,29 @@ export default function ApprovalDetail() {
     approveMutation.mutate({
       applicationId: Number(id),
       isProfessionalInvestor: isProfessionalInvestor === "yes",
-      approvedRiskProfile,
+      approvedRiskProfile: approvedRiskProfile as 'low' | 'medium' | 'high',
     });
   };
 
   const handleReject = () => {
-    if (!reason.trim()) {
+    if (!rejectReason.trim()) {
       toast.error("请输入拒绝理由");
       return;
     }
     rejectMutation.mutate({
       applicationId: Number(id),
-      reason,
+      rejectReason: rejectReason,
     });
   };
 
   const handleReturn = () => {
-    if (!reason.trim()) {
+    if (!returnReason.trim()) {
       toast.error("请输入退回理由");
       return;
     }
     returnMutation.mutate({
       applicationId: Number(id),
-      reason,
+      returnReason: returnReason,
     });
   };
 
@@ -128,8 +129,8 @@ export default function ApprovalDetail() {
   }
 
   const application = applicationData.application;
-  const personalBasicInfo = applicationData.personalBasicInfo;
-  const personalDetailedInfo = applicationData.personalDetailedInfo;
+  const personalBasicInfo = applicationData.basicInfo;
+  const personalDetailedInfo = applicationData.detailedInfo;
   const occupationInfo = applicationData.occupation;
   const employmentDetails = applicationData.employment;
   const financialAndInvestment = applicationData.financial;
@@ -197,7 +198,7 @@ export default function ApprovalDetail() {
                 </div>
                 <div>
                   <Label>身份证号</Label>
-                  <p>{personalBasicInfo?.idNumber || "-"}</p>
+                  <p>{personalDetailedInfo?.idNumber || "-"}</p>
                 </div>
                 <div>
                   <Label>出生日期</Label>
@@ -221,7 +222,7 @@ export default function ApprovalDetail() {
                   </div>
                   <div className="col-span-2">
                     <Label>地址</Label>
-                    <p>{personalDetailedInfo.address || "-"}</p>
+                    <p>{personalDetailedInfo.residentialAddress || "-"}</p>
                   </div>
                 </div>
               </div>
@@ -233,8 +234,16 @@ export default function ApprovalDetail() {
                 <h3 className="font-semibold text-lg mb-2">职业信息</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label>职业</Label>
-                    <p>{occupationInfo.occupation || "-"}</p>
+                    <Label>就业状态</Label>
+                    <p>{occupationInfo.employmentStatus || "-"}</p>
+                  </div>
+                  <div>
+                    <Label>公司名称</Label>
+                    <p>{occupationInfo.companyName || "-"}</p>
+                  </div>
+                  <div>
+                    <Label>职位</Label>
+                    <p>{occupationInfo.position || "-"}</p>
                   </div>
                   <div>
                     <Label>行业</Label>
@@ -395,8 +404,8 @@ export default function ApprovalDetail() {
             <DialogDescription>请输入拒绝理由</DialogDescription>
           </DialogHeader>
           <Textarea
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
+            value={rejectReason}
+            onChange={(e) => setRejectReason(e.target.value)}
             placeholder="请输入拒绝理由..."
             rows={4}
           />
@@ -407,7 +416,7 @@ export default function ApprovalDetail() {
             <Button
               variant="destructive"
               onClick={handleReject}
-              disabled={rejectMutation.isPending || !reason.trim()}
+              disabled={rejectMutation.isPending || !rejectReason.trim()}
             >
               {rejectMutation.isPending ? "处理中..." : "确认拒绝"}
             </Button>
@@ -423,8 +432,8 @@ export default function ApprovalDetail() {
             <DialogDescription>请输入退回理由</DialogDescription>
           </DialogHeader>
           <Textarea
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
+            value={returnReason}
+            onChange={(e) => setReturnReason(e.target.value)}
             placeholder="请输入需要补充的材料或修改的内容..."
             rows={4}
           />
@@ -434,7 +443,7 @@ export default function ApprovalDetail() {
             </Button>
             <Button
               onClick={handleReturn}
-              disabled={returnMutation.isPending || !reason.trim()}
+              disabled={returnMutation.isPending || !returnReason.trim()}
             >
               {returnMutation.isPending ? "处理中..." : "确认退回"}
             </Button>

@@ -591,3 +591,22 @@
 - [ ] 拒绝：发送邮件到Customer-services@cmfinancial.com
 - [ ] 退回：发送邮件到Customer-services@cmfinancial.com
 - [ ] 所有审批邮件使用compliance@cmfinancial.com作为发件人
+
+
+## TypeScript错误修复和审批功能完善（2026-01-30 下午）
+
+### TypeScript类型错误修复
+- [x] 修复ApprovalDetail页面的returnApplication API缺失错误（后端使用approval.return）
+- [x] 修复personalBasicInfo数据结构类型错误（使用basicInfo）
+- [x] 修复personalDetailedInfo数据结构类型错误（使用detailedInfo和residentialAddress）
+- [x] 修复occupationInfo数据结构类型错误（使用employmentStatus、companyName、position）
+- [x] 修复employmentDetails数据结构类型错误
+- [x] 修复financialAndInvestment数据结构类型错误
+- [x] 修复taxInformation数据结构类型错误
+
+### 审批功能完善
+- [x] 在拒绝申请对话框中添加原因输入框（必填）
+- [x] 在退回补充材料对话框中添加原因输入框（必填）
+- [x] 更新后端API支持原因参数（rejectReason和returnReason）
+- [x] 为拒绝和退回对话框创建独立的reason状态
+- [ ] 测试完整的审批流程（批准/拒绝/退回）
