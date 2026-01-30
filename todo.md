@@ -1007,3 +1007,39 @@
 - [x] 添加3秒倒計時顯示
 - [x] 倒計時結束後自動拍攝
 - [x] 顯示驗證結果（成功/失敗）和置信度
+
+## 兩級審批流程實現（2026-01-30）
+
+### 數據庫schema修改
+- [ ] 在applications表添加firstApprovalStatus字段（pending/approved/rejected）
+- [ ] 在applications表添加firstApprovalBy字段（第一級審批人員ID）
+- [ ] 在applications表添加firstApprovalAt字段（第一級審批時間）
+- [ ] 在applications表添加firstApprovalComments字段（第一級審批意見）
+- [ ] 在applications表添加secondApprovalStatus字段（pending/approved/rejected）
+- [ ] 在applications表添加secondApprovalBy字段（第二級審批人員ID）
+- [ ] 在applications表添加secondApprovalAt字段（第二級審批時間）
+- [ ] 在applications表添加secondApprovalComments字段（第二級審批意見）
+
+### 審批流程API更新
+- [ ] 修改審批API，支持第一級審批操作
+- [ ] 修改審批API，支持第二級審批操作
+- [ ] 實現第一級審批通過後發送郵件通知合規部
+
+### 前端界面更新
+- [ ] 修改審批列表頁面，顯示兩級審批狀態
+- [ ] 修改審批詳情頁面，顯示兩級審批信息
+- [ ] 添加第一級審批操作界面
+- [ ] 添加第二級審批操作界面
+- [ ] 根據審批級別和狀態顯示不同的操作按鈕
+
+### 郵件通知功能
+- [ ] 實現第一級審批通過後的郵件通知功能
+- [ ] 郵件內容包含申請詳情和審批鏈接
+
+## 兩級審批流程實現進度（2026-01-30）
+
+- [x] 修改數據庫schema，添加兩級審批相關字段
+- [x] 更新審批流程API，支持兩級審批狀態和操作
+- [x] 實現第一級審批通過後的郵件通知功能
+- [ ] 修改審批列表和詳情頁面，顯示兩級審批狀態
+- [ ] 添加第二級審批界面和操作

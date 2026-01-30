@@ -1042,8 +1042,8 @@ export const appRouter = router({
         return await db.getCompleteApplicationData(input.id);
       }),
     
-    // 审批通过
-    approve: protectedProcedure
+    // 第一级审批（有CE号码的审批人员）
+    firstApprove: protectedProcedure
       .input(z.object({
         applicationId: z.number(),
         isProfessionalInvestor: z.boolean(),
@@ -1062,8 +1062,19 @@ export const appRouter = router({
           throw new Error('未找到审批人员信息，请联系管理员');
         }
         
-        // 更新申请状态为已批准
-        await db.updateApplicationStatus(input.applicationId, 'approved');
+        // 第一级审批必须有CE号码
+        if (!approver.ceNumber) {
+          throw new Error('第一级审批人员必须有CE号码');
+        }
+        
+        // 更新第一级审批信息
+        await db.updateFirstApproval(input.applicationId, {
+          status: 'approved',
+          approverEmail: ctx.user.email || '',
+          approverName: approver.employeeName,
+          approverCeNo: approver.ceNumber,
+          comments: input.comments,
+        });
         
         // 更新PI和风险偏好
         await db.updateApplicationApprovalInfo(input.applicationId, {
@@ -1071,28 +1082,97 @@ export const appRouter = router({
           approvedRiskProfile: input.approvedRiskProfile,
         });
         
-        // 记录审批操作（使用approver.id而不是user.id）
+        // 记录审批操作
         await db.createApprovalRecord({
           applicationId: input.applicationId,
           approverId: approver.id,
-          action: 'approved',
+          action: 'first_approved',
           comments: input.comments,
         });
         
-        // 发送审批通过邮件到operation@cmfinancial.com
+        // 发送邮件通知合规部进行第二级审批
         try {
+          const { sendFirstApprovalNotificationEmail } = await import('./email');
           const applicationData = await db.getCompleteApplicationData(input.applicationId);
           if (applicationData) {
-            await sendApprovalNotificationEmail(
+            await sendFirstApprovalNotificationEmail(
               applicationData.application?.applicationNumber || '',
               applicationData.basicInfo?.chineseName || applicationData.basicInfo?.englishName || '未知',
-              ctx.user.name || ctx.user.email || '审批人员',
+              approver.employeeName,
+              approver.ceNumber,
               input.isProfessionalInvestor,
               input.approvedRiskProfile
             );
           }
         } catch (emailError) {
-          console.error('Failed to send approval notification email:', emailError);
+          console.error('Failed to send first approval notification email:', emailError);
+          // 邮件发送失败不影响审批流程
+        }
+        
+        return { success: true };
+      }),
+    
+    // 第二级审批（合规部终审）
+    secondApprove: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+        comments: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // 检查用户是否为审批人员或管理员
+        if (ctx.user.role !== 'admin' && !ctx.user.email?.endsWith('@cmfinancial.com')) {
+          throw new Error('没有权限进行审批操作');
+        }
+        
+        // 获取审批人员信息
+        const approver = await db.getApproverByUserId(ctx.user.id);
+        if (!approver) {
+          throw new Error('未找到审批人员信息，请联系管理员');
+        }
+        
+        // 检查第一级审批是否已通过
+        const applicationData = await db.getCompleteApplicationData(input.applicationId);
+        if (!applicationData?.application?.firstApprovalStatus || applicationData.application.firstApprovalStatus !== 'approved') {
+          throw new Error('第一级审批尚未通过，无法进行第二级审批');
+        }
+        
+        // 更新第二级审批信息
+        await db.updateSecondApproval(input.applicationId, {
+          status: 'approved',
+          approverEmail: ctx.user.email || '',
+          approverName: approver.employeeName,
+            approverCeNo: approver.ceNumber, // 合规部可能没有CE号码号码
+          comments: input.comments,
+        });
+        
+        // 更新申请状态为最终批准
+        await db.updateApplicationStatus(input.applicationId, 'approved');
+        
+        // 记录审批操作
+        await db.createApprovalRecord({
+          applicationId: input.applicationId,
+          approverId: approver.id,
+          action: 'second_approved',
+          comments: input.comments,
+        });
+        
+        // 发送最终批准邮件到operation@cmfinancial.com
+        try {
+          const { sendFinalApprovalNotificationEmail } = await import('./email');
+          if (applicationData) {
+            await sendFinalApprovalNotificationEmail(
+              applicationData.application?.applicationNumber || '',
+              applicationData.basicInfo?.chineseName || applicationData.basicInfo?.englishName || '未知',
+              applicationData.application?.firstApprovalByName || '',
+              applicationData.application?.firstApprovalByCeNo || '',
+              approver.employeeName,
+              approver.ceNumber || '',
+              applicationData.application?.isProfessionalInvestor || false,
+              applicationData.application?.approvedRiskProfile || 'medium'
+            );
+          }
+        } catch (emailError) {
+          console.error('Failed to send final approval notification email:', emailError);
           // 邮件发送失败不影响审批流程
         }
         

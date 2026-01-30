@@ -1,0 +1,1 @@
+ALTER TABLE `approval_records` MODIFY COLUMN `action` enum('approved','rejected','returned','first_approved','second_approved') NOT NULL;

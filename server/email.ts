@@ -615,3 +615,200 @@ ${resetLink}
     return false;
   }
 }
+
+/**
+ * 發送第一級審批通過通知郵件到合規部
+ * @param applicationNumber 申請編號
+ * @param customerName 客戶姓名
+ * @param firstApproverName 第一級審批人員姓名
+ * @param firstApproverCeNo 第一級審批人員CE號碼
+ * @param isProfessionalInvestor 是否為專業投資者
+ * @param approvedRiskProfile 審批的風險偏好
+ * @returns Promise<boolean> 發送成功返回true，失敗返回false
+ */
+export async function sendFirstApprovalNotificationEmail(
+  applicationNumber: string,
+  customerName: string,
+  firstApproverName: string,
+  firstApproverCeNo: string,
+  isProfessionalInvestor: boolean,
+  approvedRiskProfile: string
+): Promise<boolean> {
+  if (!apiKey) {
+    throw new Error('SendGrid API密鑰未配置');
+  }
+
+  const complianceEmail = 'compliance@cmfinancial.com';
+
+  const riskMap: Record<string, string> = {
+    'low': '低風險',
+    'medium': '中等風險',
+    'high': '高風險'
+  };
+
+  try {
+    const msg = {
+      to: complianceEmail,
+      from: senderEmail,
+      subject: `【待終審】開戶申請第一級審批已通過 - ${applicationNumber}`,
+      text: `申請編號：${applicationNumber}
+客戶姓名：${customerName}
+第一級審批人員：${firstApproverName}（CE No.: ${firstApproverCeNo}）
+審批結果：第一級審批通過
+專業投資者（PI）：${isProfessionalInvestor ? '是' : '否'}
+風險評級：${riskMap[approvedRiskProfile] || approvedRiskProfile}
+
+請登錄系統進行第二級審批（終審）。`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h2 style="color: #2563eb;">誠港金融 - 開戶申請第一級審批通過通知</h2>
+          <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0;">
+            <p style="margin: 0; font-weight: bold; color: #92400e;">⚠️ 此申請需要您進行第二級審批（終審）</p>
+          </div>
+          <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">申請編號：</td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${applicationNumber}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">客戶姓名：</td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${customerName}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">第一級審批人員：</td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${firstApproverName}（CE No.: ${firstApproverCeNo}）</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">審批結果：</td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;"><span style="color: #10b981; font-weight: bold;">✓ 第一級審批通過</span></td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">專業投資者（PI）：</td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${isProfessionalInvestor ? '是' : '否'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">風險評級：</td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${riskMap[approvedRiskProfile] || approvedRiskProfile}</td>
+            </tr>
+          </table>
+          <p style="margin: 20px 0;">請登錄系統查看完整申請資料並進行第二級審批（終審）。</p>
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+          <p style="color: #6b7280; font-size: 12px;">此郵件由系統自動發送，請勿回覆。</p>
+        </div>
+      `,
+    };
+
+    await sgMail.send(msg);
+    console.log(`First approval notification sent to ${complianceEmail}`);
+    return true;
+  } catch (error: any) {
+    console.error('Failed to send first approval notification email:', error);
+    if (error.response) {
+      console.error('SendGrid error response:', error.response.body);
+    }
+    return false;
+  }
+}
+
+/**
+ * 發送最終審批通過通知郵件到運營部
+ * @param applicationNumber 申請編號
+ * @param customerName 客戶姓名
+ * @param firstApproverName 第一級審批人員姓名
+ * @param firstApproverCeNo 第一級審批人員CE號碼
+ * @param secondApproverName 第二級審批人員姓名
+ * @param secondApproverCeNo 第二級審批人員CE號碼（可能為空）
+ * @param isProfessionalInvestor 是否為專業投資者
+ * @param approvedRiskProfile 審批的風險偏好
+ * @returns Promise<boolean> 發送成功返回true，失敗返回false
+ */
+export async function sendFinalApprovalNotificationEmail(
+  applicationNumber: string,
+  customerName: string,
+  firstApproverName: string,
+  firstApproverCeNo: string,
+  secondApproverName: string,
+  secondApproverCeNo: string,
+  isProfessionalInvestor: boolean,
+  approvedRiskProfile: string
+): Promise<boolean> {
+  if (!apiKey) {
+    throw new Error('SendGrid API密鑰未配置');
+  }
+
+  const operationEmail = 'operation@cmfinancial.com';
+
+  const riskMap: Record<string, string> = {
+    'low': '低風險',
+    'medium': '中等風險',
+    'high': '高風險'
+  };
+
+  try {
+    const msg = {
+      to: operationEmail,
+      from: senderEmail,
+      subject: `【已批准】開戶申請最終審批通過 - ${applicationNumber}`,
+      text: `申請編號：${applicationNumber}
+客戶姓名：${customerName}
+第一級審批人員：${firstApproverName}（CE No.: ${firstApproverCeNo}）
+第二級審批人員：${secondApproverName}${secondApproverCeNo ? `（CE No.: ${secondApproverCeNo}）` : ''}
+審批結果：最終批准
+專業投資者（PI）：${isProfessionalInvestor ? '是' : '否'}
+風險評級：${riskMap[approvedRiskProfile] || approvedRiskProfile}
+
+請進行後續的開立賬戶和發送Welcome letter的步驟。`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h2 style="color: #2563eb;">誠港金融 - 開戶申請最終審批通過通知</h2>
+          <div style="background-color: #d1fae5; border-left: 4px solid #10b981; padding: 15px; margin: 20px 0;">
+            <p style="margin: 0; font-weight: bold; color: #065f46;">✓ 此申請已通過兩級審批，可以進行後續開戶操作</p>
+          </div>
+          <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">申請編號：</td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${applicationNumber}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">客戶姓名：</td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${customerName}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">第一級審批人員：</td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${firstApproverName}（CE No.: ${firstApproverCeNo}）</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">第二級審批人員：</td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${secondApproverName}${secondApproverCeNo ? `（CE No.: ${secondApproverCeNo}）` : ''}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">審批結果：</td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;"><span style="color: #10b981; font-weight: bold;">✓ 最終批准</span></td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">專業投資者（PI）：</td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${isProfessionalInvestor ? '是' : '否'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">風險評級：</td>
+              <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${riskMap[approvedRiskProfile] || approvedRiskProfile}</td>
+            </tr>
+          </table>
+          <p style="margin: 20px 0;">請進行後續的開立賬戶和發送Welcome letter的步驟。</p>
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+          <p style="color: #6b7280; font-size: 12px;">此郵件由系統自動發送，請勿回覆。</p>
+        </div>
+      `,
+    };
+
+    await sgMail.send(msg);
+    console.log(`Final approval notification sent to ${operationEmail}`);
+    return true;
+  } catch (error: any) {
+    console.error('Failed to send final approval notification email:', error);
+    if (error.response) {
+      console.error('SendGrid error response:', error.response.body);
+    }
+    return false;
+  }
+}

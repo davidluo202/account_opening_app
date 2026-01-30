@@ -62,6 +62,20 @@ export const applications = mysqlTable("applications", {
   // 审批相关字段
   isProfessionalInvestor: boolean("isProfessionalInvestor").default(false), // 是否为专业投资者（PI）
   approvedRiskProfile: mysqlEnum("approvedRiskProfile", ["low", "medium", "high"]), // 审批人员评估的风险偏好
+  // 第一级审批字段
+  firstApprovalStatus: mysqlEnum("firstApprovalStatus", ["pending", "approved", "rejected"]).default("pending"), // 第一级审批状态
+  firstApprovalBy: varchar("firstApprovalBy", { length: 200 }), // 第一级审批人员ID
+  firstApprovalByName: varchar("firstApprovalByName", { length: 200 }), // 第一级审批人员姓名
+  firstApprovalByCeNo: varchar("firstApprovalByCeNo", { length: 20 }), // 第一级审批人员CE号码
+  firstApprovalAt: timestamp("firstApprovalAt"), // 第一级审批时间
+  firstApprovalComments: text("firstApprovalComments"), // 第一级审批意见
+  // 第二级审批字段（合规部终审）
+  secondApprovalStatus: mysqlEnum("secondApprovalStatus", ["pending", "approved", "rejected"]).default("pending"), // 第二级审批状态
+  secondApprovalBy: varchar("secondApprovalBy", { length: 200 }), // 第二级审批人员ID
+  secondApprovalByName: varchar("secondApprovalByName", { length: 200 }), // 第二级审批人员姓名
+  secondApprovalByCeNo: varchar("secondApprovalByCeNo", { length: 20 }), // 第二级审批人员CE号码（如果有）
+  secondApprovalAt: timestamp("secondApprovalAt"), // 第二级审批时间
+  secondApprovalComments: text("secondApprovalComments"), // 第二级审批意见
 });
 
 /**
@@ -254,7 +268,7 @@ export const approvalRecords = mysqlTable("approval_records", {
   id: int("id").autoincrement().primaryKey(),
   applicationId: int("applicationId").notNull(), // 关联applications表
   approverId: int("approverId").notNull(), // 关联approvers表
-  action: mysqlEnum("action", ["approved", "rejected", "returned"]).notNull(), // 审批操作
+  action: mysqlEnum("action", ["approved", "rejected", "returned", "first_approved", "second_approved"]).notNull(), // 审批操作
   comments: text("comments"), // 审批意见
   rejectReason: text("rejectReason"), // 拒绝理由
   returnReason: text("returnReason"), // 退回补充材料理由

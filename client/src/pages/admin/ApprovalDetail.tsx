@@ -42,7 +42,7 @@ export default function ApprovalDetail() {
     { enabled: !!id }
   );
 
-  const approveMutation = trpc.approval.approve.useMutation({
+  const approveMutation = trpc.approval.firstApprove.useMutation({
     onSuccess: () => {
       toast.success("申请已批准");
       setLocation("/admin/approvals");

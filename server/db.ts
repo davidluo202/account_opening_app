@@ -936,3 +936,65 @@ export async function updateUserPassword(userId: number, hashedPassword: string)
     throw new Error('更新密码失败');
   }
 }
+
+/**
+ * 更新第一級審批信息
+ */
+export async function updateFirstApproval(
+  applicationId: number,
+  info: {
+    status: 'approved' | 'rejected';
+    approverEmail: string;
+    approverName: string;
+    approverCeNo: string;
+    comments?: string;
+  }
+) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  await db
+    .update(applications)
+    .set({
+      firstApprovalStatus: info.status,
+      firstApprovalBy: info.approverEmail,
+      firstApprovalByName: info.approverName,
+      firstApprovalByCeNo: info.approverCeNo,
+      firstApprovalAt: new Date(),
+      firstApprovalComments: info.comments || null,
+    })
+    .where(eq(applications.id, applicationId));
+  
+  return { success: true };
+}
+
+/**
+ * 更新第二級審批信息
+ */
+export async function updateSecondApproval(
+  applicationId: number,
+  info: {
+    status: 'approved' | 'rejected';
+    approverEmail: string;
+    approverName: string;
+    approverCeNo?: string;
+    comments?: string;
+  }
+) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  await db
+    .update(applications)
+    .set({
+      secondApprovalStatus: info.status,
+      secondApprovalBy: info.approverEmail,
+      secondApprovalByName: info.approverName,
+      secondApprovalByCeNo: info.approverCeNo || null,
+      secondApprovalAt: new Date(),
+      secondApprovalComments: info.comments || null,
+    })
+    .where(eq(applications.id, applicationId));
+  
+  return { success: true };
+}
