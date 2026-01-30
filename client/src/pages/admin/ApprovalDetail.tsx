@@ -524,6 +524,60 @@ export default function ApprovalDetail() {
               </div>
             )}
 
+            {/* Face Verification */}
+            {applicationData.face && (
+              <div>
+                <h3 className="font-semibold text-lg mb-2">人臉識別</h3>
+                <div className="space-y-4">
+                  <div>
+                    <Label>驗證狀態</Label>
+                    <p className="mt-1">
+                      {applicationData.face.verified ? (
+                        <span className="text-green-600 font-medium">✓ 已驗證</span>
+                      ) : (
+                        <span className="text-gray-500">未驗證</span>
+                      )}
+                    </p>
+                  </div>
+                  {applicationData.face.verified && applicationData.face.verificationData && (() => {
+                    try {
+                      const data = JSON.parse(applicationData.face.verificationData);
+                      return (
+                        <>
+                          {data.confidence && (
+                            <div>
+                              <Label>置信度</Label>
+                              <p className="mt-1">{data.confidence.toFixed(2)}%</p>
+                            </div>
+                          )}
+                          {data.verifiedAt && (
+                            <div>
+                              <Label>驗證時間</Label>
+                              <p className="mt-1">{new Date(data.verifiedAt).toLocaleString('zh-CN')}</p>
+                            </div>
+                          )}
+                          {data.faceImageUrl && (
+                            <div>
+                              <Label>人臉照片</Label>
+                              <div className="mt-2">
+                                <img 
+                                  src={data.faceImageUrl} 
+                                  alt="Face Verification" 
+                                  className="max-w-xs rounded border"
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      );
+                    } catch (e) {
+                      return null;
+                    }
+                  })()}
+                </div>
+              </div>
+            )}
+
             {/* Regulatory Declarations */}
             {applicationData.regulatory && (
               <div>

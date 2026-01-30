@@ -354,14 +354,15 @@ export default function FaceVerification() {
   const isNextDisabled = !selfieImage || !verificationResult?.success || saveMutation.isPending;
 
   return (
-    <ApplicationWizard currentStep={11} applicationId={applicationId}>
+    <ApplicationWizard 
+      currentStep={11} 
+      applicationId={applicationId}
+      onNext={handleNext}
+      onPrevious={handleBack}
+      isNextDisabled={isNextDisabled}
+      isNextLoading={saveMutation.isPending}
+    >
       <div className="space-y-6">
-        <div>
-          <h2 className="text-2xl font-bold mb-2">人臉識別 / Face Verification</h2>
-          <p className="text-muted-foreground">
-            請對準攝像頭，系統將自動檢測並拍攝您的照片
-          </p>
-        </div>
 
         <Card className="p-6">
           <div className="space-y-4">
@@ -514,22 +515,6 @@ export default function FaceVerification() {
             <canvas ref={canvasRef} className="hidden" />
           </div>
         </Card>
-
-        <div className="flex justify-between pt-4">
-          <Button onClick={handleBack} variant="outline" disabled={saveMutation.isPending}>
-            上一步
-          </Button>
-          <Button onClick={handleNext} disabled={isNextDisabled}>
-            {saveMutation.isPending ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                保存中...
-              </>
-            ) : (
-              "下一步"
-            )}
-          </Button>
-        </div>
       </div>
     </ApplicationWizard>
   );

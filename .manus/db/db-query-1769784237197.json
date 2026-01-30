@@ -1,0 +1,45 @@
+{
+  "query": "SELECT id, applicationId, verified, LEFT(verificationData, 100) as verification_preview, createdAt FROM face_verification ORDER BY id DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2uixhWXF4JwUSvL.6b97ca2f8816 --database gu8TL5Ga5RUHfjV8rgaSaT --execute SELECT id, applicationId, verified, LEFT(verificationData, 100) as verification_preview, createdAt FROM face_verification ORDER BY id DESC LIMIT 5;",
+  "rows": [
+    {
+      "id": "90004",
+      "applicationId": "90052",
+      "verified": "1",
+      "verification_preview": "{\"faceImageUrl\":\"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAA",
+      "createdAt": "2026-01-29 04:55:47"
+    },
+    {
+      "id": "90003",
+      "applicationId": "90051",
+      "verified": "1",
+      "verification_preview": "{\"faceImageUrl\":\"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAA",
+      "createdAt": "2026-01-29 04:14:52"
+    },
+    {
+      "id": "90002",
+      "applicationId": "90034",
+      "verified": "1",
+      "verification_preview": "{\"faceImageUrl\":\"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAA",
+      "createdAt": "2026-01-29 03:52:36"
+    },
+    {
+      "id": "90001",
+      "applicationId": "90017",
+      "verified": "1",
+      "verification_preview": "{\"faceImageUrl\":\"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAA",
+      "createdAt": "2026-01-29 03:19:34"
+    },
+    {
+      "id": "60001",
+      "applicationId": "60065",
+      "verified": "1",
+      "verification_preview": "{\"faceImageUrl\":\"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAA",
+      "createdAt": "2026-01-29 02:23:34"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tapplicationId\tverified\tverification_preview\tcreatedAt\n90004\t90052\t1\t{\"faceImageUrl\":\"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAA\t2026-01-29 04:55:47\n90003\t90051\t1\t{\"faceImageUrl\":\"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAA\t2026-01-29 04:14:52\n90002\t90034\t1\t{\"faceImageUrl\":\"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAA\t2026-01-29 03:52:36\n90001\t90017\t1\t{\"faceImageUrl\":\"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAA\t2026-01-29 03:19:34\n60001\t60065\t1\t{\"faceImageUrl\":\"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAA\t2026-01-29 02:23:34\n",
+  "stderr": "",
+  "execution_time_ms": 66
+}
