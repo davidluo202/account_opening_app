@@ -789,6 +789,104 @@ export const appRouter = router({
   
   // 审批人员管理
   approver: router({
+    // 密码登录
+    loginWithPassword: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        password: z.string().min(6),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { hashPassword, verifyPassword } = await import('./password');
+        
+        // 查找用户
+        const user = await db.getUserByEmail(input.email);
+        if (!user) {
+          throw new Error('邮箱或密码错误');
+        }
+        
+        // 验证密码
+        if (!user.password) {
+          throw new Error('该账户尚未设置密码，请使用验证码登录');
+        }
+        
+        const isValid = await verifyPassword(input.password, user.password);
+        if (!isValid) {
+          throw new Error('邮箱或密码错误');
+        }
+        
+        // 创建session token
+        const { sdk } = await import('./_core/sdk');
+        const sessionToken = await sdk.createSessionToken(user.openId, {
+          name: user.name || user.email || '',
+        });
+        
+        // 设置session cookie
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.cookie(COOKIE_NAME, sessionToken, cookieOptions);
+        
+        return { success: true };
+      }),
+    
+    // 请求密码重置
+    requestPasswordReset: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+      }))
+      .mutation(async ({ input }) => {
+        const { generateResetToken, generateResetLink } = await import('./password');
+        const { sendPasswordResetEmail } = await import('./email');
+        
+        // 查找用户
+        const user = await db.getUserByEmail(input.email);
+        if (!user) {
+          // 不要透露用户是否存在
+          return { success: true, message: '如果该邮箱存在，您将收到密码重置邮件' };
+        }
+        
+        // 生成重置令牌
+        const resetToken = generateResetToken();
+        const resetExpires = new Date(Date.now() + 60 * 60 * 1000); // 1小时后过期
+        
+        // 保存重置令牌到数据库
+        await db.savePasswordResetToken(user.id, resetToken, resetExpires);
+        
+        // 生成重置链接
+        const baseUrl = process.env.VITE_APP_URL || 'http://localhost:3000';
+        const resetLink = generateResetLink(resetToken, baseUrl);
+        
+        // 发送邮件
+        const sent = await sendPasswordResetEmail(input.email, resetLink);
+        if (!sent) {
+          throw new Error('邮件发送失败，请稍后重试');
+        }
+        
+        return { success: true, message: '密码重置邮件已发送' };
+      }),
+    
+    // 重置密码
+    resetPassword: publicProcedure
+      .input(z.object({
+        token: z.string(),
+        newPassword: z.string().min(6),
+      }))
+      .mutation(async ({ input }) => {
+        const { hashPassword } = await import('./password');
+        
+        // 验证令牌
+        const user = await db.getUserByResetToken(input.token);
+        if (!user) {
+          throw new Error('重置链接无效或已过期');
+        }
+        
+        // 加密新密码
+        const hashedPassword = await hashPassword(input.newPassword);
+        
+        // 更新密码并清除重置令牌
+        await db.updateUserPassword(user.id, hashedPassword);
+        
+        return { success: true, message: '密码重置成功' };
+      }),
+    
     // 获取所有审批人员列表
     list: protectedProcedure.query(async ({ ctx }) => {
       // 检查用户是否为管理员

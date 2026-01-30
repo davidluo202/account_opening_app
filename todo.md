@@ -863,3 +863,52 @@
 - [x] 投资经验年限选项添加"Years/年"注释（如3_to_5显示为"3-5 Years/年"）
 - [x] 确认首页路由正确指向客户开户系统首页（/）
 - [x] 确认所有页面logo点击跳转到客户开户系统首页（/），不是审批页面
+
+## 紧急修复和密码重置功能（2026-01-30 晚上3）
+
+- [ ] 修复审批详情页面财务状况显示消失问题（恢复完整的财务状况信息）
+- [ ] 修复审批人员session持久化问题（验证后保持登录状态，不应每次都要求验证码）
+- [ ] 实现用户密码重置后端功能（生成重置令牌、发送重置邮件、验证令牌、更新密码）
+- [ ] 实现用户密码重置前端界面（用户管理页面添加重置按钮、创建密码重置页面）
+- [ ] 测试完整的密码重置流程（发送邮件 → 点击链接 → 输入新密码 → 确认重置）
+
+## 密码登录和重置功能详细任务（2026-01-30 晚上3-更新）
+
+### 数据库和后端
+- [ ] 更新users表schema：添加password、passwordResetToken、passwordResetExpires字段
+- [ ] 推送数据库迁移（pnpm db:push）
+- [ ] 实现密码加密工具函数（bcrypt hash和verify）
+- [ ] 实现密码登录API（approver.loginWithPassword）
+- [ ] 实现密码重置请求API（approver.requestPasswordReset）
+- [ ] 实现密码重置验证和更新API（approver.resetPassword）
+- [ ] 修复session持久化问题（确保验证码和密码登录都创建session）
+
+### 前端界面
+- [ ] 修改AdminHome登录页面：支持密码登录和验证码登录切换
+- [ ] 创建密码重置请求页面/对话框
+- [ ] 创建密码重置页面（通过邮件链接访问）
+- [ ] 在UserManagement页面添加密码重置按钮
+- [ ] 实现密码重置邮件发送功能
+
+### 测试
+- [ ] 测试密码登录流程
+- [ ] 测试验证码登录流程（确保仍然可用）
+- [ ] 测试session持久化（刷新页面保持登录）
+- [ ] 测试密码重置完整流程
+
+## 密码登录和重置功能完成标记（2026-01-30）
+- [x] 审批详情页面财务状况显示优化（添加千分位分隔符和货币币种）
+- [x] 投资经验年限显示优化（添加Years/年注释）
+- [x] 修复首页路由跳转问题（确保logo和网页地址跳转到客户开户首页）
+- [x] 数据库schema更新（添加password、passwordResetToken、passwordResetExpires字段）
+- [x] 实现密码加密工具函数（bcrypt）
+- [x] 实现密码登录API（approver.loginWithPassword）
+- [x] 实现密码重置请求API（approver.requestPasswordReset）
+- [x] 实现密码重置API（approver.resetPassword）
+- [x] 实现密码重置邮件发送功能（sendPasswordResetEmail）
+- [x] 修复session持久化问题（cookie maxAge设置为7天）
+- [x] 修改AdminHome登录页面支持密码登录和验证码登录切换
+- [x] 创建忘记密码页面（/forgot-password）
+- [x] 创建重置密码页面（/reset-password）
+- [x] 在UserManagement页面添加密码重置按钮
+- [x] 添加数据库辅助函数（savePasswordResetToken、getUserByResetToken、updateUserPassword）

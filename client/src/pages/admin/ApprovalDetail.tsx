@@ -417,15 +417,33 @@ export default function ApprovalDetail() {
                   </div>
                   <div>
                     <Label>年收入范围</Label>
-                    <p>{employmentDetails.annualIncome ? `${Number(employmentDetails.annualIncome).toLocaleString()} 港币` : "-"}</p>
+                    <p>
+                      {employmentDetails.annualIncome 
+                        ? (typeof employmentDetails.annualIncome === 'number' 
+                          ? `${(employmentDetails.annualIncome as number).toLocaleString()} 港币` 
+                          : `${employmentDetails.annualIncome}`) 
+                        : "-"}
+                    </p>
                   </div>
                   <div>
                     <Label>流动资产范围</Label>
-                    <p>{employmentDetails.liquidAsset ? `${Number(employmentDetails.liquidAsset).toLocaleString()} 港币` : "-"}</p>
+                    <p>
+                      {employmentDetails.liquidAsset 
+                        ? (typeof employmentDetails.liquidAsset === 'number' 
+                          ? `${(employmentDetails.liquidAsset as number).toLocaleString()} 港币` 
+                          : `${employmentDetails.liquidAsset}`) 
+                        : "-"}
+                    </p>
                   </div>
                   <div>
                     <Label>净资产范围</Label>
-                    <p>{employmentDetails.netWorth ? `${Number(employmentDetails.netWorth).toLocaleString()} 港币` : "-"}</p>
+                    <p>
+                      {employmentDetails.netWorth 
+                        ? (typeof employmentDetails.netWorth === 'number' 
+                          ? `${(employmentDetails.netWorth as number).toLocaleString()} 港币` 
+                          : `${employmentDetails.netWorth}`) 
+                        : "-"}
+                    </p>
                   </div>
                 </div>
               </div>

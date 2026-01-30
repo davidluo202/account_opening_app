@@ -24,6 +24,8 @@ import AdminHome from "./pages/admin/AdminHome";
 import ApprovalDetail from "./pages/admin/ApprovalDetail";
 import ApproverManagement from "./pages/admin/ApproverManagement";
 import UserManagement from "./pages/admin/UserManagement";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function Router() {
   return (
@@ -49,6 +51,8 @@ function Router() {
       <Route path={"/admin/approvals/:id"} component={ApprovalDetail} />
       <Route path={"/admin/approvers"} component={ApproverManagement} />
       <Route path={"/admin/users"} component={UserManagement} />
+      <Route path={"/forgot-password"} component={ForgotPassword} />
+      <Route path={"/reset-password"} component={ResetPassword} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

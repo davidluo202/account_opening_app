@@ -22,7 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Shield, ShieldOff, Info, Search } from "lucide-react";
+import { Shield, ShieldOff, Info, Search, KeyRound } from "lucide-react";
 
 export default function UserManagement() {
   const [selectedUser, setSelectedUser] = useState<number | null>(null);
@@ -47,6 +47,15 @@ export default function UserManagement() {
     },
     onError: (error) => {
       toast.error(error.message || "更新用户角色失败");
+    },
+  });
+
+  const resetPasswordMutation = trpc.approver.requestPasswordReset.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message || "密码重置邮件已发送");
+    },
+    onError: (error) => {
+      toast.error(error.message || "发送失败");
     },
   });
 
@@ -173,28 +182,44 @@ export default function UserManagement() {
                       <TableCell>
                         {new Date(user.createdAt).toLocaleString("zh-CN")}
                       </TableCell>
-                      <TableCell className="text-right space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedUser(user.id);
-                            setShowRoleDialog(true);
-                          }}
-                        >
-                          {user.role === "admin" ? (
-                            <>
-                              <ShieldOff className="h-4 w-4 mr-1" />
-                              降级
-                            </>
-                          ) : (
-                            <>
-                              <Shield className="h-4 w-4 mr-1" />
-                              提升
-                            </>
-                          )}
-                        </Button>
-
+                      <TableCell className="text-right">
+                        <div className="flex gap-2 justify-end">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedUser(user.id);
+                              setShowRoleDialog(true);
+                            }}
+                          >
+                            {user.role === "admin" ? (
+                              <>
+                                <ShieldOff className="h-4 w-4 mr-1" />
+                                降级
+                              </>
+                            ) : (
+                              <>
+                                <Shield className="h-4 w-4 mr-1" />
+                                提升
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              if (user.email) {
+                                resetPasswordMutation.mutate({ email: user.email });
+                              } else {
+                                toast.error("该用户没有邮箱地址");
+                              }
+                            }}
+                            disabled={!user.email || resetPasswordMutation.isPending}
+                          >
+                            <KeyRound className="h-4 w-4 mr-1" />
+                            重置密码
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}

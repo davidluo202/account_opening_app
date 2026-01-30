@@ -555,3 +555,63 @@ export async function sendReturnNotificationEmail(
     return false;
   }
 }
+
+/**
+ * 发送密码重置邮件
+ * @param to 收件人邮箱
+ * @param resetLink 密码重置链接
+ * @returns Promise<boolean> 发送成功返回true，失败返回false
+ */
+export async function sendPasswordResetEmail(to: string, resetLink: string): Promise<boolean> {
+  if (!apiKey) {
+    throw new Error('SendGrid API密钥未配置');
+  }
+
+  try {
+    const msg = {
+      to,
+      from: senderEmail,
+      subject: '誠港金融 - 密碼重置請求',
+      text: `您好，
+
+我們收到了您的密碼重置請求。請點擊以下鏈接重置您的密碼：
+
+${resetLink}
+
+此鏈接將在1小時後過期。如果您沒有請求重置密碼，請忽略此郵件。
+
+誠港金融股份有限公司
+客戶服務團隊`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h2 style="color: #2563eb;">誠港金融</h2>
+          <p>您好，</p>
+          <p>我們收到了您的密碼重置請求。請點擊以下按鈕重置您的密碼：</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${resetLink}" style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">重置密碼</a>
+          </div>
+          <p>或複製以下鏈接到瀏覽器：</p>
+          <p style="background-color: #f3f4f6; padding: 10px; word-break: break-all; font-size: 12px;">${resetLink}</p>
+          <p style="color: #dc2626; font-weight: bold;">此鏈接將在1小時後過期。</p>
+          <p>如果您沒有請求重置密碼，請忽略此郵件。您的密碼將保持不變。</p>
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+          <p style="color: #6b7280; font-size: 12px;">
+            誠港金融股份有限公司<br>
+            客戶服務團隊<br>
+            此郵件由系統自動發送，請勿回覆。
+          </p>
+        </div>
+      `,
+    };
+
+    await sgMail.send(msg);
+    console.log(`Password reset email sent to ${to}`);
+    return true;
+  } catch (error: any) {
+    console.error('SendGrid error:', error);
+    if (error.response) {
+      console.error('SendGrid response:', error.response.body);
+    }
+    return false;
+  }
+}

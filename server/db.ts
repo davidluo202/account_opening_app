@@ -1,4 +1,4 @@
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, gt } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, 
@@ -864,4 +864,75 @@ export async function getApprovalHistory(applicationId: number) {
     .orderBy(desc(approvalRecords.createdAt));
   
   return results;
+}
+
+// ==================== 密码重置相关 ====================
+
+/**
+ * 保存密码重置令牌
+ */
+export async function savePasswordResetToken(userId: number, token: string, expiresAt: Date) {
+  const db = await getDb();
+  if (!db) throw new Error('数据库连接失败');
+
+  try {
+    await db
+      .update(users)
+      .set({
+        passwordResetToken: token,
+        passwordResetExpires: expiresAt,
+      })
+      .where(eq(users.id, userId));
+  } catch (error) {
+    console.error('Error saving password reset token:', error);
+    throw new Error('保存重置令牌失败');
+  }
+}
+
+/**
+ * 通过重置令牌获取用户
+ */
+export async function getUserByResetToken(token: string) {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    const result = await db
+      .select()
+      .from(users)
+      .where(
+        and(
+          eq(users.passwordResetToken, token),
+          gt(users.passwordResetExpires, new Date())
+        )
+      )
+      .limit(1);
+    
+    return result[0] || null;
+  } catch (error) {
+    console.error('Error getting user by reset token:', error);
+    return null;
+  }
+}
+
+/**
+ * 更新用户密码并清除重置令牌
+ */
+export async function updateUserPassword(userId: number, hashedPassword: string) {
+  const db = await getDb();
+  if (!db) throw new Error('数据库连接失败');
+
+  try {
+    await db
+      .update(users)
+      .set({
+        password: hashedPassword,
+        passwordResetToken: null,
+        passwordResetExpires: null,
+      })
+      .where(eq(users.id, userId));
+  } catch (error) {
+    console.error('Error updating user password:', error);
+    throw new Error('更新密码失败');
+  }
 }

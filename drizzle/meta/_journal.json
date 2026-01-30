@@ -71,6 +71,13 @@
       "when": 1769744234652,
       "tag": "0009_productive_firebrand",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1769759167641,
+      "tag": "0010_numerous_anita_blake",
+      "breakpoints": true
     }
   ]
 }
