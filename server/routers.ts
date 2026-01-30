@@ -743,6 +743,65 @@ export const appRouter = router({
         }
         return await db.getFaceVerification(input.applicationId);
       }),
+    
+    // Face++人脸比对API
+    compareFaces: protectedProcedure
+      .input(z.object({
+        selfieImageUrl: z.string(),
+        idCardImageUrl: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const { selfieImageUrl, idCardImageUrl } = input;
+        
+        // 检查Face++ API密钥是否配置
+        const apiKey = process.env.FACEPP_API_KEY;
+        const apiSecret = process.env.FACEPP_API_SECRET;
+        
+        if (!apiKey || !apiSecret) {
+          throw new Error('Face++ API密鑰未配置');
+        }
+        
+        try {
+          // 调用Face++ Compare API
+          const formData = new FormData();
+          formData.append('api_key', apiKey);
+          formData.append('api_secret', apiSecret);
+          formData.append('image_url1', selfieImageUrl);
+          formData.append('image_url2', idCardImageUrl);
+          
+          const response = await fetch('https://api-us.faceplusplus.com/facepp/v3/compare', {
+            method: 'POST',
+            body: formData,
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Face++ API請求失敗: ${response.statusText}`);
+          }
+          
+          const result = await response.json();
+          
+          // 检查是否有错误
+          if (result.error_message) {
+            throw new Error(`Face++ API錯誤: ${result.error_message}`);
+          }
+          
+          // 获取置信度（0-100）
+          const confidence = result.confidence || 0;
+          const threshold = 90; // 90%置信度阈值
+          const success = confidence >= threshold;
+          
+          return {
+            success,
+            confidence,
+            message: success 
+              ? `人臉比對成功，置信度：${confidence.toFixed(2)}%`
+              : `人臉比對失敗，置信度：${confidence.toFixed(2)}%（需要≥${threshold}%）`,
+          };
+        } catch (error: any) {
+          console.error('Face++ API error:', error);
+          throw new Error(`人臉比對失敗: ${error.message}`);
+        }
+      }),
   }),
   
   // Case 12: 监管声明

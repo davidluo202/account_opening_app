@@ -7,6 +7,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2, Camera, CheckCircle2, RefreshCw, AlertCircle, Smartphone, Monitor } from "lucide-react";
+import * as faceapi from 'face-api.js';
 
 export default function FaceVerification() {
   const params = useParams<{ id: string }>();
@@ -24,6 +25,7 @@ export default function FaceVerification() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const detectionIntervalRef = useRef<number | null>(null);
+  const countdownIntervalRef = useRef<number | null>(null);
 
   // 状态管理
   const [captureMode, setCaptureMode] = useState<"none" | "native" | "browser">("none");
@@ -33,6 +35,9 @@ export default function FaceVerification() {
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [autoCapture, setAutoCapture] = useState(true);
   const [faceDetected, setFaceDetected] = useState(false);
+  const [isModelLoaded, setIsModelLoaded] = useState(false);
+  const [countdown, setCountdown] = useState<number | null>(null);
+  const [consecutiveDetections, setConsecutiveDetections] = useState(0);
 
   const { data: existingData, isLoading: isLoadingData, refetch } = trpc.faceVerification.get.useQuery(
     { applicationId },
@@ -48,6 +53,21 @@ export default function FaceVerification() {
       toast.error(`保存失敗: ${error.message}`);
     },
   });
+
+  // 加载face-api.js模型
+  useEffect(() => {
+    const loadModels = async () => {
+      try {
+        await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
+        setIsModelLoaded(true);
+        console.log('Face detection models loaded successfully');
+      } catch (error) {
+        console.error('Error loading face detection models:', error);
+        toast.error('人臉檢測模型加載失敗');
+      }
+    };
+    loadModels();
+  }, []);
 
   // 移动设备检测
   useEffect(() => {
@@ -73,10 +93,13 @@ export default function FaceVerification() {
     }
   }, [existingData]);
 
-  // 清理摄像头资源
+  // 清理资源
   useEffect(() => {
     return () => {
       stopCamera();
+      if (countdownIntervalRef.current) {
+        clearInterval(countdownIntervalRef.current);
+      }
     };
   }, []);
 
@@ -122,6 +145,11 @@ export default function FaceVerification() {
   // ==================== 浏览器摄像头方法 ====================
 
   const startCamera = async () => {
+    if (!isModelLoaded) {
+      toast.error('人臉檢測模型尚未加載完成，請稍候');
+      return;
+    }
+
     setCaptureMode("browser");
     // ✅ 关键修复：先设置isCapturing为true，让video元素渲染到DOM中
     setIsCapturing(true);
@@ -185,93 +213,79 @@ export default function FaceVerification() {
       clearInterval(detectionIntervalRef.current);
       detectionIntervalRef.current = null;
     }
+    if (countdownIntervalRef.current) {
+      clearInterval(countdownIntervalRef.current);
+      countdownIntervalRef.current = null;
+    }
     setIsCapturing(false);
     setIsVideoReady(false);
     setFaceDetected(false);
+    setCountdown(null);
+    setConsecutiveDetections(0);
     setCaptureMode("none");
   };
 
-  // 简单的人脸检测（基于图像分析）
+  // 使用face-api.js进行人脸检测
   const startFaceDetection = () => {
+    const REQUIRED_DETECTIONS = 3; // 需要连续检测到3次
+    let detectionCount = 0;
+
     if (detectionIntervalRef.current) {
       clearInterval(detectionIntervalRef.current);
     }
 
-    detectionIntervalRef.current = window.setInterval(() => {
-      if (!videoRef.current || !canvasRef.current || !isVideoReady) return;
+    detectionIntervalRef.current = window.setInterval(async () => {
+      if (!videoRef.current || !isVideoReady) return;
 
-      const video = videoRef.current;
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext('2d');
-      
-      if (!ctx) return;
-
-      // 设置canvas尺寸
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      
-      // 绘制当前帧
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-      // 简单的人脸检测：检查图片中心区域的亮度变化和色彩分布
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
-      const checkSize = Math.min(canvas.width, canvas.height) / 3;
-      
       try {
-        const imageData = ctx.getImageData(
-          centerX - checkSize / 2,
-          centerY - checkSize / 2,
-          checkSize,
-          checkSize
+        // 使用face-api.js检测人脸
+        const detection = await faceapi.detectSingleFace(
+          videoRef.current,
+          new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 })
         );
 
-        // 计算平均亮度和肤色检测
-        let totalBrightness = 0;
-        let skinColorPixels = 0;
-        const totalPixels = imageData.data.length / 4;
+        if (detection) {
+          detectionCount++;
+          setConsecutiveDetections(detectionCount);
+          setFaceDetected(true);
 
-        for (let i = 0; i < imageData.data.length; i += 4) {
-          const r = imageData.data[i];
-          const g = imageData.data[i + 1];
-          const b = imageData.data[i + 2];
-          
-          // 计算亮度
-          const brightness = (r + g + b) / 3;
-          totalBrightness += brightness;
-
-          // 简单的肤色检测（RGB范围）
-          if (r > 95 && g > 40 && b > 20 && 
-              r > g && r > b && 
-              Math.abs(r - g) > 15) {
-            skinColorPixels++;
-          }
-        }
-
-        const avgBrightness = totalBrightness / totalPixels;
-        const skinColorRatio = skinColorPixels / totalPixels;
-
-        // 判断是否检测到人脸
-        // 条件：亮度在合理范围内 + 肤色像素占比足够
-        const faceDetectedNow = 
-          avgBrightness > 50 && avgBrightness < 220 && 
-          skinColorRatio > 0.15;
-
-        setFaceDetected(faceDetectedNow);
-
-        // 如果检测到人脸且开启自动拍摄，则自动拍照
-        if (faceDetectedNow && autoCapture) {
-          // 延迟1秒后拍照，给用户准备时间
-          setTimeout(() => {
-            if (faceDetected) {
-              capturePhoto();
+          if (detectionCount >= REQUIRED_DETECTIONS) {
+            // 连续检测到人脸，开始倒计时
+            if (detectionIntervalRef.current) {
+              clearInterval(detectionIntervalRef.current);
+              detectionIntervalRef.current = null;
             }
-          }, 1000);
+            startCountdownAndCapture();
+          }
+        } else {
+          detectionCount = 0;
+          setConsecutiveDetections(0);
+          setFaceDetected(false);
         }
       } catch (error) {
         console.error("Face detection error:", error);
       }
-    }, 500); // 每500ms检测一次
+    }, 300); // 每300ms检测一次
+  };
+
+  const startCountdownAndCapture = () => {
+    let count = 3;
+    setCountdown(count);
+
+    countdownIntervalRef.current = window.setInterval(() => {
+      count--;
+      if (count > 0) {
+        setCountdown(count);
+      } else {
+        if (countdownIntervalRef.current) {
+          clearInterval(countdownIntervalRef.current);
+          countdownIntervalRef.current = null;
+        }
+        setCountdown(null);
+        // 自动拍照
+        capturePhoto();
+      }
+    }, 1000);
   };
 
   const capturePhoto = () => {
@@ -364,6 +378,7 @@ export default function FaceVerification() {
           <p className="text-sm text-blue-900">
             <strong>提示：</strong>請確保光線充足，面部清晰可見，並正面對準攝像頭。
             {isMobileDevice && "建議使用手機相機以獲得最佳體驗。"}
+            {!isModelLoaded && " 人臉檢測模型加載中..."}
           </p>
         </div>
 
@@ -416,6 +431,7 @@ export default function FaceVerification() {
                     variant={isMobileDevice ? "outline" : "default"}
                     size="lg"
                     className="w-full"
+                    disabled={!isModelLoaded}
                   >
                     <Monitor className="h-5 w-5 mr-2" />
                     使用瀏覽器攝像頭{isMobileDevice && "（備選）"}
@@ -445,13 +461,22 @@ export default function FaceVerification() {
                     </div>
                   )}
 
+                  {/* 倒计时显示 */}
+                  {countdown !== null && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                      <div className="text-white text-9xl font-bold animate-pulse">
+                        {countdown}
+                      </div>
+                    </div>
+                  )}
+
                   {/* 人脸检测状态 */}
-                  {isVideoReady && (
+                  {isVideoReady && countdown === null && (
                     <div className="absolute top-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
                       {faceDetected ? (
                         <span className="flex items-center gap-1">
                           <CheckCircle2 className="h-3 w-3 text-green-500" />
-                          檢測到人臉
+                          檢測到人臉 ({consecutiveDetections}/3)
                         </span>
                       ) : (
                         <span>請將面部對準框內</span>
@@ -481,9 +506,9 @@ export default function FaceVerification() {
                   )}
                 </div>
 
-                {autoCapture && isVideoReady && (
+                {autoCapture && isVideoReady && countdown === null && (
                   <p className="text-xs text-center text-muted-foreground">
-                    系統將在檢測到人臉後自動拍攝
+                    系統將在連續檢測到人臉後自動倒計時3秒拍攝
                   </p>
                 )}
               </div>
