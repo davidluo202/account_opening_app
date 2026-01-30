@@ -161,6 +161,12 @@ export const appRouter = router({
           throw new Error("申请不存在或无权访问");
         }
         
+        // 分配申请编号（如果还没有）
+        let applicationNumber = application.applicationNumber;
+        if (!applicationNumber) {
+          applicationNumber = await db.assignApplicationNumber(input.id);
+        }
+        
         // 提交申请（包含签名信息）
         await db.submitApplication(input.id, {
           signatureName: input.signatureName,
@@ -176,11 +182,10 @@ export const appRouter = router({
         const completeData = await db.getCompleteApplicationData(input.id);
         if (!completeData || !completeData.detailedInfo) {
           throw new Error("申请数据不存在");
-        }
-                // 添加applicationNumber和签名信息到completeData以便PDF生成器使用
+        }                // 添加applicationNumber和签名信息到completeData以便PDF生成器使用
         const dataForPDF = {
           ...completeData,
-          applicationNumber: application.applicationNumber,
+          applicationNumber: applicationNumber,
           submittedAt: new Date(),
           signatureName: application.signatureName,
           signatureMethod: application.signatureMethod,
@@ -192,7 +197,7 @@ export const appRouter = router({
         const customerEmail = completeData.detailedInfo?.email;
         const customerName = completeData.basicInfo?.chineseName || completeData.basicInfo?.englishName || '客户';
         
-        console.log(`Preparing to send emails for application ${application.applicationNumber}`);
+        console.log(`Preparing to send emails for application ${applicationNumber}`);
         console.log(`Customer email: ${customerEmail}`);
         console.log(`Customer name: ${customerName}`);
         
@@ -213,14 +218,14 @@ export const appRouter = router({
           // PDF生成失败不影响邮件发送，只是不附带PDF
         }
         
-        // 发送邮件（暂时不附带PDF，等待PDF生成功能完善后添加附件）
-        if (customerEmail && application.applicationNumber) {
-          console.log(`Condition met: customerEmail=${customerEmail}, applicationNumber=${application.applicationNumber}`);
+        // 发送邮件
+        if (customerEmail && applicationNumber) {
+          console.log(`Condition met: customerEmail=${customerEmail}, applicationNumber=${applicationNumber}`);
           try {
             console.log(`Calling sendCustomerConfirmationEmail...`);
             const result = await sendCustomerConfirmationEmail(
               customerEmail,
-              application.applicationNumber,
+              applicationNumber,
               customerName,
               pdfBuffer // 附带PDF
             );
@@ -237,25 +242,25 @@ export const appRouter = router({
           try {
             console.log(`Calling sendInternalNotificationEmail...`);
             const result = await sendInternalNotificationEmail(
-              application.applicationNumber,
+              applicationNumber,
               customerName,
               customerEmail,
               pdfBuffer // 附带PDF
             );
             console.log(`sendInternalNotificationEmail result: ${result}`);
             if (result) {
-              console.log(`Internal notification email sent for application ${application.applicationNumber}`);
+              console.log(`Internal notification email sent for application ${applicationNumber}`);
             } else {
-              console.error(`Failed to send internal notification email for application ${application.applicationNumber}`);
+              console.error(`Failed to send internal notification email for application ${applicationNumber}`);
             }
           } catch (error) {
             console.error('Failed to send internal notification email:', error);
           }
         } else {
-          console.log(`Email sending skipped: customerEmail=${customerEmail}, applicationNumber=${application.applicationNumber}`);
+          console.log(`Email sending skipped: customerEmail=${customerEmail}, applicationNumber=${applicationNumber}`);
         }
         
-        console.log(`Application ${application.applicationNumber} submitted successfully. Email notifications sent (without PDF attachment).`);
+        console.log(`Application ${applicationNumber} submitted successfully. Email notifications sent.`);
         
         // 如果PDF生成成功，上传到S3并返回URL
         let pdfUrl: string | undefined;
@@ -263,7 +268,7 @@ export const appRouter = router({
           try {
             const { storagePut } = await import('./storage');
             const result = await storagePut(
-              `applications/${application.applicationNumber}/application.pdf`,
+              `applications/${applicationNumber}/application.pdf`,
               pdfBuffer,
               'application/pdf'
             );

@@ -1,0 +1,16 @@
+{
+  "query": "SELECT a.id, a.applicationNumber, DATE_FORMAT(a.submittedAt, '%Y-%m-%d %H:%i:%s') as submitted_time, pd.email \nFROM applications a \nLEFT JOIN personal_detailed_info pd ON a.id = pd.applicationId \nWHERE a.status = 'submitted' \nORDER BY a.submittedAt DESC \nLIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2uixhWXF4JwUSvL.6b97ca2f8816 --database gu8TL5Ga5RUHfjV8rgaSaT --execute SELECT a.id, a.applicationNumber, DATE_FORMAT(a.submittedAt, '%Y-%m-%d %H:%i:%s') as submitted_time, pd.email \nFROM applications a \nLEFT JOIN personal_detailed_info pd ON a.id = pd.applicationId \nWHERE a.status = 'submitted' \nORDER BY a.submittedAt DESC \nLIMIT 1;",
+  "rows": [
+    {
+      "id": "150001",
+      "applicationNumber": "CMF-ACAPP-260130-001",
+      "submitted_time": "2026-01-30 15:19:49",
+      "email": "davidluo20@gmail.com"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tapplicationNumber\tsubmitted_time\temail\n150001\tCMF-ACAPP-260130-001\t2026-01-30 15:19:49\tdavidluo20@gmail.com\n",
+  "stderr": "",
+  "execution_time_ms": 933
+}

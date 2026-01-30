@@ -1,0 +1,418 @@
+{
+  "query": "SELECT id, applicationNumber, status, DATE_FORMAT(submittedAt, '%Y-%m-%d %H:%i:%s') as submitted_time, signatureName, signatureMethod FROM applications WHERE status = 'submitted' ORDER BY submittedAt DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2uixhWXF4JwUSvL.6b97ca2f8816 --database gu8TL5Ga5RUHfjV8rgaSaT --execute SELECT id, applicationNumber, status, DATE_FORMAT(submittedAt, '%Y-%m-%d %H:%i:%s') as submitted_time, signatureName, signatureMethod FROM applications WHERE status = 'submitted' ORDER BY submittedAt DESC;",
+  "rows": [
+    {
+      "id": "150001",
+      "applicationNumber": "CMF-ACAPP-260130-001",
+      "status": "submitted",
+      "submitted_time": "2026-01-30 15:19:49",
+      "signatureName": "xintao luo",
+      "signatureMethod": "typed"
+    },
+    {
+      "id": "90053",
+      "applicationNumber": "CMF-ACAPP-260129-006",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 05:34:21",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "90052",
+      "applicationNumber": "CMF-ACAPP-260129-005",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 04:56:41",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "90051",
+      "applicationNumber": "CMF-ACAPP-260129-004",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 04:16:08",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "90046",
+      "applicationNumber": "CMF-ACAPP-260128-071",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 04:05:59",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "90034",
+      "applicationNumber": "CMF-ACAPP-260129-003",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 03:53:50",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "90029",
+      "applicationNumber": "CMF-ACAPP-260128-067",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 03:38:10",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "90028",
+      "applicationNumber": "CMF-ACAPP-260128-066",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 03:38:10",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "90017",
+      "applicationNumber": "CMF-ACAPP-260129-002",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 03:21:09",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "90012",
+      "applicationNumber": "CMF-ACAPP-260128-064",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 03:12:01",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "90011",
+      "applicationNumber": "CMF-ACAPP-260128-063",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 03:12:01",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "60124",
+      "applicationNumber": "CMF-ACAPP-260128-059",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 02:46:08",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "60125",
+      "applicationNumber": "CMF-ACAPP-260128-060",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 02:46:07",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "60110",
+      "applicationNumber": "CMF-ACAPP-260128-056",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 02:45:44",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "60093",
+      "applicationNumber": "CMF-ACAPP-260128-052",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 02:45:07",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "60092",
+      "applicationNumber": "CMF-ACAPP-260128-051",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 02:45:06",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "60065",
+      "applicationNumber": "CMF-ACAPP-260129-001",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 02:30:30",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "60077",
+      "applicationNumber": "CMF-ACAPP-260128-048",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 02:17:54",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "60076",
+      "applicationNumber": "CMF-ACAPP-260128-047",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 02:17:54",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "60061",
+      "applicationNumber": "CMF-ACAPP-260128-044",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 01:58:50",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "60059",
+      "applicationNumber": "CMF-ACAPP-260128-043",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 01:58:50",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "60043",
+      "applicationNumber": "CMF-ACAPP-260128-040",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 01:58:27",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "60028",
+      "applicationNumber": "CMF-ACAPP-260128-037",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 01:57:53",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "60027",
+      "applicationNumber": "CMF-ACAPP-260128-036",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 01:57:53",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "60013",
+      "applicationNumber": "CMF-ACAPP-260128-033",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 01:40:08",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "60011",
+      "applicationNumber": "CMF-ACAPP-260128-032",
+      "status": "submitted",
+      "submitted_time": "2026-01-29 01:40:08",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30180",
+      "applicationNumber": "CMF-ACAPP-260128-029",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 13:50:52",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30176",
+      "applicationNumber": "CMF-ACAPP-260128-028",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 13:43:06",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30174",
+      "applicationNumber": "CMF-ACAPP-260128-027",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 13:43:06",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30159",
+      "applicationNumber": "CMF-ACAPP-260128-024",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 13:26:12",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30157",
+      "applicationNumber": "CMF-ACAPP-260128-023",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 13:26:12",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30143",
+      "applicationNumber": "CMF-ACAPP-260128-020",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 13:04:22",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30141",
+      "applicationNumber": "CMF-ACAPP-260128-019",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 13:04:22",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30125",
+      "applicationNumber": "CMF-ACAPP-260128-016",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 12:59:35",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30124",
+      "applicationNumber": "CMF-ACAPP-260128-015",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 12:59:35",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30108",
+      "applicationNumber": "CMF-ACAPP-260128-011",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 12:44:51",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30109",
+      "applicationNumber": "CMF-ACAPP-260128-012",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 12:44:51",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30092",
+      "applicationNumber": "CMF-ACAPP-260128-007",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 12:24:47",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30093",
+      "applicationNumber": "CMF-ACAPP-260128-008",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 12:24:47",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30077",
+      "applicationNumber": "CMF-ACAPP-260128-004",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 12:23:38",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30076",
+      "applicationNumber": "CMF-ACAPP-260128-003",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 12:23:38",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30059",
+      "applicationNumber": "APP-MKXZ49QU-YI38",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 12:00:27",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30060",
+      "applicationNumber": "APP-MKXZ49W7-I88G",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 12:00:27",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30044",
+      "applicationNumber": "APP-MKXZ0NYZ-K0UP",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 11:57:38",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30043",
+      "applicationNumber": "APP-MKXZ0NUI-GP0H",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 11:57:38",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30030",
+      "applicationNumber": "APP-MKXYO9BA-67YO",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 11:48:00",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30026",
+      "applicationNumber": "APP-MKXYNTX2-G1T3",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 11:47:40",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "30022",
+      "applicationNumber": "APP-MKXYN9MK-J5C2",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 11:47:13",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "15",
+      "applicationNumber": "APP-MKXUR534-3KM1",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 09:58:28",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "12",
+      "applicationNumber": "APP-MKXUBZT1-B090",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 09:46:29",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    },
+    {
+      "id": "5",
+      "applicationNumber": "APP-MKXUBFM8-IAZ4",
+      "status": "submitted",
+      "submitted_time": "2026-01-28 09:46:03",
+      "signatureName": "NULL",
+      "signatureMethod": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tapplicationNumber\tstatus\tsubmitted_time\tsignatureName\tsignatureMethod\n150001\tCMF-ACAPP-260130-001\tsubmitted\t2026-01-30 15:19:49\txintao luo\ttyped\n90053\tCMF-ACAPP-260129-006\tsubmitted\t2026-01-29 05:34:21\tNULL\tNULL\n90052\tCMF-ACAPP-260129-005\tsubmitted\t2026-01-29 04:56:41\tNULL\tNULL\n90051\tCMF-ACAPP-260129-004\tsubmitted\t2026-01-29 04:16:08\tNULL\tNULL\n90046\tCMF-ACAPP-260128-071\tsubmitted\t2026-01-29 04:05:59\tNULL\tNULL\n90034\tCMF-ACAPP-260129-003\tsubmitted\t2026-01-29 03:53:50\tNULL\tNULL\n90029\tCMF-ACAPP-260128-067\tsubmitted\t2026-01-29 03:38:10\tNULL\tNULL\n90028\tCMF-ACAPP-260128-066\tsubmitted\t2026-01-29 03:38:10\tNULL\tNULL\n90017\tCMF-ACAPP-260129-002\tsubmitted\t2026-01-29 03:21:09\tNULL\tNULL\n90012\tCMF-ACAPP-260128-064\tsubmitted\t2026-01-29 03:12:01\tNULL\tNULL\n90011\tCMF-ACAPP-260128-063\tsubmitted\t2026-01-29 03:12:01\tNULL\tNULL\n60124\tCMF-ACAPP-260128-059\tsubmitted\t2026-01-29 02:46:08\tNULL\tNULL\n60125\tCMF-ACAPP-260128-060\tsubmitted\t2026-01-29 02:46:07\tNULL\tNULL\n60110\tCMF-ACAPP-260128-056\tsubmitted\t2026-01-29 02:45:44\tNULL\tNULL\n60093\tCMF-ACAPP-260128-052\tsubmitted\t2026-01-29 02:45:07\tNULL\tNULL\n60092\tCMF-ACAPP-260128-051\tsubmitted\t2026-01-29 02:45:06\tNULL\tNULL\n60065\tCMF-ACAPP-260129-001\tsubmitted\t2026-01-29 02:30:30\tNULL\tNULL\n60077\tCMF-ACAPP-260128-048\tsubmitted\t2026-01-29 02:17:54\tNULL\tNULL\n60076\tCMF-ACAPP-260128-047\tsubmitted\t2026-01-29 02:17:54\tNULL\tNULL\n60061\tCMF-ACAPP-260128-044\tsubmitted\t2026-01-29 01:58:50\tNULL\tNULL\n60059\tCMF-ACAPP-260128-043\tsubmitted\t2026-01-29 01:58:50\tNULL\tNULL\n60043\tCMF-ACAPP-260128-040\tsubmitted\t2026-01-29 01:58:27\tNULL\tNULL\n60028\tCMF-ACAPP-260128-037\tsubmitted\t2026-01-29 01:57:53\tNULL\tNULL\n60027\tCMF-ACAPP-260128-036\tsubmitted\t2026-01-29 01:57:53\tNULL\tNULL\n60013\tCMF-ACAPP-260128-033\tsubmitted\t2026-01-29 01:40:08\tNULL\tNULL\n60011\tCMF-ACAPP-260128-032\tsubmitted\t2026-01-29 01:40:08\tNULL\tNULL\n30180\tCMF-ACAPP-260128-029\tsubmitted\t2026-01-28 13:50:52\tNULL\tNULL\n30176\tCMF-ACAPP-260128-028\tsubmitted\t2026-01-28 13:43:06\tNULL\tNULL\n30174\tCMF-ACAPP-260128-027\tsubmitted\t2026-01-28 13:43:06\tNULL\tNULL\n30159\tCMF-ACAPP-260128-024\tsubmitted\t2026-01-28 13:26:12\tNULL\tNULL\n30157\tCMF-ACAPP-260128-023\tsubmitted\t2026-01-28 13:26:12\tNULL\tNULL\n30143\tCMF-ACAPP-260128-020\tsubmitted\t2026-01-28 13:04:22\tNULL\tNULL\n30141\tCMF-ACAPP-260128-019\tsubmitted\t2026-01-28 13:04:22\tNULL\tNULL\n30125\tCMF-ACAPP-260128-016\tsubmitted\t2026-01-28 12:59:35\tNULL\tNULL\n30124\tCMF-ACAPP-260128-015\tsubmitted\t2026-01-28 12:59:35\tNULL\tNULL\n30108\tCMF-ACAPP-260128-011\tsubmitted\t2026-01-28 12:44:51\tNULL\tNULL\n30109\tCMF-ACAPP-260128-012\tsubmitted\t2026-01-28 12:44:51\tNULL\tNULL\n30092\tCMF-ACAPP-260128-007\tsubmitted\t2026-01-28 12:24:47\tNULL\tNULL\n30093\tCMF-ACAPP-260128-008\tsubmitted\t2026-01-28 12:24:47\tNULL\tNULL\n30077\tCMF-ACAPP-260128-004\tsubmitted\t2026-01-28 12:23:38\tNULL\tNULL\n30076\tCMF-ACAPP-260128-003\tsubmitted\t2026-01-28 12:23:38\tNULL\tNULL\n30059\tAPP-MKXZ49QU-YI38\tsubmitted\t2026-01-28 12:00:27\tNULL\tNULL\n30060\tAPP-MKXZ49W7-I88G\tsubmitted\t2026-01-28 12:00:27\tNULL\tNULL\n30044\tAPP-MKXZ0NYZ-K0UP\tsubmitted\t2026-01-28 11:57:38\tNULL\tNULL\n30043\tAPP-MKXZ0NUI-GP0H\tsubmitted\t2026-01-28 11:57:38\tNULL\tNULL\n30030\tAPP-MKXYO9BA-67YO\tsubmitted\t2026-01-28 11:48:00\tNULL\tNULL\n30026\tAPP-MKXYNTX2-G1T3\tsubmitted\t2026-01-28 11:47:40\tNULL\tNULL\n30022\tAPP-MKXYN9MK-J5C2\tsubmitted\t2026-01-28 11:47:13\tNULL\tNULL\n15\tAPP-MKXUR534-3KM1\tsubmitted\t2026-01-28 09:58:28\tNULL\tNULL\n12\tAPP-MKXUBZT1-B090\tsubmitted\t2026-01-28 09:46:29\tNULL\tNULL\n5\tAPP-MKXUBFM8-IAZ4\tsubmitted\t2026-01-28 09:46:03\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}
