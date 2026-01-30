@@ -415,7 +415,7 @@ export async function sendRejectionNotificationEmail(
 
   try {
     const msg = {
-      to: customerServiceEmail,
+      to: [customerEmail, customerServiceEmail], // 同时发送给客户和客服部
       from: complianceEmail, // 使用compliance@cmfinancial.com作为发件人
       subject: `开户申请已拒绝 - ${applicationNumber}`,
       text: `申请编号：${applicationNumber}
@@ -498,7 +498,7 @@ export async function sendReturnNotificationEmail(
 
   try {
     const msg = {
-      to: customerServiceEmail,
+      to: [customerEmail, customerServiceEmail], // 同时发送给客户和客服部
       from: complianceEmail, // 使用compliance@cmfinancial.com作为发件人
       subject: `开户申请需补充材料 - ${applicationNumber}`,
       text: `申请编号：${applicationNumber}

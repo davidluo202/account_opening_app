@@ -35,6 +35,12 @@ export default function ApprovalDetail() {
     { id: Number(id) },
     { enabled: !!id }
   );
+  
+  // 获取审批历史记录
+  const { data: approvalHistory } = trpc.approval.getHistory.useQuery(
+    { applicationId: Number(id) },
+    { enabled: !!id }
+  );
 
   const approveMutation = trpc.approval.approve.useMutation({
     onSuccess: () => {
@@ -395,13 +401,80 @@ export default function ApprovalDetail() {
           </CardContent>
         </Card>
 
-        {/* Approval Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>审批操作</CardTitle>
-            <CardDescription>请完成以下审批选项</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
+        {/* Approval Actions or Approval Info */}
+        {applicationData?.application?.status === 'approved' ? (
+          /* 已批准的申请显示审批信息 */
+          <Card>
+            <CardHeader>
+              <CardTitle>审批信息</CardTitle>
+              <CardDescription>该申请已审批通过</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {approvalHistory && approvalHistory.length > 0 && (() => {
+                const latestApproval = approvalHistory[0];
+                return (
+                  <>
+                    <div className="p-4 bg-green-50 border border-green-200 rounded-md">
+                      <div className="flex items-center gap-2 mb-3">
+                        <CheckCircle className="h-5 w-5 text-green-600" />
+                        <span className="font-semibold text-green-800">审批已通过</span>
+                      </div>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">审批人员：</span>
+                          <span className="font-medium">{latestApproval.approverName || '-'} (CE: {latestApproval.approverCeNumber || '-'})</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">专业投资者（PI）：</span>
+                          <span className="font-medium">{applicationData.application.isProfessionalInvestor ? '是' : '否'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">风险评级：</span>
+                          <span className="font-medium">
+                            {(() => {
+                              const riskMap: Record<string, string> = {
+                                'low': '低风险',
+                                'medium': '中等风险',
+                                'high': '高风险'
+                              };
+                              return riskMap[applicationData.application.approvedRiskProfile || ''] || '-';
+                            })()}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">审批时间：</span>
+                          <span className="font-medium">
+                            {new Date(latestApproval.createdAt).toLocaleString('zh-CN', {
+                              year: 'numeric',
+                              month: '2-digit',
+                              day: '2-digit',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit',
+                              hour12: false
+                            })}
+                          </span>
+                        </div>
+                        <div className="pt-2 mt-2 border-t border-green-200">
+                          <p className="text-green-700">
+                            <strong>审批结果：</strong>已发送通知邮件到 operation@cmfinancial.com
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                );
+              })()}
+            </CardContent>
+          </Card>
+        ) : (
+          /* 待审批的申请显示审批操作 */
+          <Card>
+            <CardHeader>
+              <CardTitle>审批操作</CardTitle>
+              <CardDescription>请完成以下审批选项</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
             {/* Professional Investor */}
             <div className="space-y-2">
               <Label>是否定义为专业投资者（PI）</Label>
@@ -463,6 +536,7 @@ export default function ApprovalDetail() {
             </div>
           </CardContent>
         </Card>
+        )}
       </div>
 
       {/* Reject Dialog */}

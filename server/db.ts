@@ -699,10 +699,7 @@ export async function getSubmittedApplications() {
     .where(
       or(
         eq(applications.status, 'submitted'),
-        eq(applications.status, 'under_review'),
-        eq(applications.status, 'approved'),
-        eq(applications.status, 'rejected'),
-        eq(applications.status, 'returned')
+        eq(applications.status, 'approved')
       )
     )
     .orderBy(desc(applications.submittedAt));
