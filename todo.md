@@ -701,3 +701,28 @@
 - [x] AdminHome.tsx的验证码输入框支持回车键验证并进入审批系统（添加onKeyDown事件）
 - [x] EmailVerification组件的邮箱输入框支持回车键（已在前面实现）
 - [x] EmailVerification组件的验证码输入框支持回车键验证（已在前面实现）
+
+
+## 审批人员权限管理页面（2026-01-30 下午7）
+
+### 后端API开发
+- [x] 实现获取所有审批人员列表的API（approver.list）
+- [x] 实现添加审批人员的API（approver.add），包含姓名和CE号码
+- [x] 实现编辑审批人员的API（approver.update），允许修改姓名和CE号码
+- [x] 实现停用/激活审批人员的API（approver.update支持isActive字段）
+- [x] 实现删除审批人员的API（approver.delete）
+- [x] 添加权限检查，只有管理员可以访问这些API（ctx.user.role !== 'admin'）
+
+### 前端页面开发
+- [x] 创建ApproverManagement.tsx页面组件（已存在，添加导航栏和logo）
+- [x] 实现审批人员列表展示（表格形式，显示ID/姓名/CE号码/邮箱/状态/创建时间）
+- [x] 实现添加审批人员对话框（输入用户ID、姓名、CE号码）
+- [x] 实现编辑审批人员对话框（修改姓名、CE号码）
+- [x] 实现停用/激活审批人员功能（Power/PowerOff图标按钮）
+- [x] 实现删除审批人员功能（确认对话框）
+- [ ] 添加搜索和筛选功能（按姓名、CE号码、状态）（可选功能）
+
+### 导航和路由
+- [x] 在App.tsx中添加审批人员管理页面路由（/admin/approvers）
+- [x] 在ApprovalList.tsx中添加“权限管理”导航链接
+- [x] 后端API已有权限检查，只有admin角色可以访问

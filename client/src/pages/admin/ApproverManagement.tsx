@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import {
@@ -151,7 +152,25 @@ export default function ApproverManagement() {
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b sticky top-0 z-10">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <a href="/" className="flex items-center cursor-pointer">
+            <img src="/logo-zh.png" alt="誠港金融" className="h-12" />
+          </a>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => window.location.href = '/admin/approvals'}
+          >
+            返回审批列表
+          </Button>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <div className="container mx-auto py-8">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold">审批人员管理</h1>
@@ -231,6 +250,7 @@ export default function ApproverManagement() {
             )}
           </TableBody>
         </Table>
+      </div>
       </div>
 
       {/* 添加审批人员对话框 */}

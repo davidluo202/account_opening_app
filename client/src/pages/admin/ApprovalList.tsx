@@ -59,15 +59,25 @@ export default function ApprovalList() {
           <a href="/" className="flex items-center cursor-pointer">
             <img src="/logo-zh.png" alt="誠港金融" className="h-12" />
           </a>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleLogout}
-            className="flex items-center gap-2"
-          >
-            <LogOut className="h-4 w-4" />
-            登出 / Log out
-          </Button>
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setLocation('/admin/approvers')}
+              className="flex items-center gap-2"
+            >
+              权限管理
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              className="flex items-center gap-2"
+            >
+              <LogOut className="h-4 w-4" />
+              登出 / Log out
+            </Button>
+          </div>
         </div>
       </header>
 
