@@ -871,6 +871,12 @@ export const appRouter = router({
           throw new Error('没有权限进行审批操作');
         }
         
+        // 获取审批人员信息
+        const approver = await db.getApproverByUserId(ctx.user.id);
+        if (!approver) {
+          throw new Error('未找到审批人员信息，请联系管理员');
+        }
+        
         // 更新申请状态为已批准
         await db.updateApplicationStatus(input.applicationId, 'approved');
         
@@ -880,10 +886,10 @@ export const appRouter = router({
           approvedRiskProfile: input.approvedRiskProfile,
         });
         
-        // 记录审批操作
+        // 记录审批操作（使用approver.id而不是user.id）
         await db.createApprovalRecord({
           applicationId: input.applicationId,
-          approverId: ctx.user.id,
+          approverId: approver.id,
           action: 'approved',
           comments: input.comments,
         });
@@ -921,13 +927,19 @@ export const appRouter = router({
           throw new Error('没有权限进行审批操作');
         }
         
+        // 获取审批人员信息
+        const approver = await db.getApproverByUserId(ctx.user.id);
+        if (!approver) {
+          throw new Error('未找到审批人员信息，请联系管理员');
+        }
+        
         // 更新申请状态为已拒绝
         await db.updateApplicationStatus(input.applicationId, 'rejected');
         
-        // 记录审批操作
+        // 记录审批操作（使用approver.id而不是user.id）
         await db.createApprovalRecord({
           applicationId: input.applicationId,
-          approverId: ctx.user.id,
+          approverId: approver.id,
           action: 'rejected',
           comments: input.comments,
           rejectReason: input.rejectReason,
@@ -966,13 +978,19 @@ export const appRouter = router({
           throw new Error('没有权限进行审批操作');
         }
         
+        // 获取审批人员信息
+        const approver = await db.getApproverByUserId(ctx.user.id);
+        if (!approver) {
+          throw new Error('未找到审批人员信息，请联系管理员');
+        }
+        
         // 更新申请状态为退回补充
         await db.updateApplicationStatus(input.applicationId, 'returned');
         
-        // 记录审批操作
+        // 记录审批操作（使用approver.id而不是user.id）
         await db.createApprovalRecord({
           applicationId: input.applicationId,
-          approverId: ctx.user.id,
+          approverId: approver.id,
           action: 'returned',
           comments: input.comments,
           returnReason: input.returnReason,
@@ -1008,6 +1026,64 @@ export const appRouter = router({
         }
         
         return await db.getApprovalHistory(input.applicationId);
+      }),
+  }),
+  
+  // 用户管理
+  user: router({
+    // 获取所有用户列表
+    list: protectedProcedure.query(async ({ ctx }) => {
+      // 只有管理员可以访问
+      if (ctx.user.role !== 'admin') {
+        throw new Error('没有权限访问用户管理');
+      }
+      
+      return await db.getAllUsers();
+    }),
+    
+    // 重置用户密码
+    resetPassword: protectedProcedure
+      .input(z.object({ userId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        // 只有管理员可以访问
+        if (ctx.user.role !== 'admin') {
+          throw new Error('没有权限重置密码');
+        }
+        
+        // 生成新密码（8位随机字符）
+        const newPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8).toUpperCase();
+        
+        // TODO: 实现密码重置逻辑（当前系统使用OAuth，暂无密码功能）
+        // await db.updateUserPassword(input.userId, newPassword);
+        
+        return { newPassword };
+      }),
+    
+    // 更新用户角色
+    updateRole: protectedProcedure
+      .input(z.object({
+        userId: z.number(),
+        role: z.enum(['user', 'admin']),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // 只有管理员可以访问
+        if (ctx.user.role !== 'admin') {
+          throw new Error('没有权限修改用户角色');
+        }
+        
+        return await db.updateUserRole(input.userId, input.role);
+      }),
+    
+    // 获取用户的审批人员信息
+    getApproverInfo: protectedProcedure
+      .input(z.object({ userId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        // 只有管理员可以访问
+        if (ctx.user.role !== 'admin') {
+          throw new Error('没有权限查看审批人员信息');
+        }
+        
+        return await db.getApproverByUserId(input.userId);
       }),
   }),
 });

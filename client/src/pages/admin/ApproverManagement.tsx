@@ -159,13 +159,15 @@ export default function ApproverManagement() {
           <a href="/" className="flex items-center cursor-pointer">
             <img src="/logo-zh.png" alt="誠港金融" className="h-12" />
           </a>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => window.location.href = '/admin/approvals'}
-          >
-            返回审批列表
-          </Button>
+          <div className="flex items-center gap-4">
+            <a href="/admin/approvals" className="text-gray-600 hover:text-gray-900">
+              审批列表
+            </a>
+            <span className="text-blue-600 font-medium">权限管理</span>
+            <a href="/admin/users" className="text-gray-600 hover:text-gray-900">
+              用户管理
+            </a>
+          </div>
         </div>
       </header>
 

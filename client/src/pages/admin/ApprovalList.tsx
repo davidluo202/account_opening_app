@@ -71,6 +71,14 @@ export default function ApprovalList() {
             <Button
               variant="ghost"
               size="sm"
+              onClick={() => setLocation('/admin/users')}
+              className="flex items-center gap-2"
+            >
+              用户管理
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={handleLogout}
               className="flex items-center gap-2"
             >

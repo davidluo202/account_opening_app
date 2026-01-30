@@ -23,6 +23,7 @@ import ApprovalList from "./pages/admin/ApprovalList";
 import AdminHome from "./pages/admin/AdminHome";
 import ApprovalDetail from "./pages/admin/ApprovalDetail";
 import ApproverManagement from "./pages/admin/ApproverManagement";
+import UserManagement from "./pages/admin/UserManagement";
 
 function Router() {
   return (
@@ -47,6 +48,7 @@ function Router() {
       <Route path={"/admin/approvals"} component={ApprovalList} />
       <Route path={"/admin/approvals/:id"} component={ApprovalDetail} />
       <Route path={"/admin/approvers"} component={ApproverManagement} />
+      <Route path={"/admin/users"} component={UserManagement} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

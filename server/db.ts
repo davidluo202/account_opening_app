@@ -37,6 +37,47 @@ export async function getDb() {
 }
 
 // ==================== 用户相关 ====================
+
+/**
+ * 获取所有用户列表
+ */
+export async function getAllUsers() {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    const result = await db
+      .select()
+      .from(users)
+      .orderBy(desc(users.createdAt));
+    
+    return result;
+  } catch (error) {
+    console.error('Error getting all users:', error);
+    return [];
+  }
+}
+
+/**
+ * 更新用户角色
+ */
+export async function updateUserRole(userId: number, role: 'user' | 'admin') {
+  const db = await getDb();
+  if (!db) throw new Error('数据库连接失败');
+
+  try {
+    await db
+      .update(users)
+      .set({ role })
+      .where(eq(users.id, userId));
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating user role:', error);
+    throw new Error('更新用户角色失败');
+  }
+}
+
 export async function upsertUser(user: InsertUser): Promise<void> {
   if (!user.openId) {
     throw new Error("User openId is required for upsert");
@@ -561,6 +602,27 @@ export async function saveVerificationCode(email: string, code: string, expiresA
 }
 
 // ==================== 审批人员管理 ====================
+
+/**
+ * 根据用户ID获取审批人员信息
+ */
+export async function getApproverByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    const result = await db
+      .select()
+      .from(approvers)
+      .where(eq(approvers.userId, userId))
+      .limit(1);
+    
+    return result[0] || null;
+  } catch (error) {
+    console.error('Error getting approver by userId:', error);
+    return null;
+  }
+}
 
 /**
  * 获取所有审批人员列表

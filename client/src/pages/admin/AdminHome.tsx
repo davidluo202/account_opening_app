@@ -75,7 +75,15 @@ export default function AdminHome() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+      {/* Logo Header */}
+      <div className="absolute top-8 left-8">
+        <a href="/" className="flex items-center cursor-pointer">
+          <img src="/logo-zh.png" alt="誠港金融" className="h-12" />
+        </a>
+      </div>
+
+      <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="text-center space-y-2">
           <div className="mx-auto w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4">
@@ -183,6 +191,7 @@ export default function AdminHome() {
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

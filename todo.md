@@ -726,3 +726,37 @@
 - [x] 在App.tsx中添加审批人员管理页面路由（/admin/approvers）
 - [x] 在ApprovalList.tsx中添加“权限管理”导航链接
 - [x] 后端API已有权限检查，只有admin角色可以访问
+
+
+## 审批系统logo修复、审批人员信息记录和用户管理页面（2026-01-30 晚上）
+
+### 审批系统logo修复
+- [x] 在AdminHome.tsx（审批系统登录主页）添加公司logo
+- [ ] 确保logo点击返回开户系统首页（/）
+- [ ] 确认ApprovalList.tsx的logo已正确显示并链接到首页
+
+### 审批人员信息记录修复
+- [x] 检查approval_records表使用approverId字段关联approvers表
+- [x] 修改审批API使用approver.id而不是user.id
+- [x] 确认审批后的查看记录中显示审批人员ID和CE号码
+- [ ] 测试完整的审批流程，验证信息记录正确
+
+### 用户管理后端API开发
+- [x] 实现获取所有用户列表的API（user.list）
+- [x] 实现重置用户密码的API（user.resetPassword）
+- [x] 实现提升用户为管理员的API（user.updateRole）
+- [x] 实现查看用户审批人员关联状态的API（user.getApproverInfo）
+- [ ] 添加权限检查，只有管理员可以访问这些API
+
+### 用户管理前端页面开发
+- [x] 创建UserManagement.tsx页面组件
+- [ ] 实现用户列表展示（表格形式：ID/姓名/邮箱/角色/审批人员状态/注册时间）
+- [ ] 实现重置密码对话框（生成新密码并显示给管理员）
+- [ ] 实现角色管理对话框（提升为管理员/降级为普通用户）
+- [ ] 实现查看审批人员关联信息（显示CE号码、姓名、状态）
+- [ ] 添加搜索和筛选功能（按邮箱、角色、审批人员状态）
+
+### 导航和路由
+- [ ] 在App.tsx中添加用户管理页面路由（/admin/users）
+- [ ] 在ApprovalList.tsx或ApproverManagement.tsx中添加"用户管理"导航链接
+- [ ] 确保只有管理员可以访问用户管理页面
