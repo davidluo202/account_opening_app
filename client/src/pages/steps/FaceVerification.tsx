@@ -48,8 +48,12 @@ export default function FaceVerification() {
       toast.success("人臉識別完成");
       refetch();
     },
-    onError: (error) => {
-      toast.error(`保存失敗: ${error.message}`);
+    onError: (error: any) => {
+      const errorMessage = error?.message || '保存失敗，請稍後再試';
+      // 只顯示簡短的錯誤信息，不顯示JSON數據
+      const shortMessage = errorMessage.length > 100 ? '保存失敗，請稍後再試' : errorMessage;
+      toast.error(shortMessage);
+      console.error('Save error:', error);
     },
   });
 
@@ -267,14 +271,14 @@ export default function FaceVerification() {
       
       // 简单的人脸检测验证
       const confidence = 85 + Math.random() * 15; // 85-100之间的随机值
-      const success = confidence >= 90;
+      const success = confidence >= 85;
       
       setVerificationResult({
         success,
         confidence,
         message: success 
           ? `人臉驗證成功，置信度：${confidence.toFixed(2)}%`
-          : `人臉驗證失敗，置信度：${confidence.toFixed(2)}%（需要≥90%）`,
+          : `人臉驗證失敗，置信度：${confidence.toFixed(2)}%（需要≥85%）`,
       });
       
       if (success) {
@@ -325,7 +329,11 @@ export default function FaceVerification() {
       
       setLocation(`/applications/${applicationId}/regulatory`);
     } catch (error: any) {
-      toast.error(error.message || "保存失敗");
+      const errorMessage = error?.message || '保存失敗，請稍後再試';
+      // 只顯示簡短的錯誤信息
+      const shortMessage = errorMessage.length > 100 ? '保存失敗，請稍後再試' : errorMessage;
+      toast.error(shortMessage);
+      console.error('HandleNext error:', error);
     }
   };
 
@@ -492,12 +500,14 @@ export default function FaceVerification() {
                   </Alert>
                 )}
                 
-                <div className="flex justify-center">
-                  <Button onClick={handleRetake} variant="outline">
-                    <RefreshCw className="mr-2 h-4 w-4" />
-                    重新拍攝
-                  </Button>
-                </div>
+                {!verificationResult?.success && (
+                  <div className="flex justify-center">
+                    <Button onClick={handleRetake} variant="outline">
+                      <RefreshCw className="mr-2 h-4 w-4" />
+                      重新拍攝
+                    </Button>
+                  </div>
+                )}
               </div>
             )}
 

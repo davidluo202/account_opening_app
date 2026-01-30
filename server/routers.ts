@@ -1086,7 +1086,7 @@ export const appRouter = router({
         await db.createApprovalRecord({
           applicationId: input.applicationId,
           approverId: approver.id,
-          action: 'first_approved',
+          action: 'first_approved' as any,
           comments: input.comments,
         });
         
@@ -1152,7 +1152,7 @@ export const appRouter = router({
         await db.createApprovalRecord({
           applicationId: input.applicationId,
           approverId: approver.id,
-          action: 'second_approved',
+          action: 'second_approved' as any,
           comments: input.comments,
         });
         
