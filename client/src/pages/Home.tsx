@@ -40,6 +40,9 @@ export default function Home() {
             <img src="/logo-zh.png" alt="誠港金融" className="h-12" />
           </a>
           <div className="flex items-center gap-4">
+            <Button variant="outline" size="sm" asChild>
+              <a href="/admin">审批系统</a>
+            </Button>
             <Button variant="ghost" size="sm">English</Button>
             <Button asChild>
               <a href={getLoginUrl()}>登入</a>

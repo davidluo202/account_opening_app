@@ -77,7 +77,7 @@ export default function ApplicationWizard({
       <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container py-4">
           <div className="flex items-center justify-between mb-4">
-            <a href="/applications" className="flex items-center">
+            <a href="/" className="flex items-center">
               <img src="/logo-zh.png" alt="誠港金融" className="h-12" />
             </a>
             <Button

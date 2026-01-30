@@ -56,7 +56,7 @@ export default function ApprovalList() {
       {/* Header */}
       <header className="bg-white border-b sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <a href="/admin" className="flex items-center cursor-pointer">
+          <a href="/" className="flex items-center cursor-pointer">
             <img src="/logo-zh.png" alt="誠港金融" className="h-12" />
           </a>
           <Button

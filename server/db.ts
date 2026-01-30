@@ -786,9 +786,11 @@ export async function getApprovalHistory(applicationId: number) {
       createdAt: approvalRecords.createdAt,
       approverName: approvers.employeeName,
       approverCeNumber: approvers.ceNumber,
+      approverEmail: users.email,
     })
     .from(approvalRecords)
     .leftJoin(approvers, eq(approvalRecords.approverId, approvers.id))
+    .leftJoin(users, eq(approvers.userId, users.id))
     .where(eq(approvalRecords.applicationId, applicationId))
     .orderBy(desc(approvalRecords.createdAt));
   
