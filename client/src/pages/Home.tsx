@@ -19,7 +19,11 @@ export default function Home() {
     );
   }
 
-  // 已登录用户也可以访问首页，不自动跳转
+  // 普通客户登录后跳转到开户系统
+  if (isAuthenticated && user?.email && !user.email.endsWith('@cmfinancial.com')) {
+    setLocation("/applications");
+    return null;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-blue-50 to-white">
