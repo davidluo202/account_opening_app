@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,15 +19,18 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Shield, ShieldOff, Key, Info } from "lucide-react";
+import { Shield, ShieldOff, Info, Search } from "lucide-react";
 
 export default function UserManagement() {
   const [selectedUser, setSelectedUser] = useState<number | null>(null);
   const [showRoleDialog, setShowRoleDialog] = useState(false);
-  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [showApproverInfoDialog, setShowApproverInfoDialog] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "user">("all");
+  const [approverFilter, setApproverFilter] = useState<"all" | "yes" | "no">("all");
 
   const utils = trpc.useUtils();
   const { data: users, isLoading } = trpc.user.list.useQuery();
@@ -47,25 +50,13 @@ export default function UserManagement() {
     },
   });
 
-  const resetPasswordMutation = trpc.user.resetPassword.useMutation({
-    onSuccess: (data) => {
-      setNewPassword(data.newPassword);
-      toast.success("密码重置成功");
-    },
-    onError: (error) => {
-      toast.error(error.message || "重置密码失败");
-    },
-  });
+
 
   const handleUpdateRole = (userId: number, newRole: "user" | "admin") => {
     updateRoleMutation.mutate({ userId, role: newRole });
   };
 
-  const handleResetPassword = (userId: number) => {
-    setSelectedUser(userId);
-    setShowPasswordDialog(true);
-    resetPasswordMutation.mutate({ userId });
-  };
+
 
   const handleShowApproverInfo = (userId: number) => {
     setSelectedUser(userId);
@@ -73,6 +64,26 @@ export default function UserManagement() {
   };
 
   const selectedUserData = users?.find((u) => u.id === selectedUser);
+
+  // 筛选和搜索逻辑
+  const filteredUsers = useMemo(() => {
+    if (!users) return [];
+    
+    return users.filter((user) => {
+      // 搜索过滤
+      const matchesSearch = searchTerm === "" || 
+        user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.name?.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      // 角色过滤
+      const matchesRole = roleFilter === "all" || user.role === roleFilter;
+      
+      // 审批人员过滤（暂时无法判断，需要额外查询）
+      // 这里简化处理，只做搜索和角色过滤
+      
+      return matchesSearch && matchesRole;
+    });
+  }, [users, searchTerm, roleFilter]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -101,9 +112,31 @@ export default function UserManagement() {
             <CardTitle>用户管理</CardTitle>
           </CardHeader>
           <CardContent>
+            {/* 搜索和筛选 */}
+            <div className="flex gap-4 mb-6">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="搜索邮箱或姓名..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Select value={roleFilter} onValueChange={(value: any) => setRoleFilter(value)}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="角色筛选" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">全部角色</SelectItem>
+                  <SelectItem value="admin">管理员</SelectItem>
+                  <SelectItem value="user">普通用户</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             {isLoading ? (
               <div className="text-center py-8 text-gray-500">加载中...</div>
-            ) : users && users.length > 0 ? (
+            ) : filteredUsers && filteredUsers.length > 0 ? (
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -117,7 +150,7 @@ export default function UserManagement() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {users.map((user) => (
+                  {filteredUsers.map((user) => (
                     <TableRow key={user.id}>
                       <TableCell>{user.id}</TableCell>
                       <TableCell>{user.name || "-"}</TableCell>
@@ -161,14 +194,7 @@ export default function UserManagement() {
                             </>
                           )}
                         </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleResetPassword(user.id)}
-                        >
-                          <Key className="h-4 w-4 mr-1" />
-                          重置密码
-                        </Button>
+
                       </TableCell>
                     </TableRow>
                   ))}
@@ -212,32 +238,7 @@ export default function UserManagement() {
         </DialogContent>
       </Dialog>
 
-      {/* Password Reset Dialog */}
-      <Dialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>重置密码</DialogTitle>
-            <DialogDescription>
-              当前系统使用OAuth登录，暂不支持密码重置功能。
-            </DialogDescription>
-          </DialogHeader>
-          {newPassword && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded p-4">
-              <p className="text-sm text-gray-700 mb-2">新密码（示例）：</p>
-              <p className="font-mono text-lg font-bold">{newPassword}</p>
-              <p className="text-xs text-gray-500 mt-2">请将此密码告知用户</p>
-            </div>
-          )}
-          <DialogFooter>
-            <Button onClick={() => {
-              setShowPasswordDialog(false);
-              setNewPassword("");
-            }}>
-              关闭
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+
 
       {/* Approver Info Dialog */}
       <Dialog open={showApproverInfoDialog} onOpenChange={setShowApproverInfoDialog}>
