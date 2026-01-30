@@ -20,7 +20,14 @@ export default function Home() {
   }
 
   if (isAuthenticated) {
-    setLocation("/applications");
+    // 根据用户邮箱域名判断跳转目标
+    if (user?.email && user.email.endsWith('@cmfinancial.com')) {
+      // 审批人员跳转到后台审批系统
+      setLocation("/admin/approvals");
+    } else {
+      // 普通客户跳转到开户系统
+      setLocation("/applications");
+    }
     return null;
   }
 

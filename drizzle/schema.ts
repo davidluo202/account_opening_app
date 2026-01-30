@@ -52,6 +52,10 @@ export const applications = mysqlTable("applications", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   submittedAt: timestamp("submittedAt"),
+  // 电子签署相关字段
+  signatureName: varchar("signatureName", { length: 200 }), // 签名人姓名
+  signatureTimestamp: timestamp("signatureTimestamp"), // 签署时间戳
+  signatureMethod: mysqlEnum("signatureMethod", ["typed", "iamsmart"]), // 签署方式：输入姓名或iAM Smart
 });
 
 /**

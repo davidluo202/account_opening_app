@@ -267,7 +267,14 @@ export async function assignApplicationNumber(applicationId: number) {
   return applicationNumber;
 }
 
-export async function submitApplication(applicationId: number) {
+export async function submitApplication(
+  applicationId: number,
+  signatureData?: {
+    signatureName: string;
+    signatureMethod: 'typed' | 'iamsmart';
+    signatureTimestamp: Date;
+  }
+) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   
@@ -275,7 +282,12 @@ export async function submitApplication(applicationId: number) {
     .update(applications)
     .set({ 
       status: "submitted",
-      submittedAt: new Date()
+      submittedAt: new Date(),
+      ...(signatureData && {
+        signatureName: signatureData.signatureName,
+        signatureMethod: signatureData.signatureMethod,
+        signatureTimestamp: signatureData.signatureTimestamp,
+      }),
     })
     .where(eq(applications.id, applicationId));
 }

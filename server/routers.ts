@@ -118,18 +118,26 @@ export const appRouter = router({
     
     // 提交申请
     submit: protectedProcedure
-      .input(z.object({ id: z.number() }))
+      .input(z.object({ 
+        id: z.number(),
+        signatureName: z.string(),
+        signatureMethod: z.enum(['typed', 'iamsmart']),
+      }))
       .mutation(async ({ input, ctx }) => {
         const application = await db.getApplicationById(input.id);
         if (!application || application.userId !== ctx.user.id) {
           throw new Error("申请不存在或无权访问");
         }
         
-        // 提交申请
-        await db.submitApplication(input.id);
+        // 提交申请（包含签名信息）
+        await db.submitApplication(input.id, {
+          signatureName: input.signatureName,
+          signatureMethod: input.signatureMethod,
+          signatureTimestamp: new Date(),
+        });
         
         // 生成PDF
-        const { generateApplicationPDF } = await import('./pdf-generator-v4');
+        const { generateApplicationPDF } = await import('./pdf-generator-v5');
         let pdfBuffer: Buffer | undefined;
         
         // 获取申请数据用于邮件发送
@@ -137,12 +145,14 @@ export const appRouter = router({
         if (!completeData || !completeData.detailedInfo) {
           throw new Error("申请数据不存在");
         }
-        
-        // 添加applicationNumber到completeData以便PDF生成器使用
+                // 添加applicationNumber和签名信息到completeData以便PDF生成器使用
         const dataForPDF = {
           ...completeData,
           applicationNumber: application.applicationNumber,
           submittedAt: new Date(),
+          signatureName: application.signatureName,
+          signatureMethod: application.signatureMethod,
+          signatureTimestamp: application.signatureTimestamp,
         };
         
         // 发送客户确认邮件

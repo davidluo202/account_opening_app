@@ -19,7 +19,10 @@ export default function ApplicationPreview() {
 
   const [hasGeneratedNumber, setHasGeneratedNumber] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [showSignatureDialog, setShowSignatureDialog] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [signatureName, setSignatureName] = useState("");
+  const [signatureMethod, setSignatureMethod] = useState<"typed" | "iamsmart">("typed");
 
   // 获取完整申请数据
   const { data: completeData, isLoading, refetch } = trpc.application.getComplete.useQuery(
@@ -100,7 +103,22 @@ export default function ApplicationPreview() {
       toast.info("申请已提交，无需重复提交");
       return;
     }
-    submitMutation.mutate({ id: applicationId });
+    // 显示签名对话框
+    setSignatureName(completeData?.basicInfo?.englishName || "");
+    setShowSignatureDialog(true);
+  };
+
+  const handleConfirmSignature = () => {
+    if (!signatureName.trim()) {
+      toast.error("请输入签名姓名");
+      return;
+    }
+    submitMutation.mutate({ 
+      id: applicationId,
+      signatureName: signatureName.trim(),
+      signatureMethod,
+    });
+    setShowSignatureDialog(false);
   };
 
   const handleEdit = (step: number) => {
@@ -687,6 +705,75 @@ export default function ApplicationPreview() {
           </div>
         )}
       </div>
+      
+      {/* 签名对话框 */}
+      <Dialog open={showSignatureDialog} onOpenChange={setShowSignatureDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>电子签署 Electronic Signature</DialogTitle>
+            <DialogDescription>
+              请输入您的姓名以完成电子签署。此签名具有法律效力，以香港《电子交易条例》（第553章）为基准。
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">签名方式 Signature Method</label>
+              <div className="flex gap-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    value="typed"
+                    checked={signatureMethod === "typed"}
+                    onChange={(e) => setSignatureMethod(e.target.value as "typed")}
+                    className="w-4 h-4"
+                  />
+                  <span className="text-sm">输入姓名 Typed Name</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    value="iamsmart"
+                    checked={signatureMethod === "iamsmart"}
+                    onChange={(e) => setSignatureMethod(e.target.value as "iamsmart")}
+                    className="w-4 h-4"
+                  />
+                  <span className="text-sm">iAM Smart 智方便</span>
+                </label>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">签名姓名 Signatory Name *</label>
+              <input
+                type="text"
+                value={signatureName}
+                onChange={(e) => setSignatureName(e.target.value)}
+                placeholder="请输入您的英文姓名"
+                className="w-full px-3 py-2 border rounded-md"
+              />
+            </div>
+            
+            <div className="bg-blue-50 p-3 rounded-lg text-sm text-blue-800">
+              <p className="font-semibold mb-1">电子签署声明：</p>
+              <ul className="list-disc list-inside space-y-1 text-xs">
+                <li>本人同意使用电子签署方式签署本申请表</li>
+                <li>此电子签署具有与手写签名同等的法律效力</li>
+                <li>签署时间将自动记录并包含在申请表中</li>
+              </ul>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowSignatureDialog(false)}>
+              取消
+            </Button>
+            <Button onClick={handleConfirmSignature} disabled={!signatureName.trim()}>
+              确认签署并提交
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       
       {/* 提交成功对话框 */}
       <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
