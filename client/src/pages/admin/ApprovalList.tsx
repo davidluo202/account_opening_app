@@ -12,11 +12,20 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2 } from 'lucide-react';
+import { Loader2, LogOut } from 'lucide-react';
+import { useAuth } from '@/_core/hooks/useAuth';
+import { toast } from 'sonner';
 
 export default function ApprovalList() {
   const [, setLocation] = useLocation();
+  const { logout } = useAuth();
   const { data: applications, isLoading } = trpc.approval.getPendingApplications.useQuery();
+
+  const handleLogout = async () => {
+    await logout();
+    toast.success('已登出');
+    setLocation('/admin');
+  };
 
   const getStatusBadge = (status: string) => {
     const statusMap = {
@@ -43,7 +52,26 @@ export default function ApprovalList() {
   };
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <a href="/admin" className="flex items-center cursor-pointer">
+            <img src="/logo-zh.png" alt="誠港金融" className="h-12" />
+          </a>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleLogout}
+            className="flex items-center gap-2"
+          >
+            <LogOut className="h-4 w-4" />
+            登出 / Log out
+          </Button>
+        </div>
+      </header>
+
+      <div className="container mx-auto py-8">
       <Card>
         <CardHeader>
           <CardTitle>待審批申請列表</CardTitle>
@@ -92,6 +120,7 @@ export default function ApprovalList() {
           )}
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

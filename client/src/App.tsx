@@ -20,6 +20,8 @@ import RegulatoryDeclaration from "./pages/steps/RegulatoryDeclaration";
 import ApplicationPreview from "./pages/ApplicationPreview";
 import ApproverRegister from "./pages/ApproverRegister";
 import ApprovalList from "./pages/admin/ApprovalList";
+import AdminHome from "./pages/admin/AdminHome";
+import ApprovalDetail from "./pages/admin/ApprovalDetail";
 
 function Router() {
   return (
@@ -40,7 +42,9 @@ function Router() {
       <Route path={"/application/:id/step/12"} component={RegulatoryDeclaration} />
       <Route path={"/application/:id/preview"} component={ApplicationPreview} />
       <Route path={"/register/approver"} component={ApproverRegister} />
+      <Route path={"/admin"} component={AdminHome} />
       <Route path={"/admin/approvals"} component={ApprovalList} />
+      <Route path={"/admin/approvals/:id"} component={ApprovalDetail} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
