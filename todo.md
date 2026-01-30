@@ -509,3 +509,43 @@
 - [ ] 添加电子签署法律声明（ETO Cap.553）
 - [ ] 添加反洗钱监管规定声明
 - [ ] 测试PDF生成包含完整签署信息
+
+
+## 审批管理系统完整开发（2026-01-30 下午）
+
+### 修复404错误和管理员权限
+- [ ] 修复/admin/approvals页面404错误
+- [ ] 创建审批申请列表页面
+- [ ] 设置xluo@cmfinancial.com为系统管理员
+- [ ] 实现管理员对审批人员的增删改权限
+
+### 扩展数据库schema
+- [ ] 在applications表添加isProfessionalInvestor字段（PI定义）
+- [ ] 在applications表添加approvedRiskProfile字段（审批人员评估的风险偏好：low/medium/high）
+- [ ] 在approval_records表添加rejectReason和returnReason字段
+
+### 审批操作后端API
+- [ ] approval.getPendingApplications - 获取所有已提交的申请列表
+- [ ] approval.getApplicationDetail - 获取申请完整详情（包含所有表单数据和附件）
+- [ ] approval.approve - 审批通过（包含PI定义和风险偏好评估）
+- [ ] approval.reject - 拒绝申请（需要拒绝理由）
+- [ ] approval.return - 退回补充材料（需要退回理由）
+- [ ] approval.getHistory - 获取申请的审批历史记录
+
+### 审批管理前端界面
+- [ ] 创建待审批申请列表页面（/admin/approvals）
+- [ ] 显示所有已提交的申请（表格形式）
+- [ ] 实现申请详情页面（/admin/approvals/:id）
+- [ ] 显示客户申请的完整预览信息
+- [ ] 添加PI定义选择（是/否）
+- [ ] 添加风险偏好评估选择（低/中/高）
+- [ ] 添加审批操作按钮（批准/拒绝/退回补充材料）
+- [ ] 实现拒绝理由输入对话框
+- [ ] 实现退回理由输入对话框
+- [ ] 显示审批历史记录时间线
+
+### 审批结果邮件通知
+- [ ] 批准：发送邮件到operation@cmfinancial.com
+- [ ] 拒绝：发送邮件到customers-service@cmfinancial.com（包含拒绝理由）
+- [ ] 退回补充材料：发送邮件到customers-service@cmfinancial.com（包含退回理由）
+- [ ] 邮件模板设计（中英文）

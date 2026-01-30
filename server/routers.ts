@@ -826,6 +826,133 @@ export const appRouter = router({
         return await db.deleteApprover(input.id);
       }),
   }),
+  
+  // 审批管理
+  approval: router({
+    // 获取所有已提交的申请列表
+    getPendingApplications: protectedProcedure.query(async ({ ctx }) => {
+      // 检查用户是否为审批人员或管理员
+      if (ctx.user.role !== 'admin' && !ctx.user.email?.endsWith('@cmfinancial.com')) {
+        throw new Error('没有权限访问审批系统');
+      }
+      
+      return await db.getSubmittedApplications();
+    }),
+    
+    // 获取申请完整详情
+    getApplicationDetail: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ ctx, input }) => {
+        // 检查用户是否为审批人员或管理员
+        if (ctx.user.role !== 'admin' && !ctx.user.email?.endsWith('@cmfinancial.com')) {
+          throw new Error('没有权限访问审批系统');
+        }
+        
+        return await db.getCompleteApplicationData(input.id);
+      }),
+    
+    // 审批通过
+    approve: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+        isProfessionalInvestor: z.boolean(),
+        approvedRiskProfile: z.enum(['low', 'medium', 'high']),
+        comments: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // 检查用户是否为审批人员或管理员
+        if (ctx.user.role !== 'admin' && !ctx.user.email?.endsWith('@cmfinancial.com')) {
+          throw new Error('没有权限进行审批操作');
+        }
+        
+        // 更新申请状态为已批准
+        await db.updateApplicationStatus(input.applicationId, 'approved');
+        
+        // 更新PI和风险偏好
+        await db.updateApplicationApprovalInfo(input.applicationId, {
+          isProfessionalInvestor: input.isProfessionalInvestor,
+          approvedRiskProfile: input.approvedRiskProfile,
+        });
+        
+        // 记录审批操作
+        await db.createApprovalRecord({
+          applicationId: input.applicationId,
+          approverId: ctx.user.id,
+          action: 'approved',
+          comments: input.comments,
+        });
+        
+        return { success: true };
+      }),
+    
+    // 拒绝申请
+    reject: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+        rejectReason: z.string(),
+        comments: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // 检查用户是否为审批人员或管理员
+        if (ctx.user.role !== 'admin' && !ctx.user.email?.endsWith('@cmfinancial.com')) {
+          throw new Error('没有权限进行审批操作');
+        }
+        
+        // 更新申请状态为已拒绝
+        await db.updateApplicationStatus(input.applicationId, 'rejected');
+        
+        // 记录审批操作
+        await db.createApprovalRecord({
+          applicationId: input.applicationId,
+          approverId: ctx.user.id,
+          action: 'rejected',
+          comments: input.comments,
+          rejectReason: input.rejectReason,
+        });
+        
+        return { success: true };
+      }),
+    
+    // 退回补充材料
+    return: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+        returnReason: z.string(),
+        comments: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // 检查用户是否为审批人员或管理员
+        if (ctx.user.role !== 'admin' && !ctx.user.email?.endsWith('@cmfinancial.com')) {
+          throw new Error('没有权限进行审批操作');
+        }
+        
+        // 更新申请状态为退回补充
+        await db.updateApplicationStatus(input.applicationId, 'returned');
+        
+        // 记录审批操作
+        await db.createApprovalRecord({
+          applicationId: input.applicationId,
+          approverId: ctx.user.id,
+          action: 'returned',
+          comments: input.comments,
+          returnReason: input.returnReason,
+        });
+        
+        return { success: true };
+      }),
+    
+    // 获取审批历史记录
+    getHistory: protectedProcedure
+      .input(z.object({ applicationId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        // 检查用户是否为审批人员或管理员
+        if (ctx.user.role !== 'admin' && !ctx.user.email?.endsWith('@cmfinancial.com')) {
+          throw new Error('没有权限访问审批历史');
+        }
+        
+        return await db.getApprovalHistory(input.applicationId);
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

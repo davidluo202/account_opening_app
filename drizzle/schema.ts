@@ -56,6 +56,9 @@ export const applications = mysqlTable("applications", {
   signatureName: varchar("signatureName", { length: 200 }), // 签名人姓名
   signatureTimestamp: timestamp("signatureTimestamp"), // 签署时间戳
   signatureMethod: mysqlEnum("signatureMethod", ["typed", "iamsmart"]), // 签署方式：输入姓名或iAM Smart
+  // 审批相关字段
+  isProfessionalInvestor: boolean("isProfessionalInvestor").default(false), // 是否为专业投资者（PI）
+  approvedRiskProfile: mysqlEnum("approvedRiskProfile", ["low", "medium", "high"]), // 审批人员评估的风险偏好
 });
 
 /**
@@ -250,6 +253,8 @@ export const approvalRecords = mysqlTable("approval_records", {
   approverId: int("approverId").notNull(), // 关联approvers表
   action: mysqlEnum("action", ["approved", "rejected", "returned"]).notNull(), // 审批操作
   comments: text("comments"), // 审批意见
+  rejectReason: text("rejectReason"), // 拒绝理由
+  returnReason: text("returnReason"), // 退回补充材料理由
   createdAt: timestamp("createdAt").defaultNow().notNull(), // 审批时间
 });
 

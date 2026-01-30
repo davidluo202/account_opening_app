@@ -19,6 +19,7 @@ import FaceVerification from "./pages/steps/FaceVerification";
 import RegulatoryDeclaration from "./pages/steps/RegulatoryDeclaration";
 import ApplicationPreview from "./pages/ApplicationPreview";
 import ApproverRegister from "./pages/ApproverRegister";
+import ApprovalList from "./pages/admin/ApprovalList";
 
 function Router() {
   return (
@@ -39,6 +40,7 @@ function Router() {
       <Route path={"/application/:id/step/12"} component={RegulatoryDeclaration} />
       <Route path={"/application/:id/preview"} component={ApplicationPreview} />
       <Route path={"/register/approver"} component={ApproverRegister} />
+      <Route path={"/admin/approvals"} component={ApprovalList} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

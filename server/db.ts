@@ -671,3 +671,129 @@ export async function updateUserEmailVerified(userId: number, verified: boolean)
     throw new Error('更新邮箱验证状态失败');
   }
 }
+
+
+// ============================================
+// 审批管理相关函数
+// ============================================
+
+/**
+ * 获取所有已提交的申请列表
+ */
+export async function getSubmittedApplications() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const { or } = await import('drizzle-orm');
+  
+  const results = await db
+    .select({
+      id: applications.id,
+      applicationNumber: applications.applicationNumber,
+      status: applications.status,
+      submittedAt: applications.submittedAt,
+      customerName: personalBasicInfo.englishName,
+    })
+    .from(applications)
+    .leftJoin(personalBasicInfo, eq(applications.id, personalBasicInfo.applicationId))
+    .where(
+      or(
+        eq(applications.status, 'submitted'),
+        eq(applications.status, 'under_review'),
+        eq(applications.status, 'approved'),
+        eq(applications.status, 'rejected'),
+        eq(applications.status, 'returned')
+      )
+    )
+    .orderBy(desc(applications.submittedAt));
+  
+  return results;
+}
+
+/**
+ * 更新申请状态
+ */
+export async function updateApplicationStatus(applicationId: number, status: 'submitted' | 'under_review' | 'approved' | 'rejected' | 'returned') {
+  const db = await getDb();
+  if (!db) return null;
+  
+  await db
+    .update(applications)
+    .set({ status })
+    .where(eq(applications.id, applicationId));
+  
+  return { success: true };
+}
+
+/**
+ * 更新申请的审批信息（PI和风险偏好）
+ */
+export async function updateApplicationApprovalInfo(
+  applicationId: number,
+  info: { isProfessionalInvestor: boolean; approvedRiskProfile: 'low' | 'medium' | 'high' }
+) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  await db
+    .update(applications)
+    .set({
+      isProfessionalInvestor: info.isProfessionalInvestor,
+      approvedRiskProfile: info.approvedRiskProfile,
+    })
+    .where(eq(applications.id, applicationId));
+  
+  return { success: true };
+}
+
+/**
+ * 创建审批记录
+ */
+export async function createApprovalRecord(data: {
+  applicationId: number;
+  approverId: number;
+  action: 'approved' | 'rejected' | 'returned';
+  comments?: string;
+  rejectReason?: string;
+  returnReason?: string;
+}) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  await db.insert(approvalRecords).values({
+    applicationId: data.applicationId,
+    approverId: data.approverId,
+    action: data.action,
+    comments: data.comments || null,
+    rejectReason: data.rejectReason || null,
+    returnReason: data.returnReason || null,
+  });
+  
+  return { success: true };
+}
+
+/**
+ * 获取申请的审批历史记录
+ */
+export async function getApprovalHistory(applicationId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const results = await db
+    .select({
+      id: approvalRecords.id,
+      action: approvalRecords.action,
+      comments: approvalRecords.comments,
+      rejectReason: approvalRecords.rejectReason,
+      returnReason: approvalRecords.returnReason,
+      createdAt: approvalRecords.createdAt,
+      approverName: approvers.employeeName,
+      approverCeNumber: approvers.ceNumber,
+    })
+    .from(approvalRecords)
+    .leftJoin(approvers, eq(approvalRecords.approverId, approvers.id))
+    .where(eq(approvalRecords.applicationId, applicationId))
+    .orderBy(desc(approvalRecords.createdAt));
+  
+  return results;
+}
