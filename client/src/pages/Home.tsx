@@ -19,17 +19,7 @@ export default function Home() {
     );
   }
 
-  if (isAuthenticated) {
-    // 根据用户邮箱域名判断跳转目标
-    if (user?.email && user.email.endsWith('@cmfinancial.com')) {
-      // 审批人员跳转到审批系统主页
-      setLocation("/admin");
-    } else {
-      // 普通客户跳转到开户系统
-      setLocation("/applications");
-    }
-    return null;
-  }
+  // 已登录用户也可以访问首页，不自动跳转
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-blue-50 to-white">

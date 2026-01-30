@@ -912,3 +912,12 @@
 - [x] 创建重置密码页面（/reset-password）
 - [x] 在UserManagement页面添加密码重置按钮
 - [x] 添加数据库辅助函数（savePasswordResetToken、getUserByResetToken、updateUserPassword）
+
+## 修复首页跳转和密码重置链接问题（2026-01-30）
+- [ ] 排查并修复首页自动跳转到/admin的问题（应该显示客户开户首页）
+- [ ] 修复密码重置邮件链接使用localhost的问题（改为使用实际公网域名）
+- [ ] 测试首页访问和密码重置流程
+
+- [x] 排查并修复首页自动跳转到/admin的问题（删除Home.tsx中的自动跳转逻辑）
+- [x] 修复密码重置邮件链接使用localhost的问题（从请求头获取实际域名）
+- [x] 测试首页访问和密码重置流程

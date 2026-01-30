@@ -832,7 +832,7 @@ export const appRouter = router({
       .input(z.object({
         email: z.string().email(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const { generateResetToken, generateResetLink } = await import('./password');
         const { sendPasswordResetEmail } = await import('./email');
         
@@ -850,8 +850,10 @@ export const appRouter = router({
         // 保存重置令牌到数据库
         await db.savePasswordResetToken(user.id, resetToken, resetExpires);
         
-        // 生成重置链接
-        const baseUrl = process.env.VITE_APP_URL || 'http://localhost:3000';
+        // 从请求头获取域名
+        const protocol = ctx.req.headers['x-forwarded-proto'] || (ctx.req.secure ? 'https' : 'http');
+        const host = ctx.req.headers['x-forwarded-host'] || ctx.req.headers['host'] || 'localhost:3000';
+        const baseUrl = `${protocol}://${host}`;
         const resetLink = generateResetLink(resetToken, baseUrl);
         
         // 发送邮件
