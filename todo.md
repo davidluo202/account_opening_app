@@ -546,6 +546,14 @@
 
 ### 审批结果邮件通知
 - [ ] 批准：发送邮件到operation@cmfinancial.com
-- [ ] 拒绝：发送邮件到customers-service@cmfinancial.com（包含拒绝理由）
-- [ ] 退回补充材料：发送邮件到customers-service@cmfinancial.com（包含退回理由）
+- [ ] 拒绝：发送邮件到Customer-services@cmfinancial.com（包含拒绝理由）
+- [ ] 退回补充材料：发送邮件到Customer-services@cmfinancial.com（包含退回理由）
 - [ ] 邮件模板设计（中英文）
+
+
+## 邮箱地址更正（2026-01-30）
+
+- [x] 将客户服务部邮箱今customers-service@cmfinancial.com更正为Customer-services@cmfinancial.com
+- [x] 检查所有代码文件中的邮箱地址（未发现旧邮箱地址）
+- [x] 更新todo.md中的邮箱地址
+- [ ] 测试邮件发送功能（待实现审批邮件功能后测试）
