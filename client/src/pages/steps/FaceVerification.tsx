@@ -320,14 +320,11 @@ export default function FaceVerification() {
       await saveMutation.mutateAsync({
         applicationId,
         verified: true,
-        verificationData: {
-          faceImageUrl: selfieImage,
-          verifiedAt: new Date().toISOString(),
-          confidence: verificationResult.confidence,
-        },
+        faceImageData: selfieImage, // base64 image data
+        confidence: verificationResult.confidence,
       });
       
-      setLocation(`/applications/${applicationId}/regulatory`);
+      setLocation(`/application/${applicationId}/step/12`);
     } catch (error: any) {
       const errorMessage = error?.message || '保存失敗，請稍後再試';
       // 只顯示簡短的錯誤信息
@@ -338,7 +335,7 @@ export default function FaceVerification() {
   };
 
   const handleBack = () => {
-    setLocation(`/applications/${applicationId}/id-upload`);
+    setLocation(`/application/${applicationId}/step/10`);
   };
 
   if (isLoadingData) {

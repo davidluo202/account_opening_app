@@ -714,24 +714,38 @@ export const appRouter = router({
       .input(z.object({
         applicationId: z.number(),
         verified: z.boolean(),
-        verificationData: z.any().optional(),
+        faceImageData: z.string(), // base64 image data
+        confidence: z.number(),
       }))
       .mutation(async ({ input, ctx }) => {
-        const { applicationId, verificationData, ...data } = input;
+        const { applicationId, faceImageData, confidence, verified } = input;
         const application = await db.getApplicationById(applicationId);
         if (!application || application.userId !== ctx.user.id) {
           throw new Error("申请不存在或无权访问");
         }
         
+        // 上传人脸照片到S3
+        const base64Data = faceImageData.split(',')[1];
+        const buffer = Buffer.from(base64Data, 'base64');
+        const fileKey = `face-verification/${ctx.user.id}/${applicationId}-${Date.now()}.jpg`;
+        const { url: faceImageUrl } = await storagePut(fileKey, buffer, 'image/jpeg');
+        
+        // 准备保存的数据
+        const verificationData = {
+          faceImageUrl,
+          verifiedAt: new Date().toISOString(),
+          confidence,
+        };
+        
         const saveData = {
-          ...data,
-          verificationData: verificationData ? JSON.stringify(verificationData) : null,
+          verified,
+          verificationData: JSON.stringify(verificationData),
         };
         
         await db.saveFaceVerification(applicationId, saveData);
         await db.updateApplicationStep(applicationId, 11);
         
-        return { success: true };
+        return { success: true, faceImageUrl };
       }),
     
     get: protectedProcedure
