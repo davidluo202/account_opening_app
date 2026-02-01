@@ -196,6 +196,7 @@ export const appRouter = router({
         const { sendCustomerConfirmationEmail, sendInternalNotificationEmail } = await import('./email');
         const customerEmail = completeData.detailedInfo?.email;
         const customerName = completeData.basicInfo?.chineseName || completeData.basicInfo?.englishName || '客户';
+        const customerGender = completeData.basicInfo?.gender; // 获取客户性别
         
         console.log(`Preparing to send emails for application ${applicationNumber}`);
         console.log(`Customer email: ${customerEmail}`);
@@ -227,6 +228,7 @@ export const appRouter = router({
               customerEmail,
               applicationNumber,
               customerName,
+              customerGender, // 传递性别
               pdfBuffer // 附带PDF
             );
             console.log(`sendCustomerConfirmationEmail result: ${result}`);

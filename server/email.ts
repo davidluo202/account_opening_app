@@ -76,6 +76,7 @@ export async function sendCustomerConfirmationEmail(
   to: string,
   applicationNumber: string,
   customerName: string,
+  customerGender?: string | null,
   pdfBuffer?: Buffer
 ): Promise<boolean> {
   if (!apiKey) {
@@ -87,7 +88,7 @@ export async function sendCustomerConfirmationEmail(
       to,
       from: senderEmail,
       subject: `誠港金融 - 開戶申請確認函 (申請編號：${applicationNumber})`,
-      text: `尊敬的${customerName}先生/女士，
+      text: `尊敬的${customerName}${customerGender === 'male' ? '先生' : customerGender === 'female' ? '女士' : '先生/女士'}，
 
 感謝您選擇誠港金融股份有限公司。
 
@@ -100,8 +101,8 @@ export async function sendCustomerConfirmationEmail(
 - 我們可能會通過電話或郵件與您聯繫，以核實部分信息
 - 請確保您提供的聯繫方式暢通
 
-如有任何疑問，歡迎隨時聯繫我們：
-電話：+852 xxxx xxxx
+如有任何疑問，歡迎隨時聯系我們：
+電話：852-2598-1700
 郵箱：onboarding@cmfinancial.com
 
 此致
@@ -116,7 +117,7 @@ export async function sendCustomerConfirmationEmail(
             <h2 style="color: #2563eb; margin-bottom: 20px;">誠港金融股份有限公司</h2>
             <h3 style="color: #1f2937; margin-bottom: 20px;">開戶申請確認函</h3>
             
-            <p style="color: #374151;">尊敬的 <strong>${customerName}</strong> 先生/女士，</p>
+            <p style="color: #374151;">尊敬的 <strong>${customerName}</strong> ${customerGender === 'male' ? '先生' : customerGender === 'female' ? '女士' : '先生/女士'}，</p>
             
             <p style="color: #374151; line-height: 1.6;">
               感謝您選擇誠港金融股份有限公司。
@@ -147,7 +148,7 @@ export async function sendCustomerConfirmationEmail(
             
             <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
               <p style="color: #6b7280; margin: 5px 0;">如有任何疑問，歡迎隨時聯繫我們：</p>
-              <p style="color: #6b7280; margin: 5px 0;">電話：+852 xxxx xxxx</p>
+              <p style="color: #6b7280; margin: 5px 0;">電話：852-2598-1700</p>
               <p style="color: #6b7280; margin: 5px 0;">郵箱：onboarding@cmfinancial.com</p>
             </div>
             

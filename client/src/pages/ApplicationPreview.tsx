@@ -300,7 +300,7 @@ export default function ApplicationPreview() {
 
         {/* 申请编号和状态 */}
         <Card className="p-6 mb-6 bg-white border-2">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-gray-600 mb-1">申请编号 Application No.</p>
               <p className="text-2xl font-bold text-primary">
@@ -320,7 +320,7 @@ export default function ApplicationPreview() {
         </Card>
 
         {/* CMF003风格的表格展示 */}
-        <Card className="p-0 mb-6 overflow-hidden">
+        <Card className="p-0 mb-6 overflow-hidden overflow-x-auto">
           {/* 标题 */}
           <div className="bg-primary text-white p-4 text-center">
             <h2 className="text-xl font-bold">客户開戶申請表（個人/聯名）</h2>
@@ -329,7 +329,7 @@ export default function ApplicationPreview() {
 
           {/* 账户类型 */}
           <div className="border-b">
-            <table className="w-full">
+            <table className="w-full min-w-[600px]">
               <tbody>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold w-1/3 border-r">客户类型 Customer Type</td>
@@ -351,7 +351,7 @@ export default function ApplicationPreview() {
                 </Button>
               </h3>
             </div>
-            <table className="w-full">
+            <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">中文姓名 Name (Chinese)</td>
@@ -385,7 +385,7 @@ export default function ApplicationPreview() {
                 </Button>
               </h3>
             </div>
-            <table className="w-full">
+            <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">证件类型 ID Type</td>
@@ -440,7 +440,7 @@ export default function ApplicationPreview() {
                 </Button>
               </h3>
             </div>
-            <table className="w-full">
+            <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">就业状况 Employment Status</td>
@@ -486,7 +486,7 @@ export default function ApplicationPreview() {
                 </Button>
               </h3>
             </div>
-            <table className="w-full">
+            <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">收入来源 Income Source</td>
@@ -514,7 +514,7 @@ export default function ApplicationPreview() {
                 </Button>
               </h3>
             </div>
-            <table className="w-full">
+            <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">投资目的 Investment Objective</td>
@@ -543,7 +543,7 @@ export default function ApplicationPreview() {
               </h3>
             </div>
             {bankAccounts && bankAccounts.length > 0 ? (
-              <table className="w-full">
+              <table className="w-full min-w-[800px]">
                 <thead className="bg-gray-100">
                   <tr>
                     <th className="p-3 text-left border-r">银行名称 Bank Name</th>
@@ -580,7 +580,7 @@ export default function ApplicationPreview() {
                 </Button>
               </h3>
             </div>
-            <table className="w-full">
+            <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">税务居民国家 Tax Residency</td>
@@ -603,7 +603,7 @@ export default function ApplicationPreview() {
               </h3>
             </div>
             {documents && documents.length > 0 ? (
-              <table className="w-full">
+              <table className="w-full min-w-[800px]">
                 <thead className="bg-gray-100">
                   <tr>
                     <th className="p-3 text-left border-r">文件类型 Document Type</th>
@@ -640,7 +640,7 @@ export default function ApplicationPreview() {
                 </Button>
               </h3>
             </div>
-            <table className="w-full">
+            <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">验证状态 Verification Status</td>
@@ -669,7 +669,7 @@ export default function ApplicationPreview() {
                 </Button>
               </h3>
             </div>
-            <table className="w-full">
+            <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">是否为PEP</td>
