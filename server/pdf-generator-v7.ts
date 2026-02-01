@@ -5,15 +5,12 @@ import PDFDocument from 'pdfkit';
 import { Readable } from 'stream';
 import * as path from 'path';
 import * as fs from 'fs';
-import { fileURLToPath } from 'url';
 
-// 在ES模塊中獲取__dirname
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// 中文字體路径
-const FONT_PATH_SC = path.join(__dirname, 'fonts', 'NotoSansCJKsc-Regular.otf');
-const FONT_PATH_TC = path.join(__dirname, 'fonts', 'NotoSansCJKtc-Regular.otf');
+// 使用項目根目錄的絕對路徑（更可靠）
+// process.cwd() 返回 Node.js 進程的當前工作目錄，即項目根目錄
+const PROJECT_ROOT = process.cwd();
+const FONT_PATH_SC = path.join(PROJECT_ROOT, 'server', 'fonts', 'NotoSansCJKsc-Regular.otf');
+const FONT_PATH_TC = path.join(PROJECT_ROOT, 'server', 'fonts', 'NotoSansCJKtc-Regular.otf');
 
 // 預加載字體文件以確保存在
 if (!fs.existsSync(FONT_PATH_SC)) {
