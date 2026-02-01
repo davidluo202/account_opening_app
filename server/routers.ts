@@ -223,7 +223,24 @@ export const appRouter = router({
           // PDF生成失败不影响邮件发送，只是不附带PDF
         }
         
-        // 发送邮件
+        // 如果PDF生成成功，先上传到S3获得URL
+        let pdfUrl: string | undefined;
+        if (pdfBuffer) {
+          try {
+            const { storagePut } = await import('./storage');
+            const result = await storagePut(
+              `applications/${applicationNumber}/application.pdf`,
+              pdfBuffer,
+              'application/pdf'
+            );
+            pdfUrl = result.url;
+            console.log(`PDF uploaded to S3: ${pdfUrl}`);
+          } catch (error) {
+            console.error('Failed to upload PDF to S3:', error);
+          }
+        }
+        
+        // 发送邮件（使用PDF下载链接）
         if (customerEmail && applicationNumber) {
           console.log(`Condition met: customerEmail=${customerEmail}, applicationNumber=${applicationNumber}`);
           try {
@@ -233,7 +250,7 @@ export const appRouter = router({
               applicationNumber,
               customerName,
               customerGender, // 传递性别
-              pdfBuffer // 附带PDF
+              pdfUrl // PDF下载链接
             );
             console.log(`sendCustomerConfirmationEmail result: ${result}`);
             if (result) {
@@ -251,7 +268,7 @@ export const appRouter = router({
               applicationNumber,
               customerName,
               customerEmail,
-              pdfBuffer // 附带PDF
+              pdfUrl // PDF下载链接
             );
             console.log(`sendInternalNotificationEmail result: ${result}`);
             if (result) {
@@ -264,25 +281,6 @@ export const appRouter = router({
           }
         } else {
           console.log(`Email sending skipped: customerEmail=${customerEmail}, applicationNumber=${applicationNumber}`);
-        }
-        
-        console.log(`Application ${applicationNumber} submitted successfully. Email notifications sent.`);
-        
-        // 如果PDF生成成功，上传到S3并返回URL
-        let pdfUrl: string | undefined;
-        if (pdfBuffer) {
-          try {
-            const { storagePut } = await import('./storage');
-            const result = await storagePut(
-              `applications/${applicationNumber}/application.pdf`,
-              pdfBuffer,
-              'application/pdf'
-            );
-            pdfUrl = result.url;
-            console.log(`PDF uploaded to S3: ${pdfUrl}`);
-          } catch (error) {
-            console.error('Failed to upload PDF to S3:', error);
-          }
         }
         
         return { success: true, pdfUrl };
@@ -404,16 +402,10 @@ export const appRouter = router({
           throw new Error(`PDF生成失败: ${error instanceof Error ? error.message : '未知错误'}`);
         }
         
-        // 上传到S3
-        const { storagePut } = await import('./storage');
-        const fileName = `application-preview-${application.applicationNumber}-${Date.now()}.pdf`;
-        const { url } = await storagePut(
-          `applications/${ctx.user.id}/${fileName}`,
-          pdfBuffer,
-          'application/pdf'
-        );
+        // 返回base64编码的PDF数据，供前端下载
+        const pdfBase64 = pdfBuffer.toString('base64');
         
-        return { success: true, pdfUrl: url };
+        return { success: true, pdfData: pdfBase64, fileName: `${application.applicationNumber}.pdf` };
       }),
   }),
   

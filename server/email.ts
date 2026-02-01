@@ -77,7 +77,7 @@ export async function sendCustomerConfirmationEmail(
   applicationNumber: string,
   customerName: string,
   customerGender?: string | null,
-  pdfBuffer?: Buffer
+  pdfUrl?: string
 ): Promise<boolean> {
   if (!apiKey) {
     throw new Error('SendGrid API密钥未配置');
@@ -159,35 +159,28 @@ export async function sendCustomerConfirmationEmail(
             </div>
           </div>
           
+          ${pdfUrl ? `
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${pdfUrl}" style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+              下載申請表PDF / Download Application PDF
+            </a>
+          </div>
+          ` : ''}
+          
           <p style="text-align: center; color: #9ca3af; font-size: 12px; margin-top: 20px;">
             此郵件由系統自動發送，請勿回覆。
           </p>
         </div>
       `,
-      attachments: pdfBuffer ? [
-        {
-          content: pdfBuffer.toString('base64'),
-          filename: `申請表_${applicationNumber}.pdf`,
-          type: 'application/pdf',
-          disposition: 'attachment',
-        },
-      ] : undefined,
     };
     
     // 添加详细日志
     console.log(`[Customer Email] Preparing to send email to ${to}`);
-    console.log(`[Customer Email] PDF Buffer exists: ${!!pdfBuffer}`);
-    console.log(`[Customer Email] PDF Buffer size: ${pdfBuffer ? pdfBuffer.length : 0} bytes`);
-    console.log(`[Customer Email] Has attachments: ${!!msg.attachments}`);
-    if (msg.attachments) {
-      console.log(`[Customer Email] Attachment count: ${msg.attachments.length}`);
-      console.log(`[Customer Email] Attachment filename: ${msg.attachments[0].filename}`);
-      console.log(`[Customer Email] Attachment base64 length: ${msg.attachments[0].content.length}`);
-    }
+    console.log(`[Customer Email] PDF URL: ${pdfUrl || 'Not provided'}`);
     
     try {
       await sgMail.send(msg);
-      console.log(`Customer confirmation email sent to ${to} with PDF attachment`);
+      console.log(`Customer confirmation email sent to ${to} with PDF download link`);
       return true;
     } catch (error: any) {
       console.error('SendGrid error:', error);
@@ -214,7 +207,7 @@ export async function sendInternalNotificationEmail(
   applicationNumber: string,
   customerName: string,
   customerEmail: string,
-  pdfBuffer?: Buffer
+  pdfUrl?: string
 ): Promise<boolean> {
   if (!apiKey) {
     throw new Error('SendGrid API密钥未配置');
@@ -263,33 +256,26 @@ export async function sendInternalNotificationEmail(
           
           <p style="color: #374151;">請查閱附件中的申請表PDF文件，並盡快處理此申請。</p>
           
+          ${pdfUrl ? `
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${pdfUrl}" style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+              下載申請表PDF / Download Application PDF
+            </a>
+          </div>
+          ` : ''}
+          
           <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
           <p style="color: #9ca3af; font-size: 12px;">此郵件由系統自動發送。</p>
         </div>
       `,
-      attachments: pdfBuffer ? [
-        {
-          content: pdfBuffer.toString('base64'),
-          filename: `${applicationNumber}_Application.pdf`,
-          type: 'application/pdf',
-          disposition: 'attachment',
-        },
-      ] : undefined,
     };
     
     // 添加详细日志
     console.log(`[Internal Email] Preparing to send email to onboarding@cmfinancial.com`);
-    console.log(`[Internal Email] PDF Buffer exists: ${!!pdfBuffer}`);
-    console.log(`[Internal Email] PDF Buffer size: ${pdfBuffer ? pdfBuffer.length : 0} bytes`);
-    console.log(`[Internal Email] Has attachments: ${!!msg.attachments}`);
-    if (msg.attachments) {
-      console.log(`[Internal Email] Attachment count: ${msg.attachments.length}`);
-      console.log(`[Internal Email] Attachment filename: ${msg.attachments[0].filename}`);
-      console.log(`[Internal Email] Attachment base64 length: ${msg.attachments[0].content.length}`);
-    }
+    console.log(`[Internal Email] PDF URL: ${pdfUrl || 'Not provided'}`);
     
     await sgMail.send(msg);
-    console.log(`Internal notification email sent to onboarding@cmfinancial.com with PDF attachment`);
+    console.log(`Internal notification email sent to onboarding@cmfinancial.com with PDF download link`);
     return true;
   } catch (error: any) {
     console.error('SendGrid error:', error);

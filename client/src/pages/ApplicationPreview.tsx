@@ -109,15 +109,28 @@ export default function ApplicationPreview() {
   // 下载PDF
   const downloadPDFMutation = trpc.application.generatePreviewPDF.useMutation({
     onSuccess: (data) => {
-      if (data.pdfUrl) {
+      if (data.pdfData && data.fileName) {
+        // 将base64转换为Blob
+        const byteCharacters = atob(data.pdfData);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        
         // 创建一个隐藏的a标签来触发下载
         const link = document.createElement('a');
-        link.href = data.pdfUrl;
-        link.download = `${application?.applicationNumber || 'application'}.pdf`;
+        link.href = URL.createObjectURL(blob);
+        link.download = data.fileName;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        toast.success("申请表PDF已生成");
+        
+        // 释放内存
+        URL.revokeObjectURL(link.href);
+        
+        toast.success("申请表PDF已保存到本地");
       }
     },
     onError: (error) => {
