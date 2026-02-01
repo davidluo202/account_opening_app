@@ -398,6 +398,11 @@ export const appRouter = router({
           financial: completeData.employment, // employment包含財務狀況
           investment: completeData.financial, // financial包含投資信息
           bankAccounts: completeData.bankAccounts,
+          // 添加簽名信息（如果已提交）
+          signatureName: application.signatureName,
+          signatureMethod: application.signatureMethod,
+          signatureTimestamp: application.signatureTimestamp,
+          submittedAt: application.submittedAt,
         };
         
         // 生成PDF

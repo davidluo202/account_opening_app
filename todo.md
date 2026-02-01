@@ -1226,3 +1226,16 @@
 - [x] 補充所有缺失的字段到PDF生成器（賬戶類型、傳真、投資信息等）
 - [x] 修復routers.ts中的數據映射（employment→financial, financial→investment）
 - [x] 修復TypeScript重複屬性錯誤（derivatives）
+
+
+## 修復PDF電子簽名和時間戳顯示（2026-02-01 晚上）
+- [ ] 檢查PDF生成器中的簽名處理邏輯
+- [ ] 修復簽名人姓名顯示（signatureName）
+- [ ] 修復簽名時間戳顯示（signatureTimestamp）
+- [ ] 確保PDF中顯示電子簽名方式說明
+- [ ] 測試提交和預覽PDF，確認簽名信息完整
+
+- [x] 檢查PDF生成器中的簽名處理邏輯（已有代碼）
+- [x] 修復generatePreviewPDF API添加簽名信息
+- [x] 從application記錄讀取signatureName, signatureMethod, signatureTimestamp
+- [x] 確保PDF中顯示電子簽名方式說明
