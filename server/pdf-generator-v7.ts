@@ -5,6 +5,11 @@ import PDFDocument from 'pdfkit';
 import { Readable } from 'stream';
 import * as path from 'path';
 import * as fs from 'fs';
+import { fileURLToPath } from 'url';
+
+// 在ES模塊中獲取__dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // 中文字體路径
 const FONT_PATH_SC = path.join(__dirname, 'fonts', 'NotoSansCJKsc-Regular.otf');
