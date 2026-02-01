@@ -3,6 +3,20 @@
  */
 import PDFDocument from 'pdfkit';
 import { Readable } from 'stream';
+import * as path from 'path';
+import * as fs from 'fs';
+
+// 中文字體路径
+const FONT_PATH_SC = path.join(__dirname, 'fonts', 'NotoSansCJKsc-Regular.otf');
+const FONT_PATH_TC = path.join(__dirname, 'fonts', 'NotoSansCJKtc-Regular.otf');
+
+// 預加載字體文件以確保存在
+if (!fs.existsSync(FONT_PATH_SC)) {
+  console.warn(`[PDF] Simplified Chinese font not found: ${FONT_PATH_SC}`);
+}
+if (!fs.existsSync(FONT_PATH_TC)) {
+  console.warn(`[PDF] Traditional Chinese font not found: ${FONT_PATH_TC}`);
+}
 
 /**
  * 格式化金额（添加千分号）
@@ -185,21 +199,36 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       doc.on('end', () => resolve(Buffer.concat(chunks)));
       doc.on('error', reject);
 
-      // 页眉
-      doc.fontSize(18).font('Helvetica-Bold').text('Customer Account Opening Application', { align: 'center' });
-      doc.fontSize(16).text('客户开户申请表', { align: 'center' });
+      // 註冊中文字體
+      try {
+        if (fs.existsSync(FONT_PATH_TC)) {
+          doc.registerFont('NotoSansCJK', FONT_PATH_TC);
+          console.log('[PDF] Traditional Chinese font registered successfully');
+        } else if (fs.existsSync(FONT_PATH_SC)) {
+          doc.registerFont('NotoSansCJK', FONT_PATH_SC);
+          console.log('[PDF] Simplified Chinese font registered successfully');
+        } else {
+          console.warn('[PDF] No Chinese font available, falling back to default');
+        }
+      } catch (error) {
+        console.error('[PDF] Failed to register Chinese font:', error);
+      }
+
+      // 页眉（使用中文字體）
+      doc.fontSize(18).font('NotoSansCJK').text('Customer Account Opening Application', { align: 'center' });
+      doc.fontSize(16).font('NotoSansCJK').text('客户开户申请表', { align: 'center' });
       doc.moveDown(0.5);
 
       // 申请编号和状态
-      doc.fontSize(10).font('Helvetica');
+      doc.fontSize(10).font('NotoSansCJK');
       doc.text(`Application Number / 申请编号: ${data.applicationNumber || 'N/A'}`, { continued: true });
       doc.text(`     Status / 状态: ${translate(data.status)}`, { align: 'left' });
       doc.moveDown(1);
 
       // 基本信息
-      doc.fontSize(14).font('Helvetica-Bold').text('Basic Information / 基本信息');
+      doc.fontSize(14).font('NotoSansCJK').text('Basic Information / 基本信息');
       doc.moveDown(0.3);
-      doc.fontSize(10).font('Helvetica');
+      doc.fontSize(10).font('NotoSansCJK');
       
       if (data.basicInfo) {
         const bi = data.basicInfo;
@@ -213,9 +242,9 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       doc.moveDown(1);
 
       // 详细信息
-      doc.fontSize(14).font('Helvetica-Bold').text('Detailed Information / 详细信息');
+      doc.fontSize(14).font('NotoSansCJK').text('Detailed Information / 详细信息');
       doc.moveDown(0.3);
-      doc.fontSize(10).font('Helvetica');
+      doc.fontSize(10).font('NotoSansCJK');
       
       if (data.detailedInfo) {
         const di = data.detailedInfo;
@@ -234,9 +263,9 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
 
       // 职业信息
       if (data.occupation) {
-        doc.fontSize(14).font('Helvetica-Bold').text('Occupation Information / 职业信息');
+        doc.fontSize(14).font('NotoSansCJK').text('Occupation Information / 职业信息');
         doc.moveDown(0.3);
-        doc.fontSize(10).font('Helvetica');
+        doc.fontSize(10).font('NotoSansCJK');
         
         const oc = data.occupation;
         doc.text(`Employment Status / 就业状态: ${translate(oc.employmentStatus)}`);
@@ -252,9 +281,9 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
 
       // 财务状况
       if (data.financial) {
-        doc.fontSize(14).font('Helvetica-Bold').text('Financial Information / 财务状况');
+        doc.fontSize(14).font('NotoSansCJK').text('Financial Information / 财务状况');
         doc.moveDown(0.3);
-        doc.fontSize(10).font('Helvetica');
+        doc.fontSize(10).font('NotoSansCJK');
         
         const fi = data.financial;
         doc.text(`Annual Income / 年收入: ${formatAmount(fi.annualIncome)}`);
@@ -267,9 +296,9 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
 
       // 投资经验
       if (data.investmentExperience) {
-        doc.fontSize(14).font('Helvetica-Bold').text('Investment Experience / 投资经验');
+        doc.fontSize(14).font('NotoSansCJK').text('Investment Experience / 投资经验');
         doc.moveDown(0.3);
-        doc.fontSize(10).font('Helvetica');
+        doc.fontSize(10).font('NotoSansCJK');
         
         const ie = data.investmentExperience;
         doc.text(`Stocks / 股票: ${ie.stocksExperience || 0} Years / 年`);
@@ -281,9 +310,9 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
 
       // 银行账户
       if (data.bankAccounts && data.bankAccounts.length > 0) {
-        doc.fontSize(14).font('Helvetica-Bold').text('Bank Account Information / 银行账户信息');
+        doc.fontSize(14).font('NotoSansCJK').text('Bank Account Information / 银行账户信息');
         doc.moveDown(0.3);
-        doc.fontSize(10).font('Helvetica');
+        doc.fontSize(10).font('NotoSansCJK');
         
         data.bankAccounts.forEach((account, index) => {
           doc.text(`Account ${index + 1}:`);
@@ -298,9 +327,9 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
 
       // 人脸识别验证
       if (data.faceVerification?.verified) {
-        doc.fontSize(14).font('Helvetica-Bold').text('Face Verification / 人脸识别验证');
+        doc.fontSize(14).font('NotoSansCJK').text('Face Verification / 人脸识别验证');
         doc.moveDown(0.3);
-        doc.fontSize(10).font('Helvetica');
+        doc.fontSize(10).font('NotoSansCJK');
         
         doc.text(`Verification Status / 验证状态: Verified / 已验证`);
         doc.text(`Verification Time / 验证时间: ${formatTimestamp(data.faceVerification.verifiedAt)}`);
@@ -319,9 +348,9 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       }
 
       // 签名声明
-      doc.fontSize(14).font('Helvetica-Bold').text('Applicant Declaration and Signature / 申请人声明及签署');
+      doc.fontSize(14).font('NotoSansCJK').text('Applicant Declaration and Signature / 申请人声明及签署');
       doc.moveDown(0.3);
-      doc.fontSize(9).font('Helvetica');
+      doc.fontSize(9).font('NotoSansCJK');
       
       doc.text('Customer Declaration / 客户声明:');
       doc.fontSize(8);
@@ -336,14 +365,14 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       doc.text('本人同意使用电子签署方式签署本申请表，并明白此电子签署具有与手写签名同等的法律效力。');
       doc.moveDown(0.5);
       
-      doc.fontSize(9).font('Helvetica-Bold');
+      doc.fontSize(9).font('NotoSansCJK');
       doc.text(`Signature / 签名: ${data.signatureName || 'N/A'}`);
       doc.text(`Signature Method / 签署方式: ${data.signatureMethod === 'typed' ? 'Typed / 键入' : 'Drawn / 手绘'}`);
       doc.text(`Signature Timestamp / 签署时间: ${formatTimestamp(data.signatureTimestamp)}`);
       doc.moveDown(1);
 
       // 页脚
-      doc.fontSize(8).font('Helvetica');
+      doc.fontSize(8).font('NotoSansCJK');
       doc.text('CM Financial Limited / 诚港金融股份有限公司', { align: 'center' });
       doc.text('This document is generated automatically by the system / 此文件由系统自动生成', { align: 'center' });
       doc.text(`Generated at / 生成时间: ${new Date().toLocaleString('zh-HK', { timeZone: 'Asia/Hong_Kong' })}`, { align: 'center' });
