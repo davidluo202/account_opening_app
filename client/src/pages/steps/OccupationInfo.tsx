@@ -3,6 +3,7 @@ import { useParams, useLocation } from "wouter";
 import ApplicationWizard from "@/components/ApplicationWizard";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
@@ -274,7 +275,7 @@ export default function OccupationInfo() {
               <Label htmlFor="companyAddress">
                 {formData.employmentStatus === "employed" ? "公司地址 / Company Address" : "業務地址 / Business Address"} <span className="text-destructive">*</span>
               </Label>
-                <Input
+                <Textarea
                   id="companyAddress"
                   value={formData.companyAddress}
                   onChange={(e) => {
@@ -288,6 +289,7 @@ export default function OccupationInfo() {
                     }
                   }}
                   placeholder="請輸入地址"
+                  rows={3}
                   className={errors.companyAddress ? "border-destructive" : ""}
                 />
               {errors.companyAddress && <p className="text-sm text-destructive">{errors.companyAddress}</p>}

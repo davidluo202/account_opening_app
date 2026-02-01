@@ -27,14 +27,41 @@ const accountTypes = [
   { value: "others", label: "其他 / Others" },
 ];
 
+// 香港銀行列表（含3位代碼）
+const hkBanks = [
+  { code: "004", name: "渣打銀行 / The Hongkong and Shanghai Banking Corporation Limited" },
+  { code: "009", name: "中國銀行 / Bank of China (Hong Kong) Limited" },
+  { code: "012", name: "恒生銀行 / Hang Seng Bank Limited" },
+  { code: "015", name: "東亞銀行 / The Bank of East Asia, Limited" },
+  { code: "018", name: "渣打清算有限公司 / The Hongkong and Shanghai Banking Corporation Limited" },
+  { code: "024", name: "恆隆銀行 / Hang Lung Bank Limited" },
+  { code: "025", name: "上海商業銀行 / Shanghai Commercial Bank Limited" },
+  { code: "027", name: "永亞銀行 / Wing Lung Bank Limited" },
+  { code: "028", name: "公理銀行 / Public Bank (Hong Kong) Limited" },
+  { code: "035", name: "華南銀行 / Wah Nam Bank Limited" },
+  { code: "038", name: "大新銀行 / Dah Sing Bank, Limited" },
+  { code: "039", name: "道亨銀行 / Dao Heng Bank Limited" },
+  { code: "040", name: "建設銀行 / China Construction Bank (Asia) Corporation Limited" },
+  { code: "041", name: "集友銀行 / Chiyu Banking Corporation Limited" },
+  { code: "043", name: "南洋商業銀行 / Nanyang Commercial Bank, Limited" },
+  { code: "061", name: "花旗銀行 / Citibank (Hong Kong) Limited" },
+  { code: "128", name: "富邦銀行 / Fubon Bank (Hong Kong) Limited" },
+  { code: "250", name: "招商永隆銀行 / CMB Wing Lung Bank Limited" },
+  { code: "251", name: "交通銀行 / Bank of Communications (Hong Kong) Limited" },
+  { code: "253", name: "中信銀行 / China CITIC Bank International Limited" },
+  { code: "254", name: "工商銀行 / Industrial and Commercial Bank of China (Asia) Limited" },
+];
+
 export default function BankAccount() {
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
 
   const [isAdding, setIsAdding] = useState(false);
+  const [bankSearchQuery, setBankSearchQuery] = useState("");
   const [formData, setFormData] = useState({
     bankName: "",
+    bankCode: "", // 銀行代碼
     accountType: "saving", // 默认为Saving
     accountCurrency: "HKD",
     accountNumber: "",
@@ -60,12 +87,14 @@ export default function BankAccount() {
       toast.success("銀行賬戶已添加");
       setFormData({
         bankName: "",
+        bankCode: "",
         accountType: "saving",
         accountCurrency: "HKD",
         accountNumber: "",
         accountHolderName: basicInfo?.englishName || "",
         bankLocation: "HK",
       });
+      setBankSearchQuery("");
       setIsAdding(false);
       refetch();
     },
@@ -244,25 +273,6 @@ export default function BankAccount() {
               </Button>
             </div>
 
-            {/* 银行名称 */}
-            <div className="space-y-2">
-              <Label htmlFor="bankName">
-                银行名称 / Bank Name <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="bankName"
-                value={formData.bankName}
-                onChange={(e) => {
-                  setFormData({ ...formData, bankName: e.target.value });
-                  if (errors.bankName) setErrors({ ...errors, bankName: "" });
-                }}
-                onBlur={(e) => handleChineseBlur('bankName', e.target.value)}
-                placeholder="请输入银行名称"
-                className={errors.bankName ? "border-destructive" : ""}
-              />
-              {errors.bankName && <p className="text-sm text-destructive">{errors.bankName}</p>}
-            </div>
-
             {/* 银行所在地 */}
             <div className="space-y-2">
               <Label htmlFor="bankLocation">
@@ -271,9 +281,11 @@ export default function BankAccount() {
               <Select 
                 value={formData.bankLocation} 
                 onValueChange={(v) => {
-                  setFormData({ ...formData, bankLocation: v });
+                  setFormData({ ...formData, bankLocation: v, bankName: "", bankCode: "" });
+                  setBankSearchQuery("");
                   // 清除账号验证错误，因为所在地改变了
                   if (errors.accountNumber) setErrors({ ...errors, accountNumber: "" });
+                  if (errors.bankName) setErrors({ ...errors, bankName: "" });
                 }}
               >
                 <SelectTrigger>
@@ -285,6 +297,66 @@ export default function BankAccount() {
                   <SelectItem value="OTHER">其他 / Other</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* 银行名称 */}
+            <div className="space-y-2">
+              <Label htmlFor="bankName">
+                银行名称 / Bank Name <span className="text-destructive">*</span>
+              </Label>
+              {formData.bankLocation === "HK" ? (
+                <>
+                  {/* 搜索输入框 */}
+                  <Input
+                    placeholder="输入银行名称或代码搜索..."
+                    value={bankSearchQuery}
+                    onChange={(e) => setBankSearchQuery(e.target.value)}
+                    className="mb-2"
+                  />
+                  {/* 银行下拉选择 */}
+                  <Select 
+                    value={formData.bankCode}
+                    onValueChange={(code) => {
+                      const bank = hkBanks.find(b => b.code === code);
+                      if (bank) {
+                        setFormData({ ...formData, bankCode: code, bankName: bank.name });
+                        if (errors.bankName) setErrors({ ...errors, bankName: "" });
+                      }
+                    }}
+                  >
+                    <SelectTrigger className={errors.bankName ? "border-destructive" : ""}>
+                      <SelectValue placeholder="选择银行" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[300px]">
+                      {hkBanks
+                        .filter(bank => 
+                          bankSearchQuery === "" || 
+                          bank.name.toLowerCase().includes(bankSearchQuery.toLowerCase()) ||
+                          bank.code.includes(bankSearchQuery)
+                        )
+                        .map((bank) => (
+                          <SelectItem key={bank.code} value={bank.code}>
+                            {bank.code} - {bank.name}
+                          </SelectItem>
+                        ))
+                      }
+                    </SelectContent>
+                  </Select>
+                </>
+              ) : (
+                <Input
+                  id="bankName"
+                  value={formData.bankName}
+                  onChange={(e) => {
+                    setFormData({ ...formData, bankName: e.target.value });
+                    if (errors.bankName) setErrors({ ...errors, bankName: "" });
+                  }}
+                  onBlur={(e) => handleChineseBlur('bankName', e.target.value)}
+                  placeholder="请输入银行名称"
+                  className={errors.bankName ? "border-destructive" : ""}
+                />
+              )}
+              {errors.bankName && <p className="text-sm text-destructive">{errors.bankName}</p>}
             </div>
 
             {/* 账户类型 */}

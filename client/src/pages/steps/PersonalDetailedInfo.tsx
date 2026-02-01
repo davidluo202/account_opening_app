@@ -3,6 +3,7 @@ import { useParams, useLocation } from "wouter";
 import ApplicationWizard from "@/components/ApplicationWizard";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { trpc } from "@/lib/trpc";
@@ -562,7 +563,7 @@ export default function PersonalDetailedInfo() {
           <Label htmlFor="residentialAddress">
             居住地址 / Residential Address <span className="text-destructive">*</span>
           </Label>
-            <Input
+            <Textarea
               id="residentialAddress"
               value={formData.residentialAddress}
               onChange={(e) => {
@@ -577,6 +578,7 @@ export default function PersonalDetailedInfo() {
                 }
               }}
               placeholder="請輸入完整居住地址"
+              rows={3}
               className={errors.residentialAddress ? "border-destructive" : ""}
             />
           {errors.residentialAddress && <p className="text-sm text-destructive">{errors.residentialAddress}</p>}

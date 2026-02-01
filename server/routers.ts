@@ -153,9 +153,13 @@ export const appRouter = router({
       .input(z.object({ 
         id: z.number(),
         signatureName: z.string(),
-        signatureMethod: z.enum(['typed', 'iamsmart']),
+        signatureData: z.string(),
       }))
       .mutation(async ({ input, ctx }) => {
+        console.log('\n========== SUBMIT API CALLED ==========');
+        console.log('[Submit] Application ID:', input.id);
+        console.log('[Submit] Signature Name:', input.signatureName);
+        console.log('[Submit] User:', ctx.user.openId);
         const application = await db.getApplicationById(input.id);
         if (!application || application.userId !== ctx.user.id) {
           throw new Error("申请不存在或无权访问");
@@ -170,7 +174,7 @@ export const appRouter = router({
         // 提交申请（包含签名信息）
         await db.submitApplication(input.id, {
           signatureName: input.signatureName,
-          signatureMethod: input.signatureMethod,
+          signatureData: input.signatureData,
           signatureTimestamp: new Date(),
         });
         
@@ -187,9 +191,9 @@ export const appRouter = router({
           ...completeData,
           applicationNumber: applicationNumber,
           submittedAt: new Date(),
-          signatureName: application.signatureName,
-          signatureMethod: application.signatureMethod,
-          signatureTimestamp: application.signatureTimestamp,
+          signatureName: input.signatureName,
+          signatureData: input.signatureData,
+          signatureTimestamp: new Date(),
         };
         
         // 发送客户确认邮件

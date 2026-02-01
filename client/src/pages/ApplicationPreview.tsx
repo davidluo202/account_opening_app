@@ -166,7 +166,7 @@ export default function ApplicationPreview() {
     submitMutation.mutate({ 
       id: applicationId,
       signatureName: signatureName.trim(),
-      signatureMethod,
+      signatureData: "", // 电子签名数据（如果需要）
     });
     setShowSignatureDialog(false);
   };
@@ -188,6 +188,39 @@ export default function ApplicationPreview() {
     const num = typeof amount === "string" ? parseFloat(amount) : amount;
     if (isNaN(num)) return "-";
     return num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  };
+
+  // 格式化金额區間（顯示完整區間）
+  const formatAmountRange = (range: string | null | undefined) => {
+    if (!range) return "-";
+    // 如果包含連字符，表示是區間
+    if (range.includes("-")) {
+      const parts = range.split("-");
+      if (parts.length === 2) {
+        const start = parseInt(parts[0]);
+        const end = parts[1].includes("+") ? parts[1] : parseInt(parts[1]);
+        if (!isNaN(start)) {
+          if (typeof end === "number" && !isNaN(end)) {
+            return `HKD ${start.toLocaleString('en-US')} - ${end.toLocaleString('en-US')}`;
+          } else if (typeof end === "string" && end.includes("+")) {
+            return `HKD ${start.toLocaleString('en-US')}+`;
+          }
+        }
+      }
+    }
+    // 如果包含+號，表示以上
+    if (range.includes("+")) {
+      const num = parseInt(range.replace("+", ""));
+      if (!isNaN(num)) {
+        return `HKD ${num.toLocaleString('en-US')}+`;
+      }
+    }
+    // 如果是單一數字，直接格式化
+    const num = parseInt(range);
+    if (!isNaN(num)) {
+      return `HKD ${num.toLocaleString('en-US')}`;
+    }
+    return range;
   };
 
   // 翻译函数
@@ -491,14 +524,14 @@ export default function ApplicationPreview() {
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">收入来源 Income Source</td>
                   <td className="p-3 w-1/4 border-r">{employment?.incomeSource || "-"}</td>
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">年收入 Annual Income (HKD)</td>
-                  <td className="p-3 w-1/4">{formatAmount(employment?.annualIncome)}</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">年收入 Annual Income</td>
+                  <td className="p-3 w-1/4">{formatAmountRange(employment?.annualIncome)}</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold border-r">流动资产 Liquid Asset (HKD)</td>
-                  <td className="p-3 border-r">{formatAmount(employment?.liquidAsset)}</td>
-                  <td className="p-3 bg-gray-50 font-semibold border-r">净资产 Net Worth (HKD)</td>
-                  <td className="p-3">{formatAmount(employment?.netWorth)}</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">流动资产 Liquid Asset</td>
+                  <td className="p-3 border-r">{formatAmountRange(employment?.liquidAsset)}</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">净资产 Net Worth</td>
+                  <td className="p-3">{formatAmountRange(employment?.netWorth)}</td>
                 </tr>
               </tbody>
             </table>
@@ -826,7 +859,13 @@ export default function ApplicationPreview() {
       </Dialog>
       
       {/* 提交成功对话框 */}
-      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+      <Dialog open={showSuccessDialog} onOpenChange={(open) => {
+        if (!open) {
+          // 关闭对话框时跳转到列表页
+          setLocation("/applications");
+        }
+        setShowSuccessDialog(open);
+      }}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="text-2xl text-green-600 flex items-center">

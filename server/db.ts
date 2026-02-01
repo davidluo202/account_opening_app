@@ -317,9 +317,9 @@ export async function assignApplicationNumber(applicationId: number) {
 
 export async function submitApplication(
   applicationId: number,
-  signatureData?: {
+  signatureInfo?: {
     signatureName: string;
-    signatureMethod: 'typed' | 'iamsmart';
+    signatureData: string;
     signatureTimestamp: Date;
   }
 ) {
@@ -331,10 +331,10 @@ export async function submitApplication(
     .set({ 
       status: "submitted",
       submittedAt: new Date(),
-      ...(signatureData && {
-        signatureName: signatureData.signatureName,
-        signatureMethod: signatureData.signatureMethod,
-        signatureTimestamp: signatureData.signatureTimestamp,
+      ...(signatureInfo && {
+        signatureName: signatureInfo.signatureName,
+        signatureData: signatureInfo.signatureData,
+        signatureTimestamp: signatureInfo.signatureTimestamp,
       }),
     })
     .where(eq(applications.id, applicationId));
