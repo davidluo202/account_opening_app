@@ -186,14 +186,21 @@ export const appRouter = router({
         const completeData = await db.getCompleteApplicationData(input.id);
         if (!completeData || !completeData.detailedInfo) {
           throw new Error("申请数据不存在");
-        }                // 添加applicationNumber和签名信息到completeData以便PDF生成器使用
+        }                // 準備PDF數據（映射到PDF生成器期望的格式）
         const dataForPDF = {
-          ...completeData,
           applicationNumber: applicationNumber,
-          submittedAt: new Date(),
+          status: application.status,
+          accountSelection: completeData.accountSelection,
+          basicInfo: completeData.basicInfo,
+          detailedInfo: completeData.detailedInfo,
+          occupation: completeData.occupation,
+          financial: completeData.employment, // employment包含財務狀況
+          investment: completeData.financial, // financial包含投資信息
+          bankAccounts: completeData.bankAccounts,
           signatureName: input.signatureName,
-          signatureData: input.signatureData,
+          signatureMethod: 'typed',
           signatureTimestamp: new Date(),
+          submittedAt: new Date(),
         };
         
         // 发送客户确认邮件
@@ -380,13 +387,17 @@ export const appRouter = router({
           throw new Error("申请数据不存在");
         }
         
-        // 添加applicationNumber和其他信息到completeData以便PDF生成器使用
+        // 準備PDF數據（映射到PDF生成器期望的格式）
         const dataForPDF = {
-          ...completeData,
           applicationNumber: application.applicationNumber,
           status: application.status,
-          createdAt: application.createdAt,
-          updatedAt: application.updatedAt,
+          accountSelection: completeData.accountSelection,
+          basicInfo: completeData.basicInfo,
+          detailedInfo: completeData.detailedInfo,
+          occupation: completeData.occupation,
+          financial: completeData.employment, // employment包含財務狀況
+          investment: completeData.financial, // financial包含投資信息
+          bankAccounts: completeData.bankAccounts,
         };
         
         // 生成PDF

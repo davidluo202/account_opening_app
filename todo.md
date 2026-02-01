@@ -1212,3 +1212,17 @@
 - [x] 修改FONT_PATH_SC和FONT_PATH_TC使用絕對路徑
 - [x] 重啟服務器應用修復
 - [x] 準備可發布版本
+
+
+## 修復PDF數據丟失問題（2026-02-01 晚上）
+- [ ] 對比預覽頁面ApplicationPreview.tsx顯示的所有字段
+- [ ] 對比PDF生成器pdf-generator-v7.ts包含的字段
+- [ ] 找出缺失的字段（估計一半以上數據丟失）
+- [ ] 補充所有缺失字段到PDF生成器
+- [ ] 確保PDF與預覽頁面數據完全一致
+- [ ] 測試完整流程並保存checkpoint
+
+- [x] 對比預覽頁面和PDF生成器的字段
+- [x] 補充所有缺失的字段到PDF生成器（賬戶類型、傳真、投資信息等）
+- [x] 修復routers.ts中的數據映射（employment→financial, financial→investment）
+- [x] 修復TypeScript重複屬性錯誤（derivatives）
