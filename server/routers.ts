@@ -179,7 +179,7 @@ export const appRouter = router({
         });
         
         // 生成PDF
-        const { generateApplicationPDF } = await import('./pdf-generator-v5');
+        const { generateApplicationPDF } = await import('./pdf-generator-v7');
         let pdfBuffer: Buffer | undefined;
         
         // 获取申请数据用于邮件发送
@@ -215,7 +215,7 @@ export const appRouter = router({
             hasDetailedInfo: !!completeData.detailedInfo,
             hasOccupation: !!completeData.occupation,
           }));
-          pdfBuffer = await generateApplicationPDF(dataForPDF);
+          pdfBuffer = await generateApplicationPDF(dataForPDF as any);
           console.log(`[PDF Generation] PDF generated successfully, size: ${pdfBuffer.length} bytes`);
         } catch (error) {
           console.error('[PDF Generation] Failed to generate PDF:', error);
@@ -392,12 +392,12 @@ export const appRouter = router({
         };
         
         // 生成PDF
-        const { generateApplicationPDF } = await import('./pdf-generator-v5');
+        const { generateApplicationPDF } = await import('./pdf-generator-v7');
         let pdfBuffer: Buffer;
         
         try {
           console.log('[Preview PDF] Starting PDF generation...');
-          pdfBuffer = await generateApplicationPDF(dataForPDF);
+          pdfBuffer = await generateApplicationPDF(dataForPDF as any);
           console.log(`[Preview PDF] PDF generated successfully, size: ${pdfBuffer.length} bytes`);
         } catch (error) {
           console.error('[Preview PDF] Failed to generate PDF:', error);

@@ -1132,3 +1132,19 @@
 - [x] 創建application.generatePreviewPDF API
 - [x] 實現PDF生成邏輯（包含標題、編號、狀態、簽名、時間戳）
 - [ ] 測試PDF生成和下載功能
+
+## 修復PDF生成錯誤（2026-02-01）
+- [ ] 分析當前pdf-generator-v5.ts的依賴問題
+- [x] 選擇純Node.js的PDF生成方案（使用puppeteer）
+- [x] 實現新的PDF生成器，支持中文顯示
+- [ ] 測試PDF生成功能，確保包含所有必要信息
+- [ ] 確保PDF可以正確附加到郵件中
+
+## PDF生成器更新為PDFKit（2026-02-01）
+- [x] 分析puppeteer在沙箱環境中的問題（下載Chromium超時）
+- [x] 創建pdf-generator-v7.ts使用PDFKit替代puppeteer
+- [x] 更新routers.ts中所有PDF生成引用為v7版本
+- [x] 修復TypeScript類型錯誤
+- [x] 重啟開發服務器應用更改
+- [ ] 測試"保存為PDF"按鈕功能
+- [ ] 測試提交申請時的PDF郵件發送功能
