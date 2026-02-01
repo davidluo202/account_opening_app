@@ -1,0 +1,38 @@
+{
+  "query": "SELECT id, openId, name, email, createdAt FROM users ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2uixhWXF4JwUSvL.6b97ca2f8816 --database gu8TL5Ga5RUHfjV8rgaSaT --execute SELECT id, openId, name, email, createdAt FROM users ORDER BY id;",
+  "rows": [
+    {
+      "id": "1",
+      "openId": "RHhEzJG856nasoAgfgHeiq",
+      "name": "david luo",
+      "email": "davidluo20@gmail.com",
+      "createdAt": "2026-01-28 09:45:21"
+    },
+    {
+      "id": "150207",
+      "openId": "H6ZsTMxV6tVWLtZppoyp5Y",
+      "name": "Renee LI",
+      "email": "pztqc7m6xr@privaterelay.appleid.com",
+      "createdAt": "2026-01-29 05:03:49"
+    },
+    {
+      "id": "270009",
+      "openId": "iEvDaMXePjnH74wc4UBBNB",
+      "name": "xluo",
+      "email": "xluo@cmfinancial.com",
+      "createdAt": "2026-01-30 03:08:13"
+    },
+    {
+      "id": "840081",
+      "openId": "davidluo200@gmail.com",
+      "name": "davidluo200",
+      "email": "davidluo200@gmail.com",
+      "createdAt": "2026-02-01 10:17:02"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topenId\tname\temail\tcreatedAt\n1\tRHhEzJG856nasoAgfgHeiq\tdavid luo\tdavidluo20@gmail.com\t2026-01-28 09:45:21\n150207\tH6ZsTMxV6tVWLtZppoyp5Y\tRenee LI\tpztqc7m6xr@privaterelay.appleid.com\t2026-01-29 05:03:49\n270009\tiEvDaMXePjnH74wc4UBBNB\txluo\txluo@cmfinancial.com\t2026-01-30 03:08:13\n840081\tdavidluo200@gmail.com\tdavidluo200\tdavidluo200@gmail.com\t2026-02-01 10:17:02\n",
+  "stderr": "",
+  "execution_time_ms": 52
+}

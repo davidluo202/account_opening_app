@@ -172,7 +172,8 @@ export default function ApplicationPreview() {
   };
 
   const handleEdit = (step: number) => {
-    setLocation(`/application/${applicationId}/step/${step}`);
+    // 添加returnToPreview参数，告诉目标页面保存后返回预览页
+    setLocation(`/application/${applicationId}/step/${step}?returnToPreview=true`);
   };
 
   // 格式化日期

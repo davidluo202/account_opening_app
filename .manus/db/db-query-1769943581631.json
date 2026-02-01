@@ -1,0 +1,18 @@
+{
+  "query": "SELECT id, userId, applicationNumber, status, currentStep, createdAt FROM applications WHERE id = 210002;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2uixhWXF4JwUSvL.6b97ca2f8816 --database gu8TL5Ga5RUHfjV8rgaSaT --execute SELECT id, userId, applicationNumber, status, currentStep, createdAt FROM applications WHERE id = 210002;",
+  "rows": [
+    {
+      "id": "210002",
+      "userId": "1",
+      "applicationNumber": "NULL",
+      "status": "draft",
+      "currentStep": "3",
+      "createdAt": "2026-02-01 10:13:40"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\tapplicationNumber\tstatus\tcurrentStep\tcreatedAt\n210002\t1\tNULL\tdraft\t3\t2026-02-01 10:13:40\n",
+  "stderr": "",
+  "execution_time_ms": 52
+}
