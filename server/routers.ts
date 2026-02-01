@@ -362,6 +362,59 @@ export const appRouter = router({
         
         return { success: true, pdfUrl: url };
       }),
+
+    // 生成预览PDF（不提交，只生成PDF供下载）
+    generatePreviewPDF: protectedProcedure
+      .input(z.object({ applicationId: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        const application = await db.getApplicationById(input.applicationId);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
+        }
+        
+        if (!application.applicationNumber) {
+          throw new Error("请先生成申请编号");
+        }
+        
+        // 获取完整的申请数据
+        const completeData = await db.getCompleteApplicationData(input.applicationId);
+        if (!completeData || !completeData.detailedInfo) {
+          throw new Error("申请数据不存在");
+        }
+        
+        // 添加applicationNumber和其他信息到completeData以便PDF生成器使用
+        const dataForPDF = {
+          ...completeData,
+          applicationNumber: application.applicationNumber,
+          status: application.status,
+          createdAt: application.createdAt,
+          updatedAt: application.updatedAt,
+        };
+        
+        // 生成PDF
+        const { generateApplicationPDF } = await import('./pdf-generator-v5');
+        let pdfBuffer: Buffer;
+        
+        try {
+          console.log('[Preview PDF] Starting PDF generation...');
+          pdfBuffer = await generateApplicationPDF(dataForPDF);
+          console.log(`[Preview PDF] PDF generated successfully, size: ${pdfBuffer.length} bytes`);
+        } catch (error) {
+          console.error('[Preview PDF] Failed to generate PDF:', error);
+          throw new Error(`PDF生成失败: ${error instanceof Error ? error.message : '未知错误'}`);
+        }
+        
+        // 上传到S3
+        const { storagePut } = await import('./storage');
+        const fileName = `application-preview-${application.applicationNumber}-${Date.now()}.pdf`;
+        const { url } = await storagePut(
+          `applications/${ctx.user.id}/${fileName}`,
+          pdfBuffer,
+          'application/pdf'
+        );
+        
+        return { success: true, pdfUrl: url };
+      }),
   }),
   
   // Case 1 & 2: 账户选择

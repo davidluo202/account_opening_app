@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
-import { ArrowLeft, Check, Save } from "lucide-react";
+import { ArrowLeft, Check, Save, FileDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation, useRoute } from "wouter";
 import { toast } from "sonner";
@@ -105,6 +105,30 @@ export default function ApplicationPreview() {
       toast.error(`提交失败: ${error.message}`);
     },
   });
+
+  // 下载PDF
+  const downloadPDFMutation = trpc.application.generatePreviewPDF.useMutation({
+    onSuccess: (data) => {
+      if (data.pdfUrl) {
+        // 创建一个隐藏的a标签来触发下载
+        const link = document.createElement('a');
+        link.href = data.pdfUrl;
+        link.download = `${application?.applicationNumber || 'application'}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        toast.success("申请表PDF已生成");
+      }
+    },
+    onError: (error) => {
+      toast.error(`生成PDF失败: ${error.message}`);
+    },
+  });
+
+  const handleDownloadPDF = () => {
+    if (!applicationId) return;
+    downloadPDFMutation.mutate({ applicationId: Number(applicationId) });
+  };
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -767,6 +791,17 @@ export default function ApplicationPreview() {
               >
                 <Save className="h-4 w-4 mr-2" />
                 {generateNumberMutation.isPending ? "生成中..." : "保存并生成申请编号"}
+              </Button>
+            )}
+
+            {application?.applicationNumber && (
+              <Button
+                onClick={handleDownloadPDF}
+                disabled={downloadPDFMutation.isPending}
+                variant="outline"
+              >
+                <FileDown className="h-4 w-4 mr-2" />
+                {downloadPDFMutation.isPending ? "生成中..." : "保存为PDF"}
               </Button>
             )}
 
