@@ -87,7 +87,6 @@ export const translations: Record<string, string> = {
   inheritance: '繼承財產',
   gift: '贈與',
   savings: '儲蓄',
-  other: '其他',
   
   // 文件類型
   id_card: '身份證件',

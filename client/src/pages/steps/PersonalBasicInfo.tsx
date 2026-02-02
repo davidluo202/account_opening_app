@@ -51,6 +51,17 @@ export default function PersonalBasicInfo() {
     },
   });
 
+  const saveOnlyMutation = trpc.personalBasic.save.useMutation({
+    onSuccess: (result) => {
+      if (result.success && result.data) {
+        toast.success("保存成功");
+      }
+    },
+    onError: (error) => {
+      toast.error(`保存失敗: ${error.message}`);
+    },
+  });
+
   // 自动保存功能（仅在有数据时启用）
   const autoSaveMutation = trpc.personalBasic.save.useMutation({
     onSuccess: () => {
@@ -143,7 +154,28 @@ export default function PersonalBasicInfo() {
     return Object.keys(newErrors).length === 0;
   };
 
-const handleNext = () => {
+  const handleSave = () => {
+    if (!validateForm()) {
+      toast.error("請檢查表單中的錯誤");
+      return;
+    }
+
+    const nationality = formData.nationality === "other" 
+      ? formData.otherNationality 
+      : formData.nationality;
+
+    saveOnlyMutation.mutate({
+      applicationId,
+      chineseName: formData.chineseName,
+      englishName: formData.englishName,
+      gender: formData.gender,
+      dateOfBirth: formData.dateOfBirth,
+      placeOfBirth: formData.placeOfBirth,
+      nationality,
+    });
+  };
+
+  const handleNext = () => {
     if (!validateForm()) {
       toast.error("請檢查表單中的錯誤");
       return;
@@ -181,7 +213,9 @@ const handleNext = () => {
       applicationId={applicationId}
       currentStep={3}
       onNext={handleNext}
+      onSave={handleSave}
       isNextLoading={saveMutation.isPending}
+      isSaveLoading={saveOnlyMutation.isPending}
       showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-6">

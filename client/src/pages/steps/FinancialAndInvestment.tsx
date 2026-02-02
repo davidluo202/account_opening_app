@@ -71,6 +71,17 @@ export default function FinancialAndInvestment() {
     },
   });
 
+  const saveOnlyMutation = trpc.financial.save.useMutation({
+    onSuccess: (result) => {
+      if (result.success && result.data) {
+        toast.success("保存成功");
+      }
+    },
+    onError: (error) => {
+      toast.error(`保存失敗: ${error.message}`);
+    },
+  });
+
   useEffect(() => {
     if (existingData) {
       try {
@@ -128,7 +139,21 @@ export default function FinancialAndInvestment() {
     return Object.keys(newErrors).length === 0;
   };
 
-const handleNext = () => {
+  const handleSave = () => {
+    if (!validateForm()) {
+      toast.error("請檢查表單中的錯誤");
+      return;
+    }
+
+    saveOnlyMutation.mutate({
+      applicationId,
+      investmentObjectives,
+      investmentExperience,
+      riskTolerance,
+    });
+  };
+
+  const handleNext = () => {
     if (!validateForm()) {
       toast.error("請檢查表單中的錯誤");
       return;
@@ -159,8 +184,9 @@ const handleNext = () => {
       applicationId={applicationId}
       currentStep={7}
       onNext={handleNext}
+      onSave={handleSave}
       isNextLoading={saveMutation.isPending}
-    
+      isSaveLoading={saveOnlyMutation.isPending}
       showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-8">

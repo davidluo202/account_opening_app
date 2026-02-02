@@ -97,6 +97,17 @@ export default function PersonalDetailedInfo() {
     },
   });
 
+  const saveOnlyMutation = trpc.personalDetailed.save.useMutation({
+    onSuccess: (result) => {
+      if (result.success) {
+        toast.success("保存成功");
+      }
+    },
+    onError: (error) => {
+      toast.error(`保存失敗: ${error.message}`);
+    },
+  });
+
   useEffect(() => {
     if (existingData) {
       setFormData({
@@ -229,15 +240,17 @@ export default function PersonalDetailedInfo() {
     return Object.keys(newErrors).length === 0;
   };
 
-const handleSave = () => {
+  const handleSave = () => {
     if (!validateForm()) {
       toast.error("請檢查表單中的錯誤");
       return;
     }
 
-    saveMutation.mutate({
+    saveOnlyMutation.mutate({
       applicationId,
       ...formData,
+      idExpiryDate: formData.idIsPermanent ? undefined : formData.idExpiryDate,
+      emailVerified, // 保存邮箱验证状态
     });
   };
 
@@ -272,8 +285,9 @@ const handleSave = () => {
       applicationId={applicationId}
       currentStep={4}
       onNext={handleNext}
+      onSave={handleSave}
       isNextLoading={saveMutation.isPending}
-    
+      isSaveLoading={saveOnlyMutation.isPending}
       showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-6">

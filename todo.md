@@ -1312,3 +1312,25 @@
 - [x] 更新translations.ts添加所有缺失的翻譯（business, investment, rental, family, other）
 - [x] 測試預覽頁面的翻譯效果（收入來源"business"正確顯示為"業務收入"）
 - [x] 測試審批頁面的翻譯效果（審批頁面已在之前修復）
+
+## 編輯頁面保存按鈕實現（2026-02-02 第二次嘗試）
+- [ ] 確認ApplicationWizard組件已支持onSave prop
+- [ ] PersonalBasicInfo - 添加保存按鈕
+- [ ] PersonalDetailedInfo - 添加保存按鈕
+- [ ] OccupationInfo - 添加保存按鈕
+- [ ] EmploymentDetails - 添加保存按鈕
+- [ ] FinancialAndInvestment - 添加保存按鈕
+- [ ] TaxInfo - 添加保存按鈕
+- [ ] FaceVerification - 添加保存按鈕
+- [ ] RegulatoryDeclaration - 添加保存按鈕
+- [ ] AccountSelection - 添加保存按鈕
+- [ ] BankAccount和DocumentUpload - 確認是否需要保存按鈕
+- [ ] 測試所有頁面的保存功能
+
+## 為三個關鍵頁面添加保存按鈕（2026-02-02）
+- [x] 清理之前批量腳本留下的錯誤代碼
+- [x] 確認PersonalBasicInfo保存按鈕功能正常
+- [x] 確認PersonalDetailedInfo保存按鈕功能正常
+- [x] 為FinancialAndInvestment添加保存按鈕功能
+- [ ] 測試三個頁面的保存功能
+- [ ] 保存checkpoint
