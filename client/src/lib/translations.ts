@@ -76,13 +76,18 @@ export const translations: Record<string, string> = {
   
   // 收入來源
   salary: '薪金',
+  business: '業務收入',
   business_income: '營業收入',
+  investment: '投資收益',
   investment_income: '投資收益',
+  rental: '租金收入',
   rental_income: '租金收入',
   pension: '養老金',
+  family: '家庭支持',
   inheritance: '繼承財產',
   gift: '贈與',
   savings: '儲蓄',
+  other: '其他',
   
   // 文件類型
   id_card: '身份證件',
