@@ -49,6 +49,17 @@ export default function TaxInfo() {
     },
   });
 
+  const saveOnlyMutation = trpc.tax.save.useMutation({
+    onSuccess: (result) => {
+      if (result.success && result.data) {
+        toast.success("保存成功");
+      }
+    },
+    onError: (error) => {
+      toast.error(`保存失敗: ${error.message}`);
+    },
+  });
+
   useEffect(() => {
     if (existingData) {
       setFormData(existingData);
@@ -77,7 +88,7 @@ const handleSave = () => {
       return;
     }
 
-    saveMutation.mutate({
+    saveOnlyMutation.mutate({
       applicationId,
       ...formData,
     });
@@ -112,8 +123,9 @@ const handleSave = () => {
       applicationId={applicationId}
       currentStep={9}
       onNext={handleNext}
+      onSave={handleSave}
       isNextLoading={saveMutation.isPending}
-    
+      isSaveLoading={saveOnlyMutation.isPending}
       showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-6">

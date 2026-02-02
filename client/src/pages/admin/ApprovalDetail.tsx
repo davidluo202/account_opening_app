@@ -826,26 +826,12 @@ export default function ApprovalDetail() {
                   <div className="mt-2 text-sm text-yellow-700 space-y-1">
                     <p>客户自评风险等级：
                       <span className="font-semibold">
-                        {(() => {
-                          const riskMap: Record<string, string> = {
-                            'low': '低风险',
-                            'medium': '中等风险',
-                            'high': '高风险'
-                          };
-                          return riskMap[applicationData?.financial?.riskTolerance || ''] || '-';
-                        })()}
+                        {getRiskToleranceDescription(applicationData?.financial?.riskTolerance || '')}
                       </span>
                     </p>
                     <p>审批人员评定风险等级：
                       <span className="font-semibold">
-                        {(() => {
-                          const riskMap: Record<string, string> = {
-                            'low': '低风险',
-                            'medium': '中等风险',
-                            'high': '高风险'
-                          };
-                          return riskMap[approvedRiskProfile] || '-';
-                        })()}
+                        {getRiskToleranceDescription(approvedRiskProfile)}
                       </span>
                     </p>
                   </div>
