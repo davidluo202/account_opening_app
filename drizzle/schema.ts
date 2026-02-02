@@ -61,7 +61,7 @@ export const applications = mysqlTable("applications", {
   signatureMethod: mysqlEnum("signatureMethod", ["typed", "iamsmart"]), // 签署方式：输入姓名或iAM Smart
   // 审批相关字段
   isProfessionalInvestor: boolean("isProfessionalInvestor").default(false), // 是否为专业投资者（PI）
-  approvedRiskProfile: mysqlEnum("approvedRiskProfile", ["low", "medium", "high"]), // 审批人员评估的风险偏好
+  approvedRiskProfile: mysqlEnum("approvedRiskProfile", ["R1", "R2", "R3", "R4", "R5"]), // 审批人员评估的风险等级：R1(低风险) R2(中低风险) R3(中风险) R4(中高风险) R5(高风险)
   // 第一级审批字段
   firstApprovalStatus: mysqlEnum("firstApprovalStatus", ["pending", "approved", "rejected"]).default("pending"), // 第一级审批状态
   firstApprovalBy: varchar("firstApprovalBy", { length: 200 }), // 第一级审批人员ID
@@ -170,7 +170,7 @@ export const financialAndInvestment = mysqlTable("financial_and_investment", {
   applicationId: int("applicationId").notNull().unique(),
   investmentObjectives: text("investmentObjectives").notNull(), // JSON array
   investmentExperience: text("investmentExperience").notNull(), // JSON object with experience levels
-  riskTolerance: varchar("riskTolerance", { length: 50 }).notNull(),
+  riskTolerance: mysqlEnum("riskTolerance", ["R1", "R2", "R3", "R4", "R5"]).notNull(), // 客户选择的风险等级：R1(低风险) R2(中低风险) R3(中风险) R4(中高风险) R5(高风险)
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

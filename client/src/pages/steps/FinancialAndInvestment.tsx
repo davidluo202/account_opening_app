@@ -34,9 +34,11 @@ const experienceLevels = [
 ];
 
 const riskToleranceLevels = [
-  { value: "low", label: "低風險 / Low Risk", description: "優先保本，接受較低回報" },
-  { value: "medium", label: "中等風險 / Medium Risk", description: "平衡風險與回報" },
-  { value: "high", label: "高風險 / High Risk", description: "追求高回報，接受較大波動" },
+  { value: "R1", label: "R1 - 低风险 / Low Risk", description: "在一定的时间内，本金安全的不稳定性很低，基金净值会有轻度波动，或造成轻微的本金亏损" },
+  { value: "R2", label: "R2 - 中低风险 / Medium-Low Risk", description: "在一定时间内，本金安全的不稳定性相对较低，基金净值会有较低波动，或造成较低的本金亏损" },
+  { value: "R3", label: "R3 - 中风险 / Medium Risk", description: "在一定时间内，本金安全具有一定的不稳定性，基金净值会有适度波动，或造成一定的本金亏损" },
+  { value: "R4", label: "R4 - 中高风险 / Medium-High Risk", description: "在一定时间内，本金安全的不稳定性相对较高，基金净值会有较高波动，或造成较大的本金亏损" },
+  { value: "R5", label: "R5 - 高风险 / High Risk", description: "在一定的时间内，本金安全的不稳定性很高，基金净值会有高度波动，或造成很大的本金亏损" },
 ];
 
 export default function FinancialAndInvestment() {

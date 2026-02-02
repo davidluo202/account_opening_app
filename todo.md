@@ -1239,3 +1239,20 @@
 - [x] 修復generatePreviewPDF API添加簽名信息
 - [x] 從application記錄讀取signatureName, signatureMethod, signatureTimestamp
 - [x] 確保PDF中顯示電子簽名方式說明
+
+
+## 更新風險等級定義和完善中文翻譯（2026-02-02）
+- [ ] 更新數據庫schema將riskTolerance從low/medium/high改為R1/R2/R3/R4/R5
+- [ ] 更新數據庫schema將approvedRiskProfile從low/medium/high改為R1/R2/R3/R4/R5
+- [ ] 更新前端表單風險等級選項，添加R1-R5的詳細定義
+- [ ] 完善PDF生成器的中文翻譯映射（證件類型、婚姻狀態、學歷、投資目標、收入來源等）
+- [ ] 完善預覽頁面的中文翻譯顯示
+- [ ] 測試風險等級選擇和中文顯示，確保準確無誤
+
+## 風險等級和中文翻譯更新完成（2026-02-02）
+- [x] 更新數據庫schema將風險等級從low/medium/high改為R1-R5
+- [x] 更新前端FinancialAndInvestment.tsx的風險等級選項，添加R1-R5詳細定義
+- [x] 更新後台ApprovalDetail.tsx的風險等級選項，添加R1-R5詳細定義
+- [x] 擴展PDF生成器的翻譯映射，添加所有缺失字段翻譯
+- [x] 創建統一的翻譯工具translations.ts供前端使用
+- [x] 更新ApplicationPreview.tsx使用統一的翻譯函數

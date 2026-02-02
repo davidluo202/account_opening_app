@@ -100,7 +100,7 @@ export default function ApprovalDetail() {
     approveMutation.mutate({
       applicationId: Number(id),
       isProfessionalInvestor: isProfessionalInvestor === "yes",
-      approvedRiskProfile: approvedRiskProfile as 'low' | 'medium' | 'high',
+      approvedRiskProfile: approvedRiskProfile as 'R1' | 'R2' | 'R3' | 'R4' | 'R5',
     });
   };
 
@@ -392,11 +392,13 @@ export default function ApprovalDetail() {
                   <div>
                     <Label className="font-medium">客户自评风险承受能力</Label>
                     <div className="mt-1 p-3 bg-gray-50 rounded-md">
-                      {(() => {
-                        const riskMap: Record<string, string> = {
-                          'low': '低风险',
-                          'medium': '中等风险',
-                          'high': '高风险'
+                         {(() => {
+                           const riskMap: Record<string, string> = {
+                             'R1': 'R1 - 低风险',
+                             'R2': 'R2 - 中低风险',
+                             'R3': 'R3 - 中风险',
+                             'R4': 'R4 - 中高风险',
+                             'R5': 'R5 - 高风险'
                         };
                         return riskMap[financialAndInvestment.riskTolerance || ''] || financialAndInvestment.riskTolerance || '-';
                       })()}
@@ -660,9 +662,11 @@ export default function ApprovalDetail() {
                           <span className="font-medium">
                             {(() => {
                               const riskMap: Record<string, string> = {
-                                'low': '低风险',
-                                'medium': '中等风险',
-                                'high': '高风险'
+                                'R1': 'R1 - 低风险',
+                                'R2': 'R2 - 中低风险',
+                                'R3': 'R3 - 中风险',
+                                'R4': 'R4 - 中高风险',
+                                'R5': 'R5 - 高风险'
                               };
                               return riskMap[applicationData.application.approvedRiskProfile || ''] || '-';
                             })()}
@@ -719,15 +723,17 @@ export default function ApprovalDetail() {
 
             {/* Risk Profile */}
             <div className="space-y-2">
-              <Label>风险偏好评估</Label>
+              <Label>风险等级评估</Label>
               <Select value={approvedRiskProfile} onValueChange={setApprovedRiskProfile}>
                 <SelectTrigger>
-                  <SelectValue placeholder="请选择风险偏好" />
+                  <SelectValue placeholder="请选择风险等级" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="low">低</SelectItem>
-                  <SelectItem value="medium">中</SelectItem>
-                  <SelectItem value="high">高</SelectItem>
+                  <SelectItem value="R1">R1 - 低风险（本金安全的不稳定性很低，基金净值会有轻度波动）</SelectItem>
+                  <SelectItem value="R2">R2 - 中低风险（本金安全的不稳定性相对较低，基金净值会有较低波动）</SelectItem>
+                  <SelectItem value="R3">R3 - 中风险（本金安全具有一定的不稳定性，基金净值会有适度波动）</SelectItem>
+                  <SelectItem value="R4">R4 - 中高风险（本金安全的不稳定性相对较高，基金净值会有较高波动）</SelectItem>
+                  <SelectItem value="R5">R5 - 高风险（本金安全的不稳定性很高，基金净值会有高度波动）</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -1,0 +1,2 @@
+ALTER TABLE `applications` MODIFY COLUMN `approvedRiskProfile` enum('R1','R2','R3','R4','R5');--> statement-breakpoint
+ALTER TABLE `financial_and_investment` MODIFY COLUMN `riskTolerance` enum('R1','R2','R3','R4','R5') NOT NULL;

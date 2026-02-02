@@ -796,7 +796,7 @@ export async function updateApplicationStatus(applicationId: number, status: 'su
  */
 export async function updateApplicationApprovalInfo(
   applicationId: number,
-  info: { isProfessionalInvestor: boolean; approvedRiskProfile: 'low' | 'medium' | 'high' }
+  info: { isProfessionalInvestor: boolean; approvedRiskProfile: 'R1' | 'R2' | 'R3' | 'R4' | 'R5' }
 ) {
   const db = await getDb();
   if (!db) return null;

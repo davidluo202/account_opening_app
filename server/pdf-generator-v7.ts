@@ -111,6 +111,9 @@ const translations: Record<string, string> = {
   // 证件类型
   hkid: '香港身份证 HKID',
   passport: '护照 Passport',
+  'mainland-id': '中国大陆居民身份证 Mainland ID',
+  'taiwan-id': '台湾居民身份证 Taiwan ID',
+  'macao-id': '澳门居民身份证 Macao ID',
   
   // 婚姻状况
   single: '单身 Single',
@@ -119,11 +122,13 @@ const translations: Record<string, string> = {
   widowed: '丧偶 Widowed',
   
   // 教育程度
-  high_school: '高中 High School',
-  associate: '专科 Associate',
-  bachelor: '本科 Bachelor',
-  master: '硕士 Master',
-  doctorate: '博士 Doctorate',
+  high_school: '高中学历 High School',
+  associate: '专科学历 Associate',
+  bachelor: '本科学历 Bachelor',
+  master: '硕士学历 Master',
+  doctorate: '博士学历 Doctorate',
+  primary: '小学学历 Primary',
+  secondary: '中学学历 Secondary',
   
   // 就业状态
   employed: '受雇 Employed',
@@ -147,9 +152,41 @@ const translations: Record<string, string> = {
   stocks: '股票 Stocks',
   bonds: '债券 Bonds',
   funds: '基金 Funds',
-  derivatives: '衍生品 Derivatives',
+  derivatives: '衡生品 Derivatives',
   forex: '外汇 Forex',
   commodities: '商品 Commodities',
+  
+  // 投资目标
+  capital_growth: '资本增值 Capital Growth',
+  income_generation: '收益生成 Income Generation',
+  capital_preservation: '资本保值 Capital Preservation',
+  speculation: '投机 Speculation',
+  hedging: '对冲 Hedging',
+  
+  // 收入来源
+  salary: '薪金 Salary',
+  business_income: '营业收入 Business Income',
+  investment_income: '投资收益 Investment Income',
+  rental_income: '租金收入 Rental Income',
+  pension: '养老金 Pension',
+  inheritance: '继承财产 Inheritance',
+  gift: '赠与 Gift',
+  savings: '储蓄 Savings',
+  
+  // 风险等级
+  R1: 'R1 - 低风险',
+  R2: 'R2 - 中低风险',
+  R3: 'R3 - 中风险',
+  R4: 'R4 - 中高风险',
+  R5: 'R5 - 高风险',
+  
+  // 币种
+  HKD: '港币 HKD',
+  USD: '美元 USD',
+  CNY: '人民币 CNY',
+  EUR: '欧元 EUR',
+  GBP: '英镑 GBP',
+  JPY: '日元 JPY',
   
   // 申请状态
   draft: '草稿 Draft',
