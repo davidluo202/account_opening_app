@@ -578,8 +578,8 @@ export async function getCompleteApplicationData(applicationId: number) {
     employment,
     financial,
     bankAccounts: bankAccountsList,
-    tax,
-    documents,
+    taxInfo: tax,
+    uploadedDocuments: documents,
     face,
     regulatory
   };

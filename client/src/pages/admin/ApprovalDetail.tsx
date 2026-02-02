@@ -154,8 +154,8 @@ export default function ApprovalDetail() {
   const employmentDetails = applicationData.employment;
   const financialAndInvestment = applicationData.financial;
   const bankAccounts = applicationData.bankAccounts;
-  const taxInformation = applicationData.tax;
-  const documents = applicationData.documents;
+  const taxInformation = applicationData.taxInfo;
+  const documents = applicationData.uploadedDocuments;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -507,7 +507,7 @@ export default function ApprovalDetail() {
               <div>
                 <h3 className="font-semibold text-lg mb-2">上传文件</h3>
                 <div className="space-y-2">
-                  {documents.map((doc) => (
+                  {documents.map((doc: any) => (
                     <div key={doc.id} className="flex items-center justify-between p-3 border rounded">
                       <div>
                         <p className="font-medium">{doc.documentType}</p>

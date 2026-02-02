@@ -125,7 +125,7 @@ export default function ApplicationPreview() {
     );
   }
 
-  const { application, accountSelection, basicInfo: personalBasic, detailedInfo: personalDetailed, occupation, employment, financial, bankAccounts, tax: taxInfo, documents, face: faceVerification, regulatory } = completeData;
+  const { application, accountSelection, basicInfo: personalBasic, detailedInfo: personalDetailed, occupation, employment, financial, bankAccounts, taxInfo, uploadedDocuments: documents, face: faceVerification, regulatory } = completeData;
 
   const handleSaveAndGenerateNumber = () => {
     if (!application?.applicationNumber) {
@@ -560,7 +560,7 @@ export default function ApplicationPreview() {
                   </tr>
                 </thead>
                 <tbody>
-                  {documents.map((doc, index) => (
+                  {documents.map((doc: any, index: number) => (
                     <tr key={index} className="border-b">
                       <td className="p-3 border-r">{translate(doc.documentType)}</td>
                       <td className="p-3 border-r">{doc.fileName}</td>

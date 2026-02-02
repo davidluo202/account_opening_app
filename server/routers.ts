@@ -344,9 +344,9 @@ export const appRouter = router({
             accountNumber: account.accountNumber,
             accountType: account.accountType || 'saving',
           })),
-          taxCountry: completeData.tax?.taxResidency || '',
-          taxIdNumber: completeData.tax?.taxIdNumber || '',
-          uploadedDocuments: completeData.documents || [],
+          taxCountry: completeData.taxInfo?.taxResidency || '',
+          taxIdNumber: completeData.taxInfo?.taxIdNumber || '',
+          uploadedDocuments: completeData.uploadedDocuments || [],
           faceVerificationStatus: completeData.face?.verified ? 'verified' : 'pending',
           isPEP: completeData.regulatory?.isPEP || false,
           isUSPerson: completeData.regulatory?.isUSPerson || false,
@@ -398,6 +398,16 @@ export const appRouter = router({
           financial: completeData.employment, // employment包含財務狀況
           investment: completeData.financial, // financial包含投資信息
           bankAccounts: completeData.bankAccounts,
+          // 添加稅務信息
+          taxInfo: completeData.taxInfo ? {
+            taxResidency: completeData.taxInfo.taxResidency,
+            taxIdNumber: completeData.taxInfo.taxIdNumber,
+          } : undefined,
+          // 添加上傳文件清單
+          uploadedDocuments: completeData.uploadedDocuments?.map((doc: any) => ({
+            documentType: doc.documentType,
+            fileUrl: doc.fileUrl,
+          })) || [],
           // 添加簽名信息（如果已提交）
           signatureName: application.signatureName,
           signatureMethod: application.signatureMethod,

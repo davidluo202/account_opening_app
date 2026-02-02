@@ -291,6 +291,14 @@ export interface ApplicationPDFData {
     accountNumber?: string | null;
     accountHolderName?: string | null;
   }>;
+  taxInfo?: {
+    taxResidency?: string | null;
+    taxIdNumber?: string | null;
+  };
+  uploadedDocuments?: Array<{
+    documentType?: string | null;
+    fileUrl?: string | null;
+  }>;
   signatureName?: string | null;
   signatureMethod?: string | null;
   signatureTimestamp?: string | Date | null;
@@ -448,6 +456,33 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
           doc.text(`  账号 Account Number: ${account.accountNumber || 'N/A'}`);
           doc.text(`  持有人 Holder Name: ${account.accountHolderName || 'N/A'}`);
           doc.moveDown(0.5);
+        });
+        doc.moveDown(0.5);
+      }
+
+      // 税务信息
+      if (data.taxInfo) {
+        doc.fontSize(12).font('NotoSansCJK').text('7. 税务信息 Tax Information');
+        doc.moveDown(0.3);
+        doc.fontSize(10).font('NotoSansCJK');
+        doc.text(`  税务居民身份 Tax Residency: ${data.taxInfo.taxResidency || 'N/A'}`);
+        doc.text(`  税务识别号 Tax ID Number: ${data.taxInfo.taxIdNumber || 'N/A'}`);
+        doc.moveDown(0.5);
+      }
+
+      // 上传文件清单
+      if (data.uploadedDocuments && data.uploadedDocuments.length > 0) {
+        doc.fontSize(12).font('NotoSansCJK').text('8. 上传文件清单 Uploaded Documents');
+        doc.moveDown(0.3);
+        doc.fontSize(10).font('NotoSansCJK');
+        
+        data.uploadedDocuments.forEach((doc_item, index) => {
+          const docTypeTranslated = translate(doc_item.documentType);
+          doc.text(`  ${index + 1}. ${docTypeTranslated}`);
+          if (doc_item.fileUrl) {
+            doc.fontSize(8).fillColor('blue').text(`     下载链接 Download: ${doc_item.fileUrl}`);
+            doc.fillColor('black').fontSize(10);
+          }
         });
         doc.moveDown(0.5);
       }
