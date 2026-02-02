@@ -106,6 +106,25 @@ export default function OccupationInfo() {
     return Object.keys(newErrors).length === 0;
   };
 
+const handleSave = () => {
+    if (!validateForm()) {
+      toast.error("請檢查表單中的錯誤");
+      return;
+    }
+
+    saveMutation.mutate({
+      applicationId,
+      employmentStatus: formData.employmentStatus as "employed" | "self_employed" | "student" | "unemployed",
+      companyName: formData.companyName,
+      position: formData.position,
+      yearsOfService: formData.yearsOfService ? parseInt(formData.yearsOfService) : undefined,
+      industry: formData.industry,
+      companyAddress: formData.companyAddress,
+      officePhone: formData.officePhone,
+      officeFaxNo: formData.officeFaxNo,
+    });
+  };
+
   const handleNext = () => {
     if (!validateForm()) {
       toast.error("請檢查表單中的錯誤");

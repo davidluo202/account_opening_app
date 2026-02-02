@@ -316,7 +316,7 @@ export default function BankAccount() {
     }
   };
 
-  const handleNext = () => {
+const handleNext = () => {
     if (!bankAccounts || bankAccounts.length === 0) {
       toast.error("請至少添加一個銀行賬戶");
       return;

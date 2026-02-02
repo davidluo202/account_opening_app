@@ -143,7 +143,7 @@ export default function PersonalBasicInfo() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleNext = () => {
+const handleNext = () => {
     if (!validateForm()) {
       toast.error("請檢查表單中的錯誤");
       return;

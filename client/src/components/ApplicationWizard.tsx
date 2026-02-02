@@ -32,8 +32,10 @@ interface ApplicationWizardProps {
   children: ReactNode;
   onNext?: () => void;
   onPrevious?: () => void;
+  onSave?: () => void;
   isNextDisabled?: boolean;
   isNextLoading?: boolean;
+  isSaveLoading?: boolean;
   hideNext?: boolean;
   hidePrevious?: boolean;
   nextLabel?: string;
@@ -46,8 +48,10 @@ export default function ApplicationWizard({
   children,
   onNext,
   onPrevious,
+  onSave,
   isNextDisabled = false,
   isNextLoading = false,
+  isSaveLoading = false,
   hideNext = false,
   hidePrevious = false,
   nextLabel = "下一步",
@@ -138,24 +142,42 @@ export default function ApplicationWizard({
               )}
             </div>
 
-            {!hideNext && (
-              <Button
-                onClick={handleNext}
-                disabled={isNextDisabled || isNextLoading}
-              >
-                {isNextLoading ? (
-                  <span className="flex items-center">
-                    <span className="animate-spin mr-2">⏳</span>
-                    處理中...
-                  </span>
-                ) : (
-                  <>
-                    {nextLabel}
-                    <ChevronRight className="h-4 w-4 ml-2" />
-                  </>
-                )}
-              </Button>
-            )}
+            <div className="flex gap-2">
+              {onSave && (
+                <Button
+                  variant="outline"
+                  onClick={onSave}
+                  disabled={isSaveLoading}
+                >
+                  {isSaveLoading ? (
+                    <span className="flex items-center">
+                      <span className="animate-spin mr-2">⏳</span>
+                      保存中...
+                    </span>
+                  ) : (
+                    "保存"
+                  )}
+                </Button>
+              )}
+              {!hideNext && (
+                <Button
+                  onClick={handleNext}
+                  disabled={isNextDisabled || isNextLoading}
+                >
+                  {isNextLoading ? (
+                    <span className="flex items-center">
+                      <span className="animate-spin mr-2">⏳</span>
+                      處理中...
+                    </span>
+                  ) : (
+                    <>
+                      {nextLabel}
+                      <ChevronRight className="h-4 w-4 ml-2" />
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </main>

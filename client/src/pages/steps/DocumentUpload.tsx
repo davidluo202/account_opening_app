@@ -86,7 +86,7 @@ export default function DocumentUpload() {
     return requiredTypes.every(type => getUploadedDocument(type));
   };
 
-  const handleNext = () => {
+const handleNext = () => {
     if (!hasRequiredDocuments()) {
       toast.error("請上傳所有必需的文件");
       return;

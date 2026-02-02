@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, LogOut, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
+import { translate, formatInvestmentObjectives, getRiskToleranceDescription } from "@/lib/translations";
 import {
   Dialog,
   DialogContent,
@@ -242,7 +243,7 @@ export default function ApprovalDetail() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label>证件类型</Label>
-                    <p>{personalDetailedInfo.idType || "-"}</p>
+                    <p>{translate(personalDetailedInfo.idType) || "-"}</p>
                   </div>
                   <div>
                     <Label>证件号码</Label>
@@ -333,22 +334,7 @@ export default function ApprovalDetail() {
                   <div>
                     <Label className="font-medium">投资目标</Label>
                     <div className="mt-1 p-3 bg-gray-50 rounded-md">
-                      {(() => {
-                        try {
-                          const objectives = JSON.parse(financialAndInvestment.investmentObjectives || '[]');
-                          const objectiveMap: Record<string, string> = {
-                            'capital_preservation': '资本保值',
-                            'income': '收益',
-                            'growth': '增值',
-                            'speculation': '投机'
-                          };
-                          return objectives.length > 0 
-                            ? objectives.map((obj: string) => objectiveMap[obj] || obj).join('、')
-                            : '-';
-                        } catch {
-                          return financialAndInvestment.investmentObjectives || '-';
-                        }
-                      })()}
+                      {formatInvestmentObjectives(financialAndInvestment.investmentObjectives)}
                     </div>
                   </div>
                   <div>
@@ -392,16 +378,7 @@ export default function ApprovalDetail() {
                   <div>
                     <Label className="font-medium">客户自评风险承受能力</Label>
                     <div className="mt-1 p-3 bg-gray-50 rounded-md">
-                         {(() => {
-                           const riskMap: Record<string, string> = {
-                             'R1': 'R1 - 低风险',
-                             'R2': 'R2 - 中低风险',
-                             'R3': 'R3 - 中风险',
-                             'R4': 'R4 - 中高风险',
-                             'R5': 'R5 - 高风险'
-                        };
-                        return riskMap[financialAndInvestment.riskTolerance || ''] || financialAndInvestment.riskTolerance || '-';
-                      })()}
+                      {getRiskToleranceDescription(financialAndInvestment.riskTolerance)}
                     </div>
                   </div>
                 </div>

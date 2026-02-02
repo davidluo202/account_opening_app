@@ -437,7 +437,35 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
         doc.fontSize(10).font('NotoSansCJK');
         
         const inv = data.investment;
-        doc.text(`投资目的 Investment Objective: ${inv.investmentObjectives || 'N/A'}`);
+        // 翻譯投資目的
+        const translateObjective = (obj: string) => {
+          const translations: Record<string, string> = {
+            capital_growth: '資本增值',
+            income_generation: '收益生成',
+            capital_preservation: '資本保值',
+            speculation: '投機',
+            hedging: '對沖',
+          };
+          return translations[obj] || obj;
+        };
+        
+        let objectives = 'N/A';
+        if (inv.investmentObjectives) {
+          try {
+            const parsed = typeof inv.investmentObjectives === 'string' 
+              ? JSON.parse(inv.investmentObjectives) 
+              : inv.investmentObjectives;
+            if (Array.isArray(parsed)) {
+              objectives = parsed.map(translateObjective).join(', ');
+            } else {
+              objectives = String(inv.investmentObjectives);
+            }
+          } catch (e) {
+            objectives = String(inv.investmentObjectives);
+          }
+        }
+        
+        doc.text(`投资目的 Investment Objective: ${objectives}`);
         doc.text(`投资经验 Investment Experience: ${formatInvestmentExperience(inv.investmentExperience)}`);
         doc.text(`风险承受能力 Risk Tolerance: ${inv.riskTolerance || 'N/A'}`);
         doc.moveDown(1);

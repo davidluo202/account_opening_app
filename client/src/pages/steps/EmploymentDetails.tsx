@@ -89,6 +89,18 @@ export default function EmploymentDetails() {
     return Object.keys(newErrors).length === 0;
   };
 
+const handleSave = () => {
+    if (!validateForm()) {
+      toast.error("請檢查表單中的錯誤");
+      return;
+    }
+
+    saveMutation.mutate({
+      applicationId,
+      ...formData,
+    });
+  };
+
   const handleNext = () => {
     if (!validateForm()) {
       toast.error("請檢查表單中的錯誤");

@@ -41,7 +41,7 @@ export default function AccountSelection() {
     }
   }, [existingData]);
 
-  const handleNext = () => {
+const handleNext = () => {
     saveMutation.mutate({
       applicationId,
       customerType,
