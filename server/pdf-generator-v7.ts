@@ -348,6 +348,29 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       doc.on('data', (chunk) => chunks.push(chunk));
       doc.on('end', () => resolve(Buffer.concat(chunks)));
       doc.on('error', reject);
+      
+      // 使用pageAdded事件監聽器在每個新頁面創建時自動添加頁眉和Logo
+      let pageNumber = 0;
+      doc.on('pageAdded', () => {
+        pageNumber++;
+        
+        // 保存當前位置
+        const currentY = doc.y;
+        const currentX = doc.x;
+        
+        // 添加Logo到頁眉
+        if (fs.existsSync(LOGO_PATH)) {
+          try {
+            doc.image(LOGO_PATH, 50, 20, { width: 120 });
+          } catch (error) {
+            console.error('[PDF] Failed to add logo:', error);
+          }
+        }
+        
+        // 恢復當前位置
+        doc.x = currentX;
+        doc.y = currentY;
+      });
 
       // 註冊中文字體
       try {
@@ -612,26 +635,21 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       doc.text(`签署时间 Signature Timestamp: ${formatTimestamp(data.signatureTimestamp)}`);
       doc.moveDown(1);
 
-      // 使用bufferPages功能在每一頁添加頁眉和頁腳
+      // 使用bufferPages功能在所有頁面添加頁腳頁碼
       const pages = doc.bufferedPageRange();
       for (let i = 0; i < pages.count; i++) {
         doc.switchToPage(i);
         
-        // 页眉：添加Logo
-        if (fs.existsSync(LOGO_PATH)) {
-          try {
-            doc.image(LOGO_PATH, 50, 20, { width: 120 });
-          } catch (error) {
-            console.error('[PDF] Failed to add logo:', error);
-          }
-        }
-        
-        // 页脚：添加页码
-        doc.fontSize(8).font('NotoSansCJK');
+        // 添加頁碼到頁腳（使用絕對定位）
         const pageNumberText = `第${i + 1}页`;
-        doc.text(pageNumberText, 50, doc.page.height - 50, {
-          align: 'center',
-          width: doc.page.width - 100,
+        const pageNumberWidth = doc.widthOfString(pageNumberText);
+        const pageNumberX = (doc.page.width - pageNumberWidth) / 2;
+        const pageNumberY = doc.page.height - 40;
+        
+        doc.fontSize(8).font('NotoSansCJK');
+        doc.text(pageNumberText, pageNumberX, pageNumberY, {
+          lineBreak: false,
+          continued: false,
         });
       }
 
