@@ -7,7 +7,7 @@ import { ArrowLeft, Check, Save, FileDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation, useRoute } from "wouter";
 import { toast } from "sonner";
-import { translate, formatInvestmentExperience as formatInvExp, formatInvestmentObjectives, formatAmount } from "@/lib/translations";
+import { translate, formatInvestmentExperience as formatInvExp, formatInvestmentObjectives, formatAmount, getRiskToleranceDescription } from "@/lib/translations";
 
 // 使用翻譯工具中的函數
 const formatInvestmentExperience = formatInvExp;
@@ -438,7 +438,7 @@ export default function ApplicationPreview() {
               <tbody>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">收入来源 Income Source</td>
-                  <td className="p-3 w-1/4 border-r">{employment?.incomeSource || "-"}</td>
+                  <td className="p-3 w-1/4 border-r">{translate(employment?.incomeSource) || "-"}</td>
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">年收入 Annual Income</td>
                   <td className="p-3 w-1/4">{formatAmountRange(employment?.annualIncome)}</td>
                 </tr>
@@ -465,8 +465,8 @@ export default function ApplicationPreview() {
             <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">投资目的 Investment Objective</td>
-                  <td className="p-3" colSpan={3}>{financial?.investmentObjectives || "-"}</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">投資目的 Investment Objective</td>
+                  <td className="p-3" colSpan={3}>{formatInvestmentObjectives(financial?.investmentObjectives) || "-"}</td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">投资经验 Investment Experience</td>
@@ -474,7 +474,7 @@ export default function ApplicationPreview() {
                 </tr>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">风险承受能力 Risk Tolerance</td>
-                  <td className="p-3" colSpan={3}>{financial?.riskTolerance || "-"}</td>
+                  <td className="p-3" colSpan={3}>{getRiskToleranceDescription(financial?.riskTolerance) || "-"}</td>
                 </tr>
               </tbody>
             </table>
@@ -562,7 +562,7 @@ export default function ApplicationPreview() {
                 <tbody>
                   {documents.map((doc, index) => (
                     <tr key={index} className="border-b">
-                      <td className="p-3 border-r">{doc.documentType}</td>
+                      <td className="p-3 border-r">{translate(doc.documentType)}</td>
                       <td className="p-3 border-r">{doc.fileName}</td>
                       <td className="p-3">
                         <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
