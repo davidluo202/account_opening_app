@@ -482,6 +482,8 @@ export default function PersonalDetailedInfo() {
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : countdown > 0 ? (
                   `${Math.floor(countdown / 60)}:${String(countdown % 60).padStart(2, '0')}`
+                ) : showVerificationInput ? (
+                  "重發"
                 ) : (
                   "驗證"
                 )}
@@ -522,16 +524,6 @@ export default function PersonalDetailedInfo() {
                     "確認"
                   )}
                 </button>
-                {countdown > 0 && (
-                  <button
-                    type="button"
-                    onClick={handleSendVerificationCode}
-                    disabled={countdown > 0 || isSendingCode}
-                    className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-                  >
-                    重發
-                  </button>
-                )}
               </div>
               {countdown > 0 && (
                 <p className="text-sm text-muted-foreground">

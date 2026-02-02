@@ -39,6 +39,7 @@ export default function FaceVerification() {
     confidence: number;
     message: string;
   } | null>(null);
+  const [isAlreadyVerified, setIsAlreadyVerified] = useState(false);
 
   const { data: existingData, isLoading: isLoadingData, refetch } = trpc.faceVerification.get.useQuery(
     { applicationId },
@@ -74,13 +75,22 @@ export default function FaceVerification() {
     loadModels();
   }, []);
 
-  // 加载已有的人脸照片
+  // 加载已有的人脸照片和驗證狀態
   useEffect(() => {
     if (existingData?.verificationData) {
       try {
         const data = JSON.parse(existingData.verificationData);
         if (data.faceImageUrl) {
           setSelfieImage(data.faceImageUrl);
+        }
+        // 檢查是否已驗證通過
+        if (data.verified === true || existingData.verified === true) {
+          setIsAlreadyVerified(true);
+          setVerificationResult({
+            success: true,
+            confidence: data.confidence || 95,
+            message: "人臉驗證已通過"
+          });
         }
       } catch (e) {
         console.error("Error parsing verification data:", e);
@@ -308,6 +318,12 @@ export default function FaceVerification() {
   };
 
   const handleNext = async () => {
+    // 如果已驗證通過，直接跳轉到下一步
+    if (isAlreadyVerified) {
+      setLocation(`/application/${applicationId}/step/12`);
+      return;
+    }
+
     if (!selfieImage) {
       toast.error("請先完成人臉識別");
       return;
@@ -352,7 +368,8 @@ export default function FaceVerification() {
     );
   }
 
-  const isNextDisabled = !selfieImage || !verificationResult?.success || saveMutation.isPending;
+  // 如果已驗證通過，允許直接點擊下一步
+  const isNextDisabled = isAlreadyVerified ? false : (!selfieImage || !verificationResult?.success || saveMutation.isPending);
 
   return (
     <ApplicationWizard 
@@ -366,6 +383,15 @@ export default function FaceVerification() {
       showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-6">
+        {/* 已驗證狀態提示 */}
+        {isAlreadyVerified && (
+          <Alert className="bg-green-50 border-green-200">
+            <CheckCircle2 className="h-4 w-4 text-green-600" />
+            <AlertDescription className="text-green-800">
+              <strong>✓ 人臉驗證已通過</strong>，您可以直接點擊“下一步”繼續申請流程。
+            </AlertDescription>
+          </Alert>
+        )}
 
         <Card className="p-6">
           <div className="space-y-4">

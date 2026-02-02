@@ -61,16 +61,17 @@ export default function TaxInfo() {
   });
 
   useEffect(() => {
-    if (existingData) {
-      setFormData(existingData);
-    } else if (basicInfo && detailedInfo) {
-      // 自动填充
+    // 優先從basicInfo和detailedInfo自動同步最新數據
+    if (basicInfo && detailedInfo) {
       setFormData({
         taxResidency: basicInfo.nationality,
         taxIdNumber: detailedInfo.idNumber,
       });
+    } else if (existingData) {
+      // 如果沒有basicInfo和detailedInfo，則使用已保存的數據
+      setFormData(existingData);
     }
-  }, [existingData, basicInfo, detailedInfo]);
+  }, [basicInfo, detailedInfo, existingData]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};

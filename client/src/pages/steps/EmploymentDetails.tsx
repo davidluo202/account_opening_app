@@ -68,6 +68,17 @@ export default function EmploymentDetails() {
     },
   });
 
+  const saveOnlyMutation = trpc.employment.save.useMutation({
+    onSuccess: (result) => {
+      if (result.success && result.data) {
+        toast.success("保存成功");
+      }
+    },
+    onError: (error) => {
+      toast.error(`保存失敗: ${error.message}`);
+    },
+  });
+
   useEffect(() => {
     if (existingData) {
       setFormData({
@@ -95,7 +106,7 @@ const handleSave = () => {
       return;
     }
 
-    saveMutation.mutate({
+    saveOnlyMutation.mutate({
       applicationId,
       ...formData,
     });
@@ -131,7 +142,8 @@ const handleSave = () => {
       currentStep={6}
       onNext={handleNext}
       isNextLoading={saveMutation.isPending}
-    
+      onSave={handleSave}
+      isSaveLoading={saveOnlyMutation.isPending}
       showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-6">
