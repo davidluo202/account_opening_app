@@ -67,6 +67,17 @@ export default function OccupationInfo() {
     },
   });
 
+  const saveOnlyMutation = trpc.occupation.save.useMutation({
+    onSuccess: (result) => {
+      if (result.success && result.data) {
+        toast.success("保存成功");
+      }
+    },
+    onError: (error) => {
+      toast.error(`保存失敗: ${error.message}`);
+    },
+  });
+
   useEffect(() => {
     if (existingData) {
       setFormData({
@@ -112,7 +123,7 @@ const handleSave = () => {
       return;
     }
 
-    saveMutation.mutate({
+    saveOnlyMutation.mutate({
       applicationId,
       employmentStatus: formData.employmentStatus as "employed" | "self_employed" | "student" | "unemployed",
       companyName: formData.companyName,
@@ -161,7 +172,9 @@ const handleSave = () => {
       applicationId={applicationId}
       currentStep={5}
       onNext={handleNext}
+      onSave={handleSave}
       isNextLoading={saveMutation.isPending}
+      isSaveLoading={saveOnlyMutation.isPending}
       showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-6">

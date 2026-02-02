@@ -131,15 +131,14 @@ export default function ApplicationWizard({
                   上一步
                 </Button>
               )}
-              {showReturnToPreview && (
-                <Button
-                  variant="outline"
-                  onClick={() => setLocation(`/application/${applicationId}/preview`)}
-                >
-                  <FileText className="h-4 w-4 mr-2" />
-                  返回預覽
-                </Button>
-              )}
+              <Button
+                variant="outline"
+                onClick={() => setLocation(`/application/${applicationId}/preview`)}
+                disabled={!showReturnToPreview}
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                返回預覽
+              </Button>
             </div>
 
             <div className="flex gap-2">

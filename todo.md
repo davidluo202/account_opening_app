@@ -1334,3 +1334,14 @@
 - [x] 為FinancialAndInvestment添加保存按鈕功能
 - [ ] 測試三個頁面的保存功能
 - [ ] 保存checkpoint
+
+## 優化返回預覽按鈕和擴展保存按鈕（2026-02-02）
+- [x] 優化“返回預覽”按鈕邏輯：新建申請時灰顯不可用，只有從預覽頁面點擊“編輯”進入時才激活
+- [x] 為OccupationInfo（職業信息）添加保存按鈕
+- [ ] 為EmploymentDetails（就業詳情）添加保存按鈕
+- [ ] 為TaxInfo（稅務信息）添加保存按鈕
+- [ ] 為FaceVerification（人臉識別）添加保存按鈕
+- [ ] 為RegulatoryDeclaration（監管聲明）添加保存按鈕
+- [ ] 為AccountSelection（賬戶選擇）添加保存按鈕
+- [ ] 測試所有頁面的保存按鈕功能
+- [ ] 測試返回預覽按鈕的激活/禁用邏輯
