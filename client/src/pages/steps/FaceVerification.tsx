@@ -362,7 +362,6 @@ export default function FaceVerification() {
       onPrevious={handleBack}
       isNextDisabled={isNextDisabled}
       isNextLoading={saveMutation.isPending}
-      isSaveLoading={saveOnlyMutation.isPending}
     
       showReturnToPreview={showReturnToPreview}
     >
@@ -523,16 +522,3 @@ export default function FaceVerification() {
     </ApplicationWizard>
   );
 }
-
-  // 保存按鈕的mutation（不跳轉）
-  const saveOnlyMutation = trpc.faceVerification.save.useMutation({
-    onSuccess: (result) => {
-      if (result.success) {
-        toast.success("保存成功");
-        // 不跳轉，留在當前頁面
-      }
-    },
-    onError: (error: any) => {
-      toast.error(`保存失敗: ${error.message}`);
-    },
-  });

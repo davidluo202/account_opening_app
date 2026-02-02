@@ -41,16 +41,7 @@ export default function AccountSelection() {
     }
   }, [existingData]);
 
-  const handleSave = () => {
-    saveOnlyMutation.mutate({
-      applicationId,
-      customerType,
-      accountType,
-    });
-  
-  };
-
-  const handleNext = () => {
+const handleNext = () => {
     saveMutation.mutate({
       applicationId,
       customerType,
@@ -75,9 +66,7 @@ export default function AccountSelection() {
       applicationId={applicationId}
       currentStep={1}
       onNext={handleNext}
-      onSave={handleSave}
       isNextLoading={saveMutation.isPending}
-      isSaveLoading={saveOnlyMutation.isPending}
       hidePrevious
     
       showReturnToPreview={showReturnToPreview}
@@ -166,16 +155,3 @@ export default function AccountSelection() {
     </ApplicationWizard>
   );
 }
-
-  // 保存按鈕的mutation（不跳轉）
-  const saveOnlyMutation = trpc.accountSelection.save.useMutation({
-    onSuccess: (result) => {
-      if (result.success) {
-        toast.success("保存成功");
-        // 不跳轉，留在當前頁面
-      }
-    },
-    onError: (error: any) => {
-      toast.error(`保存失敗: ${error.message}`);
-    },
-  });
