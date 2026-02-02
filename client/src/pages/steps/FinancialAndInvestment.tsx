@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "wouter";
+import { useReturnToPreview } from "@/hooks/useReturnToPreview";
 import ApplicationWizard from "@/components/ApplicationWizard";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -45,6 +46,7 @@ export default function FinancialAndInvestment() {
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
+  const showReturnToPreview = useReturnToPreview();
 
   const [investmentObjectives, setInvestmentObjectives] = useState<string[]>([]);
   const [investmentExperience, setInvestmentExperience] = useState<Record<string, string>>({});
@@ -142,7 +144,9 @@ export default function FinancialAndInvestment() {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={7}>
+      <ApplicationWizard applicationId={applicationId} currentStep={7}
+      showReturnToPreview={showReturnToPreview}
+    >
         <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -156,6 +160,8 @@ export default function FinancialAndInvestment() {
       currentStep={7}
       onNext={handleNext}
       isNextLoading={saveMutation.isPending}
+    
+      showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-8">
         {/* 投資目的 */}

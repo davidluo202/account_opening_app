@@ -10,6 +10,7 @@ import { Loader2 } from "lucide-react";
 import { convertToTraditional } from "@/lib/converter";
 import { validateChineseName, validateEnglishName, validateAge } from "@/lib/validators";
 import { useAutoSave } from "@/hooks/useAutoSave";
+import { useReturnToPreview } from "@/hooks/useReturnToPreview";
 
 const countries = [
   "中国", "香港", "澳门", "台湾", "美国", "加拿大", "英国", "澳大利亚", "新加坡", "日本", "韩国", "other"
@@ -19,6 +20,7 @@ export default function PersonalBasicInfo() {
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
+  const showReturnToPreview = useReturnToPreview();
 
   const [formData, setFormData] = useState({
     chineseName: "",
@@ -164,7 +166,9 @@ export default function PersonalBasicInfo() {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={3}>
+      <ApplicationWizard applicationId={applicationId} currentStep={3}
+      showReturnToPreview={showReturnToPreview}
+    >
         <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -178,6 +182,7 @@ export default function PersonalBasicInfo() {
       currentStep={3}
       onNext={handleNext}
       isNextLoading={saveMutation.isPending}
+      showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-6">
         {/* 自动保存状态显示 */}

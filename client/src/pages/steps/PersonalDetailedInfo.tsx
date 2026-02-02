@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation, useSearch } from "wouter";
+import { useReturnToPreview } from "@/hooks/useReturnToPreview";
 import ApplicationWizard from "@/components/ApplicationWizard";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -49,6 +50,7 @@ export default function PersonalDetailedInfo() {
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
+  const showReturnToPreview = useReturnToPreview();
 
   // 获取用户基本信息（用于匹配身份证信息）
   const { data: basicInfo } = trpc.personalBasic.get.useQuery(
@@ -243,7 +245,9 @@ export default function PersonalDetailedInfo() {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={4}>
+      <ApplicationWizard applicationId={applicationId} currentStep={4}
+      showReturnToPreview={showReturnToPreview}
+    >
         <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -257,6 +261,8 @@ export default function PersonalDetailedInfo() {
       currentStep={4}
       onNext={handleNext}
       isNextLoading={saveMutation.isPending}
+    
+      showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-6">
         {/* 身份證件類型 */}

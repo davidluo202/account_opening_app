@@ -37,6 +37,7 @@ interface ApplicationWizardProps {
   hideNext?: boolean;
   hidePrevious?: boolean;
   nextLabel?: string;
+  showReturnToPreview?: boolean;
 }
 
 export default function ApplicationWizard({
@@ -50,6 +51,7 @@ export default function ApplicationWizard({
   hideNext = false,
   hidePrevious = false,
   nextLabel = "下一步",
+  showReturnToPreview = false,
 }: ApplicationWizardProps) {
   const [, setLocation] = useLocation();
   const progress = (currentStep / steps.length) * 100;
@@ -115,17 +117,26 @@ export default function ApplicationWizard({
 
           {/* Navigation Buttons */}
           <div className="flex justify-between">
-            {!hidePrevious && currentStep > 1 ? (
-              <Button
-                variant="outline"
-                onClick={handlePrevious}
-              >
-                <ChevronLeft className="h-4 w-4 mr-2" />
-                上一步
-              </Button>
-            ) : (
-              <div></div>
-            )}
+            <div className="flex gap-2">
+              {!hidePrevious && currentStep > 1 && (
+                <Button
+                  variant="outline"
+                  onClick={handlePrevious}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-2" />
+                  上一步
+                </Button>
+              )}
+              {showReturnToPreview && (
+                <Button
+                  variant="outline"
+                  onClick={() => setLocation(`/application/${applicationId}/preview`)}
+                >
+                  <FileText className="h-4 w-4 mr-2" />
+                  返回預覽
+                </Button>
+              )}
+            </div>
 
             {!hideNext && (
               <Button

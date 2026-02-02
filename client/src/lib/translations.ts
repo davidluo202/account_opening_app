@@ -21,6 +21,7 @@ export const translations: Record<string, string> = {
   // 證件類型
   hkid: '香港身份證',
   passport: '護照',
+  mainland_id: '中國大陸身份證',
   'mainland-id': '中國大陸居民身份證',
   'taiwan-id': '台灣居民身份證',
   'macao-id': '澳門居民身份證',

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation, useSearch } from "wouter";
+import { useReturnToPreview } from "@/hooks/useReturnToPreview";
 import ApplicationWizard from "@/components/ApplicationWizard";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,7 @@ export default function TaxInfo() {
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
+  const showReturnToPreview = useReturnToPreview();
 
   const [formData, setFormData] = useState({
     taxResidency: "",
@@ -83,7 +85,9 @@ export default function TaxInfo() {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={9}>
+      <ApplicationWizard applicationId={applicationId} currentStep={9}
+      showReturnToPreview={showReturnToPreview}
+    >
         <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -97,6 +101,8 @@ export default function TaxInfo() {
       currentStep={9}
       onNext={handleNext}
       isNextLoading={saveMutation.isPending}
+    
+      showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-6">
         <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">

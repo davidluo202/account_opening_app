@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation, useSearch } from "wouter";
+import { useReturnToPreview } from "@/hooks/useReturnToPreview";
 import ApplicationWizard from "@/components/ApplicationWizard";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -185,6 +186,7 @@ export default function BankAccount() {
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
+  const showReturnToPreview = useReturnToPreview();
 
   const [isAdding, setIsAdding] = useState(false);
   const [bankSearchQuery, setBankSearchQuery] = useState("");
@@ -324,7 +326,9 @@ export default function BankAccount() {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={8}>
+      <ApplicationWizard applicationId={applicationId} currentStep={8}
+      showReturnToPreview={showReturnToPreview}
+    >
         <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -338,6 +342,8 @@ export default function BankAccount() {
       currentStep={8}
       onNext={handleNext}
       isNextDisabled={!bankAccounts || bankAccounts.length === 0}
+    
+      showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-6">
         {/* 已添加的銀行賬戶列表 */}

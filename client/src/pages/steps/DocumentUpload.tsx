@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { useParams, useLocation, useSearch } from "wouter";
+import { useReturnToPreview } from "@/hooks/useReturnToPreview";
 import ApplicationWizard from "@/components/ApplicationWizard";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ export default function DocumentUpload() {
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
+  const showReturnToPreview = useReturnToPreview();
 
   const [uploading, setUploading] = useState<string | null>(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
@@ -94,7 +96,9 @@ export default function DocumentUpload() {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={10}>
+      <ApplicationWizard applicationId={applicationId} currentStep={10}
+      showReturnToPreview={showReturnToPreview}
+    >
         <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -108,6 +112,8 @@ export default function DocumentUpload() {
       currentStep={10}
       onNext={handleNext}
       isNextDisabled={!hasRequiredDocuments()}
+    
+      showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-6">
         <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">

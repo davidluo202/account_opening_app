@@ -111,6 +111,7 @@ const translations: Record<string, string> = {
   // 证件类型
   hkid: '香港身份证 HKID',
   passport: '护照 Passport',
+  mainland_id: '中国大陆身份证 Mainland ID',
   'mainland-id': '中国大陆居民身份证 Mainland ID',
   'taiwan-id': '台湾居民身份证 Taiwan ID',
   'macao-id': '澳门居民身份证 Macao ID',
@@ -507,7 +508,7 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       
       doc.fontSize(9).font('NotoSansCJK');
       doc.text(`签名 Signature: ${data.signatureName || 'N/A'}`);
-      doc.text(`签署方式 Signature Method: ${data.signatureMethod === 'typed' ? 'Typed / 键入' : 'Drawn / 手绘'}`);
+      doc.text(`签署方式 Signature Method: Typed / 输入`);
       doc.text(`签署时间 Signature Timestamp: ${formatTimestamp(data.signatureTimestamp)}`);
       doc.moveDown(1);
 

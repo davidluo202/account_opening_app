@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "wouter";
+import { useReturnToPreview } from "@/hooks/useReturnToPreview";
 import ApplicationWizard from "@/components/ApplicationWizard";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -11,6 +12,7 @@ export default function AccountSelection() {
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
+  const showReturnToPreview = useReturnToPreview();
 
   const [customerType, setCustomerType] = useState<"individual" | "joint" | "corporate">("individual");
   const [accountType, setAccountType] = useState<"cash" | "margin" | "derivatives">("cash");
@@ -49,7 +51,9 @@ export default function AccountSelection() {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={1}>
+      <ApplicationWizard applicationId={applicationId} currentStep={1}
+      showReturnToPreview={showReturnToPreview}
+    >
         <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -64,6 +68,8 @@ export default function AccountSelection() {
       onNext={handleNext}
       isNextLoading={saveMutation.isPending}
       hidePrevious
+    
+      showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-8">
         {/* Case 1: 客戶類型 */}

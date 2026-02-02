@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useParams, useLocation, useSearch } from "wouter";
+import { useReturnToPreview } from "@/hooks/useReturnToPreview";
 import ApplicationWizard from "@/components/ApplicationWizard";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -13,6 +14,7 @@ export default function FaceVerification() {
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
+  const showReturnToPreview = useReturnToPreview();
 
   // 浏览器摄像头相关
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -340,7 +342,9 @@ export default function FaceVerification() {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard currentStep={11} applicationId={applicationId}>
+      <ApplicationWizard currentStep={11} applicationId={applicationId}
+      showReturnToPreview={showReturnToPreview}
+    >
         <div className="flex justify-center items-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -358,6 +362,8 @@ export default function FaceVerification() {
       onPrevious={handleBack}
       isNextDisabled={isNextDisabled}
       isNextLoading={saveMutation.isPending}
+    
+      showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-6">
 

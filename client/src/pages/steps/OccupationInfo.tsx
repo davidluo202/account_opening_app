@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation, useSearch } from "wouter";
+import { useReturnToPreview } from "@/hooks/useReturnToPreview";
 import ApplicationWizard from "@/components/ApplicationWizard";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -34,6 +35,7 @@ export default function OccupationInfo() {
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
+  const showReturnToPreview = useReturnToPreview();
 
   const [formData, setFormData] = useState({
     employmentStatus: "" as "employed" | "self_employed" | "student" | "unemployed" | "",
@@ -125,7 +127,9 @@ export default function OccupationInfo() {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={5}>
+      <ApplicationWizard applicationId={applicationId} currentStep={5}
+      showReturnToPreview={showReturnToPreview}
+    >
         <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -139,6 +143,7 @@ export default function OccupationInfo() {
       currentStep={5}
       onNext={handleNext}
       isNextLoading={saveMutation.isPending}
+      showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-6">
         {/* 就業狀況 */}

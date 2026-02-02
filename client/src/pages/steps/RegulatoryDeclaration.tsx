@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation, useSearch } from "wouter";
+import { useReturnToPreview } from "@/hooks/useReturnToPreview";
 import ApplicationWizard from "@/components/ApplicationWizard";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,7 @@ export default function RegulatoryDeclaration() {
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
+  const showReturnToPreview = useReturnToPreview();
 
   const [formData, setFormData] = useState({
     isPEP: false,
@@ -111,7 +113,9 @@ export default function RegulatoryDeclaration() {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={12}>
+      <ApplicationWizard applicationId={applicationId} currentStep={12}
+      showReturnToPreview={showReturnToPreview}
+    >
         <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -125,6 +129,8 @@ export default function RegulatoryDeclaration() {
       currentStep={12}
       onNext={handleNext}
       isNextLoading={saveMutation.isPending}
+    
+      showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-6">
         {/* PEP 声明 */}
