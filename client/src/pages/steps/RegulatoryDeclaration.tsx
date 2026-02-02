@@ -93,7 +93,26 @@ export default function RegulatoryDeclaration() {
     return Object.keys(newErrors).length === 0;
   };
 
-const handleNext = () => {
+  const handleSave = () => {
+    if (!validateForm()) {
+      toast.error("請檢查表單中的錯誤");
+      return;
+    }
+
+    saveOnlyMutation.mutate({
+      applicationId,
+      isPEP: formData.isPEP,
+      isUSPerson: formData.isUSPerson,
+      agreementRead: formData.hasReadAgreement,
+      agreementAccepted: formData.hasReadAgreement,
+      signatureName: formData.signature,
+      electronicSignatureConsent: formData.acceptsETO,
+      amlComplianceConsent: formData.acceptsAML,
+    });
+  
+  };
+
+  const handleNext = () => {
     if (!validateForm()) {
       toast.error("請檢查表單中的錯誤");
       return;
@@ -128,7 +147,9 @@ const handleNext = () => {
       applicationId={applicationId}
       currentStep={12}
       onNext={handleNext}
+      onSave={handleSave}
       isNextLoading={saveMutation.isPending}
+      isSaveLoading={saveOnlyMutation.isPending}
     
       showReturnToPreview={showReturnToPreview}
     >
@@ -313,3 +334,16 @@ const handleNext = () => {
     </ApplicationWizard>
   );
 }
+
+  // 保存按鈕的mutation（不跳轉）
+  const saveOnlyMutation = trpc.regulatory.save.useMutation({
+    onSuccess: (result) => {
+      if (result.success) {
+        toast.success("保存成功");
+        // 不跳轉，留在當前頁面
+      }
+    },
+    onError: (error: any) => {
+      toast.error(`保存失敗: ${error.message}`);
+    },
+  });

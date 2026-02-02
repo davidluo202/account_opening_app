@@ -101,6 +101,8 @@ const handleSave = () => {
     });
   };
 
+    ;
+
   const handleNext = () => {
     if (!validateForm()) {
       toast.error("請檢查表單中的錯誤");
@@ -130,7 +132,9 @@ const handleSave = () => {
       applicationId={applicationId}
       currentStep={6}
       onNext={handleNext}
+      onSave={handleSave}
       isNextLoading={saveMutation.isPending}
+      isSaveLoading={saveOnlyMutation.isPending}
     
       showReturnToPreview={showReturnToPreview}
     >
@@ -248,3 +252,16 @@ const handleSave = () => {
     </ApplicationWizard>
   );
 }
+
+  // 保存按鈕的mutation（不跳轉）
+  const saveOnlyMutation = trpc.employment.save.useMutation({
+    onSuccess: (result) => {
+      if (result.success) {
+        toast.success("保存成功");
+        // 不跳轉，留在當前頁面
+      }
+    },
+    onError: (error: any) => {
+      toast.error(`保存失敗: ${error.message}`);
+    },
+  });
