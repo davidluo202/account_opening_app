@@ -235,6 +235,25 @@ function formatInvestmentExperience(experience: string | Record<string, string> 
   return String(experience);
 }
 
+function formatRiskTolerance(riskLevel: string): string {
+  const riskDescriptions: Record<string, string> = {
+    // 英文風險等級
+    'conservative': '保守型 Conservative - 低风险，优先考虑资本保值',
+    'moderate': '稳健型 Moderate - 中等风险，寻求均衡收益和风险',
+    'balanced': '均衡型 Balanced - 中等到中高风险，平衡增值与稳定',
+    'aggressive': '积极型 Aggressive - 高风险，追求高回报',
+    'speculative': '激进型 Speculative - 极高风险，接受重大波动',
+    // R1-R5風險等級（與translations.ts保持一致）
+    'R1': 'R1 - 低風險：在一定時間內，本金安全具有較高的穩定性，基金淨值波動較小，或造成較小的本金虧損',
+    'R2': 'R2 - 中低風險：在一定時間內，本金安全具有較高的穩定性，基金淨值會有較小波動，或造成較小的本金虧損',
+    'R3': 'R3 - 中風險：在一定時間內，本金安全具有一定的不穩定性，基金淨值會有適度波動，或造成一定的本金虧損',
+    'R4': 'R4 - 中高風險：在一定時間內，本金安全具有較大的不穩定性，基金淨值會有較大波動，或造成較大的本金虧損',
+    'R5': 'R5 - 高風險：在一定時間內，本金安全具有很大的不穩定性，基金淨值會有很大波動，或造成很大的本金虧損'
+  };
+  
+  return riskDescriptions[riskLevel] || riskLevel;
+}
+
 export interface ApplicationPDFData {
   applicationNumber?: string | null;
   status?: string | null;
@@ -467,7 +486,10 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
         
         doc.text(`投资目的 Investment Objective: ${objectives}`);
         doc.text(`投资经验 Investment Experience: ${formatInvestmentExperience(inv.investmentExperience)}`);
-        doc.text(`风险承受能力 Risk Tolerance: ${inv.riskTolerance || 'N/A'}`);
+        
+        // 风险等级详细描述
+        const riskToleranceText = inv.riskTolerance ? formatRiskTolerance(inv.riskTolerance) : 'N/A';
+        doc.text(`风险承受能力 Risk Tolerance: ${riskToleranceText}`);
         doc.moveDown(1);
       }
 

@@ -216,3 +216,5 @@ export function formatInvestmentObjectives(objectives: string | string[] | null 
   
   return String(objectives);
 }
+
+// 最後更新: 2026-02-02

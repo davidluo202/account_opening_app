@@ -1,0 +1,70 @@
+{
+  "query": "SELECT id, applicationNumber, status, createdAt FROM applications ORDER BY id DESC LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2uixhWXF4JwUSvL.6b97ca2f8816 --database gu8TL5Ga5RUHfjV8rgaSaT --execute SELECT id, applicationNumber, status, createdAt FROM applications ORDER BY id DESC LIMIT 10;",
+  "rows": [
+    {
+      "id": "270001",
+      "applicationNumber": "CMF-ACAPP-260202-002",
+      "status": "submitted",
+      "createdAt": "2026-02-02 02:31:22"
+    },
+    {
+      "id": "240001",
+      "applicationNumber": "CMF-ACAPP-260202-001",
+      "status": "submitted",
+      "createdAt": "2026-02-02 01:13:01"
+    },
+    {
+      "id": "210002",
+      "applicationNumber": "CMF-ACAPP-260201-003",
+      "status": "submitted",
+      "createdAt": "2026-02-01 10:13:40"
+    },
+    {
+      "id": "210001",
+      "applicationNumber": "CMF-ACAPP-260201-002",
+      "status": "submitted",
+      "createdAt": "2026-02-01 09:41:24"
+    },
+    {
+      "id": "180001",
+      "applicationNumber": "CMF-ACAPP-260201-001",
+      "status": "submitted",
+      "createdAt": "2026-02-01 07:39:13"
+    },
+    {
+      "id": "150001",
+      "applicationNumber": "CMF-ACAPP-260130-001",
+      "status": "returned",
+      "createdAt": "2026-01-30 12:02:14"
+    },
+    {
+      "id": "120015",
+      "applicationNumber": "NULL",
+      "status": "draft",
+      "createdAt": "2026-01-30 02:39:51"
+    },
+    {
+      "id": "120014",
+      "applicationNumber": "NULL",
+      "status": "draft",
+      "createdAt": "2026-01-30 02:39:51"
+    },
+    {
+      "id": "120013",
+      "applicationNumber": "NULL",
+      "status": "draft",
+      "createdAt": "2026-01-30 02:39:47"
+    },
+    {
+      "id": "120012",
+      "applicationNumber": "CMF-ACAPP-260129-009",
+      "status": "approved",
+      "createdAt": "2026-01-30 02:39:47"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tapplicationNumber\tstatus\tcreatedAt\n270001\tCMF-ACAPP-260202-002\tsubmitted\t2026-02-02 02:31:22\n240001\tCMF-ACAPP-260202-001\tsubmitted\t2026-02-02 01:13:01\n210002\tCMF-ACAPP-260201-003\tsubmitted\t2026-02-01 10:13:40\n210001\tCMF-ACAPP-260201-002\tsubmitted\t2026-02-01 09:41:24\n180001\tCMF-ACAPP-260201-001\tsubmitted\t2026-02-01 07:39:13\n150001\tCMF-ACAPP-260130-001\treturned\t2026-01-30 12:02:14\n120015\tNULL\tdraft\t2026-01-30 02:39:51\n120014\tNULL\tdraft\t2026-01-30 02:39:51\n120013\tNULL\tdraft\t2026-01-30 02:39:47\n120012\tCMF-ACAPP-260129-009\tapproved\t2026-01-30 02:39:47\n",
+  "stderr": "",
+  "execution_time_ms": 95
+}

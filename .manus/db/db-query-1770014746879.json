@@ -1,0 +1,64 @@
+{
+  "query": "SHOW TABLES;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2uixhWXF4JwUSvL.6b97ca2f8816 --database gu8TL5Ga5RUHfjV8rgaSaT --execute SHOW TABLES;",
+  "rows": [
+    {
+      "Tables_in_gu8TL5Ga5RUHfjV8rgaSaT": "__drizzle_migrations"
+    },
+    {
+      "Tables_in_gu8TL5Ga5RUHfjV8rgaSaT": "account_selections"
+    },
+    {
+      "Tables_in_gu8TL5Ga5RUHfjV8rgaSaT": "application_number_sequences"
+    },
+    {
+      "Tables_in_gu8TL5Ga5RUHfjV8rgaSaT": "applications"
+    },
+    {
+      "Tables_in_gu8TL5Ga5RUHfjV8rgaSaT": "approval_records"
+    },
+    {
+      "Tables_in_gu8TL5Ga5RUHfjV8rgaSaT": "approvers"
+    },
+    {
+      "Tables_in_gu8TL5Ga5RUHfjV8rgaSaT": "bank_accounts"
+    },
+    {
+      "Tables_in_gu8TL5Ga5RUHfjV8rgaSaT": "email_verification_codes"
+    },
+    {
+      "Tables_in_gu8TL5Ga5RUHfjV8rgaSaT": "employment_details"
+    },
+    {
+      "Tables_in_gu8TL5Ga5RUHfjV8rgaSaT": "face_verification"
+    },
+    {
+      "Tables_in_gu8TL5Ga5RUHfjV8rgaSaT": "financial_and_investment"
+    },
+    {
+      "Tables_in_gu8TL5Ga5RUHfjV8rgaSaT": "occupation_info"
+    },
+    {
+      "Tables_in_gu8TL5Ga5RUHfjV8rgaSaT": "personal_basic_info"
+    },
+    {
+      "Tables_in_gu8TL5Ga5RUHfjV8rgaSaT": "personal_detailed_info"
+    },
+    {
+      "Tables_in_gu8TL5Ga5RUHfjV8rgaSaT": "regulatory_declarations"
+    },
+    {
+      "Tables_in_gu8TL5Ga5RUHfjV8rgaSaT": "tax_info"
+    },
+    {
+      "Tables_in_gu8TL5Ga5RUHfjV8rgaSaT": "uploaded_documents"
+    },
+    {
+      "Tables_in_gu8TL5Ga5RUHfjV8rgaSaT": "users"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_gu8TL5Ga5RUHfjV8rgaSaT\n__drizzle_migrations\naccount_selections\napplication_number_sequences\napplications\napproval_records\napprovers\nbank_accounts\nemail_verification_codes\nemployment_details\nface_verification\nfinancial_and_investment\noccupation_info\npersonal_basic_info\npersonal_detailed_info\nregulatory_declarations\ntax_info\nuploaded_documents\nusers\n",
+  "stderr": "",
+  "execution_time_ms": 47
+}
