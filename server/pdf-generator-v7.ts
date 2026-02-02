@@ -11,6 +11,7 @@ import * as fs from 'fs';
 const PROJECT_ROOT = process.cwd();
 const FONT_PATH_SC = path.join(PROJECT_ROOT, 'server', 'fonts', 'NotoSansCJKsc-Regular.otf');
 const FONT_PATH_TC = path.join(PROJECT_ROOT, 'server', 'fonts', 'NotoSansCJKtc-Regular.otf');
+const LOGO_PATH = path.join(PROJECT_ROOT, 'client', 'public', 'logo-zh.png');
 
 // 預加載字體文件以確保存在
 if (!fs.existsSync(FONT_PATH_SC)) {
@@ -323,6 +324,12 @@ export interface ApplicationPDFData {
   signatureMethod?: string | null;
   signatureTimestamp?: string | Date | null;
   submittedAt?: string | Date | null;
+  // 合規聲明字段
+  isPEP?: boolean | null;
+  isUSPerson?: boolean | null;
+  agreementRead?: boolean | null;
+  agreementAccepted?: boolean | null;
+  amlComplianceConsent?: boolean | null;
 }
 
 /**
@@ -333,7 +340,7 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
     try {
       const doc = new PDFDocument({
         size: 'A4',
-        margins: { top: 50, bottom: 50, left: 50, right: 50 },
+        margins: { top: 80, bottom: 70, left: 50, right: 50 }, // 增加頂部和底部邊距，為Logo和頁碼預留空間
         bufferPages: true,
       });
 
@@ -538,6 +545,49 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
         doc.moveDown(0.5);
       }
 
+      // 合規聲明
+      doc.fontSize(12).font('NotoSansCJK').text('客戶合規聲明 Customer Compliance Declarations');
+      doc.moveDown(0.3);
+      doc.fontSize(9).font('NotoSansCJK');
+
+      // PEP聲明
+      doc.text('PEP聲明 Political Exposed Person (PEP) Declaration:');
+      doc.fontSize(8);
+      const pepStatus = data.isPEP ? '是 Yes' : '否 No';
+      doc.text(`本人確認本人${pepStatus}為政治公眾人物（PEP）。`);
+      doc.text(`I confirm that I am ${pepStatus} a Political Exposed Person (PEP).`);
+      doc.moveDown(0.5);
+
+      // US Person聲明
+      doc.fontSize(9);
+      doc.text('US Person聲明 US Person Declaration:');
+      doc.fontSize(8);
+      const usPersonStatus = data.isUSPerson ? '是 Yes' : '否 No';
+      doc.text(`本人確認本人${usPersonStatus}為美國人士（US Person）。`);
+      doc.text(`I confirm that I am ${usPersonStatus} a US Person.`);
+      doc.moveDown(0.5);
+
+      // 反洗錢合規聲明
+      doc.fontSize(9);
+      doc.text('反洗錢合規聲明 Anti-Money Laundering Compliance Declaration:');
+      doc.fontSize(8);
+      const amlStatus = data.amlComplianceConsent ? '同意 Agreed' : '未同意 Not Agreed';
+      doc.text(`本人${amlStatus}接受反洗錢和其他監管合規要求的約束。`);
+      doc.text(`I ${amlStatus} to accept the constraints of anti-money laundering and other regulatory compliance requirements.`);
+      doc.moveDown(0.5);
+
+      // 開戶協議聲明
+      doc.fontSize(9);
+      doc.text('開戶協議聲明 Account Opening Agreement Declaration:');
+      doc.fontSize(8);
+      const agreementStatus = (data.agreementRead && data.agreementAccepted) ? '已閱讀並同意 Read and Agreed' : '未完成 Not Completed';
+      doc.text(`開戶協議狀態 Agreement Status: ${agreementStatus}`);
+      if (data.agreementRead && data.agreementAccepted) {
+        doc.text('本人確認已詳細閱讀開戶協議，清楚了解協議內容，並願意接受協議條款約束。');
+        doc.text('I confirm that I have read the account opening agreement in detail, clearly understand the content of the agreement, and am willing to accept the terms and conditions of the agreement.');
+      }
+      doc.moveDown(1);
+
       // 签名声明
       doc.fontSize(12).font('NotoSansCJK').text('申请人声明及签署 Applicant Declaration and Signature');
       doc.moveDown(0.3);
@@ -562,11 +612,28 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       doc.text(`签署时间 Signature Timestamp: ${formatTimestamp(data.signatureTimestamp)}`);
       doc.moveDown(1);
 
-      // 页脚
-      doc.fontSize(8).font('NotoSansCJK');
-      doc.text('诚港金融股份有限公司 CM Financial Limited', { align: 'center' });
-      doc.text('此文件由系统自动生成 This document is generated automatically by the system', { align: 'center' });
-      doc.text(`生成时间 Generated at: ${new Date().toLocaleString('zh-HK', { timeZone: 'Asia/Hong_Kong' })}`, { align: 'center' });
+      // 使用bufferPages功能在每一頁添加頁眉和頁腳
+      const pages = doc.bufferedPageRange();
+      for (let i = 0; i < pages.count; i++) {
+        doc.switchToPage(i);
+        
+        // 页眉：添加Logo
+        if (fs.existsSync(LOGO_PATH)) {
+          try {
+            doc.image(LOGO_PATH, 50, 20, { width: 120 });
+          } catch (error) {
+            console.error('[PDF] Failed to add logo:', error);
+          }
+        }
+        
+        // 页脚：添加页码
+        doc.fontSize(8).font('NotoSansCJK');
+        const pageNumberText = `第${i + 1}页`;
+        doc.text(pageNumberText, 50, doc.page.height - 50, {
+          align: 'center',
+          width: doc.page.width - 100,
+        });
+      }
 
       doc.end();
     } catch (error) {

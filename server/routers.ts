@@ -413,6 +413,12 @@ export const appRouter = router({
           signatureMethod: application.signatureMethod,
           signatureTimestamp: application.signatureTimestamp,
           submittedAt: application.submittedAt,
+          // 添加合規聲明字段（從regulatory對象中獲取）
+          isPEP: completeData.regulatory?.isPEP ?? false,
+          isUSPerson: completeData.regulatory?.isUSPerson ?? false,
+          agreementRead: completeData.regulatory?.agreementRead ?? false,
+          agreementAccepted: completeData.regulatory?.agreementAccepted ?? false,
+          amlComplianceConsent: completeData.regulatory?.amlComplianceConsent ?? false,
         };
         
         // 生成PDF
