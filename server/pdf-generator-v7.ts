@@ -330,6 +330,21 @@ export interface ApplicationPDFData {
   agreementRead?: boolean | null;
   agreementAccepted?: boolean | null;
   amlComplianceConsent?: boolean | null;
+  // 審批信息字段
+  firstApproval?: {
+    approverName?: string | null;
+    approverCeNo?: string | null;
+    isProfessionalInvestor?: boolean | null;
+    approvedRiskProfile?: string | null;
+    approvalTime?: string | Date | null;
+    comments?: string | null;
+  };
+  secondApproval?: {
+    approverName?: string | null;
+    approverCeNo?: string | null;
+    approvalTime?: string | Date | null;
+    comments?: string | null;
+  };
 }
 
 /**
@@ -644,6 +659,47 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       doc.text(`签署方式 Signature Method: Typed / 输入`);
       doc.text(`签署时间 Signature Timestamp: ${formatTimestamp(data.signatureTimestamp)}`);
       doc.moveDown(1);
+
+      // 審批信息（如果存在）
+      if (data.firstApproval || data.secondApproval) {
+        doc.addPage();
+        doc.fontSize(14).font('NotoSansCJK').text('審批記錄 Approval Records', { underline: true });
+        doc.moveDown(0.5);
+
+        // 初審信息
+        if (data.firstApproval) {
+          doc.fontSize(12).font('NotoSansCJK').text('初審記錄 First Approval Record');
+          doc.moveDown(0.3);
+          doc.fontSize(9).font('NotoSansCJK');
+          
+          doc.text(`審批人員 Approver: ${data.firstApproval.approverName || 'N/A'}`);
+          doc.text(`CE號碼 CE Number: ${data.firstApproval.approverCeNo || 'N/A'}`);
+          doc.text(`專業投資者認定 Professional Investor: ${data.firstApproval.isProfessionalInvestor ? '是 Yes' : '否 No'}`);
+          doc.text(`風險評級 Risk Profile: ${data.firstApproval.approvedRiskProfile ? formatRiskTolerance(data.firstApproval.approvedRiskProfile) : 'N/A'}`);
+          doc.text(`審批時間 Approval Time: ${formatTimestamp(data.firstApproval.approvalTime)}`);
+          if (data.firstApproval.comments) {
+            doc.text(`審批意見 Comments: ${data.firstApproval.comments}`);
+          }
+          doc.moveDown(0.5);
+        }
+
+        // 終審信息
+        if (data.secondApproval) {
+          doc.fontSize(12).font('NotoSansCJK').text('終審記錄 Final Approval Record');
+          doc.moveDown(0.3);
+          doc.fontSize(9).font('NotoSansCJK');
+          
+          doc.text(`審批人員 Approver: ${data.secondApproval.approverName || 'N/A'}`);
+          if (data.secondApproval.approverCeNo) {
+            doc.text(`CE號碼 CE Number: ${data.secondApproval.approverCeNo}`);
+          }
+          doc.text(`審批時間 Approval Time: ${formatTimestamp(data.secondApproval.approvalTime)}`);
+          if (data.secondApproval.comments) {
+            doc.text(`審批意見 Comments: ${data.secondApproval.comments}`);
+          }
+          doc.moveDown(1);
+        }
+      }
 
       // 使用bufferPages功能在所有頁面添加頁腳頁碼
       const pages = doc.bufferedPageRange();

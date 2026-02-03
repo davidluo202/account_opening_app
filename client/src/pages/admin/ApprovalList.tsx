@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, LogOut } from 'lucide-react';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { toast } from 'sonner';
@@ -19,6 +20,7 @@ import { toast } from 'sonner';
 export default function ApprovalList() {
   const [, setLocation] = useLocation();
   const { logout } = useAuth();
+  const [statusFilter, setStatusFilter] = useState<string>('all');
   const { data: applications, isLoading } = trpc.approval.getPendingApplications.useQuery();
 
   const handleLogout = async () => {
@@ -92,8 +94,25 @@ export default function ApprovalList() {
       <div className="container mx-auto py-8">
       <Card>
         <CardHeader>
-          <CardTitle>待審批申請列表</CardTitle>
-          <CardDescription>查看和審批客戶開戶申請</CardDescription>
+          <div className="flex justify-between items-start">
+            <div>
+              <CardTitle>待審批/已審批申請列表</CardTitle>
+              <CardDescription>查看和審批客戶開戶申請</CardDescription>
+            </div>
+            <div className="w-48">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="篩選狀態" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">全部申請</SelectItem>
+                  <SelectItem value="pending_first">待初審</SelectItem>
+                  <SelectItem value="pending_second">待終審</SelectItem>
+                  <SelectItem value="approved">已審批</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -104,7 +123,31 @@ export default function ApprovalList() {
             <div className="text-center py-12 text-muted-foreground">
               暫無待審批申請
             </div>
-          ) : (
+          ) : (() => {
+            // 根據篩選條件過濾申請
+            const filteredApplications = applications.filter(app => {
+              if (statusFilter === 'all') return true;
+              if (statusFilter === 'pending_first') {
+                return app.firstApprovalStatus === 'pending' && app.status === 'submitted';
+              }
+              if (statusFilter === 'pending_second') {
+                return app.firstApprovalStatus === 'approved' && app.secondApprovalStatus === 'pending' && app.status === 'under_review';
+              }
+              if (statusFilter === 'approved') {
+                return app.status === 'approved' && app.secondApprovalStatus === 'approved';
+              }
+              return true;
+            });
+
+            if (filteredApplications.length === 0) {
+              return (
+                <div className="text-center py-12 text-muted-foreground">
+                  暫無符合條件的申請
+                </div>
+              );
+            }
+
+            return (
             <Table>
               <TableHeader>
                 <TableRow>
@@ -116,7 +159,7 @@ export default function ApprovalList() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {applications.map((app) => (
+                {filteredApplications.map((app) => (
                   <TableRow key={app.id}>
                     <TableCell className="font-medium">{app.applicationNumber}</TableCell>
                     <TableCell>{app.customerName || '-'}</TableCell>
@@ -135,7 +178,8 @@ export default function ApprovalList() {
                 ))}
               </TableBody>
             </Table>
-          )}
+            );
+          })()}
         </CardContent>
       </Card>
       </div>

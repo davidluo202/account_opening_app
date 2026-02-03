@@ -717,23 +717,31 @@ export async function sendFinalApprovalNotificationEmail(
   secondApproverName: string,
   secondApproverCeNo: string,
   isProfessionalInvestor: boolean,
-  approvedRiskProfile: string
+  approvedRiskProfile: string,
+  finalPdfUrl?: string
 ): Promise<boolean> {
   if (!apiKey) {
     throw new Error('SendGrid API密鑰未配置');
   }
 
   const operationEmail = 'operation@cmfinancial.com';
+  const customerServiceEmail = 'customer-services@cmfinancial.com';
 
   const riskMap: Record<string, string> = {
     'low': '低風險',
     'medium': '中等風險',
-    'high': '高風險'
+    'high': '高風險',
+    'R1': 'R1 - 低風險',
+    'R2': 'R2 - 中低風險',
+    'R3': 'R3 - 中風險',
+    'R4': 'R4 - 中高風險',
+    'R5': 'R5 - 高風險'
   };
 
   try {
     const msg = {
       to: operationEmail,
+      cc: customerServiceEmail,
       from: senderEmail,
       subject: `【已批准】開戶申請最終審批通過 - ${applicationNumber}`,
       text: `申請編號：${applicationNumber}
@@ -782,6 +790,13 @@ export async function sendFinalApprovalNotificationEmail(
             </tr>
           </table>
           <p style="margin: 20px 0;">請進行後續的開立賬戶和發送Welcome letter的步驟。</p>
+          ${finalPdfUrl ? `
+          <div style="background-color: #f3f4f6; padding: 15px; margin: 20px 0; border-radius: 5px;">
+            <p style="margin: 0 0 10px 0; font-weight: bold;">最終版PDF文件：</p>
+            <a href="${finalPdfUrl}" style="display: inline-block; background-color: #2563eb; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">下載最終版PDF</a>
+            <p style="margin: 10px 0 0 0; font-size: 12px; color: #6b7280;">此PDF包含客戶提交、初審和終審的完整信息，用於內部存檔。</p>
+          </div>
+          ` : ''}
           <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
           <p style="color: #6b7280; font-size: 12px;">此郵件由系統自動發送，請勿回覆。</p>
         </div>

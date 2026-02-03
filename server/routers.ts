@@ -1169,6 +1169,12 @@ export const appRouter = router({
           throw new Error('第一级审批人员必须有CE号码');
         }
         
+        // 检查是否已经进行过初审（防止重复审批）
+        const existingApplication = await db.getCompleteApplicationData(input.applicationId);
+        if (existingApplication?.application?.firstApprovalStatus === 'approved') {
+          throw new Error('该申请已经完成初审，无法重复审批');
+        }
+        
         // 更新第一级审批信息
         await db.updateFirstApproval(input.applicationId, {
           status: 'approved',
@@ -1238,6 +1244,21 @@ export const appRouter = router({
           throw new Error('第一级审批尚未通过，无法进行第二级审批');
         }
         
+        // 检查是否已经完成终审（防止重复审批）
+        if (applicationData?.application?.secondApprovalStatus === 'approved') {
+          throw new Error('该申请已经完成终审，无法重复审批');
+        }
+        
+        // 检查初审和终审是否为同一人（通过userId比较）
+        // firstApprovalBy存储的是初审人员的邮箱
+        if (applicationData?.application?.firstApprovalBy) {
+          const firstApprover = await db.getApproverByUserId(ctx.user.id);
+          // 通过邮箱比较是否为同一人
+          if (firstApprover && applicationData.application.firstApprovalBy === ctx.user.email) {
+            throw new Error('初审和终审不能是同一人，请联系其他审批人员进行终审');
+          }
+        }
+        
         // 更新第二级审批信息
         await db.updateSecondApproval(input.applicationId, {
           status: 'approved',
@@ -1258,7 +1279,119 @@ export const appRouter = router({
           comments: input.comments,
         });
         
-        // 发送最终批准邮件到operation@cmfinancial.com
+        // 生成終審版PDF（包含客戶提交、初審和終審的完整信息）
+        let finalPdfUrl = '';
+        try {
+          const { generateApplicationPDF } = await import('./pdf-generator-v7');
+          const pdfData = {
+            applicationNumber: applicationData.application?.applicationNumber,
+            status: applicationData.application?.status,
+            accountSelection: applicationData.accountSelection ? {
+              customerType: applicationData.accountSelection.customerType,
+              accountType: applicationData.accountSelection.accountType,
+            } : undefined,
+            basicInfo: applicationData.basicInfo ? {
+              chineseName: applicationData.basicInfo.chineseName,
+              englishName: applicationData.basicInfo.englishName,
+              gender: applicationData.basicInfo.gender,
+              dateOfBirth: applicationData.basicInfo.dateOfBirth,
+              placeOfBirth: applicationData.basicInfo.placeOfBirth,
+              nationality: applicationData.basicInfo.nationality,
+            } : undefined,
+            detailedInfo: applicationData.detailedInfo ? {
+              idType: applicationData.detailedInfo.idType,
+              idNumber: applicationData.detailedInfo.idNumber,
+              idIssuingPlace: applicationData.detailedInfo.idIssuingPlace,
+              idExpiryDate: applicationData.detailedInfo.idExpiryDate,
+              idIsPermanent: applicationData.detailedInfo.idIsPermanent,
+              maritalStatus: applicationData.detailedInfo.maritalStatus,
+              educationLevel: applicationData.detailedInfo.educationLevel,
+              residentialAddress: applicationData.detailedInfo.residentialAddress,
+              phoneCountryCode: applicationData.detailedInfo.phoneCountryCode,
+              phoneNumber: applicationData.detailedInfo.phoneNumber,
+              faxNo: applicationData.detailedInfo.faxNo,
+              email: applicationData.detailedInfo.email,
+            } : undefined,
+            occupation: applicationData.occupation ? {
+              employmentStatus: applicationData.occupation.employmentStatus,
+              companyName: applicationData.occupation.companyName,
+              companyAddress: applicationData.occupation.companyAddress,
+              position: applicationData.occupation.position,
+              industry: applicationData.occupation.industry,
+              yearsOfService: applicationData.occupation.yearsOfService?.toString() || null,
+              officePhone: applicationData.occupation.officePhone,
+              officeFaxNo: applicationData.occupation.officeFaxNo,
+            } : undefined,
+            financial: applicationData.employment ? {
+              incomeSource: applicationData.employment.incomeSource,
+              annualIncome: applicationData.employment.annualIncome,
+              netWorth: applicationData.employment.netWorth,
+              liquidAsset: applicationData.employment.liquidAsset,
+            } : undefined,
+            investment: applicationData.financial ? {
+              investmentObjectives: applicationData.financial.investmentObjectives,
+              investmentExperience: applicationData.financial.investmentExperience,
+              riskTolerance: applicationData.financial.riskTolerance,
+            } : undefined,
+            bankAccounts: applicationData.bankAccounts?.map(acc => ({
+              bankName: acc.bankName,
+              accountType: acc.accountType,
+              currency: acc.accountCurrency,
+              accountNumber: acc.accountNumber,
+              accountHolderName: acc.accountHolderName,
+            })),
+            taxInfo: applicationData.taxInfo ? {
+              taxResidency: applicationData.taxInfo.taxResidency,
+              taxIdNumber: applicationData.taxInfo.taxIdNumber,
+            } : undefined,
+            uploadedDocuments: applicationData.uploadedDocuments?.map(doc => ({
+              documentType: doc.documentType,
+              fileUrl: doc.fileUrl,
+            })),
+            signatureName: applicationData.application?.signatureName,
+            signatureMethod: applicationData.application?.signatureMethod,
+            signatureTimestamp: applicationData.application?.signatureTimestamp,
+            submittedAt: applicationData.application?.submittedAt,
+            isPEP: applicationData.regulatory?.isPEP,
+            isUSPerson: applicationData.regulatory?.isUSPerson,
+            agreementRead: applicationData.regulatory?.agreementRead,
+            agreementAccepted: applicationData.regulatory?.agreementAccepted,
+            amlComplianceConsent: applicationData.regulatory?.amlComplianceConsent,
+            // 初審信息
+            firstApproval: {
+              approverName: applicationData.application?.firstApprovalByName,
+              approverCeNo: applicationData.application?.firstApprovalByCeNo,
+              isProfessionalInvestor: applicationData.application?.isProfessionalInvestor,
+              approvedRiskProfile: applicationData.application?.approvedRiskProfile,
+              approvalTime: applicationData.application?.firstApprovalAt,
+              comments: applicationData.application?.firstApprovalComments,
+            },
+            // 終審信息
+            secondApproval: {
+              approverName: approver.employeeName,
+              approverCeNo: approver.ceNumber,
+              approvalTime: new Date(),
+              comments: input.comments,
+            },
+          };
+          
+          const pdfBuffer = await generateApplicationPDF(pdfData);
+          
+          // 上傳PDF到S3
+          const pdfKey = `applications/${applicationData.application?.applicationNumber}/final-approval-${Date.now()}.pdf`;
+          const { url } = await storagePut(pdfKey, pdfBuffer, 'application/pdf');
+          finalPdfUrl = url;
+          
+          // 更新数据库中的finalReviewPdfUrl字段
+          await db.updateApplicationPdfUrl(input.applicationId, 'finalReviewPdfUrl', url);
+          
+          console.log(`[PDF] Final approval PDF generated and uploaded: ${url}`);
+        } catch (pdfError) {
+          console.error('Failed to generate or upload final approval PDF:', pdfError);
+          // PDF生成失败不影响审批流程
+        }
+        
+        // 发送最终批准邮件到operation@cmfinancial.com，抄送customer-services@cmfinancial.com
         try {
           const { sendFinalApprovalNotificationEmail } = await import('./email');
           if (applicationData) {
@@ -1270,7 +1403,8 @@ export const appRouter = router({
               approver.employeeName,
               approver.ceNumber || '',
               applicationData.application?.isProfessionalInvestor || false,
-              applicationData.application?.approvedRiskProfile || 'medium'
+              applicationData.application?.approvedRiskProfile || 'medium',
+              finalPdfUrl
             );
           }
         } catch (emailError) {

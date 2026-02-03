@@ -762,12 +762,15 @@ export async function getSubmittedApplications() {
       status: applications.status,
       submittedAt: applications.submittedAt,
       customerName: personalBasicInfo.englishName,
+      firstApprovalStatus: applications.firstApprovalStatus,
+      secondApprovalStatus: applications.secondApprovalStatus,
     })
     .from(applications)
     .leftJoin(personalBasicInfo, eq(applications.id, personalBasicInfo.applicationId))
     .where(
       or(
         eq(applications.status, 'submitted'),
+        eq(applications.status, 'under_review'),
         eq(applications.status, 'approved')
       )
     )
@@ -997,6 +1000,25 @@ export async function updateSecondApproval(
       secondApprovalAt: new Date(),
       secondApprovalComments: info.comments || null,
     })
+    .where(eq(applications.id, applicationId));
+  
+  return { success: true };
+}
+
+/**
+ * 更新申請的PDF URL
+ */
+export async function updateApplicationPdfUrl(
+  applicationId: number,
+  field: 'submittedPdfUrl' | 'firstReviewPdfUrl' | 'finalReviewPdfUrl',
+  url: string
+) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  await db
+    .update(applications)
+    .set({ [field]: url })
     .where(eq(applications.id, applicationId));
   
   return { success: true };
