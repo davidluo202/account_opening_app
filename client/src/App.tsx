@@ -40,12 +40,12 @@ function Router() {
       <Route path={"/application/:id/step/5"} component={OccupationInfo} />
       <Route path={"/application/:id/step/6"} component={EmploymentDetails} />
       <Route path={"/application/:id/step/7"} component={FinancialAndInvestment} />
-      <Route path={"/application/:id/step/8"} component={BankAccount} />
-      <Route path={"/application/:id/step/9"} component={TaxInfo} />
-      <Route path={"/application/:id/step/10"} component={DocumentUpload} />
-      <Route path={"/application/:id/step/11"} component={FaceVerification} />
-      <Route path={"/application/:id/step/12"} component={RegulatoryDeclaration} />
-      <Route path={"/application/:id/step/13"} component={RiskQuestionnaire} />
+      <Route path={"/application/:id/step/8"} component={RiskQuestionnaire} />
+      <Route path={"/application/:id/step/9"} component={BankAccount} />
+      <Route path={"/application/:id/step/10"} component={TaxInfo} />
+      <Route path={"/application/:id/step/11"} component={DocumentUpload} />
+      <Route path={"/application/:id/step/12"} component={FaceVerification} />
+      <Route path={"/application/:id/step/13"} component={RegulatoryDeclaration} />
       <Route path={"/application/:id/preview"} component={ApplicationPreview} />
       <Route path={"/register/approver"} component={ApproverRegister} />
       <Route path={"/admin"} component={AdminHome} />

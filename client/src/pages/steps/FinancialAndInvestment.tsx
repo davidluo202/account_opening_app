@@ -34,13 +34,7 @@ const experienceLevels = [
   { value: "more_than_5", label: "5年以上 / More than 5 years" },
 ];
 
-const riskToleranceLevels = [
-  { value: "R1", label: "R1 - 低风险 / Low Risk", description: "在一定的时间内，本金安全的不稳定性很低，基金净值会有轻度波动，或造成轻微的本金亏损" },
-  { value: "R2", label: "R2 - 中低风险 / Medium-Low Risk", description: "在一定时间内，本金安全的不稳定性相对较低，基金净值会有较低波动，或造成较低的本金亏损" },
-  { value: "R3", label: "R3 - 中风险 / Medium Risk", description: "在一定时间内，本金安全具有一定的不稳定性，基金净值会有适度波动，或造成一定的本金亏损" },
-  { value: "R4", label: "R4 - 中高风险 / Medium-High Risk", description: "在一定时间内，本金安全的不稳定性相对较高，基金净值会有较高波动，或造成较大的本金亏损" },
-  { value: "R5", label: "R5 - 高风险 / High Risk", description: "在一定的时间内，本金安全的不稳定性很高，基金净值会有高度波动，或造成很大的本金亏损" },
-];
+
 
 export default function FinancialAndInvestment() {
   const params = useParams<{ id: string }>();
@@ -50,7 +44,6 @@ export default function FinancialAndInvestment() {
 
   const [investmentObjectives, setInvestmentObjectives] = useState<string[]>([]);
   const [investmentExperience, setInvestmentExperience] = useState<Record<string, string>>({});
-  const [riskTolerance, setRiskTolerance] = useState("");
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -89,7 +82,7 @@ export default function FinancialAndInvestment() {
         const experience = JSON.parse(existingData.investmentExperience || "{}");
         setInvestmentObjectives(objectives);
         setInvestmentExperience(experience);
-        setRiskTolerance(existingData.riskTolerance);
+
       } catch (e) {
         console.error("Error parsing existing data:", e);
       }
@@ -131,9 +124,7 @@ export default function FinancialAndInvestment() {
       newErrors.investmentExperience = "請至少填寫一項投資經驗";
     }
 
-    if (!riskTolerance) {
-      newErrors.riskTolerance = "請選擇風險承受能力";
-    }
+
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -149,7 +140,7 @@ export default function FinancialAndInvestment() {
       applicationId,
       investmentObjectives,
       investmentExperience,
-      riskTolerance,
+
     });
   };
 
@@ -163,7 +154,7 @@ export default function FinancialAndInvestment() {
       applicationId,
       investmentObjectives,
       investmentExperience,
-      riskTolerance,
+
     });
   };
 
@@ -252,47 +243,7 @@ export default function FinancialAndInvestment() {
           )}
         </div>
 
-        {/* 風險承受能力 */}
-        <div className="space-y-4">
-          <div>
-            <Label className="text-base">
-              風險承受能力 / Risk Tolerance <span className="text-destructive">*</span>
-            </Label>
-          </div>
-          <div className="space-y-3">
-            {riskToleranceLevels.map((level) => (
-              <div
-                key={level.value}
-                className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                  riskTolerance === level.value
-                    ? "border-primary bg-primary/5"
-                    : "border-border hover:bg-accent"
-                }`}
-                onClick={() => {
-                  setRiskTolerance(level.value);
-                  if (errors.riskTolerance) setErrors({ ...errors, riskTolerance: "" });
-                }}
-              >
-                <div className="flex items-start gap-3">
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 ${
-                    riskTolerance === level.value ? "border-primary" : "border-muted-foreground"
-                  }`}>
-                    {riskTolerance === level.value && (
-                      <div className="w-3 h-3 rounded-full bg-primary"></div>
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-medium">{level.label}</div>
-                    <div className="text-sm text-muted-foreground">{level.description}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          {errors.riskTolerance && (
-            <p className="text-sm text-destructive">{errors.riskTolerance}</p>
-          )}
-        </div>
+
       </div>
     </ApplicationWizard>
   );

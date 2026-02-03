@@ -646,7 +646,6 @@ export const appRouter = router({
         applicationId: z.number(),
         investmentObjectives: z.array(z.string()),
         investmentExperience: z.record(z.string(), z.string()),
-        riskTolerance: z.string(),
       }))
       .mutation(async ({ input, ctx }) => {
         const { applicationId, investmentObjectives, investmentExperience, ...rest } = input;

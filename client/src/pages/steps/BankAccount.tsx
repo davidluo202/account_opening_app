@@ -321,7 +321,7 @@ const handleNext = () => {
       toast.error("請至少添加一個銀行賬戶");
       return;
     }
-    setLocation(`/application/${applicationId}/step/9`);
+    setLocation(`/application/${applicationId}/step/10`);
   };
 
   if (isLoadingData) {

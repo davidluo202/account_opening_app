@@ -320,7 +320,7 @@ export default function FaceVerification() {
   const handleNext = async () => {
     // 如果已驗證通過，直接跳轉到下一步
     if (isAlreadyVerified) {
-      setLocation(`/application/${applicationId}/step/12`);
+      setLocation(`/application/${applicationId}/step/13`);
       return;
     }
 
@@ -342,7 +342,7 @@ export default function FaceVerification() {
         confidence: verificationResult.confidence,
       });
       
-      setLocation(`/application/${applicationId}/step/12`);
+      setLocation(`/application/${applicationId}/step/13`);
     } catch (error: any) {
       const errorMessage = error?.message || '保存失敗，請稍後再試';
       // 只顯示簡短的錯誤信息

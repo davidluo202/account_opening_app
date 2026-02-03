@@ -83,7 +83,7 @@ export default function RiskQuestionnaire() {
   const saveMutation = trpc.riskQuestionnaire.save.useMutation({
     onSuccess: () => {
       toast.success("風險評估問卷已保存");
-      setLocation(`/application/${applicationId}/preview`);
+      setLocation(`/application/${applicationId}/step/9`);
     },
     onError: (error: any) => {
       toast.error(`保存失敗: ${error.message}`);
@@ -680,7 +680,7 @@ export default function RiskQuestionnaire() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => setLocation(`/application/${applicationId}/step/12`)}
+              onClick={() => setLocation(`/application/${applicationId}/step/7`)}
             >
               上一步
             </Button>

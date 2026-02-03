@@ -41,7 +41,7 @@ export default function TaxInfo() {
     onSuccess: (result) => {
       if (result.success && result.data) {
         toast.success("保存成功");
-        setLocation(`/application/${applicationId}/step/10`);
+        setLocation(`/application/${applicationId}/step/11`);
       }
     },
     onError: (error) => {

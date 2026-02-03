@@ -1,0 +1,45 @@
+{
+  "query": "SELECT id, userId, applicationNumber, status, currentStep FROM applications ORDER BY createdAt DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2uixhWXF4JwUSvL.6b97ca2f8816 --database gu8TL5Ga5RUHfjV8rgaSaT --execute SELECT id, userId, applicationNumber, status, currentStep FROM applications ORDER BY createdAt DESC LIMIT 5;",
+  "rows": [
+    {
+      "id": "360001",
+      "userId": "1140092",
+      "applicationNumber": "NULL",
+      "status": "draft",
+      "currentStep": "3"
+    },
+    {
+      "id": "330001",
+      "userId": "150207",
+      "applicationNumber": "NULL",
+      "status": "draft",
+      "currentStep": "3"
+    },
+    {
+      "id": "300001",
+      "userId": "1140092",
+      "applicationNumber": "CMF-ACAPP-260202-004",
+      "status": "approved",
+      "currentStep": "9"
+    },
+    {
+      "id": "270001",
+      "userId": "1140092",
+      "applicationNumber": "CMF-ACAPP-260202-002",
+      "status": "approved",
+      "currentStep": "3"
+    },
+    {
+      "id": "240001",
+      "userId": "1",
+      "applicationNumber": "CMF-ACAPP-260202-001",
+      "status": "approved",
+      "currentStep": "3"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\tapplicationNumber\tstatus\tcurrentStep\n360001\t1140092\tNULL\tdraft\t3\n330001\t150207\tNULL\tdraft\t3\n300001\t1140092\tCMF-ACAPP-260202-004\tapproved\t9\n270001\t1140092\tCMF-ACAPP-260202-002\tapproved\t3\n240001\t1\tCMF-ACAPP-260202-001\tapproved\t3\n",
+  "stderr": "",
+  "execution_time_ms": 182
+}

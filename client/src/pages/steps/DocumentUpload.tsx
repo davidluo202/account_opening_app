@@ -91,7 +91,7 @@ const handleNext = () => {
       toast.error("請上傳所有必需的文件");
       return;
     }
-    setLocation(`/application/${applicationId}/step/11`);
+    setLocation(`/application/${applicationId}/step/12`);
   };
 
   if (isLoadingData) {
