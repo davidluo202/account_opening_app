@@ -1602,6 +1602,37 @@ export const appRouter = router({
         return await db.getApproverByUserId(input.userId);
       }),
   }),
+  
+  // 風險評估問卷
+  riskQuestionnaire: router({
+    // 保存風險評估問卷
+    save: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+        q1_current_investments: z.string(),
+        q2_investment_period: z.string(),
+        q3_price_volatility: z.string(),
+        q4_investment_percentage: z.string(),
+        q5_investment_attitude: z.string(),
+        q6_derivatives_knowledge: z.string(),
+        q7_age_group: z.string(),
+        q8_education_level: z.string(),
+        q9_investment_knowledge_sources: z.string(),
+        q10_liquidity_needs: z.string(),
+        totalScore: z.number(),
+        riskLevel: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        return await db.saveRiskQuestionnaire(input);
+      }),
+    
+    // 獲取風險評估問卷
+    get: protectedProcedure
+      .input(z.object({ applicationId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getRiskQuestionnaire(input.applicationId);
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

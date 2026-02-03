@@ -1600,3 +1600,36 @@
 - [ ] 測試審批頁面顯示
 - [ ] 測試PDF生成
 - [ ] 保存checkpoint並交付
+
+
+## 功能擴展 - 個人信息、風險評估問卷和客戶聲明（2026-02-03）
+
+### 階段1和階段2：數據庫Schema和個人信息頁面（已完成）
+- [x] 擴展personalDetailedInfo表，添加手機號碼、賬單地址、首選語言字段
+- [x] 創建riskQuestionnaires表（10個問題）
+- [x] 創建customerDeclarations表（4個聲明）
+- [x] 更新PersonalDetailedInfo頁面，添加手機號碼（必填）、賬單地址、首選語言
+- [x] 更新後端API支持新字段（personalDetailed.save）
+- [x] 創建riskQuestionnaire router和API
+
+### 階段3：風險評估問卷頁面（進行中）
+- [ ] 完成RiskQuestionnaire.tsx頁面UI（10個問題）
+- [ ] 實現PART 1問題（Q1-Q6，適用於全部客戶）
+- [ ] 實現PART 2A問題（Q7-Q10，適用於個人/聯名客戶）
+- [ ] 實現評分計算邏輯
+- [ ] 實現風險等級判定邏輯
+- [ ] 集成到申請流程
+
+### 階段4：客戶聲明頁面
+- [ ] 創建CustomerDeclaration.tsx頁面
+- [ ] 實現4個聲明問題（A-D）
+- [ ] 實現條件顯示邏輯
+- [ ] 創建後端API保存聲明數據
+- [ ] 集成到申請流程
+
+### 階段5-8：同步更新審批和PDF
+- [ ] 更新ApprovalDetail頁面，顯示手機號碼、賬單地址、首選語言
+- [ ] 更新ApprovalDetail頁面，顯示風險評估問卷結果
+- [ ] 更新ApprovalDetail頁面，顯示客戶聲明信息
+- [ ] 更新PDF生成器，包含所有新增信息
+- [ ] 測試完整流程並交付結果

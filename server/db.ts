@@ -1028,3 +1028,89 @@ export async function updateApplicationPdfUrl(
   
   return { success: true };
 }
+
+
+// ==================== 風險評估問卷 ====================
+
+export async function saveRiskQuestionnaire(data: {
+  applicationId: number;
+  q1_current_investments: string;
+  q2_investment_period: string;
+  q3_price_volatility: string;
+  q4_investment_percentage: string;
+  q5_investment_attitude: string;
+  q6_derivatives_knowledge: string;
+  q7_age_group: string;
+  q8_education_level: string;
+  q9_investment_knowledge_sources: string;
+  q10_liquidity_needs: string;
+  totalScore: number;
+  riskLevel: string;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const { riskQuestionnaires } = await import("../drizzle/schema");
+  
+  const existing = await db
+    .select()
+    .from(riskQuestionnaires)
+    .where(eq(riskQuestionnaires.applicationId, data.applicationId))
+    .limit(1);
+
+  if (existing.length > 0) {
+    // 更新現有記錄
+    await db
+      .update(riskQuestionnaires)
+      .set({
+        q1_current_investments: data.q1_current_investments,
+        q2_investment_period: data.q2_investment_period,
+        q3_price_volatility: data.q3_price_volatility,
+        q4_investment_percentage: data.q4_investment_percentage,
+        q5_investment_attitude: data.q5_investment_attitude,
+        q6_derivatives_knowledge: data.q6_derivatives_knowledge,
+        q7_age_group: data.q7_age_group,
+        q8_education_level: data.q8_education_level,
+        q9_investment_knowledge_sources: data.q9_investment_knowledge_sources,
+        q10_liquidity_needs: data.q10_liquidity_needs,
+        totalScore: data.totalScore,
+        riskLevel: data.riskLevel,
+        updatedAt: new Date(),
+      })
+      .where(eq(riskQuestionnaires.applicationId, data.applicationId));
+    return { success: true, id: existing[0].id };
+  } else {
+    // 創建新記錄
+    const result = await db.insert(riskQuestionnaires).values({
+      applicationId: data.applicationId,
+      q1_current_investments: data.q1_current_investments,
+      q2_investment_period: data.q2_investment_period,
+      q3_price_volatility: data.q3_price_volatility,
+      q4_investment_percentage: data.q4_investment_percentage,
+      q5_investment_attitude: data.q5_investment_attitude,
+      q6_derivatives_knowledge: data.q6_derivatives_knowledge,
+      q7_age_group: data.q7_age_group,
+      q8_education_level: data.q8_education_level,
+      q9_investment_knowledge_sources: data.q9_investment_knowledge_sources,
+      q10_liquidity_needs: data.q10_liquidity_needs,
+      totalScore: data.totalScore,
+      riskLevel: data.riskLevel,
+    });
+    return { success: true, id: result.insertId };
+  }
+}
+
+export async function getRiskQuestionnaire(applicationId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  const { riskQuestionnaires } = await import("../drizzle/schema");
+  
+  const result = await db
+    .select()
+    .from(riskQuestionnaires)
+    .where(eq(riskQuestionnaires.applicationId, applicationId))
+    .limit(1);
+  
+  return result[0] || null;
+}
