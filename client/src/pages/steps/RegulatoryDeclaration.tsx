@@ -47,7 +47,7 @@ export default function RegulatoryDeclaration() {
     onSuccess: (result) => {
       if (result.success) {
         toast.success("保存成功");
-        setLocation(`/application/${applicationId}/preview`);
+        setLocation(`/application/${applicationId}/step/13`);
       }
     },
     onError: (error) => {

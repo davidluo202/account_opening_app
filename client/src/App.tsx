@@ -17,6 +17,7 @@ import TaxInfo from "./pages/steps/TaxInfo";
 import DocumentUpload from "./pages/steps/DocumentUpload";
 import FaceVerification from "./pages/steps/FaceVerification";
 import RegulatoryDeclaration from "./pages/steps/RegulatoryDeclaration";
+import RiskQuestionnaire from "./pages/steps/RiskQuestionnaire";
 import ApplicationPreview from "./pages/ApplicationPreview";
 import ApproverRegister from "./pages/ApproverRegister";
 import ApprovalList from "./pages/admin/ApprovalList";
@@ -44,6 +45,7 @@ function Router() {
       <Route path={"/application/:id/step/10"} component={DocumentUpload} />
       <Route path={"/application/:id/step/11"} component={FaceVerification} />
       <Route path={"/application/:id/step/12"} component={RegulatoryDeclaration} />
+      <Route path={"/application/:id/step/13"} component={RiskQuestionnaire} />
       <Route path={"/application/:id/preview"} component={ApplicationPreview} />
       <Route path={"/register/approver"} component={ApproverRegister} />
       <Route path={"/admin"} component={AdminHome} />
