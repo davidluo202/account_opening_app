@@ -1521,3 +1521,10 @@
 - [x] 修復PDF生成器，確保顯示終審人員的PI認定和風險等級
 - [x] 修復預覽頁面，顯示終審人員的完整審批記錄
 - [x] 測試終審流程，驗證PDF和預覽頁面都顯示完整的審批信息
+
+
+## Bug修復 - 終審時isProfessionalInvestor和riskProfile為undefined（2026-02-03）
+
+- [x] 診斷終審頁面的狀態管理問題，檢查isProfessionalInvestor和approvedRiskProfile的初始化
+- [x] 修復終審頁面的資料傳遞邏輯，確保終審時正確獲取和傳遞PI認定和風險等級
+- [x] 測試終審流程，驗證API調用成功

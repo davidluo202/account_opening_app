@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -42,6 +42,17 @@ export default function ApprovalDetail() {
     { applicationId: Number(id) },
     { enabled: !!id }
   );
+
+  // 初始化審批狀態：當applicationData載入時，設置初審人員已選擇的值
+  useEffect(() => {
+    if (applicationData?.application) {
+      // 如果是待終審狀態，使用初審人員的選擇作為預設值
+      if (applicationData.application.firstApprovalStatus === 'approved' && applicationData.application.secondApprovalStatus === 'pending') {
+        setIsProfessionalInvestor(applicationData.application.isProfessionalInvestor ? 'yes' : 'no');
+        setApprovedRiskProfile(applicationData.application.approvedRiskProfile || '');
+      }
+    }
+  }, [applicationData]);
 
   // 初審mutation
   const firstApproveMutation = trpc.approval.firstApprove.useMutation({
