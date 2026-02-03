@@ -26,6 +26,7 @@ export default function RegulatoryDeclaration() {
     hasReadAgreement: false,
     acceptsETO: false,
     acceptsAML: false,
+    acceptsRiskAssessment: false,
     signature: "",
   });
 
@@ -63,6 +64,7 @@ export default function RegulatoryDeclaration() {
         hasReadAgreement: existingData.agreementRead,
         acceptsETO: existingData.electronicSignatureConsent,
         acceptsAML: existingData.amlComplianceConsent,
+        acceptsRiskAssessment: existingData.riskAssessmentConsent || false,
         signature: existingData.signatureName,
       });
     }
@@ -81,6 +83,10 @@ export default function RegulatoryDeclaration() {
 
     if (!formData.acceptsAML) {
       newErrors.acceptsAML = "請確認接受反洗錢和合規監管要求約束";
+    }
+
+    if (!formData.acceptsRiskAssessment) {
+      newErrors.acceptsRiskAssessment = "請確認已閱讀並理解風險評估問卷";
     }
 
     if (!formData.signature.trim()) {
@@ -108,6 +114,7 @@ const handleNext = () => {
       signatureName: formData.signature,
       electronicSignatureConsent: formData.acceptsETO,
       amlComplianceConsent: formData.acceptsAML,
+      riskAssessmentConsent: formData.acceptsRiskAssessment,
     });
   };
 
@@ -275,6 +282,25 @@ const handleNext = () => {
             </div>
             {errors.acceptsAML && (
               <p className="text-sm text-destructive">{errors.acceptsAML}</p>
+            )}
+
+            <div className="flex items-start space-x-2">
+              <Checkbox
+                id="acceptsRiskAssessment"
+                checked={formData.acceptsRiskAssessment}
+                onCheckedChange={(checked) => {
+                  setFormData({ ...formData, acceptsRiskAssessment: checked as boolean });
+                  if (errors.acceptsRiskAssessment) {
+                    setErrors({ ...errors, acceptsRiskAssessment: "" });
+                  }
+                }}
+              />
+              <Label htmlFor="acceptsRiskAssessment" className="cursor-pointer font-normal">
+                我已阅读并理解上述风险评估问卷。我确认我完全理解并接受：(i) 上述风险评估过程是为了帮助我在选择金融/投资产品前评估我对风险的态度和投资目标；(ii) 上述风险评估过程并非旨在列出所有我在投资时应考虑的因素和/或问题；(iii) 我不能仅以此风险评估作为我的投资偏好，我的决定可能会随时间而改变，特别是在投资时；(iv) 我必须充分阅读并理解各种文件中所披露的信息（包括但不限于金融或投资产品的招股书/解释备忘录/小册子/指南/发售文件），这些文件涉及金融或投资产品的特点、风险、优点、费用和其他细节，然后再做出任何投资决定；(v) 我必须自己确信我有能力承受与不同投资产品相关的风险水平。 <span className="text-destructive">*</span>
+              </Label>
+            </div>
+            {errors.acceptsRiskAssessment && (
+              <p className="text-sm text-destructive">{errors.acceptsRiskAssessment}</p>
             )}
           </div>
 

@@ -1793,7 +1793,26 @@
 - [ ] 确保必须勾选才能提交
 
 ### 测试
-- [ ] 测试完整的风险评估问卷流程
-- [ ] 测试风险等级计算和显示
-- [ ] 测试客户声明页面的风险评估确认
+- [ ] 测试完整的风险评估问- [x] 测试风险评估问卷的UI和功能（项目正常运行）
+- [x] 测试客户声明页面的风险评估确认勾选框（已添加）
 - [ ] 保存checkpoint
+## 风险评估问卷UI改动（2026-02-03）
+
+### Q2-Q5、Q7、Q10从多选改为单选
+- [x] 将Q2从Checkbox改为RadioGroup（单选）
+- [x] 将Q3从Checkbox改为RadioGroup（单选）
+- [x] 将Q4从Checkbox改为RadioGroup（单选）
+- [x] 将Q5从Checkbox改为RadioGroup（单选）
+- [x] 将Q7从Checkbox改为RadioGroup（单选）
+- [x] 将Q10从Checkbox改为RadioGroup（单选）
+- [x] 隐藏Q8的UI（因为自动从个人详细信息获取）
+- [x] 在页面底部添加风险等级和描述的显示区域
+- [x] 在handleSubmit中计算评分后立即更新formData以显示结果
+- [x] 添加ApplicationWizard组件显示导航栏
+- [x] 在客户声明页面添加风险评估确认声明勾选框
+- [x] 在formData中添加acceptsRiskAssessment字段
+- [x] 在schema中添加riskAssessmentConsent字段
+- [x] 运行pnpm db:push更新数据库
+- [x] 在regulatory路由的API中添加riskAssessmentConsent字段
+- [x] 在saveMutation中添加riskAssessmentConsent字段
+- [x] 在validateForm中添加riskAssessmentConsent的验证

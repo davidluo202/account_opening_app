@@ -257,6 +257,7 @@ export const regulatoryDeclarations = mysqlTable("regulatory_declarations", {
   signatureName: varchar("signatureName", { length: 200 }).notNull(),
   electronicSignatureConsent: boolean("electronicSignatureConsent").default(false).notNull(),
   amlComplianceConsent: boolean("amlComplianceConsent").default(false).notNull(),
+  riskAssessmentConsent: boolean("riskAssessmentConsent").default(false).notNull(),
   signedAt: timestamp("signedAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

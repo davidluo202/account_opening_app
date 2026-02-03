@@ -127,6 +127,13 @@
       "when": 1770112325760,
       "tag": "0017_strange_angel",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "5",
+      "when": 1770113738279,
+      "tag": "0018_shocking_dagger",
+      "breakpoints": true
     }
   ]
 }

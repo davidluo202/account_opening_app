@@ -1,0 +1,1 @@
+ALTER TABLE `regulatory_declarations` ADD `riskAssessmentConsent` boolean DEFAULT false NOT NULL;

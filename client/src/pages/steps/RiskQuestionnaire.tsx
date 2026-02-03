@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import ApplicationWizard from "@/components/ApplicationWizard";
 
 
 interface FormData {
@@ -227,6 +228,14 @@ export default function RiskQuestionnaire() {
 
     const { totalScore, riskLevel, riskDescription } = calculateScore();
     
+    // 更新formData以顯示風險等級結果
+    setFormData(prev => ({
+      ...prev,
+      totalScore,
+      riskLevel,
+      riskDescription
+    }));
+    
     setLoading(true);
     saveMutation.mutate({
       applicationId: applicationId!,
@@ -267,6 +276,7 @@ export default function RiskQuestionnaire() {
   }
 
   return (
+    <ApplicationWizard currentStep={8} applicationId={applicationId!}>
     <div className="container max-w-4xl py-8">
       <Card>
         <CardHeader>
@@ -322,165 +332,117 @@ export default function RiskQuestionnaire() {
 
             {/* Q2 */}
             <div className="space-y-3">
-              <Label className="text-base font-medium">Q2. 預期投資年期是多少？* (可多選)</Label>
-              <div className="space-y-2 pl-4">
+              <Label className="text-base font-medium">Q2. 預期投資年期是多少？*</Label>
+              <RadioGroup
+                value={formData.q2_investment_period}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, q2_investment_period: value }))}
+                className="space-y-2 pl-4"
+              >
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q2-less-than-1"
-                    checked={formData.q2_investment_period.includes("less_than_1")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q2_investment_period", "less_than_1", checked as boolean)}
-                  />
-                  <label htmlFor="q2-less-than-1" className="text-sm">沒有或少於1年</label>
+                  <RadioGroupItem value="less_than_1" id="q2-less-than-1" />
+                  <Label htmlFor="q2-less-than-1">沒有或少於1年</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q2-1-to-3"
-                    checked={formData.q2_investment_period.includes("1_to_3")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q2_investment_period", "1_to_3", checked as boolean)}
-                  />
-                  <label htmlFor="q2-1-to-3" className="text-sm">1-3年</label>
+                  <RadioGroupItem value="1_to_3" id="q2-1-to-3" />
+                  <Label htmlFor="q2-1-to-3">1-3年</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q2-more-than-3"
-                    checked={formData.q2_investment_period.includes("more_than_3")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q2_investment_period", "more_than_3", checked as boolean)}
-                  />
-                  <label htmlFor="q2-more-than-3" className="text-sm">多於3年</label>
+                  <RadioGroupItem value="more_than_3" id="q2-more-than-3" />
+                  <Label htmlFor="q2-more-than-3">多於3年</Label>
                 </div>
-              </div>
+              </RadioGroup>
               {errors.q2 && <p className="text-sm text-destructive">{errors.q2}</p>}
             </div>
 
             {/* Q3 */}
             <div className="space-y-3">
-              <Label className="text-base font-medium">Q3. 可以接受以下哪個年度價格波幅？* (可多選)</Label>
-              <div className="space-y-2 pl-4">
+              <Label className="text-base font-medium">Q3. 可以接受以下哪個年度價格波幅？*</Label>
+              <RadioGroup
+                value={formData.q3_price_volatility}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, q3_price_volatility: value }))}
+                className="space-y-2 pl-4"
+              >
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q3-10-percent"
-                    checked={formData.q3_price_volatility.includes("10_percent")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q3_price_volatility", "10_percent", checked as boolean)}
-                  />
-                  <label htmlFor="q3-10-percent" className="text-sm">價格波幅介乎-10%至+10%</label>
+                  <RadioGroupItem value="10_percent" id="q3-10-percent" />
+                  <Label htmlFor="q3-10-percent">價格波幅介乎-10%至+10%</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q3-20-percent"
-                    checked={formData.q3_price_volatility.includes("20_percent")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q3_price_volatility", "20_percent", checked as boolean)}
-                  />
-                  <label htmlFor="q3-20-percent" className="text-sm">價格波幅介乎-20%至+20%</label>
+                  <RadioGroupItem value="20_percent" id="q3-20-percent" />
+                  <Label htmlFor="q3-20-percent">價格波幅介乎-20%至+20%</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q3-30-percent"
-                    checked={formData.q3_price_volatility.includes("30_percent")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q3_price_volatility", "30_percent", checked as boolean)}
-                  />
-                  <label htmlFor="q3-30-percent" className="text-sm">價格波幅多於-30%至多於+30%</label>
+                  <RadioGroupItem value="30_percent" id="q3-30-percent" />
+                  <Label htmlFor="q3-30-percent">價格波幅多於-30%至多於+30%</Label>
                 </div>
-              </div>
+              </RadioGroup>
               {errors.q3 && <p className="text-sm text-destructive">{errors.q3}</p>}
             </div>
 
             {/* Q4 */}
             <div className="space-y-3">
               <Label className="text-base font-medium">
-                Q4. 在現時資產淨值中(撇除自住物業價值)，有多少個百分比可作投資用途？* (可多選)
+                Q4. 在現時資產淫值中(撤除自住物業價值)，有多少個百分比可作投資用途？*
               </Label>
-              <div className="space-y-2 pl-4">
+              <RadioGroup
+                value={formData.q4_investment_percentage}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, q4_investment_percentage: value }))}
+                className="space-y-2 pl-4"
+              >
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q4-less-than-10"
-                    checked={formData.q4_investment_percentage.includes("less_than_10")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q4_investment_percentage", "less_than_10", checked as boolean)}
-                  />
-                  <label htmlFor="q4-less-than-10" className="text-sm">少於10%</label>
+                  <RadioGroupItem value="less_than_10" id="q4-less-than-10" />
+                  <Label htmlFor="q4-less-than-10">少於10%</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q4-10-to-20"
-                    checked={formData.q4_investment_percentage.includes("10_to_20")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q4_investment_percentage", "10_to_20", checked as boolean)}
-                  />
-                  <label htmlFor="q4-10-to-20" className="text-sm">介乎10%至20%</label>
+                  <RadioGroupItem value="10_to_20" id="q4-10-to-20" />
+                  <Label htmlFor="q4-10-to-20">介乎10%至20%</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q4-21-to-30"
-                    checked={formData.q4_investment_percentage.includes("21_to_30")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q4_investment_percentage", "21_to_30", checked as boolean)}
-                  />
-                  <label htmlFor="q4-21-to-30" className="text-sm">介乎21%至30%</label>
+                  <RadioGroupItem value="21_to_30" id="q4-21-to-30" />
+                  <Label htmlFor="q4-21-to-30">介乎21%至30%</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q4-31-to-50"
-                    checked={formData.q4_investment_percentage.includes("31_to_50")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q4_investment_percentage", "31_to_50", checked as boolean)}
-                  />
-                  <label htmlFor="q4-31-to-50" className="text-sm">介乎31%至50%</label>
+                  <RadioGroupItem value="31_to_50" id="q4-31-to-50" />
+                  <Label htmlFor="q4-31-to-50">介乎31%至50%</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q4-more-than-50"
-                    checked={formData.q4_investment_percentage.includes("more_than_50")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q4_investment_percentage", "more_than_50", checked as boolean)}
-                  />
-                  <label htmlFor="q4-more-than-50" className="text-sm">多於50%</label>
+                  <RadioGroupItem value="more_than_50" id="q4-more-than-50" />
+                  <Label htmlFor="q4-more-than-50">多於50%</Label>
                 </div>
-              </div>
+              </RadioGroup>
               {errors.q4 && <p className="text-sm text-destructive">{errors.q4}</p>}
             </div>
 
             {/* Q5 */}
             <div className="space-y-3">
               <Label className="text-base font-medium">
-                Q5. 以下哪一句子最能貼切描述您對金融投資的一般態度？* (可多選)
+                Q5. 以下哪一句子最能貼切描述您對金融投資的一般態度？*
               </Label>
-              <div className="space-y-2 pl-4">
+              <RadioGroup
+                value={formData.q5_investment_attitude}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, q5_investment_attitude: value }))}
+                className="space-y-2 pl-4"
+              >
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q5-no-volatility"
-                    checked={formData.q5_investment_attitude.includes("no_volatility")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q5_investment_attitude", "no_volatility", checked as boolean)}
-                  />
-                  <label htmlFor="q5-no-volatility" className="text-sm">不能接受任何價格波動，並且對賺取投資回報不感興趣</label>
+                  <RadioGroupItem value="no_volatility" id="q5-no-volatility" />
+                  <Label htmlFor="q5-no-volatility">不能接受任何價格波動，並且對賭取投資回報不感興趣</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q5-small-volatility"
-                    checked={formData.q5_investment_attitude.includes("small_volatility")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q5_investment_attitude", "small_volatility", checked as boolean)}
-                  />
-                  <label htmlFor="q5-small-volatility" className="text-sm">只能接受較小幅度的價格波動，並且僅希望賺取稍高於銀行存款利率的回報</label>
+                  <RadioGroupItem value="small_volatility" id="q5-small-volatility" />
+                  <Label htmlFor="q5-small-volatility">只能接受較小幅度的價格波動，並且僅希望賭取稍高於銀行存款利率的回報</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q5-some-volatility"
-                    checked={formData.q5_investment_attitude.includes("some_volatility")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q5_investment_attitude", "some_volatility", checked as boolean)}
-                  />
-                  <label htmlFor="q5-some-volatility" className="text-sm">可接受若干價格波幅，並希望賺取高於銀行存款利率的回報</label>
+                  <RadioGroupItem value="some_volatility" id="q5-some-volatility" />
+                  <Label htmlFor="q5-some-volatility">可接受若干價格波幅，並希望賭取高於銀行存款利率的回報</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q5-large-volatility"
-                    checked={formData.q5_investment_attitude.includes("large_volatility")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q5_investment_attitude", "large_volatility", checked as boolean)}
-                  />
-                  <label htmlFor="q5-large-volatility" className="text-sm">可接受大幅度的價格波動，並希望賺取與股市指數表現相若的回報</label>
+                  <RadioGroupItem value="large_volatility" id="q5-large-volatility" />
+                  <Label htmlFor="q5-large-volatility">可接受大幅度的價格波動，並希望賭取與股市指數表現相若的回報</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q5-any-volatility"
-                    checked={formData.q5_investment_attitude.includes("any_volatility")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q5_investment_attitude", "any_volatility", checked as boolean)}
-                  />
-                  <label htmlFor="q5-any-volatility" className="text-sm">可接受任何幅度的價格波動，並希望回報能跑贏股市指數</label>
+                  <RadioGroupItem value="any_volatility" id="q5-any-volatility" />
+                  <Label htmlFor="q5-any-volatility">可接受任何幅度的價格波動，並希望回報能跑贏股市指數</Label>
                 </div>
-              </div>
+              </RadioGroup>
               {errors.q5 && <p className="text-sm text-destructive">{errors.q5}</p>}
             </div>
 
@@ -539,83 +501,37 @@ export default function RiskQuestionnaire() {
             
             {/* Q7 */}
             <div className="space-y-3">
-              <Label className="text-base font-medium">Q7. 您屬於以下哪個年齡組別？* (可多選)</Label>
-              <div className="space-y-2 pl-4">
+              <Label className="text-base font-medium">Q7. 您屬於以下哪個年齡組別？*</Label>
+              <RadioGroup
+                value={formData.q7_age_group}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, q7_age_group: value }))}
+                className="space-y-2 pl-4"
+              >
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q7-18-to-25"
-                    checked={formData.q7_age_group.includes("18_to_25")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q7_age_group", "18_to_25", checked as boolean)}
-                  />
-                  <label htmlFor="q7-18-to-25" className="text-sm">介乎18至25歲</label>
+                  <RadioGroupItem value="18_to_25" id="q7-18-to-25" />
+                  <Label htmlFor="q7-18-to-25">介乎18至25歲</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q7-26-to-35"
-                    checked={formData.q7_age_group.includes("26_to_35")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q7_age_group", "26_to_35", checked as boolean)}
-                  />
-                  <label htmlFor="q7-26-to-35" className="text-sm">介乎26至35歲</label>
+                  <RadioGroupItem value="26_to_35" id="q7-26-to-35" />
+                  <Label htmlFor="q7-26-to-35">介乎26至35歲</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q7-36-to-50"
-                    checked={formData.q7_age_group.includes("36_to_50")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q7_age_group", "36_to_50", checked as boolean)}
-                  />
-                  <label htmlFor="q7-36-to-50" className="text-sm">介乎36至50歲</label>
+                  <RadioGroupItem value="36_to_50" id="q7-36-to-50" />
+                  <Label htmlFor="q7-36-to-50">介乎36至50歲</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q7-51-to-64"
-                    checked={formData.q7_age_group.includes("51_to_64")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q7_age_group", "51_to_64", checked as boolean)}
-                  />
-                  <label htmlFor="q7-51-to-64" className="text-sm">介乎51至64歲</label>
+                  <RadioGroupItem value="51_to_64" id="q7-51-to-64" />
+                  <Label htmlFor="q7-51-to-64">介乎51至64歲</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q7-65-plus"
-                    checked={formData.q7_age_group.includes("65_plus")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q7_age_group", "65_plus", checked as boolean)}
-                  />
-                  <label htmlFor="q7-65-plus" className="text-sm">65歲或以上</label>
+                  <RadioGroupItem value="65_plus" id="q7-65-plus" />
+                  <Label htmlFor="q7-65-plus">65歲或以上</Label>
                 </div>
-              </div>
+              </RadioGroup>
               {errors.q7 && <p className="text-sm text-destructive">{errors.q7}</p>}
             </div>
 
-            {/* Q8 */}
-            <div className="space-y-3">
-              <Label className="text-base font-medium">Q8. 您的教育程度是？* (可多選)</Label>
-              <div className="space-y-2 pl-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q8-primary-or-below"
-                    checked={formData.q8_education_level.includes("primary_or_below")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q8_education_level", "primary_or_below", checked as boolean)}
-                  />
-                  <label htmlFor="q8-primary-or-below" className="text-sm">小學或以下</label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q8-secondary"
-                    checked={formData.q8_education_level.includes("secondary")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q8_education_level", "secondary", checked as boolean)}
-                  />
-                  <label htmlFor="q8-secondary" className="text-sm">中學</label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q8-tertiary-or-above"
-                    checked={formData.q8_education_level.includes("tertiary_or_above")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q8_education_level", "tertiary_or_above", checked as boolean)}
-                  />
-                  <label htmlFor="q8-tertiary-or-above" className="text-sm">大專或以上</label>
-                </div>
-              </div>
-              {errors.q8 && <p className="text-sm text-destructive">{errors.q8}</p>}
-            </div>
+            {/* Q8 - 隱藏，自動從個人詳細信息獲取 */}
 
             {/* Q9 */}
             <div className="space-y-3">
@@ -670,45 +586,54 @@ export default function RiskQuestionnaire() {
             {/* Q10 */}
             <div className="space-y-3">
               <Label className="text-base font-medium">
-                Q10. 您需要將多少投資兌現，以滿足突發事件的流動資金需求？* (可多選)
+                Q10. 您需要將多少投資兌現，以滿足突發事件的流動資金需求？*
               </Label>
-              <div className="space-y-2 pl-4">
+              <RadioGroup
+                value={formData.q10_liquidity_needs}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, q10_liquidity_needs: value }))}
+                className="space-y-2 pl-4"
+              >
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q10-no-need"
-                    checked={formData.q10_liquidity_needs.includes("no_need")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q10_liquidity_needs", "no_need", checked as boolean)}
-                  />
-                  <label htmlFor="q10-no-need" className="text-sm">不需要出售任何投資</label>
+                  <RadioGroupItem value="no_need" id="q10-no-need" />
+                  <Label htmlFor="q10-no-need">不需要出售任何投資</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q10-up-to-30"
-                    checked={formData.q10_liquidity_needs.includes("up_to_30")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q10_liquidity_needs", "up_to_30", checked as boolean)}
-                  />
-                  <label htmlFor="q10-up-to-30" className="text-sm">我會出售不超過30%的投資</label>
+                  <RadioGroupItem value="up_to_30" id="q10-up-to-30" />
+                  <Label htmlFor="q10-up-to-30">我會出售不超過30%的投資</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q10-30-to-50"
-                    checked={formData.q10_liquidity_needs.includes("30_to_50")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q10_liquidity_needs", "30_to_50", checked as boolean)}
-                  />
-                  <label htmlFor="q10-30-to-50" className="text-sm">我會出售超過30%但不到50%的投資</label>
+                  <RadioGroupItem value="30_to_50" id="q10-30-to-50" />
+                  <Label htmlFor="q10-30-to-50">我會出售超過30%但不到50%的投資</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q10-over-50"
-                    checked={formData.q10_liquidity_needs.includes("over_50")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q10_liquidity_needs", "over_50", checked as boolean)}
-                  />
-                  <label htmlFor="q10-over-50" className="text-sm">我會出售超過50%的投資</label>
+                  <RadioGroupItem value="over_50" id="q10-over-50" />
+                  <Label htmlFor="q10-over-50">我會出售超過50%的投資</Label>
                 </div>
-              </div>
+              </RadioGroup>
               {errors.q10 && <p className="text-sm text-destructive">{errors.q10}</p>}
             </div>
           </div>
+
+          {/* 風險等級結果顯示 */}
+          {formData.riskLevel && formData.riskDescription && (
+            <div className="mt-8 p-6 bg-muted/50 rounded-lg border-2 border-primary/20">
+              <h3 className="text-lg font-semibold mb-4 text-primary">您的風險評估結果</h3>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-muted-foreground">總分：</span>
+                  <span className="text-2xl font-bold text-primary">{formData.totalScore || 0}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-muted-foreground">風險等級：</span>
+                  <span className="text-xl font-semibold text-primary">{formData.riskLevel}</span>
+                </div>
+                <div className="mt-4">
+                  <p className="text-sm font-medium text-muted-foreground mb-2">投資取向：</p>
+                  <p className="text-sm leading-relaxed whitespace-pre-line">{formData.riskDescription}</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* 按鈕 */}
           <div className="flex justify-between pt-6">
@@ -731,5 +656,6 @@ export default function RiskQuestionnaire() {
         </CardContent>
       </Card>
     </div>
+    </ApplicationWizard>
   );
 }
