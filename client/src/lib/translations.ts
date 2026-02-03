@@ -114,9 +114,54 @@ export const translations: Record<string, string> = {
   // 申請狀態
   draft: '草稿',
   submitted: '已提交',
-  approved: '已批准',
+  under_review: '審核中',
+  approved: '已審批',
   rejected: '已拒絕',
+  returned: '已退回',
 };
+
+/**
+ * 獲取詳細的申請狀態顯示
+ * 根據初審和終審狀態返回更精確的狀態描述
+ */
+export function getDetailedStatus(
+  status: string,
+  firstApprovalStatus?: string | null,
+  secondApprovalStatus?: string | null
+): string {
+  // 已經終審批准
+  if (status === 'approved' && secondApprovalStatus === 'approved') {
+    return '已審批';
+  }
+  
+  // 已經初審批准，待終審
+  if (status === 'under_review' && firstApprovalStatus === 'approved' && (!secondApprovalStatus || secondApprovalStatus === 'pending')) {
+    return '待終審';
+  }
+  
+  // 已提交，待初審
+  if (status === 'submitted' || (status === 'under_review' && !firstApprovalStatus)) {
+    return '待初審';
+  }
+  
+  // 已拒絕
+  if (status === 'rejected') {
+    return '已拒絕';
+  }
+  
+  // 已退回
+  if (status === 'returned') {
+    return '已退回';
+  }
+  
+  // 草稿
+  if (status === 'draft') {
+    return '草稿';
+  }
+  
+  // 默認返回翻譯後的狀態
+  return translate(status);
+}
 
 /**
  * 翻譯函數 - 將英文代碼轉換為中文

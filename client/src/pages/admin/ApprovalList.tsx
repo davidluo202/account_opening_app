@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Loader2, LogOut } from 'lucide-react';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { toast } from 'sonner';
+import { getDetailedStatus } from '@/lib/translations';
 
 export default function ApprovalList() {
   const [, setLocation] = useLocation();
@@ -29,16 +30,28 @@ export default function ApprovalList() {
     setLocation('/admin');
   };
 
-  const getStatusBadge = (status: string) => {
-    const statusMap = {
-      draft: { label: '草稿', variant: 'secondary' as const },
-      submitted: { label: '待審批', variant: 'default' as const },
-      approved: { label: '已批准', variant: 'default' as const },
-      rejected: { label: '已拒絕', variant: 'destructive' as const },
-      returned: { label: '退回補充', variant: 'outline' as const },
-    };
-    const config = statusMap[status as keyof typeof statusMap] || { label: status, variant: 'secondary' as const };
-    return <Badge variant={config.variant}>{config.label}</Badge>;
+  const getStatusBadge = (
+    status: string,
+    firstApprovalStatus?: string | null,
+    secondApprovalStatus?: string | null
+  ) => {
+    const detailedStatus = getDetailedStatus(status, firstApprovalStatus, secondApprovalStatus);
+    
+    // 根據詳細狀態決定顯示樣式
+    let variant: 'default' | 'secondary' | 'destructive' | 'outline' = 'default';
+    if (detailedStatus === '草稿') {
+      variant = 'secondary';
+    } else if (detailedStatus === '已拒絕') {
+      variant = 'destructive';
+    } else if (detailedStatus === '已退回') {
+      variant = 'outline';
+    } else if (detailedStatus === '已審批') {
+      variant = 'default';
+    } else if (detailedStatus === '待初審' || detailedStatus === '待終審') {
+      variant = 'default';
+    }
+    
+    return <Badge variant={variant}>{detailedStatus}</Badge>;
   };
 
   const formatDateTime = (date: Date | string | null) => {
@@ -109,6 +122,8 @@ export default function ApprovalList() {
                   <SelectItem value="pending_first">待初審</SelectItem>
                   <SelectItem value="pending_second">待終審</SelectItem>
                   <SelectItem value="approved">已審批</SelectItem>
+                  <SelectItem value="returned">已退回</SelectItem>
+                  <SelectItem value="rejected">已拒絕</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -128,13 +143,24 @@ export default function ApprovalList() {
             const filteredApplications = applications.filter(app => {
               if (statusFilter === 'all') return true;
               if (statusFilter === 'pending_first') {
-                return app.firstApprovalStatus === 'pending' && app.status === 'submitted';
+                // 待初審：已提交且初審狀態為pending或null
+                return (app.status === 'submitted' || (app.status === 'under_review' && !app.firstApprovalStatus));
               }
               if (statusFilter === 'pending_second') {
-                return app.firstApprovalStatus === 'approved' && app.secondApprovalStatus === 'pending' && app.status === 'under_review';
+                // 待終審：初審已批准且終審狀態為pending
+                return app.firstApprovalStatus === 'approved' && (!app.secondApprovalStatus || app.secondApprovalStatus === 'pending') && app.status === 'under_review';
               }
               if (statusFilter === 'approved') {
+                // 已審批：終審已批准
                 return app.status === 'approved' && app.secondApprovalStatus === 'approved';
+              }
+              if (statusFilter === 'returned') {
+                // 已退回
+                return app.status === 'returned';
+              }
+              if (statusFilter === 'rejected') {
+                // 已拒絕
+                return app.status === 'rejected';
               }
               return true;
             });
@@ -164,7 +190,7 @@ export default function ApprovalList() {
                     <TableCell className="font-medium">{app.applicationNumber}</TableCell>
                     <TableCell>{app.customerName || '-'}</TableCell>
                     <TableCell>{formatDateTime(app.submittedAt)}</TableCell>
-                    <TableCell>{getStatusBadge(app.status)}</TableCell>
+                    <TableCell>{getStatusBadge(app.status, app.firstApprovalStatus, app.secondApprovalStatus)}</TableCell>
                     <TableCell className="text-right">
                       <Button
                         variant="outline"

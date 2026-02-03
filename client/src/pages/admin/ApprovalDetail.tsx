@@ -43,13 +43,25 @@ export default function ApprovalDetail() {
     { enabled: !!id }
   );
 
-  const approveMutation = trpc.approval.firstApprove.useMutation({
+  // 初審mutation
+  const firstApproveMutation = trpc.approval.firstApprove.useMutation({
     onSuccess: () => {
-      toast.success("申请已批准");
+      toast.success("初審已批准");
       setLocation("/admin/approvals");
     },
     onError: (error: any) => {
-      toast.error(error.message || "批准失败");
+      toast.error(error.message || "初審批准失败");
+    },
+  });
+  
+  // 終審mutation
+  const secondApproveMutation = trpc.approval.secondApprove.useMutation({
+    onSuccess: () => {
+      toast.success("終審已批准");
+      setLocation("/admin/approvals");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "終審批准失败");
     },
   });
 
@@ -98,11 +110,24 @@ export default function ApprovalDetail() {
   
   const confirmApprove = () => {
     setShowRiskWarningDialog(false);
-    approveMutation.mutate({
-      applicationId: Number(id),
-      isProfessionalInvestor: isProfessionalInvestor === "yes",
-      approvedRiskProfile: approvedRiskProfile as 'R1' | 'R2' | 'R3' | 'R4' | 'R5',
-    });
+    
+    // 根據申請狀態決定調用初審還是終審
+    const isFirstApproval = !applicationData?.application?.firstApprovalStatus || applicationData.application.firstApprovalStatus !== 'approved';
+    
+    if (isFirstApproval) {
+      // 初審
+      firstApproveMutation.mutate({
+        applicationId: Number(id),
+        isProfessionalInvestor: isProfessionalInvestor === "yes",
+        approvedRiskProfile: approvedRiskProfile as 'R1' | 'R2' | 'R3' | 'R4' | 'R5',
+      });
+    } else {
+      // 終審
+      secondApproveMutation.mutate({
+        applicationId: Number(id),
+        comments: '', // 可以後續添加終審意見輸入框
+      });
+    }
   };
 
   const handleReject = () => {
@@ -802,11 +827,12 @@ export default function ApprovalDetail() {
               <div className="flex gap-4 pt-4">
                 <Button
                   onClick={handleApprove}
-                  disabled={approveMutation.isPending || !isProfessionalInvestor || !approvedRiskProfile}
+                  disabled={firstApproveMutation.isPending || secondApproveMutation.isPending || !isProfessionalInvestor || !approvedRiskProfile}
                   className="flex-1"
                 >
                   <CheckCircle className="h-4 w-4 mr-2" />
-                  {approveMutation.isPending ? "處理中..." : "終審批准"}
+                  {(firstApproveMutation.isPending || secondApproveMutation.isPending) ? "處理中..." : 
+                    (applicationData?.application?.firstApprovalStatus === 'approved' ? "終審批准" : "初審批准")}
                 </Button>
                 <Button
                   variant="destructive"
@@ -891,11 +917,12 @@ export default function ApprovalDetail() {
             <div className="flex gap-4 pt-4">
               <Button
                 onClick={handleApprove}
-                disabled={approveMutation.isPending || !isProfessionalInvestor || !approvedRiskProfile}
+                disabled={firstApproveMutation.isPending || secondApproveMutation.isPending || !isProfessionalInvestor || !approvedRiskProfile}
                 className="flex-1"
               >
                 <CheckCircle className="h-4 w-4 mr-2" />
-                {approveMutation.isPending ? "处理中..." : "批准"}
+                {(firstApproveMutation.isPending || secondApproveMutation.isPending) ? "处理中..." : 
+                  (applicationData?.application?.firstApprovalStatus === 'approved' ? "終審批准" : "初審批准")}
               </Button>
               <Button
                 variant="destructive"
@@ -1018,8 +1045,8 @@ export default function ApprovalDetail() {
             <Button variant="outline" onClick={() => setShowRiskWarningDialog(false)}>
               返回修改
             </Button>
-            <Button onClick={confirmApprove} disabled={approveMutation.isPending}>
-              {approveMutation.isPending ? "处理中..." : "确认批准"}
+            <Button onClick={confirmApprove} disabled={firstApproveMutation.isPending || secondApproveMutation.isPending}>
+              {(firstApproveMutation.isPending || secondApproveMutation.isPending) ? "处理中..." : "确认批准"}
             </Button>
           </DialogFooter>
         </DialogContent>
