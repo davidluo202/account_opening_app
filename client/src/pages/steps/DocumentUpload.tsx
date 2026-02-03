@@ -96,7 +96,7 @@ const handleNext = () => {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={10}
+      <ApplicationWizard applicationId={applicationId} currentStep={11}
       showReturnToPreview={showReturnToPreview}
     >
         <div className="flex justify-center py-12">
@@ -109,7 +109,7 @@ const handleNext = () => {
   return (
     <ApplicationWizard
       applicationId={applicationId}
-      currentStep={10}
+      currentStep={11}
       onNext={handleNext}
       isNextDisabled={!hasRequiredDocuments()}
     

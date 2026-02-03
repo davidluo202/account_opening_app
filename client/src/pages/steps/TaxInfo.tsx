@@ -109,7 +109,7 @@ const handleSave = () => {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={9}
+      <ApplicationWizard applicationId={applicationId} currentStep={10}
       showReturnToPreview={showReturnToPreview}
     >
         <div className="flex justify-center py-12">
@@ -122,7 +122,7 @@ const handleSave = () => {
   return (
     <ApplicationWizard
       applicationId={applicationId}
-      currentStep={9}
+      currentStep={10}
       onNext={handleNext}
       onSave={handleSave}
       isNextLoading={saveMutation.isPending}

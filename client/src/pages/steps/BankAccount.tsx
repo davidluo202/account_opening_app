@@ -326,7 +326,7 @@ const handleNext = () => {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={8}
+      <ApplicationWizard applicationId={applicationId} currentStep={9}
       showReturnToPreview={showReturnToPreview}
     >
         <div className="flex justify-center py-12">
@@ -339,7 +339,7 @@ const handleNext = () => {
   return (
     <ApplicationWizard
       applicationId={applicationId}
-      currentStep={8}
+      currentStep={9}
       onNext={handleNext}
       isNextDisabled={!bankAccounts || bankAccounts.length === 0}
     

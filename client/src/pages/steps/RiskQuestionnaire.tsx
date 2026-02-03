@@ -276,15 +276,18 @@ export default function RiskQuestionnaire() {
   }
 
   return (
-    <ApplicationWizard currentStep={8} applicationId={applicationId!}>
-    <div className="container max-w-4xl py-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>風險評估問卷 / Risk Profile Questionnaire</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            請根據您的實際情況填寫以下問卷，以評估您的風險承受能力
-          </p>
-        </CardHeader>
+    <ApplicationWizard 
+      currentStep={8} 
+      applicationId={applicationId!}
+      onNext={handleSubmit}
+      isNextDisabled={loading || saveMutation.isPending}
+      isNextLoading={loading || saveMutation.isPending}
+    >
+      <div>
+        <h3 className="text-xl font-semibold mb-2">風險評估問卷 / Risk Profile Questionnaire</h3>
+        <p className="text-sm text-muted-foreground mb-6">
+          請根據您的實際情況填寫以下問卷，以評估您的風險承受能力
+        </p>
         <CardContent className="space-y-8">
           {/* PART 1: 適用於全部客戶 */}
           <div className="space-y-6">
@@ -531,7 +534,24 @@ export default function RiskQuestionnaire() {
               {errors.q7 && <p className="text-sm text-destructive">{errors.q7}</p>}
             </div>
 
-            {/* Q8 - 隱藏，自動從個人詳細信息獲取 */}
+            {/* Q8 - 自動從個人詳細信息獲取，顯示為只讀 */}
+            <div className="space-y-3">
+              <Label className="text-base font-medium">Q8. 您的教育程度*</Label>
+              <Input
+                value={
+                  formData.q8_education_level === "primary_or_below"
+                    ? "小學或以下"
+                    : formData.q8_education_level === "secondary"
+                    ? "中學"
+                    : formData.q8_education_level === "tertiary_or_above"
+                    ? "大專或以上"
+                    : "未填寫"
+                }
+                disabled
+                className="bg-muted"
+              />
+              <p className="text-sm text-muted-foreground">此信息自動從個人詳細信息中獲取，如需修改請返回個人詳細信息頁面</p>
+            </div>
 
             {/* Q9 */}
             <div className="space-y-3">
@@ -634,28 +654,8 @@ export default function RiskQuestionnaire() {
               </div>
             </div>
           )}
-
-          {/* 按鈕 */}
-          <div className="flex justify-between pt-6">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setLocation(`/application/${applicationId}/step/7`)}
-            >
-              上一步
-            </Button>
-            <Button
-              type="button"
-              onClick={handleSubmit}
-              disabled={loading || saveMutation.isPending}
-            >
-              {(loading || saveMutation.isPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              下一步
-            </Button>
-          </div>
         </CardContent>
-      </Card>
-    </div>
+      </div>
     </ApplicationWizard>
   );
 }

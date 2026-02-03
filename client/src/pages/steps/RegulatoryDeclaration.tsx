@@ -48,7 +48,7 @@ export default function RegulatoryDeclaration() {
     onSuccess: (result) => {
       if (result.success) {
         toast.success("保存成功");
-        setLocation(`/application/${applicationId}/step/14`);
+        setLocation(`/application/${applicationId}/preview`);
       }
     },
     onError: (error) => {
@@ -120,7 +120,7 @@ const handleNext = () => {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={12}
+      <ApplicationWizard applicationId={applicationId} currentStep={13}
       showReturnToPreview={showReturnToPreview}
     >
         <div className="flex justify-center py-12">
@@ -133,7 +133,7 @@ const handleNext = () => {
   return (
     <ApplicationWizard
       applicationId={applicationId}
-      currentStep={12}
+      currentStep={13}
       onNext={handleNext}
       isNextLoading={saveMutation.isPending}
     

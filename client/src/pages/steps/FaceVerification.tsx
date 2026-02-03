@@ -358,7 +358,7 @@ export default function FaceVerification() {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard currentStep={11} applicationId={applicationId}
+      <ApplicationWizard currentStep={12} applicationId={applicationId}
       showReturnToPreview={showReturnToPreview}
     >
         <div className="flex justify-center items-center py-12">
@@ -373,7 +373,7 @@ export default function FaceVerification() {
 
   return (
     <ApplicationWizard 
-      currentStep={11} 
+      currentStep={12} 
       applicationId={applicationId}
       onNext={handleNext}
       onPrevious={handleBack}
