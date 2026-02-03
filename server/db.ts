@@ -962,6 +962,9 @@ export async function updateFirstApproval(
       firstApprovalByCeNo: info.approverCeNo,
       firstApprovalAt: new Date(),
       firstApprovalComments: info.comments || null,
+      // 初審通過後，狀態變為待終審
+      status: info.status === 'approved' ? 'under_review' : 'submitted',
+      secondApprovalStatus: info.status === 'approved' ? 'pending' : null,
     })
     .where(eq(applications.id, applicationId));
   

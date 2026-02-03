@@ -608,7 +608,8 @@ export default function ApprovalDetail() {
         </Card>
 
         {/* Approval Actions or Approval Info */}
-        {applicationData?.application?.status === 'approved' ? (
+        {applicationData?.application?.status === 'approved' || 
+         (applicationData?.application?.firstApprovalStatus === 'approved' && applicationData?.application?.secondApprovalStatus === 'approved') ? (
           /* 已批准的申请显示审批信息 */
           <Card>
             <CardHeader>
@@ -675,8 +676,161 @@ export default function ApprovalDetail() {
               })()}
             </CardContent>
           </Card>
+        ) : applicationData?.application?.firstApprovalStatus === 'approved' && applicationData?.application?.secondApprovalStatus === 'pending' ? (
+          /* 待終審的申请顯示終審操作 */
+          <Card>
+            <CardHeader>
+              <CardTitle>終審操作</CardTitle>
+              <CardDescription>初審已通過，請進行終審</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* 顯示初審信息 */}
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
+                <div className="flex items-center gap-2 mb-3">
+                  <CheckCircle className="h-5 w-5 text-blue-600" />
+                  <span className="font-semibold text-blue-800">初審已通過</span>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">初審人員：</span>
+                    <span className="font-medium">{applicationData.application.firstApprovalByName} (CE: {applicationData.application.firstApprovalByCeNo})</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">初審時間：</span>
+                    <span className="font-medium">
+                      {applicationData.application.firstApprovalAt ? new Date(applicationData.application.firstApprovalAt).toLocaleString('zh-CN', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false
+                      }) : '-'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">初審PI認定：</span>
+                    <span className="font-medium">{applicationData.application.isProfessionalInvestor ? '是' : '否'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">初審風險評級：</span>
+                    <span className="font-medium">{getRiskToleranceDescription(applicationData.application.approvedRiskProfile || '')}</span>
+                  </div>
+                  {applicationData.application.firstApprovalComments && (
+                    <div className="pt-2 mt-2 border-t border-blue-200">
+                      <p className="text-blue-700">
+                        <strong>初審意見：</strong>{applicationData.application.firstApprovalComments}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Professional Investor */}
+              <div className="space-y-2">
+                <Label>是否定義為專業投資者（PI）</Label>
+                <RadioGroup value={isProfessionalInvestor} onValueChange={setIsProfessionalInvestor}>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id="pi-yes" />
+                    <Label htmlFor="pi-yes">是</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id="pi-no" />
+                    <Label htmlFor="pi-no">否</Label>
+                  </div>
+                </RadioGroup>
+                
+                {/* PI認定差異提示 */}
+                {applicationData.application.isProfessionalInvestor !== undefined && 
+                 isProfessionalInvestor && 
+                 ((applicationData.application.isProfessionalInvestor && isProfessionalInvestor === 'no') || 
+                  (!applicationData.application.isProfessionalInvestor && isProfessionalInvestor === 'yes')) && (
+                  <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-md">
+                    <div className="flex items-start gap-2">
+                      <svg className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-amber-800">PI認定與初審不一致</p>
+                        <div className="mt-1 text-sm text-amber-700 space-y-1">
+                          <p>初審人員認定：<span className="font-semibold">{applicationData.application.isProfessionalInvestor ? '是' : '否'}</span></p>
+                          <p>當前選擇：<span className="font-semibold">{isProfessionalInvestor === 'yes' ? '是' : '否'}</span></p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Risk Profile */}
+              <div className="space-y-2">
+                <Label>風險等級評估</Label>
+                <Select value={approvedRiskProfile} onValueChange={setApprovedRiskProfile}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="請選擇風險等級" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="R1">R1 - 低風險（本金安全的不穩定性很低，基金淨值會有輕度波動）</SelectItem>
+                    <SelectItem value="R2">R2 - 中低風險（本金安全的不穩定性相對較低，基金淨值會有較低波動）</SelectItem>
+                    <SelectItem value="R3">R3 - 中風險（本金安全具有一定的不穩定性，基金淨值會有適度波動）</SelectItem>
+                    <SelectItem value="R4">R4 - 中高風險（本金安全的不穩定性相對較高，基金淨值會有較高波動）</SelectItem>
+                    <SelectItem value="R5">R5 - 高風險（本金安全的不穩定性很高，基金淨值會有高度波動）</SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                {/* 初審風險評級差異提示 */}
+                {applicationData.application.approvedRiskProfile && approvedRiskProfile && applicationData.application.approvedRiskProfile !== approvedRiskProfile && (
+                  <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-md">
+                    <div className="flex items-start gap-2">
+                      <svg className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-amber-800">風險評級與初審不一致</p>
+                        <div className="mt-1 text-sm text-amber-700 space-y-1">
+                          <p>初審人員評定：<span className="font-semibold">{getRiskToleranceDescription(applicationData.application.approvedRiskProfile)}</span></p>
+                          <p>當前選擇：<span className="font-semibold">{getRiskToleranceDescription(approvedRiskProfile)}</span></p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-4 pt-4">
+                <Button
+                  onClick={handleApprove}
+                  disabled={approveMutation.isPending || !isProfessionalInvestor || !approvedRiskProfile}
+                  className="flex-1"
+                >
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  {approveMutation.isPending ? "處理中..." : "終審批准"}
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => setShowRejectDialog(true)}
+                  disabled={rejectMutation.isPending}
+                  className="flex-1"
+                >
+                  <XCircle className="h-4 w-4 mr-2" />
+                  拒絕
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowReturnDialog(true)}
+                  disabled={returnMutation.isPending}
+                  className="flex-1"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  退回補充材料
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         ) : (
-          /* 待审批的申请显示审批操作 */
+          /* 待初審的申请顯示初審操作 */
           <Card>
             <CardHeader>
               <CardTitle>审批操作</CardTitle>
