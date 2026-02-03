@@ -69,6 +69,8 @@ export const applications = mysqlTable("applications", {
   firstApprovalByCeNo: varchar("firstApprovalByCeNo", { length: 20 }), // 第一级审批人员CE号码
   firstApprovalAt: timestamp("firstApprovalAt"), // 第一级审批时间
   firstApprovalComments: text("firstApprovalComments"), // 第一级审批意见
+  firstApprovalIsProfessionalInvestor: boolean("firstApprovalIsProfessionalInvestor"), // 初审人员认定的PI状态
+  firstApprovalRiskProfile: mysqlEnum("firstApprovalRiskProfile", ["R1", "R2", "R3", "R4", "R5"]), // 初审人员评估的风险等级
   // 第二级审批字段（合规部终审）
   secondApprovalStatus: mysqlEnum("secondApprovalStatus", ["pending", "approved", "rejected"]).default("pending"), // 第二级审批状态
   secondApprovalBy: varchar("secondApprovalBy", { length: 200 }), // 第二级审批人员ID

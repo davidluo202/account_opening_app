@@ -655,63 +655,108 @@ export default function ApprovalDetail() {
               <CardDescription>该申请已审批通过</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {approvalHistory && approvalHistory.length > 0 && (() => {
-                const latestApproval = approvalHistory[0];
-                return (
-                  <>
-                    <div className="p-4 bg-green-50 border border-green-200 rounded-md">
-                      <div className="flex items-center gap-2 mb-3">
-                        <CheckCircle className="h-5 w-5 text-green-600" />
-                        <span className="font-semibold text-green-800">审批已通过</span>
-                      </div>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">审批人员ID：</span>
-                          <span className="font-medium">{latestApproval.approverEmail ? latestApproval.approverEmail.split('@')[0] : '-'}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">专业投资者（PI）：</span>
-                          <span className="font-medium">{applicationData.application.isProfessionalInvestor ? '是' : '否'}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">风险评级：</span>
-                          <span className="font-medium">
-                            {(() => {
-                              const riskMap: Record<string, string> = {
-                                'R1': 'R1 - 低风险',
-                                'R2': 'R2 - 中低风险',
-                                'R3': 'R3 - 中风险',
-                                'R4': 'R4 - 中高风险',
-                                'R5': 'R5 - 高风险'
-                              };
-                              return riskMap[applicationData.application.approvedRiskProfile || ''] || '-';
-                            })()}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">审批时间：</span>
-                          <span className="font-medium">
-                            {new Date(latestApproval.createdAt).toLocaleString('zh-CN', {
-                              year: 'numeric',
-                              month: '2-digit',
-                              day: '2-digit',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              second: '2-digit',
-                              hour12: false
-                            })}
-                          </span>
-                        </div>
-                        <div className="pt-2 mt-2 border-t border-green-200">
-                          <p className="text-green-700">
-                            <strong>审批结果：</strong>已发送通知邮件到 operation@cmfinancial.com
-                          </p>
-                        </div>
-                      </div>
+              {/* 初审记录 */}
+              {applicationData?.application?.firstApprovalStatus === 'approved' && (
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
+                  <div className="flex items-center gap-2 mb-3">
+                    <CheckCircle className="h-5 w-5 text-blue-600" />
+                    <span className="font-semibold text-blue-800">初审记录</span>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">初审人员：</span>
+                      <span className="font-medium">{applicationData.application.firstApprovalByName || '-'}</span>
                     </div>
-                  </>
-                );
-              })()}
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">CE No.：</span>
+                      <span className="font-medium">{applicationData.application.firstApprovalByCeNo || '-'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">初审时间：</span>
+                      <span className="font-medium">
+                        {applicationData.application.firstApprovalAt ? new Date(applicationData.application.firstApprovalAt).toLocaleString('zh-CN', {
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          second: '2-digit',
+                          hour12: false
+                        }) : '-'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">初审PI认定：</span>
+                      <span className="font-medium">{applicationData.application.firstApprovalIsProfessionalInvestor ? '是' : '否'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">初审风险评级：</span>
+                      <span className="font-medium">{getRiskToleranceDescription(applicationData.application.firstApprovalRiskProfile || '')}</span>
+                    </div>
+                    {applicationData.application.firstApprovalComments && (
+                      <div className="pt-2 mt-2 border-t border-blue-200">
+                        <p className="text-blue-700">
+                          <strong>初审意见：</strong>{applicationData.application.firstApprovalComments}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* 终审记录 */}
+              {applicationData?.application?.secondApprovalStatus === 'approved' && (
+                <div className="p-4 bg-green-50 border border-green-200 rounded-md">
+                  <div className="flex items-center gap-2 mb-3">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <span className="font-semibold text-green-800">终审记录</span>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">终审人员：</span>
+                      <span className="font-medium">{applicationData.application.secondApprovalByName || '-'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">CE No.：</span>
+                      <span className="font-medium">{applicationData.application.secondApprovalByCeNo || '-'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">终审时间：</span>
+                      <span className="font-medium">
+                        {applicationData.application.secondApprovalAt ? new Date(applicationData.application.secondApprovalAt).toLocaleString('zh-CN', {
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          second: '2-digit',
+                          hour12: false
+                        }) : '-'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">终审PI认定：</span>
+                      <span className="font-medium">{applicationData.application.isProfessionalInvestor ? '是' : '否'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">终审风险评级：</span>
+                      <span className="font-medium">{getRiskToleranceDescription(applicationData.application.approvedRiskProfile || '')}</span>
+                    </div>
+                    {applicationData.application.secondApprovalComments && (
+                      <div className="pt-2 mt-2 border-t border-green-200">
+                        <p className="text-green-700">
+                          <strong>终审意见：</strong>{applicationData.application.secondApprovalComments}
+                        </p>
+                      </div>
+                    )}
+                    <div className="pt-2 mt-2 border-t border-green-200">
+                      <p className="text-green-700">
+                        <strong>审批结果：</strong>已发送通知邮件到 operation@cmfinancial.com
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         ) : applicationData?.application?.firstApprovalStatus === 'approved' && applicationData?.application?.secondApprovalStatus === 'pending' ? (

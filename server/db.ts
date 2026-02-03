@@ -951,6 +951,8 @@ export async function updateFirstApproval(
     approverName: string;
     approverCeNo: string;
     comments?: string;
+    isProfessionalInvestor?: boolean;
+    riskProfile?: string;
   }
 ) {
   const db = await getDb();
@@ -965,6 +967,12 @@ export async function updateFirstApproval(
       firstApprovalByCeNo: info.approverCeNo,
       firstApprovalAt: new Date(),
       firstApprovalComments: info.comments || null,
+      // 儲存初審人員的PI認定和風險評級
+      firstApprovalIsProfessionalInvestor: info.isProfessionalInvestor,
+      firstApprovalRiskProfile: info.riskProfile as any,
+      // 同時更新最終的PI認定和風險評級（終審時會覆蓋）
+      isProfessionalInvestor: info.isProfessionalInvestor,
+      approvedRiskProfile: info.riskProfile as any,
       // 初審通過後，狀態變為待終審
       status: info.status === 'approved' ? 'under_review' : 'submitted',
       secondApprovalStatus: info.status === 'approved' ? 'pending' : null,

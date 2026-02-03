@@ -1175,19 +1175,15 @@ export const appRouter = router({
           throw new Error('该申请已经完成初审，无法重复审批');
         }
         
-        // 更新第一级审批信息
+        // 更新第一级审批信息（包含PI認定和風險評級）
         await db.updateFirstApproval(input.applicationId, {
           status: 'approved',
           approverEmail: ctx.user.email || '',
           approverName: approver.employeeName,
           approverCeNo: approver.ceNumber,
           comments: input.comments,
-        });
-        
-        // 更新PI和风险偏好
-        await db.updateApplicationApprovalInfo(input.applicationId, {
           isProfessionalInvestor: input.isProfessionalInvestor,
-          approvedRiskProfile: input.approvedRiskProfile,
+          riskProfile: input.approvedRiskProfile,
         });
         
         // 记录审批操作
@@ -1363,8 +1359,8 @@ export const appRouter = router({
             firstApproval: {
               approverName: applicationData.application?.firstApprovalByName,
               approverCeNo: applicationData.application?.firstApprovalByCeNo,
-              isProfessionalInvestor: applicationData.application?.isProfessionalInvestor,
-              approvedRiskProfile: applicationData.application?.approvedRiskProfile,
+              isProfessionalInvestor: applicationData.application?.firstApprovalIsProfessionalInvestor,
+              approvedRiskProfile: applicationData.application?.firstApprovalRiskProfile,
               approvalTime: applicationData.application?.firstApprovalAt,
               comments: applicationData.application?.firstApprovalComments,
             },
