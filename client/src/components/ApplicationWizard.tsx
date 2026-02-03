@@ -19,11 +19,12 @@ const steps: Step[] = [
   { id: 5, title: "職業信息", description: "填寫職業狀況" },
   { id: 6, title: "就業詳情", description: "填寫收入資產" },
   { id: 7, title: "財務與投資", description: "填寫投資信息" },
-  { id: 8, title: "銀行賬戶", description: "添加銀行賬戶" },
-  { id: 9, title: "稅務信息", description: "填寫稅務資料" },
-  { id: 10, title: "文件上傳", description: "上傳證明文件" },
-  { id: 11, title: "人臉識別", description: "進行人臉驗證" },
-  { id: 12, title: "監管聲明", description: "簽署協議" },
+  { id: 8, title: "風險評估問卷", description: "完成風險評估" },
+  { id: 9, title: "銀行賬戶", description: "添加銀行賬戶" },
+  { id: 10, title: "稅務信息", description: "填寫稅務資料" },
+  { id: 11, title: "文件上傳", description: "上傳證明文件" },
+  { id: 12, title: "人臉識別", description: "進行人臉驗證" },
+  { id: 13, title: "監管聲明", description: "簽署協議" },
 ];
 
 interface ApplicationWizardProps {
