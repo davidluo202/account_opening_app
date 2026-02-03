@@ -1620,6 +1620,7 @@ export const appRouter = router({
         q10_liquidity_needs: z.string(),
         totalScore: z.number(),
         riskLevel: z.string(),
+        riskDescription: z.string(),
       }))
       .mutation(async ({ input }) => {
         return await db.saveRiskQuestionnaire(input);

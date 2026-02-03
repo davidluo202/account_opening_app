@@ -311,6 +311,7 @@ export const riskQuestionnaires = mysqlTable("risk_questionnaires", {
   // 评分结果
   totalScore: int("totalScore"),
   riskLevel: varchar("riskLevel", { length: 50 }), // 最低风险/低风险/低至中等风险/中等风险/中等至高风险/高风险
+  riskDescription: text("riskDescription"), // 风险等级描述（投资取向）
   // 客户确认签署
   customerSignature: varchar("customerSignature", { length: 200 }),
   signatureDate: varchar("signatureDate", { length: 10 }), // YYYY-MM-DD

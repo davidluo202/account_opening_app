@@ -1719,3 +1719,81 @@
 - [x] 更新后续步骤的编号（銀行账户从8改为9，以此类推）
 - [x] 测试从投资目标页面跳转到风险评估问卷（导航栏已显示13个步骤，包括第8步风险评估问卷）
 - [ ] 保存checkpoint
+
+## 修复风险评估问卷UI、自动计算、导航栏错位和数据持久性（2026-02-03）
+
+### 任务1：调整风险评估问卷UI
+- [ ] Q1、Q6、Q9保留多选（Checkbox）
+- [ ] Q2、Q3、Q4、Q5、Q7、Q10改为单选（RadioGroup）
+- [ ] Q8（教育程度）自动从个人详细信息中获取，不显示选择框
+- [ ] 更新FormData接口，将单选字段从数组改为字符串类型
+
+### 任务2：实现自动计算并显示风险等级
+- [ ] 所有问题回答完毕后自动计算总分
+- [ ] 根据总分自动判定风险等级（6个档位）
+- [ ] 在页面最下方显示风险等级和投资取向描述
+- [ ] 使用卡片组件展示评估结果
+
+### 任务3：修复导航栏步骤错位
+- [ ] 检查ApplicationWizard中的steps定义是否正确
+- [ ] 确保Case 8对应风险评估问卷，Case 9对应银行账户
+- [ ] 验证所有步骤的标题和描述是否匹配实际页面
+
+### 任务4：完善数据保存和持久性
+- [ ] 更新后端API，支持保存风险评估问卷数据
+- [ ] 实现数据加载逻辑，用户返回页面时恢复已填写的数据
+- [ ] 确保Q8（教育程度）从个人详细信息中自动加载
+- [ ] 测试数据持久性
+
+### 任务5：测试并保存checkpoint
+- [ ] 测试完整的风险评估问卷流程
+- [ ] 验证风险等级计算和显示是否正确
+- [ ] 测试数据保存和加载功能
+- [ ] 保存checkpoint
+
+## 完成风险评估问卷UI改动和客户声明页面更新（2026-02-03）
+
+### 后端工作（已完成）
+- [x] 更新FormData接口，将Q2-Q5、Q7、Q10改为字符串类型
+- [x] 更新评分计算逻辑，单选字段改为直接比较字符串
+- [x] 更新表单验证逻辑，单选字段改为检查字符串是否为空
+- [x] 在schema中添加riskDescription字段
+- [x] 更新routers.ts中的API，添加riskDescription字段
+- [x] 更新db.ts中的saveRiskQuestionnaire函数
+- [x] 更新calculateScore函数，添加riskDescription生成逻辑
+- [x] 更新handleSubmit函数，保存riskDescription
+- [x] 更新数据加载逻辑，添加personalDetailed查询以获取学历
+- [x] 运行pnpm db:push更新数据库
+- [x] 修复TypeScript错误
+
+### UI调整（进行中）
+- [ ] 添加RadioGroup和RadioGroupItem的import
+- [ ] 将Q2从Checkbox改为RadioGroup（单选）
+- [ ] 将Q3从Checkbox改为RadioGroup（单选）
+- [ ] 将Q4从Checkbox改为RadioGroup（单选）
+- [ ] 将Q5从Checkbox改为RadioGroup（单选）
+- [ ] 将Q7从Checkbox改为RadioGroup（单选）
+- [ ] 将Q10从Checkbox改为RadioGroup（单选）
+- [ ] 隐藏Q8的UI（因为自动从个人详细信息获取）
+- [ ] 更新标签文本，将"可多选"改为"请选择"
+
+### 风险等级显示
+- [ ] 在页面底部添加风险等级和描述的显示区域
+- [ ] 实现实时计算并显示风险等级
+- [ ] 显示风险等级的中英文描述
+
+### 导航栏
+- [ ] 添加ApplicationWizard组件到RiskQuestionnaire页面
+- [ ] 确保导航栏正确显示当前步骤
+
+### 客户声明页面更新
+- [ ] 在RegulatoryDeclaration页面添加风险评估确认声明勾选框
+- [ ] 更新schema添加riskProfileAcknowledgement字段
+- [ ] 更新后端API保存风险评估确认状态
+- [ ] 确保必须勾选才能提交
+
+### 测试
+- [ ] 测试完整的风险评估问卷流程
+- [ ] 测试风险等级计算和显示
+- [ ] 测试客户声明页面的风险评估确认
+- [ ] 保存checkpoint

@@ -1046,6 +1046,7 @@ export async function saveRiskQuestionnaire(data: {
   q10_liquidity_needs: string;
   totalScore: number;
   riskLevel: string;
+  riskDescription: string;
 }) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
@@ -1075,6 +1076,7 @@ export async function saveRiskQuestionnaire(data: {
         q10_liquidity_needs: data.q10_liquidity_needs,
         totalScore: data.totalScore,
         riskLevel: data.riskLevel,
+        riskDescription: data.riskDescription,
         updatedAt: new Date(),
       })
       .where(eq(riskQuestionnaires.applicationId, data.applicationId));
@@ -1095,8 +1097,9 @@ export async function saveRiskQuestionnaire(data: {
       q10_liquidity_needs: data.q10_liquidity_needs,
       totalScore: data.totalScore,
       riskLevel: data.riskLevel,
+      riskDescription: data.riskDescription,
     });
-    return { success: true, id: result.insertId };
+    return { success: true, id: Number(result.insertId) };
   }
 }
 
