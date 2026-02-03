@@ -67,10 +67,19 @@ export default function PersonalDetailedInfo() {
     maritalStatus: "",
     educationLevel: "",
     email: "",
+    // 住宅电话（可选）
     phoneCountryCode: "+852",
     phoneNumber: "",
+    // 手机号码（必填）
+    mobileCountryCode: "+852",
+    mobileNumber: "",
     faxNo: "", // 传真号码（可选）
     residentialAddress: "",
+    // 账单通讯地址
+    billingAddressType: "residential" as "residential" | "office" | "other",
+    billingAddressOther: "",
+    // 账单首选语言
+    preferredLanguage: "chinese" as "chinese" | "english",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -113,7 +122,10 @@ export default function PersonalDetailedInfo() {
       setFormData({
         ...existingData,
         idExpiryDate: existingData.idExpiryDate || "",
-        faxNo: existingData.faxNo || "", // 处理可选字段
+        faxNo: existingData.faxNo || "",
+        phoneCountryCode: existingData.phoneCountryCode || "+852",
+        phoneNumber: existingData.phoneNumber || "",
+        billingAddressOther: existingData.billingAddressOther || "",
       });
       // 从数据库读取邮箱验证状态
       if (existingData.emailVerified) {
@@ -233,8 +245,16 @@ export default function PersonalDetailedInfo() {
       newErrors.email = "請先驗證郵箱地址";
     }
 
-    if (!formData.phoneNumber.trim()) newErrors.phoneNumber = "請輸入電話號碼";
-    if (!formData.residentialAddress.trim()) newErrors.residentialAddress = "請輸入居住地址";
+    // 手机号码必填
+    if (!formData.mobileNumber.trim()) newErrors.mobileNumber = "请输入手机号码";
+    // 住宅电话可选，不需要验证
+    
+    if (!formData.residentialAddress.trim()) newErrors.residentialAddress = "请输入居住地址";
+    
+    // 账单通讯地址验证
+    if (formData.billingAddressType === "other" && !formData.billingAddressOther.trim()) {
+      newErrors.billingAddressOther = "请输入账单通讯地址";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -534,10 +554,10 @@ export default function PersonalDetailedInfo() {
           )}
         </div>
 
-        {/* 電話號碼 */}
+        {/* 住宅电话 */}
         <div className="space-y-2">
           <Label htmlFor="phoneNumber">
-            電話號碼 / Phone Number <span className="text-destructive">*</span>
+            住宅电话 / Residential Phone (可选)
           </Label>
           <div className="flex gap-2">
             <Select 
@@ -562,11 +582,46 @@ export default function PersonalDetailedInfo() {
                 setFormData({ ...formData, phoneNumber: e.target.value });
                 if (errors.phoneNumber) setErrors({ ...errors, phoneNumber: "" });
               }}
-              placeholder="請輸入電話號碼"
+              placeholder="请输入住宅电话"
               className={`flex-1 ${errors.phoneNumber ? "border-destructive" : ""}`}
             />
           </div>
           {errors.phoneNumber && <p className="text-sm text-destructive">{errors.phoneNumber}</p>}
+        </div>
+
+        {/* 手机号码 */}
+        <div className="space-y-2">
+          <Label htmlFor="mobileNumber">
+            手机号码 / Mobile Number <span className="text-destructive">*</span>
+          </Label>
+          <div className="flex gap-2">
+            <Select 
+              value={formData.mobileCountryCode} 
+              onValueChange={(v) => setFormData({ ...formData, mobileCountryCode: v })}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {countryCodes.map((code) => (
+                  <SelectItem key={code.value} value={code.value}>
+                    {code.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Input
+              id="mobileNumber"
+              value={formData.mobileNumber}
+              onChange={(e) => {
+                setFormData({ ...formData, mobileNumber: e.target.value });
+                if (errors.mobileNumber) setErrors({ ...errors, mobileNumber: "" });
+              }}
+              placeholder="请输入手机号码"
+              className={`flex-1 ${errors.mobileNumber ? "border-destructive" : ""}`}
+            />
+          </div>
+          {errors.mobileNumber && <p className="text-sm text-destructive">{errors.mobileNumber}</p>}
         </div>
 
         {/* 传真号码 */}
@@ -606,6 +661,100 @@ export default function PersonalDetailedInfo() {
               className={errors.residentialAddress ? "border-destructive" : ""}
             />
           {errors.residentialAddress && <p className="text-sm text-destructive">{errors.residentialAddress}</p>}
+        </div>
+
+        {/* 账单通讯地址 */}
+        <div className="space-y-2">
+          <Label>
+            账单通讯地址 / Billing Address <span className="text-destructive">*</span>
+          </Label>
+          <div className="space-y-3">
+            <div className="flex flex-col gap-2">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="billingAddressType"
+                  value="residential"
+                  checked={formData.billingAddressType === "residential"}
+                  onChange={(e) => setFormData({ ...formData, billingAddressType: e.target.value as "residential" | "office" | "other" })}
+                  className="w-4 h-4"
+                />
+                <span>住宅住址 / Residential Address</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="billingAddressType"
+                  value="office"
+                  checked={formData.billingAddressType === "office"}
+                  onChange={(e) => setFormData({ ...formData, billingAddressType: e.target.value as "residential" | "office" | "other" })}
+                  className="w-4 h-4"
+                />
+                <span>办公地址 / Office Address</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="billingAddressType"
+                  value="other"
+                  checked={formData.billingAddressType === "other"}
+                  onChange={(e) => setFormData({ ...formData, billingAddressType: e.target.value as "residential" | "office" | "other" })}
+                  className="w-4 h-4"
+                />
+                <span>其他 / Other</span>
+              </label>
+            </div>
+            {formData.billingAddressType === "other" && (
+              <Textarea
+                value={formData.billingAddressOther}
+                onChange={(e) => {
+                  setFormData({ ...formData, billingAddressOther: e.target.value });
+                  if (errors.billingAddressOther) setErrors({ ...errors, billingAddressOther: "" });
+                }}
+                onBlur={() => {
+                  const converted = convertToTraditional(formData.billingAddressOther);
+                  if (converted !== formData.billingAddressOther) {
+                    setFormData({ ...formData, billingAddressOther: converted });
+                  }
+                }}
+                placeholder="请输入完整账单通讯地址"
+                rows={3}
+                className={errors.billingAddressOther ? "border-destructive" : ""}
+              />
+            )}
+            {errors.billingAddressOther && <p className="text-sm text-destructive">{errors.billingAddressOther}</p>}
+          </div>
+        </div>
+
+        {/* 账单首选语言 */}
+        <div className="space-y-2">
+          <Label>
+            账单首选语言 / Preferred Language for Statements <span className="text-destructive">*</span>
+          </Label>
+          <div className="flex gap-4">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="preferredLanguage"
+                value="chinese"
+                checked={formData.preferredLanguage === "chinese"}
+                onChange={(e) => setFormData({ ...formData, preferredLanguage: e.target.value as "chinese" | "english" })}
+                className="w-4 h-4"
+              />
+              <span>中文 / Chinese</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="preferredLanguage"
+                value="english"
+                checked={formData.preferredLanguage === "english"}
+                onChange={(e) => setFormData({ ...formData, preferredLanguage: e.target.value as "chinese" | "english" })}
+                className="w-4 h-4"
+              />
+              <span>英文 / English</span>
+            </label>
+          </div>
         </div>
       </div>
     </ApplicationWizard>

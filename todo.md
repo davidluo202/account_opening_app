@@ -1545,3 +1545,58 @@
 - [x] 修復初審API的updateFirstApproval函數，移除對isProfessionalInvestor和approvedRiskProfile的更新
 - [x] 修復終審API的updateSecondApproval函數，確保不覆蓋firstApprovalIsProfessionalInvestor和firstApprovalRiskProfile
 - [x] 測試初審和終審流程，驗證初審和終審記錄各自獨立存在
+
+
+## 功能擴展 - 個人信息、風險評估問卷和客戶聲明（2026-02-03）
+
+### 數據庫Schema擴展
+- [ ] 在personalInfo表中添加手機號碼字段（countryCode, phoneNumber）
+- [ ] 在personalInfo表中添加賬單通訊地址字段（billingAddressType, billingAddress相關字段）
+- [ ] 在personalInfo表中添加賬單首選語言字段（preferredLanguage）
+- [ ] 創建riskQuestionnaire表，存儲風險評估問卷答案
+- [ ] 創建customerDeclaration表，存儲客戶聲明答案
+- [ ] 執行pnpm db:push推送schema變更
+
+### 風險評估問卷頁面
+- [ ] 創建RiskQuestionnaire.tsx頁面組件
+- [ ] 實現PART 1問題（Q1-Q6，適用於全部客戶）
+- [ ] 實現PART 2A問題（Q7-Q10，適用於個人/聯名客戶）
+- [ ] 實現PART 2B問題（Q11-Q14，適用於公司客戶）
+- [ ] 實現風險評分計算邏輯
+- [ ] 實現65歲以上/小學或以下學歷客戶的特殊處理
+- [ ] 添加客戶確認簽署部分
+- [ ] 創建保存風險問卷答案的API
+
+### 客戶聲明頁面
+- [ ] 創建CustomerDeclaration.tsx頁面組件
+- [ ] 實現聲明A（最終受益擁有人）
+- [ ] 實現聲明B（持牌法團或註冊機構僱員或董事）
+- [ ] 實現聲明C（Canton Mutual Financial Limited僱員）
+- [ ] 實現聲明D（Canton Mutual Financial Limited僱員或董事之親屬）
+- [ ] 創建保存客戶聲明答案的API
+
+### 個人詳細信息頁面更新
+- [ ] 添加手機號碼輸入框（國家區號+電話號碼）
+- [ ] 添加賬單通訊地址選項（住宅住址、辦公地址、其他）
+- [ ] 添加賬單首選語言選擇（中文/英文）
+- [ ] 更新保存個人信息的API
+
+### 審批頁面更新
+- [ ] 在ApprovalDetail頁面顯示手機號碼
+- [ ] 在ApprovalDetail頁面顯示賬單通訊地址
+- [ ] 在ApprovalDetail頁面顯示賬單首選語言
+- [ ] 在ApprovalDetail頁面顯示風險評估問卷答案
+- [ ] 在ApprovalDetail頁面顯示客戶聲明答案
+
+### PDF生成器更新
+- [ ] 在PDF中添加手機號碼
+- [ ] 在PDF中添加賬單通訊地址
+- [ ] 在PDF中添加賬單首選語言
+- [ ] 在PDF中添加風險評估問卷答案
+- [ ] 在PDF中添加客戶聲明答案
+
+### 測試和交付
+- [ ] 測試完整的用戶申請流程
+- [ ] 測試審批頁面顯示
+- [ ] 測試PDF生成
+- [ ] 保存checkpoint並交付

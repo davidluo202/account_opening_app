@@ -525,11 +525,20 @@ export const appRouter = router({
         maritalStatus: z.string(),
         educationLevel: z.string(),
         email: z.string().email(),
-        phoneCountryCode: z.string(),
-        phoneNumber: z.string(),
-        faxNo: z.string().optional(), // 传真号码（可选）
-        emailVerified: z.boolean().optional().default(false), // 邮箱验证状态
+        // 住宅电话（可选）
+        phoneCountryCode: z.string().optional(),
+        phoneNumber: z.string().optional(),
+        // 手机号码（必填）
+        mobileCountryCode: z.string(),
+        mobileNumber: z.string(),
+        faxNo: z.string().optional(),
+        emailVerified: z.boolean().optional().default(false),
         residentialAddress: z.string(),
+        // 账单通讯地址
+        billingAddressType: z.enum(["residential", "office", "other"]),
+        billingAddressOther: z.string().optional(),
+        // 账单首选语言
+        preferredLanguage: z.enum(["chinese", "english"]),
       }))
       .mutation(async ({ input, ctx }) => {
         const { applicationId, ...data } = input;

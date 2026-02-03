@@ -126,11 +126,20 @@ export const personalDetailedInfo = mysqlTable("personal_detailed_info", {
   maritalStatus: varchar("maritalStatus", { length: 50 }).notNull(),
   educationLevel: varchar("educationLevel", { length: 50 }).notNull(),
   email: varchar("email", { length: 320 }).notNull(),
-  phoneCountryCode: varchar("phoneCountryCode", { length: 10 }).notNull(),
-  phoneNumber: varchar("phoneNumber", { length: 50 }).notNull(),
+  // 住宅电话（可选）
+  phoneCountryCode: varchar("phoneCountryCode", { length: 10 }),
+  phoneNumber: varchar("phoneNumber", { length: 50 }),
+  // 手机号码（必填）
+  mobileCountryCode: varchar("mobileCountryCode", { length: 10 }).notNull(),
+  mobileNumber: varchar("mobileNumber", { length: 50 }).notNull(),
   faxNo: varchar("faxNo", { length: 50 }), // 传真号码
   emailVerified: boolean("emailVerified").default(false).notNull(), // 邮箱验证状态
   residentialAddress: text("residentialAddress").notNull(),
+  // 账单通讯地址
+  billingAddressType: mysqlEnum("billingAddressType", ["residential", "office", "other"]).notNull(),
+  billingAddressOther: text("billingAddressOther"), // 当选择"other"时填写
+  // 账单首选语言
+  preferredLanguage: mysqlEnum("preferredLanguage", ["chinese", "english"]).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -281,6 +290,59 @@ export const approvalRecords = mysqlTable("approval_records", {
   createdAt: timestamp("createdAt").defaultNow().notNull(), // 审批时间
 });
 
+/**
+ * 风险评估问卷表
+ */
+export const riskQuestionnaires = mysqlTable("risk_questionnaires", {
+  id: int("id").autoincrement().primaryKey(),
+  applicationId: int("applicationId").notNull().unique(),
+  // PART 1: 适用于全部客户 (Q1-Q6)
+  q1_current_investments: text("q1_current_investments"), // 多选，JSON数组
+  q2_investment_period: varchar("q2_investment_period", { length: 50 }),
+  q3_price_volatility: varchar("q3_price_volatility", { length: 50 }),
+  q4_investment_percentage: varchar("q4_investment_percentage", { length: 50 }),
+  q5_investment_attitude: varchar("q5_investment_attitude", { length: 100 }),
+  q6_derivatives_knowledge: text("q6_derivatives_knowledge"), // 多选，JSON数组
+  // PART 2A: 适用个人/联名客户 (Q7-Q10)
+  q7_age_group: varchar("q7_age_group", { length: 50 }),
+  q8_education_level: varchar("q8_education_level", { length: 50 }),
+  q9_investment_knowledge_sources: text("q9_investment_knowledge_sources"), // 多选，JSON数组
+  q10_liquidity_needs: varchar("q10_liquidity_needs", { length: 100 }),
+  // 评分结果
+  totalScore: int("totalScore"),
+  riskLevel: varchar("riskLevel", { length: 50 }), // 最低风险/低风险/低至中等风险/中等风险/中等至高风险/高风险
+  // 客户确认签署
+  customerSignature: varchar("customerSignature", { length: 200 }),
+  signatureDate: varchar("signatureDate", { length: 10 }), // YYYY-MM-DD
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+/**
+ * 客户声明表
+ */
+export const customerDeclarations = mysqlTable("customer_declarations", {
+  id: int("id").autoincrement().primaryKey(),
+  applicationId: int("applicationId").notNull().unique(),
+  // (A) 最终受益拥有人
+  declaration_a_is_beneficial_owner: boolean("declaration_a_is_beneficial_owner").notNull(),
+  declaration_a_owner_name: varchar("declaration_a_owner_name", { length: 200 }),
+  declaration_a_owner_id: varchar("declaration_a_owner_id", { length: 100 }),
+  declaration_a_owner_country: varchar("declaration_a_owner_country", { length: 100 }),
+  declaration_a_owner_address: text("declaration_a_owner_address"),
+  // (B) 持牌法团或注册机构僱员或董事
+  declaration_b_is_employee: boolean("declaration_b_is_employee").notNull(),
+  declaration_b_institution_name: varchar("declaration_b_institution_name", { length: 300 }),
+  // (C) Canton Mutual Financial Limited僱员
+  declaration_c_is_cmf_employee: boolean("declaration_c_is_cmf_employee").notNull(),
+  // (D) Canton Mutual Financial Limited僱员或董事之亲属
+  declaration_d_is_relative: boolean("declaration_d_is_relative").notNull(),
+  declaration_d_employee_name: varchar("declaration_d_employee_name", { length: 200 }),
+  declaration_d_relationship: varchar("declaration_d_relationship", { length: 100 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type Application = typeof applications.$inferSelect;
@@ -300,3 +362,7 @@ export type Approver = typeof approvers.$inferSelect;
 export type InsertApprover = typeof approvers.$inferInsert;
 export type ApprovalRecord = typeof approvalRecords.$inferSelect;
 export type InsertApprovalRecord = typeof approvalRecords.$inferInsert;
+export type RiskQuestionnaire = typeof riskQuestionnaires.$inferSelect;
+export type InsertRiskQuestionnaire = typeof riskQuestionnaires.$inferInsert;
+export type CustomerDeclaration = typeof customerDeclarations.$inferSelect;
+export type InsertCustomerDeclaration = typeof customerDeclarations.$inferInsert;
