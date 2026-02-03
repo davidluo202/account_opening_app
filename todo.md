@@ -1537,3 +1537,11 @@
 - [x] 添加終審記錄顯示區塊（姓名、CE No.、終審時間、PI認定、風險評級、審批意見）
 - [x] 驗證PDF文件包含完整的初審和終審信息
 - [x] 測試終審後的詳情頁面和PDF文件
+
+
+## Bug修復 - 終審覆蓋初審記錄問題（2026-02-03）
+
+- [x] 檢查當前數據庫更新邏輯，診斷終審覆蓋初審記錄的原因
+- [x] 修復初審API的updateFirstApproval函數，移除對isProfessionalInvestor和approvedRiskProfile的更新
+- [x] 修復終審API的updateSecondApproval函數，確保不覆蓋firstApprovalIsProfessionalInvestor和firstApprovalRiskProfile
+- [x] 測試初審和終審流程，驗證初審和終審記錄各自獨立存在

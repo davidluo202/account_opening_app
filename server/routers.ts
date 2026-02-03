@@ -1266,6 +1266,12 @@ export const appRouter = router({
           comments: input.comments,
         });
         
+        // 更新最終的PI認定和風險評級（終審結果，不覆蓋初審專用字段）
+        await db.updateApplicationApprovalInfo(input.applicationId, {
+          isProfessionalInvestor: input.isProfessionalInvestor,
+          approvedRiskProfile: input.riskProfile as any,
+        });
+        
         // 更新申请状态为最终批准
         await db.updateApplicationStatus(input.applicationId, 'approved');
         
