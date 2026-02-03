@@ -1434,3 +1434,31 @@
 ## PDF首頁Logo修復（2026-02-02）
 
 - [x] 修復PDF首頁缺少公司Logo的問題（其他頁面都有Logo，只有首頁缺失）
+
+
+## 兩級審批流程和PDF版本管理系統（2026-02-02 晚上）
+### 數據庫 Schema擴展
+- [x] 創建審批記錄表（approval_records），存儲初審和終審的完整信息（已存在）
+- [x] 擴展applications表，添加PDF版本字段（customerPdfUrl、firstReviewPdfUrl、finalReviewPdfUrl）
+- [x] 使用firstApprovalStatus和secondApprovalStatus字段區分初審和終審狀態（已存在）
+
+### PDF版本管理
+- [ ] 實現初審版PDF生成邏輯：包含初審人員信息（姓名、CE No.、是否PI、風險評級、審批時間、審批意見）
+- [ ] 實現終審版PDF生成邏輯：包含初審+終審完整信息
+- [ ] 確保客戶版PDF不包含任何審批信息，客戶可查看/下載
+
+### 審批狀態流轉
+- [ ] 優化審批列表頁面，添加"待初審"和"待終審"狀態篩選功能
+- [ ] 實現初審通過後自動將狀態從pending_first_review更新為pending_final_review
+- [ ] 實現終審通過後自動將狀態從pending_final_review更新為approved
+- [ ] 實現終審退回後自動將狀態從pending_final_review更新為returned
+
+### 郵件通知
+- [ ] 實現初審通過後自動發送郵件給compliance@cmfinancial.com，附上初審版PDF下載鏈接
+- [ ] 確保郵件內容包含申請編號、客戶姓名、初審人員信息和PDF下載鏈接
+
+### 審批詳情頁面優化
+- [ ] 在終審詳情頁面顯示初審人員的完整信息和選擇（是否PI、風險評級、審批時間、審批意見）
+- [ ] 允許終審人員對PI和風險評級進行再次認定
+- [ ] 在審批完成後的詳情頁面顯示初審和終審的完整記錄
+- [ ] 實現終審退回時清除初審PDF版本的邏輯

@@ -76,6 +76,10 @@ export const applications = mysqlTable("applications", {
   secondApprovalByCeNo: varchar("secondApprovalByCeNo", { length: 20 }), // 第二级审批人员CE号码（如果有）
   secondApprovalAt: timestamp("secondApprovalAt"), // 第二级审批时间
   secondApprovalComments: text("secondApprovalComments"), // 第二级审批意见
+  // PDF版本管理字段
+  customerPdfUrl: varchar("customerPdfUrl", { length: 500 }), // 客户版PDF URL（不包含审批信息）
+  firstReviewPdfUrl: varchar("firstReviewPdfUrl", { length: 500 }), // 初审版PDF URL（包含初审信息）
+  finalReviewPdfUrl: varchar("finalReviewPdfUrl", { length: 500 }), // 终审版PDF URL（包含初审+终审信息）
 });
 
 /**

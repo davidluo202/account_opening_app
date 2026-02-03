@@ -99,6 +99,13 @@
       "when": 1769998483236,
       "tag": "0013_shocking_bloodaxe",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "5",
+      "when": 1770092457791,
+      "tag": "0014_gifted_psylocke",
+      "breakpoints": true
     }
   ]
 }
