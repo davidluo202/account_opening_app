@@ -349,8 +349,18 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       doc.on('end', () => resolve(Buffer.concat(chunks)));
       doc.on('error', reject);
       
+      // 手動為首頁添加Logo（因為pageAdded事件不會在首頁觸發）
+      let pageNumber = 1;
+      if (fs.existsSync(LOGO_PATH)) {
+        try {
+          doc.image(LOGO_PATH, 50, 20, { width: 120 });
+          console.log('[PDF] Logo added to first page');
+        } catch (error) {
+          console.error('[PDF] Failed to add logo to first page:', error);
+        }
+      }
+      
       // 使用pageAdded事件監聽器在每個新頁面創建時自動添加頁眉和Logo
-      let pageNumber = 0;
       doc.on('pageAdded', () => {
         pageNumber++;
         
