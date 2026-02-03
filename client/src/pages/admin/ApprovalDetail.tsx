@@ -125,6 +125,8 @@ export default function ApprovalDetail() {
       // 終審
       secondApproveMutation.mutate({
         applicationId: Number(id),
+        isProfessionalInvestor: isProfessionalInvestor === "yes",
+        riskProfile: approvedRiskProfile as 'R1' | 'R2' | 'R3' | 'R4' | 'R5',
         comments: '', // 可以後續添加終審意見輸入框
       });
     }

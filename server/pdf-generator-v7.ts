@@ -342,6 +342,8 @@ export interface ApplicationPDFData {
   secondApproval?: {
     approverName?: string | null;
     approverCeNo?: string | null;
+    isProfessionalInvestor?: boolean | null;
+    approvedRiskProfile?: string | null;
     approvalTime?: string | Date | null;
     comments?: string | null;
   };
@@ -693,6 +695,8 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
           if (data.secondApproval.approverCeNo) {
             doc.text(`CE號碼 CE Number: ${data.secondApproval.approverCeNo}`);
           }
+          doc.text(`專業投資者認定 Professional Investor: ${data.secondApproval.isProfessionalInvestor ? '是 Yes' : '否 No'}`);
+          doc.text(`風險評級 Risk Profile: ${data.secondApproval.approvedRiskProfile ? formatRiskTolerance(data.secondApproval.approvedRiskProfile) : 'N/A'}`);
           doc.text(`審批時間 Approval Time: ${formatTimestamp(data.secondApproval.approvalTime)}`);
           if (data.secondApproval.comments) {
             doc.text(`審批意見 Comments: ${data.secondApproval.comments}`);

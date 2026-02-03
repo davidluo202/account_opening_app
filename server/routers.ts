@@ -1224,6 +1224,8 @@ export const appRouter = router({
     secondApprove: protectedProcedure
       .input(z.object({
         applicationId: z.number(),
+        isProfessionalInvestor: z.boolean(),
+        riskProfile: z.string(),
         comments: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -1370,6 +1372,8 @@ export const appRouter = router({
             secondApproval: {
               approverName: approver.employeeName,
               approverCeNo: approver.ceNumber,
+              isProfessionalInvestor: input.isProfessionalInvestor,
+              approvedRiskProfile: input.riskProfile,
               approvalTime: new Date(),
               comments: input.comments,
             },
