@@ -32,8 +32,13 @@ export interface ApplicationPDFData {
   email: string;
   phoneCountryCode: string;
   phoneNumber: string;
+  mobileCountryCode: string;
+  mobileNumber: string;
   faxNo?: string;
   residentialAddress: string;
+  billingAddressType: string;
+  billingAddressOther?: string;
+  preferredLanguage: string;
   
   // Case 5: 职业信息
   employmentStatus: string;
@@ -62,6 +67,23 @@ export interface ApplicationPDFData {
   // Case 9: 税务信息
   taxCountry: string;
   taxIdNumber: string;
+  
+  // Case 10: 风险评估问卷
+  riskQuestionnaire?: {
+    q1_current_investments: string;
+    q2_investment_period: string;
+    q3_price_volatility: string;
+    q4_investment_percentage: string;
+    q5_investment_attitude: string;
+    q6_derivatives_knowledge: string;
+    q7_age_group: string;
+    q8_education_level: string;
+    q9_investment_knowledge_sources: string;
+    q10_liquidity_needs: string;
+    totalScore: number;
+    riskLevel: string;
+    riskDescription: string;
+  };
   
   // Case 10: 文件上传
   uploadedDocuments: Array<{
@@ -152,10 +174,26 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       addField(doc, '學歷 Education Level', translateEducationLevel(data.educationLevel));
       addField(doc, '電子郵箱 Email', data.email);
       addField(doc, '電話號碼 Phone', `${data.phoneCountryCode} ${data.phoneNumber}`);
+      addField(doc, '手機號碼 Mobile', `${data.mobileCountryCode} ${data.mobileNumber}`);
       if (data.faxNo) {
         addField(doc, '傳真號碼 Fax Number', data.faxNo);
       }
       addField(doc, '居住地址 Residential Address', data.residentialAddress);
+      
+      // 賬單通訊地址
+      let billingAddressText = '';
+      if (data.billingAddressType === 'residential') {
+        billingAddressText = '住宅地址 Residential Address';
+      } else if (data.billingAddressType === 'office') {
+        billingAddressText = '辦公地址 Office Address';
+      } else if (data.billingAddressType === 'other' && data.billingAddressOther) {
+        billingAddressText = `其他 Other: ${data.billingAddressOther}`;
+      }
+      addField(doc, '賬單通訊地址 Billing Address', billingAddressText);
+      
+      // 賬單首選語言
+      const preferredLanguageText = data.preferredLanguage === 'chinese' ? '中文 Chinese' : '英文 English';
+      addField(doc, '賬單首選語言 Preferred Language', preferredLanguageText);
       doc.moveDown();
 
       // 第四部分：职业信息
@@ -202,16 +240,121 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       addField(doc, '稅務識別號 Tax ID Number', data.taxIdNumber);
       doc.moveDown();
 
-      // 第九部分：监管声明
-      addSection(doc, '第九部分 Part IX: 監管聲明 Regulatory Declarations');
+      // 第九部分：风险评估问卷
+      if (data.riskQuestionnaire) {
+        addSection(doc, '第九部分 Part IX: 風險評估問卷 Risk Assessment Questionnaire');
+        
+        // 总分和风险等级
+        doc.fontSize(12).font('Helvetica-Bold')
+           .text(`總分 Total Score: ${data.riskQuestionnaire.totalScore}`, { continued: true })
+           .text(`  |  風險等級 Risk Level: ${data.riskQuestionnaire.riskLevel}`);
+        doc.fontSize(10).font('Helvetica')
+           .text(`描述 Description: ${data.riskQuestionnaire.riskDescription}`);
+        doc.moveDown();
+        
+        // Q1
+        const q1Investments = JSON.parse(data.riskQuestionnaire.q1_current_investments || '[]');
+        const q1Text = q1Investments.map((item: string) => {
+          if (item === 'none') return '沒有';
+          if (item === 'deposits') return '定期存款';
+          if (item === 'bonds') return '債券';
+          if (item === 'stocks') return '股票';
+          if (item === 'funds') return '基金';
+          if (item === 'derivatives') return '衔生品';
+          return item;
+        }).join(', ');
+        addField(doc, 'Q1. 目前持有的投資產品', q1Text);
+        
+        // Q2
+        let q2Text = '';
+        if (data.riskQuestionnaire.q2_investment_period === 'less_than_1') q2Text = '少於1年 (10分)';
+        else if (data.riskQuestionnaire.q2_investment_period === '1_to_3') q2Text = '1-3年 (20分)';
+        else if (data.riskQuestionnaire.q2_investment_period === '3_to_5') q2Text = '3-5年 (30分)';
+        else if (data.riskQuestionnaire.q2_investment_period === 'over_5') q2Text = '超過5年 (40分)';
+        addField(doc, 'Q2. 投資期限', q2Text);
+        
+        // Q3
+        let q3Text = '';
+        if (data.riskQuestionnaire.q3_price_volatility === 'low') q3Text = '低 (10分)';
+        else if (data.riskQuestionnaire.q3_price_volatility === 'medium') q3Text = '中 (30分)';
+        else if (data.riskQuestionnaire.q3_price_volatility === 'high') q3Text = '高 (50分)';
+        addField(doc, 'Q3. 價格波動性接受程度', q3Text);
+        
+        // Q4
+        let q4Text = '';
+        if (data.riskQuestionnaire.q4_investment_percentage === 'less_than_25') q4Text = '少於25% (10分)';
+        else if (data.riskQuestionnaire.q4_investment_percentage === '25_to_50') q4Text = '25%-50% (20分)';
+        else if (data.riskQuestionnaire.q4_investment_percentage === '50_to_75') q4Text = '50%-75% (30分)';
+        else if (data.riskQuestionnaire.q4_investment_percentage === 'over_75') q4Text = '超過75% (40分)';
+        addField(doc, 'Q4. 投資比例', q4Text);
+        
+        // Q5
+        let q5Text = '';
+        if (data.riskQuestionnaire.q5_investment_attitude === 'conservative') q5Text = '保守 (10分)';
+        else if (data.riskQuestionnaire.q5_investment_attitude === 'moderate') q5Text = '中度 (30分)';
+        else if (data.riskQuestionnaire.q5_investment_attitude === 'aggressive') q5Text = '積極 (50分)';
+        addField(doc, 'Q5. 投資態度', q5Text);
+        
+        // Q6
+        const q6Knowledge = JSON.parse(data.riskQuestionnaire.q6_derivatives_knowledge || '[]');
+        const q6Text = q6Knowledge.map((item: string) => {
+          if (item === 'no_knowledge') return '沒有知識';
+          if (item === 'options') return '期權';
+          if (item === 'futures') return '期貨';
+          if (item === 'warrants') return '窝輪';
+          if (item === 'cbbc') return '牛熊證';
+          return item;
+        }).join(', ');
+        addField(doc, 'Q6. 衔生品知識', q6Text);
+        
+        // Q7
+        let q7Text = '';
+        if (data.riskQuestionnaire.q7_age_group === '18_to_25') q7Text = '18-25歲 (20分)';
+        else if (data.riskQuestionnaire.q7_age_group === '26_to_35') q7Text = '26-35歲 (30分)';
+        else if (data.riskQuestionnaire.q7_age_group === '36_to_50') q7Text = '36-50歲 (40分)';
+        else if (data.riskQuestionnaire.q7_age_group === '51_to_64') q7Text = '51-64歲 (20分)';
+        else if (data.riskQuestionnaire.q7_age_group === '65_plus') q7Text = '65歲或以上 (10分)';
+        addField(doc, 'Q7. 年齡組別', q7Text);
+        
+        // Q8
+        let q8Text = '';
+        if (data.riskQuestionnaire.q8_education_level === 'primary_or_below') q8Text = 'A. 小學或以下學歷 (10分)';
+        else if (data.riskQuestionnaire.q8_education_level === 'secondary') q8Text = 'B. 中學 (30分)';
+        else if (data.riskQuestionnaire.q8_education_level === 'tertiary_or_above') q8Text = 'C. 大專或以上學歷 (50分)';
+        addField(doc, 'Q8. 教育程度', q8Text);
+        
+        // Q9
+        const q9Sources = JSON.parse(data.riskQuestionnaire.q9_investment_knowledge_sources || '[]');
+        const q9Text = q9Sources.map((item: string) => {
+          if (item === 'no_interest') return '沒有興趣 (0分)';
+          if (item === 'discussion') return '與他人討論 (40分)';
+          if (item === 'reading') return '閱讀 (40分)';
+          if (item === 'research') return '研究 (40分)';
+          return item;
+        }).join(', ');
+        addField(doc, 'Q9. 投資知識來源', q9Text);
+        
+        // Q10
+        let q10Text = '';
+        if (data.riskQuestionnaire.q10_liquidity_needs === 'no_need') q10Text = '沒有需求 (50分)';
+        else if (data.riskQuestionnaire.q10_liquidity_needs === 'up_to_30') q10Text = '最多30% (30分)';
+        else if (data.riskQuestionnaire.q10_liquidity_needs === '30_to_50') q10Text = '30%-50% (20分)';
+        else if (data.riskQuestionnaire.q10_liquidity_needs === 'over_50') q10Text = '超過50% (10分)';
+        addField(doc, 'Q10. 流動資金需求', q10Text);
+        
+        doc.moveDown();
+      }
+
+      // 第十部分：监管声明
+      addSection(doc, '第十部分 Part X: 監管聲明 Regulatory Declarations');
       addField(doc, '政治公眾人物 PEP', data.isPEP ? '是 Yes' : '否 No');
       addField(doc, '美國人士 US Person', data.isUSPerson ? '是 Yes' : '否 No');
       addField(doc, '協議簽署 Agreement Signed', data.agreementSigned ? '已簽署 Signed' : '未簽署 Not Signed');
       addField(doc, '簽署日期 Signature Date', data.signatureDate);
       doc.moveDown();
 
-      // 第十部分：文件上传
-      addSection(doc, '第十部分 Part X: 上傳文件 Uploaded Documents');
+      // 第十一部分：文件上传
+      addSection(doc, '第十一部分 Part XI: 上傳文件 Uploaded Documents');
       data.uploadedDocuments.forEach((doc_item, index) => {
         doc.fontSize(10).text(`${index + 1}. ${doc_item.documentType}`);
       });

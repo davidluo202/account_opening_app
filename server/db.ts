@@ -551,6 +551,7 @@ export async function getCompleteApplicationData(applicationId: number) {
     financial,
     bankAccountsList,
     tax,
+    riskQuestionnaireData,
     documents,
     face,
     regulatory
@@ -564,6 +565,7 @@ export async function getCompleteApplicationData(applicationId: number) {
     getFinancialAndInvestment(applicationId),
     getBankAccounts(applicationId),
     getTaxInfo(applicationId),
+    getRiskQuestionnaire(applicationId),
     getUploadedDocuments(applicationId),
     getFaceVerification(applicationId),
     getRegulatoryDeclarations(applicationId)
@@ -579,6 +581,7 @@ export async function getCompleteApplicationData(applicationId: number) {
     financial,
     bankAccounts: bankAccountsList,
     taxInfo: tax,
+    riskQuestionnaire: riskQuestionnaireData,
     uploadedDocuments: documents,
     face,
     regulatory

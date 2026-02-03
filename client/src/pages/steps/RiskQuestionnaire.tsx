@@ -89,12 +89,37 @@ export default function RiskQuestionnaire() {
     }
   }, [savedData]);
 
+  // 學歷映射函數：將個人詳細信息中的學歷映射到Q8的ABC選項
+  const mapEducationToQ8 = (educationLevel: string): string => {
+    if (educationLevel === "other") {
+      return "primary_or_below"; // A選項：小學或以下學歷（10分）
+    } else if (educationLevel === "high_school") {
+      return "secondary"; // B選項：中學（30分）
+    } else {
+      return "tertiary_or_above"; // C選項：大專或以上學歷（50分）
+    }
+  };
+
+  // 獲取Q8選項的顯示文字
+  const getQ8DisplayText = (q8Value: string): string => {
+    if (q8Value === "primary_or_below") {
+      return "A. 小學或以下學歷";
+    } else if (q8Value === "secondary") {
+      return "B. 中學";
+    } else if (q8Value === "tertiary_or_above") {
+      return "C. 大專或以上學歷";
+    } else {
+      return "未填寫";
+    }
+  };
+
   // 自動填充Q8（學歷）
   useEffect(() => {
     if (personalDetailedData?.educationLevel) {
+      const mappedValue = mapEducationToQ8(personalDetailedData.educationLevel);
       setFormData(prev => ({
         ...prev,
-        q8_education_level: personalDetailedData.educationLevel,
+        q8_education_level: mappedValue,
       }));
     }
   }, [personalDetailedData]);
@@ -538,15 +563,7 @@ export default function RiskQuestionnaire() {
             <div className="space-y-3">
               <Label className="text-base font-medium">Q8. 您的教育程度*</Label>
               <Input
-                value={
-                  formData.q8_education_level === "primary_or_below"
-                    ? "小學或以下"
-                    : formData.q8_education_level === "secondary"
-                    ? "中學"
-                    : formData.q8_education_level === "tertiary_or_above"
-                    ? "大專或以上"
-                    : "未填寫"
-                }
+                value={getQ8DisplayText(formData.q8_education_level)}
                 disabled
                 className="bg-muted"
               />

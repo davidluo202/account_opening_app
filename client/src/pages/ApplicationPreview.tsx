@@ -125,7 +125,7 @@ export default function ApplicationPreview() {
     );
   }
 
-  const { application, accountSelection, basicInfo: personalBasic, detailedInfo: personalDetailed, occupation, employment, financial, bankAccounts, taxInfo, uploadedDocuments: documents, face: faceVerification, regulatory } = completeData;
+  const { application, accountSelection, basicInfo: personalBasic, detailedInfo: personalDetailed, occupation, employment, financial, bankAccounts, taxInfo, riskQuestionnaire, uploadedDocuments: documents, face: faceVerification, regulatory } = completeData;
 
   const handleSaveAndGenerateNumber = () => {
     if (!application?.applicationNumber) {
@@ -366,13 +366,34 @@ export default function ApplicationPreview() {
                   </td>
                 </tr>
                 <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold border-r">手机号码 Mobile</td>
+                  <td className="p-3 border-r">
+                    {personalDetailed?.mobileCountryCode && personalDetailed?.mobileNumber
+                      ? `${personalDetailed.mobileCountryCode} ${personalDetailed.mobileNumber}`
+                      : "-"}
+                  </td>
                   <td className="p-3 bg-gray-50 font-semibold border-r">传真 Fax</td>
-                  <td className="p-3 border-r">{personalDetailed?.faxNo || "-"}</td>
-                  <td className="p-3 bg-gray-50 font-semibold border-r" colSpan={2}></td>
+                  <td className="p-3">{personalDetailed?.faxNo || "-"}</td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">住宅地址 Residential Address</td>
                   <td className="p-3" colSpan={3}>{personalDetailed?.residentialAddress || "-"}</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold border-r">账单通讯地址 Billing Address</td>
+                  <td className="p-3" colSpan={3}>
+                    {personalDetailed?.billingAddressType === "residential" && "住宅地址 (Residential Address)"}
+                    {personalDetailed?.billingAddressType === "office" && "办公地址 (Office Address)"}
+                    {personalDetailed?.billingAddressType === "other" && (
+                      <span>其他 (Other): {personalDetailed?.billingAddressOther || "-"}</span>
+                    )}
+                  </td>
+                </tr>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold border-r">账单首选语言 Preferred Language</td>
+                  <td className="p-3" colSpan={3}>
+                    {personalDetailed?.preferredLanguage === "chinese" ? "中文 (Chinese)" : "英文 (English)"}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -538,6 +559,228 @@ export default function ApplicationPreview() {
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          {/* 风险评估问卷 */}
+          <div className="border-b">
+            <div className="bg-blue-50 p-3 border-b">
+              <h3 className="font-bold flex items-center justify-between">
+                <span>8. 风险评估问卷 Risk Assessment Questionnaire</span>
+                <Button variant="ghost" size="sm" onClick={() => handleEdit(8)}>
+                  编辑
+                </Button>
+              </h3>
+            </div>
+            {riskQuestionnaire ? (
+              <div className="p-6 space-y-6">
+                {/* 总分和风险等级 */}
+                <div className="bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">总分 Total Score</p>
+                      <p className="text-3xl font-bold text-primary">{riskQuestionnaire.totalScore || 0}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">风险等级 Risk Level</p>
+                      <p className="text-2xl font-bold text-primary">{riskQuestionnaire.riskLevel || "-"}</p>
+                    </div>
+                  </div>
+                  {riskQuestionnaire.riskDescription && (
+                    <div className="mt-4 pt-4 border-t border-blue-300">
+                      <p className="text-sm text-gray-700">{riskQuestionnaire.riskDescription}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* 问卷答案详情 */}
+                <table className="w-full min-w-[800px] border">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="p-3 text-left border-r w-1/4">问题 Question</th>
+                      <th className="p-3 text-left border-r w-1/2">答案 Answer</th>
+                      <th className="p-3 text-left w-1/4">得分 Score</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/* Q1 */}
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">Q1. 您目前持有的投资产品</td>
+                      <td className="p-3 border-r">
+                        {riskQuestionnaire.q1_current_investments ? 
+                          JSON.parse(riskQuestionnaire.q1_current_investments).map((item: string) => {
+                            if (item === "none") return "没有";
+                            if (item === "deposits") return "定期存款";
+                            if (item === "bonds") return "债券";
+                            if (item === "stocks") return "股票";
+                            if (item === "funds") return "基金";
+                            if (item === "derivatives") return "衔生品";
+                            return item;
+                          }).join(", ") 
+                          : "-"}
+                      </td>
+                      <td className="p-3">-</td>
+                    </tr>
+                    {/* Q2 */}
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">Q2. 投资期限</td>
+                      <td className="p-3 border-r">
+                        {riskQuestionnaire.q2_investment_period === "less_than_1" && "少於1年 (10分)"}
+                        {riskQuestionnaire.q2_investment_period === "1_to_3" && "1-3年 (20分)"}
+                        {riskQuestionnaire.q2_investment_period === "3_to_5" && "3-5年 (30分)"}
+                        {riskQuestionnaire.q2_investment_period === "over_5" && "超過5年 (40分)"}
+                        {!riskQuestionnaire.q2_investment_period && "-"}
+                      </td>
+                      <td className="p-3">
+                        {riskQuestionnaire.q2_investment_period === "less_than_1" && "10"}
+                        {riskQuestionnaire.q2_investment_period === "1_to_3" && "20"}
+                        {riskQuestionnaire.q2_investment_period === "3_to_5" && "30"}
+                        {riskQuestionnaire.q2_investment_period === "over_5" && "40"}
+                        {!riskQuestionnaire.q2_investment_period && "-"}
+                      </td>
+                    </tr>
+                    {/* Q3 */}
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">Q3. 价格波动性接受程度</td>
+                      <td className="p-3 border-r">
+                        {riskQuestionnaire.q3_price_volatility === "low" && "低 (10分)"}
+                        {riskQuestionnaire.q3_price_volatility === "medium" && "中 (30分)"}
+                        {riskQuestionnaire.q3_price_volatility === "high" && "高 (50分)"}
+                        {!riskQuestionnaire.q3_price_volatility && "-"}
+                      </td>
+                      <td className="p-3">
+                        {riskQuestionnaire.q3_price_volatility === "low" && "10"}
+                        {riskQuestionnaire.q3_price_volatility === "medium" && "30"}
+                        {riskQuestionnaire.q3_price_volatility === "high" && "50"}
+                        {!riskQuestionnaire.q3_price_volatility && "-"}
+                      </td>
+                    </tr>
+                    {/* Q4 */}
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">Q4. 投资比例</td>
+                      <td className="p-3 border-r">
+                        {riskQuestionnaire.q4_investment_percentage === "less_than_25" && "少於25% (10分)"}
+                        {riskQuestionnaire.q4_investment_percentage === "25_to_50" && "25%-50% (20分)"}
+                        {riskQuestionnaire.q4_investment_percentage === "50_to_75" && "50%-75% (30分)"}
+                        {riskQuestionnaire.q4_investment_percentage === "over_75" && "超過75% (40分)"}
+                        {!riskQuestionnaire.q4_investment_percentage && "-"}
+                      </td>
+                      <td className="p-3">
+                        {riskQuestionnaire.q4_investment_percentage === "less_than_25" && "10"}
+                        {riskQuestionnaire.q4_investment_percentage === "25_to_50" && "20"}
+                        {riskQuestionnaire.q4_investment_percentage === "50_to_75" && "30"}
+                        {riskQuestionnaire.q4_investment_percentage === "over_75" && "40"}
+                        {!riskQuestionnaire.q4_investment_percentage && "-"}
+                      </td>
+                    </tr>
+                    {/* Q5 */}
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">Q5. 投资态度</td>
+                      <td className="p-3 border-r">
+                        {riskQuestionnaire.q5_investment_attitude === "conservative" && "保守 (10分)"}
+                        {riskQuestionnaire.q5_investment_attitude === "moderate" && "中度 (30分)"}
+                        {riskQuestionnaire.q5_investment_attitude === "aggressive" && "积极 (50分)"}
+                        {!riskQuestionnaire.q5_investment_attitude && "-"}
+                      </td>
+                      <td className="p-3">
+                        {riskQuestionnaire.q5_investment_attitude === "conservative" && "10"}
+                        {riskQuestionnaire.q5_investment_attitude === "moderate" && "30"}
+                        {riskQuestionnaire.q5_investment_attitude === "aggressive" && "50"}
+                        {!riskQuestionnaire.q5_investment_attitude && "-"}
+                      </td>
+                    </tr>
+                    {/* Q6 */}
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">Q6. 衔生品知识</td>
+                      <td className="p-3 border-r">
+                        {riskQuestionnaire.q6_derivatives_knowledge ? 
+                          JSON.parse(riskQuestionnaire.q6_derivatives_knowledge).map((item: string) => {
+                            if (item === "no_knowledge") return "没有知识";
+                            if (item === "options") return "期权";
+                            if (item === "futures") return "期货";
+                            if (item === "warrants") return "窝轮";
+                            if (item === "cbbc") return "牛熊证";
+                            return item;
+                          }).join(", ") 
+                          : "-"}
+                      </td>
+                      <td className="p-3">-</td>
+                    </tr>
+                    {/* Q7 */}
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">Q7. 年龄组别</td>
+                      <td className="p-3 border-r">
+                        {riskQuestionnaire.q7_age_group === "18_to_25" && "18-25岁 (20分)"}
+                        {riskQuestionnaire.q7_age_group === "26_to_35" && "26-35岁 (30分)"}
+                        {riskQuestionnaire.q7_age_group === "36_to_50" && "36-50岁 (40分)"}
+                        {riskQuestionnaire.q7_age_group === "51_to_64" && "51-64岁 (20分)"}
+                        {riskQuestionnaire.q7_age_group === "65_plus" && "65岁或以上 (10分)"}
+                        {!riskQuestionnaire.q7_age_group && "-"}
+                      </td>
+                      <td className="p-3">
+                        {riskQuestionnaire.q7_age_group === "18_to_25" && "20"}
+                        {riskQuestionnaire.q7_age_group === "26_to_35" && "30"}
+                        {riskQuestionnaire.q7_age_group === "36_to_50" && "40"}
+                        {riskQuestionnaire.q7_age_group === "51_to_64" && "20"}
+                        {riskQuestionnaire.q7_age_group === "65_plus" && "10"}
+                        {!riskQuestionnaire.q7_age_group && "-"}
+                      </td>
+                    </tr>
+                    {/* Q8 */}
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">Q8. 教育程度</td>
+                      <td className="p-3 border-r">
+                        {riskQuestionnaire.q8_education_level === "primary_or_below" && "A. 小学或以下学历 (10分)"}
+                        {riskQuestionnaire.q8_education_level === "secondary" && "B. 中学 (30分)"}
+                        {riskQuestionnaire.q8_education_level === "tertiary_or_above" && "C. 大专或以上学历 (50分)"}
+                        {!riskQuestionnaire.q8_education_level && "-"}
+                      </td>
+                      <td className="p-3">
+                        {riskQuestionnaire.q8_education_level === "primary_or_below" && "10"}
+                        {riskQuestionnaire.q8_education_level === "secondary" && "30"}
+                        {riskQuestionnaire.q8_education_level === "tertiary_or_above" && "50"}
+                        {!riskQuestionnaire.q8_education_level && "-"}
+                      </td>
+                    </tr>
+                    {/* Q9 */}
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">Q9. 投资知识来源</td>
+                      <td className="p-3 border-r">
+                        {riskQuestionnaire.q9_investment_knowledge_sources ? 
+                          JSON.parse(riskQuestionnaire.q9_investment_knowledge_sources).map((item: string) => {
+                            if (item === "no_interest") return "没有兴趣 (0分)";
+                            if (item === "discussion") return "与他人讨论 (40分)";
+                            if (item === "reading") return "阅读 (40分)";
+                            if (item === "research") return "研究 (40分)";
+                            return item;
+                          }).join(", ") 
+                          : "-"}
+                      </td>
+                      <td className="p-3">-</td>
+                    </tr>
+                    {/* Q10 */}
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">Q10. 流动资金需求</td>
+                      <td className="p-3 border-r">
+                        {riskQuestionnaire.q10_liquidity_needs === "no_need" && "没有需求 (50分)"}
+                        {riskQuestionnaire.q10_liquidity_needs === "up_to_30" && "最多30% (30分)"}
+                        {riskQuestionnaire.q10_liquidity_needs === "30_to_50" && "30%-50% (20分)"}
+                        {riskQuestionnaire.q10_liquidity_needs === "over_50" && "超過50% (10分)"}
+                        {!riskQuestionnaire.q10_liquidity_needs && "-"}
+                      </td>
+                      <td className="p-3">
+                        {riskQuestionnaire.q10_liquidity_needs === "no_need" && "50"}
+                        {riskQuestionnaire.q10_liquidity_needs === "up_to_30" && "30"}
+                        {riskQuestionnaire.q10_liquidity_needs === "30_to_50" && "20"}
+                        {riskQuestionnaire.q10_liquidity_needs === "over_50" && "10"}
+                        {!riskQuestionnaire.q10_liquidity_needs && "-"}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="p-6 text-center text-gray-500">未填写风险评估问卷</div>
+            )}
           </div>
 
           {/* 文件上传 */}
