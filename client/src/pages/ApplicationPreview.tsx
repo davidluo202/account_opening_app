@@ -596,182 +596,129 @@ export default function ApplicationPreview() {
                 <table className="w-full min-w-[800px] border">
                   <thead className="bg-gray-100">
                     <tr>
-                      <th className="p-3 text-left border-r w-1/4">问题 Question</th>
-                      <th className="p-3 text-left border-r w-1/2">答案 Answer</th>
-                      <th className="p-3 text-left w-1/4">得分 Score</th>
+                      <th className="p-3 text-left border-r w-1/3">问题 Question</th>
+                      <th className="p-3 text-left w-2/3">答案 Answer</th>
                     </tr>
                   </thead>
                   <tbody>
                     {/* Q1 */}
                     <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">Q1. 您目前持有的投资产品</td>
-                      <td className="p-3 border-r">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">Q1. 現在是否持有以下任何投資產品？</td>
+                      <td className="p-3">
                         {riskQuestionnaire.q1_current_investments ? 
                           JSON.parse(riskQuestionnaire.q1_current_investments).map((item: string) => {
-                            if (item === "none") return "没有";
-                            if (item === "deposits") return "定期存款";
-                            if (item === "bonds") return "债券";
-                            if (item === "stocks") return "股票";
-                            if (item === "funds") return "基金";
-                            if (item === "derivatives") return "衔生品";
+                            if (item === "savings") return "儲蓄/定期儲蓄/存款證/保本產品";
+                            if (item === "bonds") return "债券/證券/單位信託基金/投資相連保險計劃";
+                            if (item === "derivatives") return "期貨/期權/衔生產品/結構性投資產品/掛鉤存款/槓桿式外匯投資";
                             return item;
                           }).join(", ") 
                           : "-"}
                       </td>
-                      <td className="p-3">-</td>
                     </tr>
                     {/* Q2 */}
                     <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">Q2. 投资期限</td>
-                      <td className="p-3 border-r">
-                        {riskQuestionnaire.q2_investment_period === "less_than_1" && "少於1年 (10分)"}
-                        {riskQuestionnaire.q2_investment_period === "1_to_3" && "1-3年 (20分)"}
-                        {riskQuestionnaire.q2_investment_period === "3_to_5" && "3-5年 (30分)"}
-                        {riskQuestionnaire.q2_investment_period === "over_5" && "超過5年 (40分)"}
-                        {!riskQuestionnaire.q2_investment_period && "-"}
-                      </td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">Q2. 預期投資年期是多少？</td>
                       <td className="p-3">
-                        {riskQuestionnaire.q2_investment_period === "less_than_1" && "10"}
-                        {riskQuestionnaire.q2_investment_period === "1_to_3" && "20"}
-                        {riskQuestionnaire.q2_investment_period === "3_to_5" && "30"}
-                        {riskQuestionnaire.q2_investment_period === "over_5" && "40"}
+                        {riskQuestionnaire.q2_investment_period === "less_than_1" && "沒有或少於1年"}
+                        {riskQuestionnaire.q2_investment_period === "1_to_3" && "1-3年"}
+                        {riskQuestionnaire.q2_investment_period === "more_than_3" && "多於3年"}
                         {!riskQuestionnaire.q2_investment_period && "-"}
                       </td>
                     </tr>
                     {/* Q3 */}
                     <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">Q3. 价格波动性接受程度</td>
-                      <td className="p-3 border-r">
-                        {riskQuestionnaire.q3_price_volatility === "low" && "低 (10分)"}
-                        {riskQuestionnaire.q3_price_volatility === "medium" && "中 (30分)"}
-                        {riskQuestionnaire.q3_price_volatility === "high" && "高 (50分)"}
-                        {!riskQuestionnaire.q3_price_volatility && "-"}
-                      </td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">Q3. 可以接受以下哪個年度價格波幅？</td>
                       <td className="p-3">
-                        {riskQuestionnaire.q3_price_volatility === "low" && "10"}
-                        {riskQuestionnaire.q3_price_volatility === "medium" && "30"}
-                        {riskQuestionnaire.q3_price_volatility === "high" && "50"}
+                        {riskQuestionnaire.q3_price_volatility === "10_percent" && "價格波幅介乎-10%至+10%"}
+                        {riskQuestionnaire.q3_price_volatility === "20_percent" && "價格波幅介乎-20%至+20%"}
+                        {riskQuestionnaire.q3_price_volatility === "30_percent" && "價格波幅多於-30%至多於+30%"}
                         {!riskQuestionnaire.q3_price_volatility && "-"}
                       </td>
                     </tr>
                     {/* Q4 */}
                     <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">Q4. 投资比例</td>
-                      <td className="p-3 border-r">
-                        {riskQuestionnaire.q4_investment_percentage === "less_than_25" && "少於25% (10分)"}
-                        {riskQuestionnaire.q4_investment_percentage === "25_to_50" && "25%-50% (20分)"}
-                        {riskQuestionnaire.q4_investment_percentage === "50_to_75" && "50%-75% (30分)"}
-                        {riskQuestionnaire.q4_investment_percentage === "over_75" && "超過75% (40分)"}
-                        {!riskQuestionnaire.q4_investment_percentage && "-"}
-                      </td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">Q4. 在現時資產淫值中(撤除自住物業價值)，有多少個百分比可作投資用途？</td>
                       <td className="p-3">
-                        {riskQuestionnaire.q4_investment_percentage === "less_than_25" && "10"}
-                        {riskQuestionnaire.q4_investment_percentage === "25_to_50" && "20"}
-                        {riskQuestionnaire.q4_investment_percentage === "50_to_75" && "30"}
-                        {riskQuestionnaire.q4_investment_percentage === "over_75" && "40"}
+                        {riskQuestionnaire.q4_investment_percentage === "less_than_10" && "少於10%"}
+                        {riskQuestionnaire.q4_investment_percentage === "10_to_20" && "介乎10%至20%"}
+                        {riskQuestionnaire.q4_investment_percentage === "21_to_30" && "介乎21%至30%"}
+                        {riskQuestionnaire.q4_investment_percentage === "31_to_50" && "介乎31%至50%"}
+                        {riskQuestionnaire.q4_investment_percentage === "more_than_50" && "多於50%"}
                         {!riskQuestionnaire.q4_investment_percentage && "-"}
                       </td>
                     </tr>
                     {/* Q5 */}
                     <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">Q5. 投资态度</td>
-                      <td className="p-3 border-r">
-                        {riskQuestionnaire.q5_investment_attitude === "conservative" && "保守 (10分)"}
-                        {riskQuestionnaire.q5_investment_attitude === "moderate" && "中度 (30分)"}
-                        {riskQuestionnaire.q5_investment_attitude === "aggressive" && "积极 (50分)"}
-                        {!riskQuestionnaire.q5_investment_attitude && "-"}
-                      </td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">Q5. 以下哪一句子最能貼切描述您對金融投資的一般態度？</td>
                       <td className="p-3">
-                        {riskQuestionnaire.q5_investment_attitude === "conservative" && "10"}
-                        {riskQuestionnaire.q5_investment_attitude === "moderate" && "30"}
-                        {riskQuestionnaire.q5_investment_attitude === "aggressive" && "50"}
+                        {riskQuestionnaire.q5_investment_attitude === "no_volatility" && "不能接受任何價格波動，並且對賭取投資回報不感興趣"}
+                        {riskQuestionnaire.q5_investment_attitude === "small_volatility" && "只能接受較小幅度的價格波動，並且僅希望賭取稍高於銀行存款利率的回報"}
+                        {riskQuestionnaire.q5_investment_attitude === "some_volatility" && "可接受若干價格波幅，並希望賭取高於銀行存款利率的回報"}
+                        {riskQuestionnaire.q5_investment_attitude === "large_volatility" && "可接受大幅度的價格波動，並希望賭取與股市指數表現相若的回報"}
+                        {riskQuestionnaire.q5_investment_attitude === "any_volatility" && "可接受任何幅度的價格波動，並希望回報能跑贏股市指數"}
                         {!riskQuestionnaire.q5_investment_attitude && "-"}
                       </td>
                     </tr>
                     {/* Q6 */}
                     <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">Q6. 衔生品知识</td>
-                      <td className="p-3 border-r">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">Q6. 對衔生工具產品的認識</td>
+                      <td className="p-3">
                         {riskQuestionnaire.q6_derivatives_knowledge ? 
                           JSON.parse(riskQuestionnaire.q6_derivatives_knowledge).map((item: string) => {
-                            if (item === "no_knowledge") return "没有知识";
-                            if (item === "options") return "期权";
-                            if (item === "futures") return "期货";
-                            if (item === "warrants") return "窝轮";
-                            if (item === "cbbc") return "牛熊证";
+                            if (item === "training") return "曾接受有關衔生產品的培訓或修讀相關課程";
+                            if (item === "experience") return "現時或過去擁有與衔生產品有關的工作經驗";
+                            if (item === "transactions") return "於過往3年曾執行5次或以上有關衔生產品的交易";
+                            if (item === "no_knowledge") return "沒有衔生工具之認識";
                             return item;
                           }).join(", ") 
                           : "-"}
                       </td>
-                      <td className="p-3">-</td>
                     </tr>
                     {/* Q7 */}
                     <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">Q7. 年龄组别</td>
-                      <td className="p-3 border-r">
-                        {riskQuestionnaire.q7_age_group === "18_to_25" && "18-25岁 (20分)"}
-                        {riskQuestionnaire.q7_age_group === "26_to_35" && "26-35岁 (30分)"}
-                        {riskQuestionnaire.q7_age_group === "36_to_50" && "36-50岁 (40分)"}
-                        {riskQuestionnaire.q7_age_group === "51_to_64" && "51-64岁 (20分)"}
-                        {riskQuestionnaire.q7_age_group === "65_plus" && "65岁或以上 (10分)"}
-                        {!riskQuestionnaire.q7_age_group && "-"}
-                      </td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">Q7. 您屬於以下哪個年齡組別？</td>
                       <td className="p-3">
-                        {riskQuestionnaire.q7_age_group === "18_to_25" && "20"}
-                        {riskQuestionnaire.q7_age_group === "26_to_35" && "30"}
-                        {riskQuestionnaire.q7_age_group === "36_to_50" && "40"}
-                        {riskQuestionnaire.q7_age_group === "51_to_64" && "20"}
-                        {riskQuestionnaire.q7_age_group === "65_plus" && "10"}
+                        {riskQuestionnaire.q7_age_group === "18_to_25" && "介乎18至25歲"}
+                        {riskQuestionnaire.q7_age_group === "26_to_35" && "介乎26至35歲"}
+                        {riskQuestionnaire.q7_age_group === "36_to_50" && "介乎36至50歲"}
+                        {riskQuestionnaire.q7_age_group === "51_to_64" && "介乎51至64歲"}
+                        {riskQuestionnaire.q7_age_group === "65_plus" && "65歲或以上"}
                         {!riskQuestionnaire.q7_age_group && "-"}
                       </td>
                     </tr>
                     {/* Q8 */}
                     <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">Q8. 教育程度</td>
-                      <td className="p-3 border-r">
-                        {riskQuestionnaire.q8_education_level === "primary_or_below" && "A. 小学或以下学历 (10分)"}
-                        {riskQuestionnaire.q8_education_level === "secondary" && "B. 中学 (30分)"}
-                        {riskQuestionnaire.q8_education_level === "tertiary_or_above" && "C. 大专或以上学历 (50分)"}
-                        {!riskQuestionnaire.q8_education_level && "-"}
-                      </td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">Q8. 您的教育程度</td>
                       <td className="p-3">
-                        {riskQuestionnaire.q8_education_level === "primary_or_below" && "10"}
-                        {riskQuestionnaire.q8_education_level === "secondary" && "30"}
-                        {riskQuestionnaire.q8_education_level === "tertiary_or_above" && "50"}
+                        {riskQuestionnaire.q8_education_level === "primary_or_below" && "A. 小學或以下學歷"}
+                        {riskQuestionnaire.q8_education_level === "secondary" && "B. 中學"}
+                        {riskQuestionnaire.q8_education_level === "tertiary_or_above" && "C. 大專或以上學歷"}
                         {!riskQuestionnaire.q8_education_level && "-"}
                       </td>
                     </tr>
                     {/* Q9 */}
                     <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">Q9. 投资知识来源</td>
-                      <td className="p-3 border-r">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">Q9. 您曾經或現時從以下哪些途徑汲取投資知識？</td>
+                      <td className="p-3">
                         {riskQuestionnaire.q9_investment_knowledge_sources ? 
                           JSON.parse(riskQuestionnaire.q9_investment_knowledge_sources).map((item: string) => {
-                            if (item === "no_interest") return "没有兴趣 (0分)";
-                            if (item === "discussion") return "与他人讨论 (40分)";
-                            if (item === "reading") return "阅读 (40分)";
-                            if (item === "research") return "研究 (40分)";
+                            if (item === "no_interest") return "從未汲取及/或沒有興趣汲取任何投資知識";
+                            if (item === "discussion") return "與親友及/或同事討論投資或理財話題";
+                            if (item === "reading") return "閱讀及/或收聽有關投資或財經新聞";
+                            if (item === "research") return "研究投資或財務相關事宜，或參加投資或財務相關課程、論壇、簡報會、研討會或工作坊";
                             return item;
                           }).join(", ") 
                           : "-"}
                       </td>
-                      <td className="p-3">-</td>
                     </tr>
                     {/* Q10 */}
                     <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">Q10. 流动资金需求</td>
-                      <td className="p-3 border-r">
-                        {riskQuestionnaire.q10_liquidity_needs === "no_need" && "没有需求 (50分)"}
-                        {riskQuestionnaire.q10_liquidity_needs === "up_to_30" && "最多30% (30分)"}
-                        {riskQuestionnaire.q10_liquidity_needs === "30_to_50" && "30%-50% (20分)"}
-                        {riskQuestionnaire.q10_liquidity_needs === "over_50" && "超過50% (10分)"}
-                        {!riskQuestionnaire.q10_liquidity_needs && "-"}
-                      </td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">Q10. 您需要將多少投資兌現，以滿足突發事件的流動資金需求？</td>
                       <td className="p-3">
-                        {riskQuestionnaire.q10_liquidity_needs === "no_need" && "50"}
-                        {riskQuestionnaire.q10_liquidity_needs === "up_to_30" && "30"}
-                        {riskQuestionnaire.q10_liquidity_needs === "30_to_50" && "20"}
-                        {riskQuestionnaire.q10_liquidity_needs === "over_50" && "10"}
+                        {riskQuestionnaire.q10_liquidity_needs === "no_need" && "不需要出售任何投資"}
+                        {riskQuestionnaire.q10_liquidity_needs === "up_to_30" && "我會出售不超過30%的投資"}
+                        {riskQuestionnaire.q10_liquidity_needs === "30_to_50" && "我會出售超過30%但不到50%的投資"}
+                        {riskQuestionnaire.q10_liquidity_needs === "over_50" && "我會出售超過50%的投資"}
                         {!riskQuestionnaire.q10_liquidity_needs && "-"}
                       </td>
                     </tr>
@@ -869,15 +816,54 @@ export default function ApplicationPreview() {
                   <td className="p-3 w-1/4">{regulatory?.isUSPerson ? "是" : "否"}</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold border-r">协议签署 Agreement</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">已閱讀開戶協議 Read Agreement</td>
                   <td className="p-3" colSpan={3}>
-                    {regulatory?.agreementAccepted ? (
+                    {regulatory?.agreementRead ? (
                       <span className="text-green-600 flex items-center">
                         <Check className="h-4 w-4 mr-2" />
-                        已同意并签署
+                        是
                       </span>
                     ) : (
-                      <span className="text-gray-500">未签署</span>
+                      <span className="text-gray-500">否</span>
+                    )}
+                  </td>
+                </tr>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold border-r">接受電子交易條例 ETO Consent</td>
+                  <td className="p-3" colSpan={3}>
+                    {regulatory?.electronicSignatureConsent ? (
+                      <span className="text-green-600 flex items-center">
+                        <Check className="h-4 w-4 mr-2" />
+                        已接受
+                      </span>
+                    ) : (
+                      <span className="text-gray-500">未接受</span>
+                    )}
+                  </td>
+                </tr>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold border-r">接受反洗錢和合規監管 AML Consent</td>
+                  <td className="p-3" colSpan={3}>
+                    {regulatory?.amlComplianceConsent ? (
+                      <span className="text-green-600 flex items-center">
+                        <Check className="h-4 w-4 mr-2" />
+                        已接受
+                      </span>
+                    ) : (
+                      <span className="text-gray-500">未接受</span>
+                    )}
+                  </td>
+                </tr>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold border-r">風險評估確認 Risk Assessment Consent</td>
+                  <td className="p-3" colSpan={3}>
+                    {regulatory?.riskAssessmentConsent ? (
+                      <span className="text-green-600 flex items-center">
+                        <Check className="h-4 w-4 mr-2" />
+                        已確認
+                      </span>
+                    ) : (
+                      <span className="text-gray-500">未確認</span>
                     )}
                   </td>
                 </tr>
