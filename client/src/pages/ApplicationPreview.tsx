@@ -573,25 +573,6 @@ export default function ApplicationPreview() {
             </div>
             {riskQuestionnaire ? (
               <div className="p-6 space-y-6">
-                {/* 总分和风险等级 */}
-                <div className="bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-gray-600 mb-1">总分 Total Score</p>
-                      <p className="text-3xl font-bold text-primary">{riskQuestionnaire.totalScore || 0}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600 mb-1">风险等级 Risk Level</p>
-                      <p className="text-2xl font-bold text-primary">{riskQuestionnaire.riskLevel || "-"}</p>
-                    </div>
-                  </div>
-                  {riskQuestionnaire.riskDescription && (
-                    <div className="mt-4 pt-4 border-t border-blue-300">
-                      <p className="text-sm text-gray-700">{riskQuestionnaire.riskDescription}</p>
-                    </div>
-                  )}
-                </div>
-
                 {/* 问卷答案详情 */}
                 <table className="w-full min-w-[800px] border">
                   <thead className="bg-gray-100">

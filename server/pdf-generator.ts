@@ -97,8 +97,13 @@ export interface ApplicationPDFData {
   // Case 12: 监管声明
   isPEP: boolean;
   isUSPerson: boolean;
+  hasReadAgreement: boolean;
+  acceptsETO: boolean;
+  acceptsAML: boolean;
+  acceptsRiskAssessment: boolean;
   agreementSigned: boolean;
   signatureDate: string;
+  signature: string;
 }
 
 /**
@@ -349,8 +354,13 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       addSection(doc, '第十部分 Part X: 監管聲明 Regulatory Declarations');
       addField(doc, '政治公眾人物 PEP', data.isPEP ? '是 Yes' : '否 No');
       addField(doc, '美國人士 US Person', data.isUSPerson ? '是 Yes' : '否 No');
+      addField(doc, '已閱讀開戶協議 Read Opening Agreement', data.hasReadAgreement ? '是 Yes' : '否 No');
+      addField(doc, '接受電子交易條例 Accept ETO', data.acceptsETO ? '是 Yes' : '否 No');
+      addField(doc, '接受反洗錢和合規監管 Accept AML', data.acceptsAML ? '是 Yes' : '否 No');
+      addField(doc, '已閱讀風險評估問卷 Read Risk Assessment', data.acceptsRiskAssessment ? '是 Yes' : '否 No');
       addField(doc, '協議簽署 Agreement Signed', data.agreementSigned ? '已簽署 Signed' : '未簽署 Not Signed');
       addField(doc, '簽署日期 Signature Date', data.signatureDate);
+      addField(doc, '簽名 Signature', data.signature);
       doc.moveDown();
 
       // 第十一部分：文件上传

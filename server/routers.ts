@@ -370,8 +370,13 @@ export const appRouter = router({
           faceVerificationStatus: completeData.face?.verified ? 'verified' : 'pending',
           isPEP: completeData.regulatory?.isPEP || false,
           isUSPerson: completeData.regulatory?.isUSPerson || false,
+          hasReadAgreement: completeData.regulatory?.agreementRead || false,
+          acceptsETO: completeData.regulatory?.electronicSignatureConsent || false,
+          acceptsAML: completeData.regulatory?.amlComplianceConsent || false,
+          acceptsRiskAssessment: completeData.regulatory?.riskAssessmentConsent || false,
           agreementSigned: completeData.regulatory?.agreementAccepted || false,
           signatureDate: completeData.regulatory?.signedAt ? new Date(completeData.regulatory.signedAt).toLocaleDateString() : '',
+          signature: completeData.regulatory?.signatureName || '',
         };
         
         // 生成PDF
