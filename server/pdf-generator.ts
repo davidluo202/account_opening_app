@@ -226,6 +226,15 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       addSection(doc, '第六部分 Part VI: 投資信息 Investment Information');
       addField(doc, '投資目的 Investment Objective', data.investmentObjective);
       addField(doc, '投資經驗 Investment Experience', data.investmentExperience);
+      
+      // 风险承受能力（基于风险评估问卷）
+      if (data.riskQuestionnaire && data.riskQuestionnaire.riskLevel) {
+        addField(doc, '風險承受能力 Risk Tolerance', 
+          `${data.riskQuestionnaire.riskLevel}\n${data.riskQuestionnaire.riskDescription}\n（基於風險評估問卷總分: ${data.riskQuestionnaire.totalScore}）`);
+      } else {
+        addField(doc, '風險承受能力 Risk Tolerance', '未完成風險評估問卷');
+      }
+      
       doc.moveDown();
 
       // 第七部分：银行账户
