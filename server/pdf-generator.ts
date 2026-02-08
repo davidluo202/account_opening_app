@@ -281,32 +281,32 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
         
         // Q2
         let q2Text = '';
-        if (data.riskQuestionnaire.q2_investment_period === 'less_than_1') q2Text = '少於1年 (10分)';
-        else if (data.riskQuestionnaire.q2_investment_period === '1_to_3') q2Text = '1-3年 (20分)';
-        else if (data.riskQuestionnaire.q2_investment_period === '3_to_5') q2Text = '3-5年 (30分)';
-        else if (data.riskQuestionnaire.q2_investment_period === 'over_5') q2Text = '超過5年 (40分)';
+        if (data.riskQuestionnaire.q2_investment_period === 'less_than_1') q2Text = '少於1年';
+        else if (data.riskQuestionnaire.q2_investment_period === '1_to_3') q2Text = '1-3年';
+        else if (data.riskQuestionnaire.q2_investment_period === '3_to_5') q2Text = '3-5年';
+        else if (data.riskQuestionnaire.q2_investment_period === 'over_5') q2Text = '超過5年';
         addField(doc, 'Q2. 投資期限', q2Text);
         
         // Q3
         let q3Text = '';
-        if (data.riskQuestionnaire.q3_price_volatility === 'low') q3Text = '低 (10分)';
-        else if (data.riskQuestionnaire.q3_price_volatility === 'medium') q3Text = '中 (30分)';
-        else if (data.riskQuestionnaire.q3_price_volatility === 'high') q3Text = '高 (50分)';
+        if (data.riskQuestionnaire.q3_price_volatility === 'low') q3Text = '低';
+        else if (data.riskQuestionnaire.q3_price_volatility === 'medium') q3Text = '中';
+        else if (data.riskQuestionnaire.q3_price_volatility === 'high') q3Text = '高';
         addField(doc, 'Q3. 價格波動性接受程度', q3Text);
         
         // Q4
         let q4Text = '';
-        if (data.riskQuestionnaire.q4_investment_percentage === 'less_than_25') q4Text = '少於25% (10分)';
-        else if (data.riskQuestionnaire.q4_investment_percentage === '25_to_50') q4Text = '25%-50% (20分)';
-        else if (data.riskQuestionnaire.q4_investment_percentage === '50_to_75') q4Text = '50%-75% (30分)';
-        else if (data.riskQuestionnaire.q4_investment_percentage === 'over_75') q4Text = '超過75% (40分)';
+        if (data.riskQuestionnaire.q4_investment_percentage === 'less_than_25') q4Text = '少於25%';
+        else if (data.riskQuestionnaire.q4_investment_percentage === '25_to_50') q4Text = '25%-50%';
+        else if (data.riskQuestionnaire.q4_investment_percentage === '50_to_75') q4Text = '50%-75%';
+        else if (data.riskQuestionnaire.q4_investment_percentage === 'over_75') q4Text = '超過75%';
         addField(doc, 'Q4. 投資比例', q4Text);
         
         // Q5
         let q5Text = '';
-        if (data.riskQuestionnaire.q5_investment_attitude === 'conservative') q5Text = '保守 (10分)';
-        else if (data.riskQuestionnaire.q5_investment_attitude === 'moderate') q5Text = '中度 (30分)';
-        else if (data.riskQuestionnaire.q5_investment_attitude === 'aggressive') q5Text = '積極 (50分)';
+        if (data.riskQuestionnaire.q5_investment_attitude === 'conservative') q5Text = '保守';
+        else if (data.riskQuestionnaire.q5_investment_attitude === 'moderate') q5Text = '中度';
+        else if (data.riskQuestionnaire.q5_investment_attitude === 'aggressive') q5Text = '積極';
         addField(doc, 'Q5. 投資態度', q5Text);
         
         // Q6
@@ -323,37 +323,37 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
         
         // Q7
         let q7Text = '';
-        if (data.riskQuestionnaire.q7_age_group === '18_to_25') q7Text = '18-25歲 (20分)';
-        else if (data.riskQuestionnaire.q7_age_group === '26_to_35') q7Text = '26-35歲 (30分)';
-        else if (data.riskQuestionnaire.q7_age_group === '36_to_50') q7Text = '36-50歲 (40分)';
-        else if (data.riskQuestionnaire.q7_age_group === '51_to_64') q7Text = '51-64歲 (20分)';
-        else if (data.riskQuestionnaire.q7_age_group === '65_plus') q7Text = '65歲或以上 (10分)';
+        if (data.riskQuestionnaire.q7_age_group === '18_to_25') q7Text = '18-25歲';
+        else if (data.riskQuestionnaire.q7_age_group === '26_to_35') q7Text = '26-35歲';
+        else if (data.riskQuestionnaire.q7_age_group === '36_to_50') q7Text = '36-50歲';
+        else if (data.riskQuestionnaire.q7_age_group === '51_to_64') q7Text = '51-64歲';
+        else if (data.riskQuestionnaire.q7_age_group === '65_plus') q7Text = '65歲或以上';
         addField(doc, 'Q7. 年齡組別', q7Text);
         
         // Q8
         let q8Text = '';
-        if (data.riskQuestionnaire.q8_education_level === 'primary_or_below') q8Text = 'A. 小學或以下學歷 (10分)';
-        else if (data.riskQuestionnaire.q8_education_level === 'secondary') q8Text = 'B. 中學 (30分)';
-        else if (data.riskQuestionnaire.q8_education_level === 'tertiary_or_above') q8Text = 'C. 大專或以上學歷 (50分)';
+        if (data.riskQuestionnaire.q8_education_level === 'primary_or_below') q8Text = 'A. 小學或以下學歷';
+        else if (data.riskQuestionnaire.q8_education_level === 'secondary') q8Text = 'B. 中學';
+        else if (data.riskQuestionnaire.q8_education_level === 'tertiary_or_above') q8Text = 'C. 大專或以上學歷';
         addField(doc, 'Q8. 教育程度', q8Text);
         
         // Q9
         const q9Sources = JSON.parse(data.riskQuestionnaire.q9_investment_knowledge_sources || '[]');
         const q9Text = q9Sources.map((item: string) => {
-          if (item === 'no_interest') return '沒有興趣 (0分)';
-          if (item === 'discussion') return '與他人討論 (40分)';
-          if (item === 'reading') return '閱讀 (40分)';
-          if (item === 'research') return '研究 (40分)';
+          if (item === 'no_interest') return '沒有興趣';
+          if (item === 'discussion') return '與他人討論';
+          if (item === 'reading') return '閱讀';
+          if (item === 'research') return '研究';
           return item;
         }).join(', ');
         addField(doc, 'Q9. 投資知識來源', q9Text);
         
         // Q10
         let q10Text = '';
-        if (data.riskQuestionnaire.q10_liquidity_needs === 'no_need') q10Text = '沒有需求 (50分)';
-        else if (data.riskQuestionnaire.q10_liquidity_needs === 'up_to_30') q10Text = '最多30% (30分)';
-        else if (data.riskQuestionnaire.q10_liquidity_needs === '30_to_50') q10Text = '30%-50% (20分)';
-        else if (data.riskQuestionnaire.q10_liquidity_needs === 'over_50') q10Text = '超過50% (10分)';
+        if (data.riskQuestionnaire.q10_liquidity_needs === 'no_need') q10Text = '沒有需求';
+        else if (data.riskQuestionnaire.q10_liquidity_needs === 'up_to_30') q10Text = '最多30%';
+        else if (data.riskQuestionnaire.q10_liquidity_needs === '30_to_50') q10Text = '30%-50%';
+        else if (data.riskQuestionnaire.q10_liquidity_needs === 'over_50') q10Text = '超過50%';
         addField(doc, 'Q10. 流動資金需求', q10Text);
         
         doc.moveDown();
