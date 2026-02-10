@@ -16,3 +16,13 @@
 - [ ] 保存checkpoint
 
 [之前的所有任务内容保持不变...]
+
+
+## 清理冗余文件（2026-02-11）
+
+- [x] 删除所有旧版本PDF生成器文件（pdf-generator-v2.ts到pdf-generator-v7.ts）
+- [x] 用pdf-generator-v7.ts替换pdf-generator.ts
+- [x] 更新routers.ts中的所有import语句（pdf-generator-v7改为pdf-generator）
+- [x] 验证TypeScript编译通过
+- [x] 测试PDF生成功能（等待用户发布后测试）
+- [ ] 保存最终checkpoint

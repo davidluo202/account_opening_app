@@ -179,7 +179,7 @@ export const appRouter = router({
         });
         
         // 生成PDF
-        const { generateApplicationPDF } = await import('./pdf-generator-v7');
+        const { generateApplicationPDF } = await import('./pdf-generator');
         let pdfBuffer: Buffer | undefined;
         
         // 获取申请数据用于邮件发送
@@ -447,7 +447,7 @@ export const appRouter = router({
         };
         
         // 生成PDF
-        const { generateApplicationPDF } = await import('./pdf-generator-v7');
+        const { generateApplicationPDF } = await import('./pdf-generator');
         let pdfBuffer: Buffer;
         
         try {
@@ -1320,7 +1320,7 @@ export const appRouter = router({
         // 生成終審版PDF（包含客戶提交、初審和終審的完整信息）
         let finalPdfUrl = '';
         try {
-          const { generateApplicationPDF } = await import('./pdf-generator-v7');
+          const { generateApplicationPDF } = await import('./pdf-generator');
           const pdfData = {
             applicationNumber: applicationData.application?.applicationNumber,
             status: applicationData.application?.status,
