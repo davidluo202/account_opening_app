@@ -1,28 +1,35 @@
 # 客户开户申请系统 - 任务清单
 
-## 紧急修复：PDF生成器版本问题（2026-02-08）
+## PDF样式优化（2026-02-11）
 
-**问题根源**：系统中存在多个PDF生成器版本（pdf-generator.ts 和 pdf-generator-v7.ts），routers.ts中实际使用的是pdf-generator-v7.ts，但之前的所有修改都应用在了pdf-generator.ts上，导致生成的PDF没有包含新增字段。
+**目标**：改进PDF的排版和中文字体显示效果，使生成的PDF更加专业美观。
 
-- [x] 检查pdf-generator-v7.ts的当前状态
-- [x] 将所有新增字段更新到pdf-generator-v7.ts：
-  - [x] 手机号码（mobileCountryCode, mobileNumber）
-  - [x] 账单通讯地址（billingAddressType, billingAddressOther）
-  - [x] 账单首选语言（preferredLanguage）
-  - [x] 完整的风险评估问卷（10个问题的答案，不显示分数）
-  - [x] 风险等级（基于问卷总分计算）
-  - [x] 所有监管声明字段（hasReadAgreement, acceptsETO, acceptsAML, acceptsRiskAssessment）
-- [x] 测试PDF生成功能，确认所有字段都正确显示（等待用户发布后测试）
-- [ ] 保存checkpoint
+**任务清单**：
+- [x] 分析当前PDF生成器的样式问题
+- [x] 优化中文字体显示：
+  - [x] 确保中文字体正确加载和渲染
+  - [x] 调整字体大小层级（主标頂20px、章节标頂14px、正文10px）
+  - [x] 改进中英文混排效果（英文副标题使用灰色）
+- [x] 改进布局和间距：
+  - [x] 优化段落间距和行距
+  - [x] 改进章节分隔（添加分隔线）
+  - [x] 调整页边距（已在代码中设置）
+- [x] 优化表格和列表样式：
+  - [x] 添加表格边框和背景色
+  - [x] 改进银行账户列表显示（添加浅灰色背景框）
+  - [x] 优化风险评估问卷的问答格式（总分和风险等级突出显示）
+- [x] 添加页眉页脚：
+  - [x] 添加公司Logo和名称（页眉Logo + 页脚公司名称）
+  - [x] 添加页码（格式：1 / 10）
+  - [x] 添加申请编号（页脚中间）
+- [x] 测试并保存checkpoint
 
-[之前的所有任务内容保持不变...]
+---
 
+## 已完成的任务
 
-## 清理冗余文件（2026-02-11）
-
-- [x] 删除所有旧版本PDF生成器文件（pdf-generator-v2.ts到pdf-generator-v7.ts）
+### PDF生成器修复和清理（2026-02-11）
 - [x] 用pdf-generator-v7.ts替换pdf-generator.ts
-- [x] 更新routers.ts中的所有import语句（pdf-generator-v7改为pdf-generator）
-- [x] 验证TypeScript编译通过
-- [x] 测试PDF生成功能（等待用户发布后测试）
-- [ ] 保存最终checkpoint
+- [x] 删除所有旧版本PDF生成器文件
+- [x] 更新routers.ts中的import语句
+- [x] 保存checkpoint (version: 5921ffb9)

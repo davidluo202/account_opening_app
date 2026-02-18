@@ -437,8 +437,13 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       }
 
       // 页眉（使用中文字體）
-      doc.fontSize(18).font('NotoSansCJK').text('客户开户申请表（个人/联名）', { align: 'center' });
-      doc.fontSize(14).font('NotoSansCJK').text('Customer Account Opening Form (Ind/Joint)', { align: 'center' });
+      doc.fontSize(20).font('NotoSansCJK').text('客户开户申请表（个人/联名）', { align: 'center' });
+      doc.fontSize(12).font('NotoSansCJK').fillColor('#666666').text('Customer Account Opening Form (Individual/Joint)', { align: 'center' });
+      doc.fillColor('#000000'); // 重置颜色
+      doc.moveDown(0.8);
+      
+      // 添加分隔线
+      doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke('#CCCCCC');
       doc.moveDown(0.5);
 
       // 申请编号和状态
@@ -449,7 +454,8 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
 
       // 账户类型
       if (data.accountSelection) {
-        doc.fontSize(12).font('NotoSansCJK').text('账户类型 Account Type');
+        // 章节标题
+      doc.fontSize(14).font('NotoSansCJK').fillColor('#2c3e50').text('账户类型 Account Type');
         doc.moveDown(0.3);
         doc.fontSize(10).font('NotoSansCJK');
         doc.text(`客户类型 Customer Type: ${translate(data.accountSelection.customerType)}`);
@@ -458,8 +464,10 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       }
 
       // 基本信息
-      doc.fontSize(12).font('NotoSansCJK').text('1. 个人基本信息 Personal Basic Information');
-      doc.moveDown(0.3);
+      // 章节标题
+      doc.fontSize(14).font('NotoSansCJK').fillColor('#2c3e50').text('1. 个人基本信息 Personal Basic Information');
+      doc.fillColor('#000000'); // 重置颜色
+      doc.moveDown(0.5);
       doc.fontSize(10).font('NotoSansCJK');
       
       if (data.basicInfo) {
@@ -474,8 +482,10 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       doc.moveDown(1);
 
       // 详细信息
-      doc.fontSize(12).font('NotoSansCJK').text('2. 个人详细信息 Personal Detailed Information');
-      doc.moveDown(0.3);
+      // 章节标题
+      doc.fontSize(14).font('NotoSansCJK').fillColor('#2c3e50').text('2. 个人详细信息 Personal Detailed Information');
+      doc.fillColor('#000000'); // 重置颜色
+      doc.moveDown(0.5);
       doc.fontSize(10).font('NotoSansCJK');
       
       if (data.detailedInfo) {
@@ -511,7 +521,8 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
 
       // 职业信息
       if (data.occupation) {
-        doc.fontSize(12).font('NotoSansCJK').text('3. 职业信息 Occupation Information');
+        // 章节标题
+      doc.fontSize(14).font('NotoSansCJK').fillColor('#2c3e50').text('3. 职业信息 Occupation Information');
         doc.moveDown(0.3);
         doc.fontSize(10).font('NotoSansCJK');
         
@@ -532,7 +543,8 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
 
       // 财务状况
       if (data.financial) {
-        doc.fontSize(12).font('NotoSansCJK').text('4. 财务状况 Financial Status');
+        // 章节标题
+      doc.fontSize(14).font('NotoSansCJK').fillColor('#2c3e50').text('4. 财务状况 Financial Status');
         doc.moveDown(0.3);
         doc.fontSize(10).font('NotoSansCJK');
         
@@ -546,7 +558,8 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
 
       // 投资信息
       if (data.investment) {
-        doc.fontSize(12).font('NotoSansCJK').text('5. 投资信息 Investment Information');
+        // 章节标题
+      doc.fontSize(14).font('NotoSansCJK').fillColor('#2c3e50').text('5. 投资信息 Investment Information');
         doc.moveDown(0.3);
         doc.fontSize(10).font('NotoSansCJK');
         
@@ -590,25 +603,37 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
 
       // 银行账户
       if (data.bankAccounts && data.bankAccounts.length > 0) {
-        doc.fontSize(12).font('NotoSansCJK').text('6. 银行账户 Bank Account');
-        doc.moveDown(0.3);
+        // 章节标题
+        doc.fontSize(14).font('NotoSansCJK').fillColor('#2c3e50').text('6. 银行账户 Bank Account');
+        doc.fillColor('#000000');
+        doc.moveDown(0.5);
         doc.fontSize(10).font('NotoSansCJK');
         
         data.bankAccounts.forEach((account, index) => {
-          doc.text(`账户 ${index + 1}:`);
-          doc.text(`  银行名称 Bank Name: ${account.bankName || 'N/A'}`);
-          doc.text(`  账户类型 Account Type: ${translate(account.accountType)}`);
-          doc.text(`  币种 Currency: ${account.currency || 'N/A'}`);
-          doc.text(`  账号 Account Number: ${account.accountNumber || 'N/A'}`);
-          doc.text(`  持有人 Holder Name: ${account.accountHolderName || 'N/A'}`);
-          doc.moveDown(0.5);
+          // 添加背景色区域
+          const boxY = doc.y;
+          doc.rect(50, boxY - 5, 495, 85).fillAndStroke('#f8f9fa', '#dee2e6');
+          doc.fillColor('#000000');
+          
+          doc.y = boxY;
+          doc.fontSize(11).font('NotoSansCJK').fillColor('#2c3e50').text(`账户 ${index + 1}`, 60, doc.y);
+          doc.fillColor('#000000');
+          doc.moveDown(0.3);
+          
+          doc.fontSize(10).text(`  银行名称 Bank Name: ${account.bankName || 'N/A'}`, 60);
+          doc.text(`  账户类型 Account Type: ${translate(account.accountType)}`, 60);
+          doc.text(`  币种 Currency: ${account.currency || 'N/A'}`, 60);
+          doc.text(`  账号 Account Number: ${account.accountNumber || 'N/A'}`, 60);
+          doc.text(`  持有人 Holder Name: ${account.accountHolderName || 'N/A'}`, 60);
+          doc.moveDown(0.8);
         });
         doc.moveDown(0.5);
       }
 
       // 税务信息
       if (data.taxInfo) {
-        doc.fontSize(12).font('NotoSansCJK').text('7. 税务信息 Tax Information');
+        // 章节标题
+      doc.fontSize(14).font('NotoSansCJK').fillColor('#2c3e50').text('7. 税务信息 Tax Information');
         doc.moveDown(0.3);
         doc.fontSize(10).font('NotoSansCJK');
         doc.text(`  税务居民身份 Tax Residency: ${data.taxInfo.taxResidency || 'N/A'}`);
@@ -618,16 +643,22 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
 
       // 风险评估问卷
       if (data.riskQuestionnaire) {
-        doc.fontSize(12).font('NotoSansCJK').text('8. 风险评估问卷 Risk Assessment Questionnaire');
-        doc.moveDown(0.3);
+        // 章节标题
+        doc.fontSize(14).font('NotoSansCJK').fillColor('#2c3e50').text('8. 风险评估问卷 Risk Assessment Questionnaire');
+        doc.fillColor('#000000');
+        doc.moveDown(0.5);
         doc.fontSize(10).font('NotoSansCJK');
         
         const rq = data.riskQuestionnaire;
         
-        // 总分和风险等级
-        doc.text(`总分 Total Score: ${rq.totalScore || 0}`);
-        doc.text(`风险等级 Risk Level: ${rq.riskLevel || 'N/A'}`);
-        doc.moveDown(0.5);
+        // 总分和风险等级（突出显示）
+        const scoreBoxY = doc.y;
+        doc.rect(50, scoreBoxY - 5, 495, 35).fillAndStroke('#e8f4f8', '#b3d9e8');
+        doc.fillColor('#000000');
+        doc.y = scoreBoxY;
+        doc.fontSize(11).font('NotoSansCJK').text(`总分 Total Score: ${rq.totalScore || 0}`, 60);
+        doc.text(`风险等级 Risk Level: ${rq.riskLevel || 'N/A'}`, 60);
+        doc.moveDown(0.8);
         
         // Q1
         if (rq.q1_current_investments) {
@@ -742,7 +773,8 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
 
       // 上传文件清单
       if (data.uploadedDocuments && data.uploadedDocuments.length > 0) {
-        doc.fontSize(12).font('NotoSansCJK').text('8. 上传文件清单 Uploaded Documents');
+        // 章节标题
+      doc.fontSize(14).font('NotoSansCJK').fillColor('#2c3e50').text('8. 上传文件清单 Uploaded Documents');
         doc.moveDown(0.3);
         doc.fontSize(10).font('NotoSansCJK');
         
@@ -758,7 +790,8 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       }
 
       // 合規聲明
-      doc.fontSize(12).font('NotoSansCJK').text('客戶合規聲明 Customer Compliance Declarations');
+      // 章节标题
+      doc.fontSize(14).font('NotoSansCJK').fillColor('#2c3e50').text('客戶合規聲明 Customer Compliance Declarations');
       doc.moveDown(0.3);
       doc.fontSize(9).font('NotoSansCJK');
 
@@ -828,7 +861,8 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       doc.moveDown(1);
 
       // 签名声明
-      doc.fontSize(12).font('NotoSansCJK').text('申请人声明及签署 Applicant Declaration and Signature');
+      // 章节标题
+      doc.fontSize(14).font('NotoSansCJK').fillColor('#2c3e50').text('申请人声明及签署 Applicant Declaration and Signature');
       doc.moveDown(0.3);
       doc.fontSize(9).font('NotoSansCJK');
       
@@ -859,7 +893,8 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
 
         // 初審信息
         if (data.firstApproval) {
-          doc.fontSize(12).font('NotoSansCJK').text('初審記錄 First Approval Record');
+          // 章节标题
+      doc.fontSize(14).font('NotoSansCJK').fillColor('#2c3e50').text('初審記錄 First Approval Record');
           doc.moveDown(0.3);
           doc.fontSize(9).font('NotoSansCJK');
           
@@ -876,7 +911,8 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
 
         // 終審信息
         if (data.secondApproval) {
-          doc.fontSize(12).font('NotoSansCJK').text('終審記錄 Final Approval Record');
+          // 章节标题
+      doc.fontSize(14).font('NotoSansCJK').fillColor('#2c3e50').text('終審記錄 Final Approval Record');
           doc.moveDown(0.3);
           doc.fontSize(9).font('NotoSansCJK');
           
@@ -899,17 +935,34 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       for (let i = 0; i < pages.count; i++) {
         doc.switchToPage(i);
         
-        // 添加頁碼到頁腳（使用絕對定位）
-        const pageNumberText = `第${i + 1}页`;
-        const pageNumberWidth = doc.widthOfString(pageNumberText);
-        const pageNumberX = (doc.page.width - pageNumberWidth) / 2;
-        const pageNumberY = doc.page.height - 40;
+        // 添加页脚分隔线
+        const footerY = doc.page.height - 60;
+        doc.moveTo(50, footerY).lineTo(545, footerY).stroke('#CCCCCC');
         
-        doc.fontSize(8).font('NotoSansCJK');
-        doc.text(pageNumberText, pageNumberX, pageNumberY, {
+        // 添加公司信息（左侧）
+        doc.fontSize(7).font('NotoSansCJK').fillColor('#666666');
+        doc.text('调港金融 CM Financial', 50, footerY + 8, {
           lineBreak: false,
-          continued: false,
         });
+        
+        // 添加申请编号（中间）
+        const appNumberText = `${data.applicationNumber || 'N/A'}`;
+        const appNumberWidth = doc.widthOfString(appNumberText);
+        const appNumberX = (doc.page.width - appNumberWidth) / 2;
+        doc.text(appNumberText, appNumberX, footerY + 8, {
+          lineBreak: false,
+        });
+        
+        // 添加页码（右侧）
+        const pageNumberText = `${i + 1} / ${pages.count}`;
+        const pageNumberWidth = doc.widthOfString(pageNumberText);
+        const pageNumberX = doc.page.width - 50 - pageNumberWidth;
+        doc.text(pageNumberText, pageNumberX, footerY + 8, {
+          lineBreak: false,
+        });
+        
+        // 重置颜色
+        doc.fillColor('#000000');
       }
 
       doc.end();
