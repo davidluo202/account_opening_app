@@ -242,7 +242,7 @@ export default function PersonalDetailedInfo() {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "請輸入有效的電子郵箱地址";
     } else if (!emailVerified) {
-      newErrors.email = "請先驗證郵箱地址";
+      newErrors.email = "請點擊右側的【驗證】按鈕，完成郵箱驗證後方可繼續";
     }
 
     // 手机号码必填
@@ -474,9 +474,10 @@ export default function PersonalDetailedInfo() {
 
         {/* 電子郵箱 */}
         <div className="space-y-2">
-          <Label htmlFor="email">
-            電子郵箱 / Email <span className="text-destructive">*</span>
-          </Label>
+            <Label htmlFor="email">
+              電子郵箱 / Email <span className="text-destructive">*</span>
+              {!emailVerified && <span className="text-sm text-muted-foreground ml-2">（需驗證）</span>}
+            </Label>
           <div className="flex gap-2">
             <Input
               id="email"
