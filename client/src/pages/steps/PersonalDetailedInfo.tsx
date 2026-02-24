@@ -144,10 +144,17 @@ export default function PersonalDetailedInfo() {
 
   const sendVerificationCodeMutation = trpc.auth.sendVerificationCode.useMutation({
     onSuccess: () => {
-      toast.success("验证码已发送至您的邮箱");
+      toast.success("验证码已发送至您的邮箱，请查收！", {
+        duration: 5000, // 显示5秒
+        description: "请在下方输入框中输入6位数字验证码"
+      });
       setShowVerificationInput(true);
       setCountdown(90); // 90秒倒计时
       setIsSendingCode(false);
+      // 自动聚焦到验证码输入框
+      setTimeout(() => {
+        document.getElementById('verificationCode')?.focus();
+      }, 100);
     },
     onError: (error) => {
       toast.error(`发送失败: ${error.message}`);
@@ -532,6 +539,8 @@ export default function PersonalDetailedInfo() {
                   value={verificationCode}
                   onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ''))}
                   placeholder="請輸入6位數字驗證碼"
+                  className="border-2 border-primary focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                  autoFocus
                 />
                 <button
                   type="button"
