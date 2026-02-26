@@ -1,0 +1,2 @@
+ALTER TABLE `applications` MODIFY COLUMN `approvedRiskProfile` enum('Lowest','Low','Low to Medium','Medium','Medium to High','High');--> statement-breakpoint
+ALTER TABLE `applications` MODIFY COLUMN `firstApprovalRiskProfile` enum('Lowest','Low','Low to Medium','Medium','Medium to High','High');

@@ -61,7 +61,7 @@ export const applications = mysqlTable("applications", {
   signatureMethod: mysqlEnum("signatureMethod", ["typed", "iamsmart"]), // 签署方式：输入姓名或iAM Smart
   // 审批相关字段
   isProfessionalInvestor: boolean("isProfessionalInvestor").default(false), // 是否为专业投资者（PI）
-  approvedRiskProfile: mysqlEnum("approvedRiskProfile", ["R1", "R2", "R3", "R4", "R5"]), // 审批人员评估的风险等级：R1(低风险) R2(中低风险) R3(中风险) R4(中高风险) R5(高风险)
+  approvedRiskProfile: mysqlEnum("approvedRiskProfile", ["Lowest", "Low", "Low to Medium", "Medium", "Medium to High", "High"]), // 审批人员评估的风险等级（新6级评分系统）
   // 第一级审批字段
   firstApprovalStatus: mysqlEnum("firstApprovalStatus", ["pending", "approved", "rejected"]).default("pending"), // 第一级审批状态
   firstApprovalBy: varchar("firstApprovalBy", { length: 200 }), // 第一级审批人员ID
@@ -70,7 +70,7 @@ export const applications = mysqlTable("applications", {
   firstApprovalAt: timestamp("firstApprovalAt"), // 第一级审批时间
   firstApprovalComments: text("firstApprovalComments"), // 第一级审批意见
   firstApprovalIsProfessionalInvestor: boolean("firstApprovalIsProfessionalInvestor"), // 初审人员认定的PI状态
-  firstApprovalRiskProfile: mysqlEnum("firstApprovalRiskProfile", ["R1", "R2", "R3", "R4", "R5"]), // 初审人员评估的风险等级
+  firstApprovalRiskProfile: mysqlEnum("firstApprovalRiskProfile", ["Lowest", "Low", "Low to Medium", "Medium", "Medium to High", "High"]), // 初审人员评估的风险等级（新6级评分系统）
   // 第二级审批字段（合规部终审）
   secondApprovalStatus: mysqlEnum("secondApprovalStatus", ["pending", "approved", "rejected"]).default("pending"), // 第二级审批状态
   secondApprovalBy: varchar("secondApprovalBy", { length: 200 }), // 第二级审批人员ID

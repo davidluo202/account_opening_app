@@ -92,4 +92,36 @@
   - [x] 预览PDF：正确显示10个问题+答案+总分540+风险等级Medium to High
   - [x] 提交后PDF：正确显示10个问题+答案+总分540+风险等级Medium to High
   - [x] 签名：正确显示客户英文名"Xintao Luo"（不再显示NA）
+- [x] 保存checkpoint并提交给用户 (version: c0a367d5)
+
+
+## 修复审批系统审查页面与客户预览页面不一致问题（2026-02-26）
+
+**问题描述**：
+客户服务同事进入审批系统对客户提交的申请记录打开审查时，审查页面与客户的预览页面不一致，缺少多个要素。同时需要添加初审人员意见字段，修复风险等级显示（不再使用R1-R6，而是使用新的6级评分系统），并确保所有邮件中的PDF文件与审批页面信息一致。
+
+**任务清单**：
+- - [x] 分析审批系统当前状态：
+  - [x] 识别主要问题：风险等级使用旧的R1-R5系统，缺少审批意见字段
+  - [x] 检查PDF生成器：已定义审批信息字段，但formatRiskTolerance函数需要更新
+  - [x] 检查审批邮件中的PDF文件生成逻辑
+- [x] 修复初审和终审页面显示问题：
+  - [x] 添加审批意见输入框（approvalComments状态变量）
+  - [x] 修复风险等级选项（使用新6级评分系统）
+  - [x] 更新数据库schema（approvedRiskProfile字段类型）
+  - [x] 迁移现有数据（R1-R5 -> Lowest/Low/Low to Medium/Medium/Medium to High/High）
+  - [x] 修复前端审批表单的风险等级选项
+  - [x] 修夏后端审批API的类型定义（firstApprove和secondApprove）
+  - [x] 修夏db.ts中的updateApplicationApprovalInfo函数
+  - [x] 修夏PDF生成器中的formatRiskTolerance函数
+- [ ] 修复审批邮件中的PDF文件：
+  - [ ] 初审通过后发送给compliance的PDF：包含初审人员的审批信息
+  - [ ] 终审通过后发送给operation的PDF：包含初审和终审人员的审批信息
+  - [ ] 拒绝/退回后发送给customer-services的PDF：包含审批人员的意见和理由
+  - [ ] 确保PDF中的风险等级使用新的6级评分系统
+- [ ] 完整测试：
+  - [ ] 创建新申请并提交
+  - [ ] 进行初审操作，检查初审页面显示和邮件PDF
+  - [ ] 进行终审操作，检查终审页面显示和邮件PDF
+  - [ ] 测试拒绝/退回操作，检查邮件PDF
 - [ ] 保存checkpoint并提交给用户

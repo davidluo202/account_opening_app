@@ -134,6 +134,20 @@
       "when": 1770113738279,
       "tag": "0018_shocking_dagger",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "5",
+      "when": 1772083405993,
+      "tag": "0019_fresh_karnak",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "5",
+      "when": 1772083560430,
+      "tag": "0020_dear_impossible_man",
+      "breakpoints": true
     }
   ]
 }

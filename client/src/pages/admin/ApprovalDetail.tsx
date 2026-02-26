@@ -134,6 +134,7 @@ export default function ApprovalDetail() {
   const [showRejectDialog, setShowRejectDialog] = useState(false);
   const [showReturnDialog, setShowReturnDialog] = useState(false);
   const [showRiskWarningDialog, setShowRiskWarningDialog] = useState(false);
+  const [approvalComments, setApprovalComments] = useState("");
 
   const { data: applicationData, isLoading } = trpc.approval.getApplicationDetail.useQuery(
     { id: Number(id) },
@@ -228,19 +229,20 @@ export default function ApprovalDetail() {
     const isFirstApproval = !applicationData?.application?.firstApprovalStatus || applicationData.application.firstApprovalStatus !== 'approved';
     
     if (isFirstApproval) {
-      // 初審
+      // 初审
       firstApproveMutation.mutate({
         applicationId: Number(id),
         isProfessionalInvestor: isProfessionalInvestor === "yes",
-        approvedRiskProfile: approvedRiskProfile as 'R1' | 'R2' | 'R3' | 'R4' | 'R5',
+        approvedRiskProfile: approvedRiskProfile as 'Lowest' | 'Low' | 'Low to Medium' | 'Medium' | 'Medium to High' | 'High',
+        comments: approvalComments,
       });
     } else {
-      // 終審
+      // 終审
       secondApproveMutation.mutate({
         applicationId: Number(id),
         isProfessionalInvestor: isProfessionalInvestor === "yes",
-        riskProfile: approvedRiskProfile as 'R1' | 'R2' | 'R3' | 'R4' | 'R5',
-        comments: '', // 可以後續添加終審意見輸入框
+        riskProfile: approvedRiskProfile as 'Lowest' | 'Low' | 'Low to Medium' | 'Medium' | 'Medium to High' | 'High',
+        comments: approvalComments,
       });
     }
   };
@@ -1055,11 +1057,12 @@ export default function ApprovalDetail() {
                   <SelectValue placeholder="请选择风险等级" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="R1">R1 - 低风险（本金安全的不稳定性很低，基金净值会有轻度波动）</SelectItem>
-                  <SelectItem value="R2">R2 - 中低风险（本金安全的不稳定性相对较低，基金净值会有较低波动）</SelectItem>
-                  <SelectItem value="R3">R3 - 中风险（本金安全具有一定的不稳定性，基金净值会有适度波动）</SelectItem>
-                  <SelectItem value="R4">R4 - 中高风险（本金安全的不稳定性相对较高，基金净值会有较高波动）</SelectItem>
-                  <SelectItem value="R5">R5 - 高风险（本金安全的不稳定性很高，基金净值会有高度波动）</SelectItem>
+                  <SelectItem value="Lowest">Lowest / 最低风险（分数范围：0-200）</SelectItem>
+                  <SelectItem value="Low">Low / 低风险（分数范围：201-400）</SelectItem>
+                  <SelectItem value="Low to Medium">Low to Medium / 低至中等风险（分数范围：401-500）</SelectItem>
+                  <SelectItem value="Medium">Medium / 中等风险（分数范围：501-600）</SelectItem>
+                  <SelectItem value="Medium to High">Medium to High / 中等至高风险（分数范围：601-700）</SelectItem>
+                  <SelectItem value="High">High / 高风险（分数范围：701+）</SelectItem>
                 </SelectContent>
               </Select>
               
@@ -1080,6 +1083,17 @@ export default function ApprovalDetail() {
                   </div>
                 </div>
               )}
+            </div>
+
+            {/* 审批意见 */}
+            <div className="space-y-2">
+              <Label>审批意见（可选）</Label>
+              <textarea
+                value={approvalComments}
+                onChange={(e) => setApprovalComments(e.target.value)}
+                placeholder="请输入审批意见..."
+                className="w-full min-h-[100px] p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
             </div>
 
             {/* Action Buttons */}

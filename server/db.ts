@@ -802,7 +802,7 @@ export async function updateApplicationStatus(applicationId: number, status: 'su
  */
 export async function updateApplicationApprovalInfo(
   applicationId: number,
-  info: { isProfessionalInvestor: boolean; approvedRiskProfile: 'R1' | 'R2' | 'R3' | 'R4' | 'R5' }
+  info: { isProfessionalInvestor: boolean; approvedRiskProfile: 'Lowest' | 'Low' | 'Low to Medium' | 'Medium' | 'Medium to High' | 'High' }
 ) {
   const db = await getDb();
   if (!db) return null;
@@ -1102,7 +1102,7 @@ export async function saveRiskQuestionnaire(data: {
       riskLevel: data.riskLevel,
       riskDescription: data.riskDescription,
     });
-    return { success: true, id: Number(result.insertId) };
+    return { success: true, id: Number((result as any).insertId) };
   }
 }
 

@@ -1237,7 +1237,7 @@ export const appRouter = router({
       .input(z.object({
         applicationId: z.number(),
         isProfessionalInvestor: z.boolean(),
-        approvedRiskProfile: z.enum(['R1', 'R2', 'R3', 'R4', 'R5']),
+        approvedRiskProfile: z.enum(['Lowest', 'Low', 'Low to Medium', 'Medium', 'Medium to High', 'High']),
         comments: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -1309,7 +1309,7 @@ export const appRouter = router({
       .input(z.object({
         applicationId: z.number(),
         isProfessionalInvestor: z.boolean(),
-        riskProfile: z.string(),
+        riskProfile: z.enum(['Lowest', 'Low', 'Low to Medium', 'Medium', 'Medium to High', 'High']),
         comments: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {

@@ -244,12 +244,19 @@ function formatRiskTolerance(riskLevel: string): string {
     'balanced': '均衡型 Balanced - 中等到中高风险，平衡增值与稳定',
     'aggressive': '积极型 Aggressive - 高风险，追求高回报',
     'speculative': '激进型 Speculative - 极高风险，接受重大波动',
-    // R1-R5風險等級（與translations.ts保持一致）
-    'R1': 'R1 - 低風險：在一定時間內，本金安全具有較高的穩定性，基金淨值波動較小，或造成較小的本金虧損',
-    'R2': 'R2 - 中低風險：在一定時間內，本金安全具有較高的穩定性，基金淨值會有較小波動，或造成較小的本金虧損',
-    'R3': 'R3 - 中風險：在一定時間內，本金安全具有一定的不穩定性，基金淨值會有適度波動，或造成一定的本金虧損',
-    'R4': 'R4 - 中高風險：在一定時間內，本金安全具有較大的不穩定性，基金淨值會有較大波動，或造成較大的本金虧損',
-    'R5': 'R5 - 高風險：在一定時間內，本金安全具有很大的不穩定性，基金淨值會有很大波動，或造成很大的本金虧損'
+    // 新6级风险评分系统
+    'Lowest': 'Lowest / 最低风险（分数范围：0-200）',
+    'Low': 'Low / 低风险（分数范围：201-400）',
+    'Low to Medium': 'Low to Medium / 低至中等风险（分数范围：401-500）',
+    'Medium': 'Medium / 中等风险（分数范围：501-600）',
+    'Medium to High': 'Medium to High / 中等至高风险（分数范围：601-700）',
+    'High': 'High / 高风险（分数范围：701+）',
+    // 旧的R1-R5风险等级（兼容旧数据）
+    'R1': 'Low / 低风险',
+    'R2': 'Low to Medium / 低至中等风险',
+    'R3': 'Medium / 中等风险',
+    'R4': 'Medium to High / 中等至高风险',
+    'R5': 'High / 高风险'
   };
   
   return riskDescriptions[riskLevel] || riskLevel;
