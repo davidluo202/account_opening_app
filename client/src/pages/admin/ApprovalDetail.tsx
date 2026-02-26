@@ -1066,11 +1066,11 @@ export default function ApprovalDetail() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">初審PI認定：</span>
-                    <span className="font-medium">{applicationData.application.isProfessionalInvestor ? '是' : '否'}</span>
+                    <span className="font-medium">{applicationData.application.firstApprovalIsProfessionalInvestor ? '是' : '否'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">初審風險評級：</span>
-                    <span className="font-medium">{getRiskToleranceDescription(applicationData.application.approvedRiskProfile || '')}</span>
+                    <span className="font-medium">{applicationData.application.firstApprovalRiskProfile || 'N/A'}</span>
                   </div>
                   {applicationData.application.firstApprovalComments && (
                     <div className="pt-2 mt-2 border-t border-blue-200">

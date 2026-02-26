@@ -154,3 +154,22 @@
   - [x] PDF生成器已支持审批记录显示（pdf-generator.ts第906-948行）
   - [ ] 确保firstApprove/secondApprove API传递审批信息到PDF生成器（待实现）
 - [ ] 完整测试并创建checkpoint
+
+
+## 修复终审页面显示的初审人员审批信息错误（2026-02-26）
+
+**问题描述**：
+终审页面显示的初审人员审批信息不正确：
+- 初审PI认定显示“否”（实际初审人员选了“是”）
+- 初审风险评级显示“N/A”（应该显示初审人员选择的实际风险等级）
+
+**任务清单**：
+- [x] 检查终审页面的初审信息读取逻辑：
+  - [x] 查看ApprovalDetail.tsx中显示初审PI认定的代码（第1069行）
+  - [x] 查看ApprovalDetail.tsx中显示初审风险评级的代码（第1073行）
+  - [x] 检查后端API返回的初审信息字段名称（firstApprovalIsProfessionalInvestor和firstApprovalRiskProfile）
+- [x] 修复初审信息的字段映射和显示逻辑：
+  - [x] 修复PI认定显示错误：将`isProfessionalInvestor`改为`firstApprovalIsProfessionalInvestor`
+  - [x] 修复风险评级显示错误：将`approvedRiskProfile`改为`firstApprovalRiskProfile`
+  - [x] 验证后端逻辑正确保存了初审字段（db.ts中updateFirstApproval函数）
+- [ ] 测试并创建checkpoint
