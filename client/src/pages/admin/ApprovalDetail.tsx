@@ -1126,11 +1126,12 @@ export default function ApprovalDetail() {
                     <SelectValue placeholder="請選擇風險等級" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="R1">R1 - 低風險（本金安全的不穩定性很低，基金淨值會有輕度波動）</SelectItem>
-                    <SelectItem value="R2">R2 - 中低風險（本金安全的不穩定性相對較低，基金淨值會有較低波動）</SelectItem>
-                    <SelectItem value="R3">R3 - 中風險（本金安全具有一定的不穩定性，基金淨值會有適度波動）</SelectItem>
-                    <SelectItem value="R4">R4 - 中高風險（本金安全的不穩定性相對較高，基金淨值會有較高波動）</SelectItem>
-                    <SelectItem value="R5">R5 - 高風險（本金安全的不穩定性很高，基金淨值會有高度波動）</SelectItem>
+                    <SelectItem value="Lowest">Lowest / 最低风险（分数范围：0-200）</SelectItem>
+                    <SelectItem value="Low">Low / 低风险（分数范围：201-400）</SelectItem>
+                    <SelectItem value="Low to Medium">Low to Medium / 低至中等风险（分数范围：401-500）</SelectItem>
+                    <SelectItem value="Medium">Medium / 中等风险（分数范围：501-600）</SelectItem>
+                    <SelectItem value="Medium to High">Medium to High / 中等至高风险（分数范围：601-700）</SelectItem>
+                    <SelectItem value="High">High / 高风险（分数范围：701+）</SelectItem>
                   </SelectContent>
                 </Select>
                 

@@ -172,4 +172,16 @@
   - [x] 修复PI认定显示错误：将`isProfessionalInvestor`改为`firstApprovalIsProfessionalInvestor`
   - [x] 修复风险评级显示错误：将`approvedRiskProfile`改为`firstApprovalRiskProfile`
   - [x] 验证后端逻辑正确保存了初审字段（db.ts中updateFirstApproval函数）
+- [x] 测试并创建checkpoint (version: 5f923f1d)
+
+
+## 修复初审页面风险评级选择框仍使用R1-R5问题（2026-02-26）
+
+**问题描述**：
+初审页面的风险评级选择框还在使用R1-R5，需要改为新的6级评分系统（Lowest/Low/Low to Medium/Medium/Medium to High/High）。终审页面已经是正确的。
+
+**任务清单**：
+- [x] 查找初审页面的风险评级选择框代码位置（ApprovalDetail.tsx第1129-1133行）
+- [x] 将R1-R5选项改为新的6级评分系统选项
+- [x] 验证终审页面已经使用新的6级评分系统（第1219-1224行）
 - [ ] 测试并创建checkpoint
