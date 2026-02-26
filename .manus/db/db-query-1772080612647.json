@@ -1,0 +1,40 @@
+{
+  "query": "SELECT r.applicationId, a.applicationNumber, a.status FROM risk_questionnaires r LEFT JOIN applications a ON r.applicationId = a.id WHERE r.totalScore IS NOT NULL ORDER BY r.applicationId DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2uixhWXF4JwUSvL.6b97ca2f8816 --database gu8TL5Ga5RUHfjV8rgaSaT --execute SELECT r.applicationId, a.applicationNumber, a.status FROM risk_questionnaires r LEFT JOIN applications a ON r.applicationId = a.id WHERE r.totalScore IS NOT NULL ORDER BY r.applicationId DESC;",
+  "rows": [
+    {
+      "applicationId": "480001",
+      "applicationNumber": "CMF-ACAPP-260226-001",
+      "status": "draft"
+    },
+    {
+      "applicationId": "450001",
+      "applicationNumber": "CMF-ACAPP-260208-001",
+      "status": "draft"
+    },
+    {
+      "applicationId": "420001",
+      "applicationNumber": "CMF-ACAPP-260205-001",
+      "status": "draft"
+    },
+    {
+      "applicationId": "390003",
+      "applicationNumber": "NULL",
+      "status": "draft"
+    },
+    {
+      "applicationId": "390002",
+      "applicationNumber": "CMF-ACAPP-260206-001",
+      "status": "draft"
+    },
+    {
+      "applicationId": "360001",
+      "applicationNumber": "NULL",
+      "status": "draft"
+    }
+  ],
+  "messages": [],
+  "stdout": "applicationId\tapplicationNumber\tstatus\n480001\tCMF-ACAPP-260226-001\tdraft\n450001\tCMF-ACAPP-260208-001\tdraft\n420001\tCMF-ACAPP-260205-001\tdraft\n390003\tNULL\tdraft\n390002\tCMF-ACAPP-260206-001\tdraft\n360001\tNULL\tdraft\n",
+  "stderr": "",
+  "execution_time_ms": 54
+}

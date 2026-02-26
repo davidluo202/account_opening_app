@@ -55,3 +55,41 @@
 - [x] 删除所有旧版本PDF生成器文件
 - [x] 更新routers.ts中的import语句
 - [x] 保存checkpoint (version: 5921ffb9)
+
+
+## 紧急修复：PDF文件与预览页面不一致问题（2026-02-26）
+
+**问题描述**：
+用户报告PDF文件中缺少关键信息，与预览页面不一致：
+1. 风险评估部分：PDF中显示"R1 - 低风险"等旧版评级，但应该显示完整的10个问题+用户答案+总分+风险等级（不使用R1-R6评级）
+2. 客户签名部分：PDF中显示"NA"，但应该显示客户的英文名（与预览页面一致）
+
+**修复任务**：
+- [x] 下载实际PDF文件，分析具体缺失的内容
+- [x] 对比ApplicationPreview.tsx和pdf-generator.ts，找出数据映射问题：
+  - [x] 签名字段名不匹配：routers.ts使用`signature`，PDF生成器期望`signatureName`
+  - [x] 签名时间戳字段缺失：已添加`signatureTimestamp`字段
+  - [x] 风险评估问卷数据传递逻辑已存在（routers.ts第354-368行）
+  - [x] 所有字段已改为嵌套结构，与routers.ts和pdf-generator.ts完全一致
+- [x] 修复风险评估问卷显示：
+  - [x] 显示所有10个问题的完整文本
+  - [x] 显示用户选择的答案（不显示分数）
+  - [x] 显示总分
+  - [x] 显示风险等级（基于总分计算，不使用R1-R6）
+- [x] 修复客户签名显示：
+  - [x] 使用客户的英文名（englishName）
+  - [x] 不显示"NA"
+- [x] 本地完整测试：
+  - [x] 创建新申请并填写所有字段（使用已有草稿申请CMF-ACAPP-260206-001）
+  - [x] 下载PDF文件（预览PDF和提交后S3 PDF）
+  - [x] 逐项对比PDF与预览页面，确保完全一致
+- [x] 修复代码位置：
+  - [x] server/routers.ts第190-204行：在submit API中添加riskQuestionnaire数据
+  - [x] server/routers.ts第436-467行：在generatePreviewPDF API中添加riskQuestionnaire数据
+  - [x] server/pdf-generator.ts第599-600行：移除使用旧的inv.riskTolerance字段
+  - [x] server/pdf-generator.ts第883行：修复签名显示逻辑
+- [x] 验证结果：
+  - [x] 预览PDF：正确显示10个问题+答案+总分540+风险等级Medium to High
+  - [x] 提交后PDF：正确显示10个问题+答案+总分540+风险等级Medium to High
+  - [x] 签名：正确显示客户英文名"Xintao Luo"（不再显示NA）
+- [ ] 保存checkpoint并提交给用户

@@ -1,0 +1,8 @@
+{
+  "query": "\nSELECT a.id, a.application_number, a.status, r.total_score, r.risk_level\nFROM applications a\nLEFT JOIN risk_questionnaires r ON a.id = r.application_id\nWHERE r.total_score IS NOT NULL\nAND a.status = 'draft'\nLIMIT 5;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2uixhWXF4JwUSvL.6b97ca2f8816 --database gu8TL5Ga5RUHfjV8rgaSaT --execute \nSELECT a.id, a.application_number, a.status, r.total_score, r.risk_level\nFROM applications a\nLEFT JOIN risk_questionnaires r ON a.id = r.application_id\nWHERE r.total_score IS NOT NULL\nAND a.status = 'draft'\nLIMIT 5;\n",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 2: Unknown column 'r.application_id' in 'on clause'"
+  ]
+}

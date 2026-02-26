@@ -595,8 +595,17 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
         doc.text(`投资目的 Investment Objective: ${objectives}`);
         doc.text(`投资经验 Investment Experience: ${formatInvestmentExperience(inv.investmentExperience)}`);
         
-        // 风险等级详细描述
-        const riskToleranceText = inv.riskTolerance ? formatRiskTolerance(inv.riskTolerance) : 'N/A';
+        // 风险等级详细描述 - 从风险评估问卷获取
+        let riskToleranceText = 'N/A';
+        if (data.riskQuestionnaire && data.riskQuestionnaire.riskLevel) {
+          riskToleranceText = `${data.riskQuestionnaire.riskLevel}`;
+          if (data.riskQuestionnaire.riskDescription) {
+            riskToleranceText += `\n\n${data.riskQuestionnaire.riskDescription}`;
+          }
+          if (data.riskQuestionnaire.totalScore) {
+            riskToleranceText += `\n\n（基於風險評估問卷總分: ${data.riskQuestionnaire.totalScore}）`;
+          }
+        }
         doc.text(`风险承受能力 Risk Tolerance: ${riskToleranceText}`);
         doc.moveDown(1);
       }
@@ -880,8 +889,9 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       doc.moveDown(0.5);
       
       doc.fontSize(9).font('NotoSansCJK');
-      doc.text(`签名 Signature: ${data.signatureName || 'N/A'}`);
-      doc.text(`签署方式 Signature Method: Typed / 输入`);
+      const signatureName = data.signatureName || data.basicInfo?.englishName || 'N/A';
+      doc.text(`签名 Signature: ${signatureName}`);
+      doc.text(`签署方式 Signature Method: ${data.signatureMethod || 'Typed / 输入'}`);
       doc.text(`签署时间 Signature Timestamp: ${formatTimestamp(data.signatureTimestamp)}`);
       doc.moveDown(1);
 

@@ -1,0 +1,52 @@
+{
+  "query": "SELECT a.id, a.applicationNumber, a.status, r.totalScore, r.riskLevel FROM applications a JOIN risk_questionnaires r ON a.id = r.applicationId WHERE r.totalScore IS NOT NULL ORDER BY a.id DESC LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2uixhWXF4JwUSvL.6b97ca2f8816 --database gu8TL5Ga5RUHfjV8rgaSaT --execute SELECT a.id, a.applicationNumber, a.status, r.totalScore, r.riskLevel FROM applications a JOIN risk_questionnaires r ON a.id = r.applicationId WHERE r.totalScore IS NOT NULL ORDER BY a.id DESC LIMIT 10;",
+  "rows": [
+    {
+      "id": "480001",
+      "applicationNumber": "CMF-ACAPP-260226-001",
+      "status": "draft",
+      "totalScore": "580",
+      "riskLevel": "Medium to High / 中等至高"
+    },
+    {
+      "id": "450001",
+      "applicationNumber": "CMF-ACAPP-260208-001",
+      "status": "draft",
+      "totalScore": "580",
+      "riskLevel": "Medium to High / 中等至高"
+    },
+    {
+      "id": "420001",
+      "applicationNumber": "CMF-ACAPP-260205-001",
+      "status": "draft",
+      "totalScore": "540",
+      "riskLevel": "Medium to High / 中等至高"
+    },
+    {
+      "id": "390003",
+      "applicationNumber": "NULL",
+      "status": "draft",
+      "totalScore": "490",
+      "riskLevel": "Medium to High / 中等至高"
+    },
+    {
+      "id": "390002",
+      "applicationNumber": "CMF-ACAPP-260206-001",
+      "status": "draft",
+      "totalScore": "540",
+      "riskLevel": "Medium to High / 中等至高"
+    },
+    {
+      "id": "360001",
+      "applicationNumber": "NULL",
+      "status": "draft",
+      "totalScore": "490",
+      "riskLevel": "Medium to High / 中等至高"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tapplicationNumber\tstatus\ttotalScore\triskLevel\n480001\tCMF-ACAPP-260226-001\tdraft\t580\tMedium to High / 中等至高\n450001\tCMF-ACAPP-260208-001\tdraft\t580\tMedium to High / 中等至高\n420001\tCMF-ACAPP-260205-001\tdraft\t540\tMedium to High / 中等至高\n390003\tNULL\tdraft\t490\tMedium to High / 中等至高\n390002\tCMF-ACAPP-260206-001\tdraft\t540\tMedium to High / 中等至高\n360001\tNULL\tdraft\t490\tMedium to High / 中等至高\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}
