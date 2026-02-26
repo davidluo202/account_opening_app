@@ -988,6 +988,105 @@ export default function ApplicationPreview() {
           </div>
         </Card>
 
+        {/* 审批记录 Approval Records */}
+        {(application?.firstApprovalStatus === 'approved' || application?.secondApprovalStatus === 'approved') && (
+          <Card className="p-6">
+            <h2 className="text-xl font-semibold mb-4">审批记录 Approval Records</h2>
+            
+            {/* 初审记录 */}
+            {application?.firstApprovalStatus === 'approved' && (
+              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
+                <h3 className="text-lg font-semibold mb-3 text-blue-800">初审记录 First Approval</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-600">审批人员 Approver：</span>
+                    <span className="font-medium ml-2">{application.firstApprovalByName || 'N/A'}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">CE号码 CE Number：</span>
+                    <span className="font-medium ml-2">{application.firstApprovalByCeNo || 'N/A'}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">专业投资者认定 Professional Investor：</span>
+                    <span className="font-medium ml-2">{application.isProfessionalInvestor ? '是 Yes' : '否 No'}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">风险评级 Risk Profile：</span>
+                    <span className="font-medium ml-2">{application.approvedRiskProfile ? getRiskToleranceDescription(application.approvedRiskProfile) : 'N/A'}</span>
+                  </div>
+                  <div className="col-span-2">
+                    <span className="text-gray-600">审批时间 Approval Time：</span>
+                    <span className="font-medium ml-2">
+                      {application.firstApprovalAt ? new Date(application.firstApprovalAt).toLocaleString('zh-CN', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false
+                      }) : 'N/A'}
+                    </span>
+                  </div>
+                  {application.firstApprovalComments && (
+                    <div className="col-span-2 pt-2 border-t border-blue-200">
+                      <span className="text-gray-600">审批意见 Comments：</span>
+                      <p className="mt-1 text-blue-700">{application.firstApprovalComments}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            
+            {/* 终审记录 */}
+            {application?.secondApprovalStatus === 'approved' && (
+              <div className="p-4 bg-green-50 border border-green-200 rounded-md">
+                <h3 className="text-lg font-semibold mb-3 text-green-800">终审记录 Final Approval</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-600">审批人员 Approver：</span>
+                    <span className="font-medium ml-2">{application.secondApprovalByName || 'N/A'}</span>
+                  </div>
+                  {application.secondApprovalByCeNo && (
+                    <div>
+                      <span className="text-gray-600">CE号码 CE Number：</span>
+                      <span className="font-medium ml-2">{application.secondApprovalByCeNo}</span>
+                    </div>
+                  )}
+                  <div>
+                    <span className="text-gray-600">专业投资者认定 Professional Investor：</span>
+                    <span className="font-medium ml-2">{application.isProfessionalInvestor ? '是 Yes' : '否 No'}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">风险评级 Risk Profile：</span>
+                    <span className="font-medium ml-2">{application.approvedRiskProfile ? getRiskToleranceDescription(application.approvedRiskProfile) : 'N/A'}</span>
+                  </div>
+                  <div className="col-span-2">
+                    <span className="text-gray-600">审批时间 Approval Time：</span>
+                    <span className="font-medium ml-2">
+                      {application.secondApprovalAt ? new Date(application.secondApprovalAt).toLocaleString('zh-CN', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false
+                      }) : 'N/A'}
+                    </span>
+                  </div>
+                  {application.secondApprovalComments && (
+                    <div className="col-span-2 pt-2 border-t border-green-200">
+                      <span className="text-gray-600">审批意见 Comments：</span>
+                      <p className="mt-1 text-green-700">{application.secondApprovalComments}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </Card>
+        )}
+
         {/* 操作按钮 */}
         <div className="flex justify-between items-center gap-4">
           <Button variant="outline" onClick={() => setLocation(`/application/${applicationId}/step/12`)}>

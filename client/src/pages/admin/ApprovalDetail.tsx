@@ -419,9 +419,21 @@ export default function ApprovalDetail() {
                     <Label>邮箱</Label>
                     <p>{personalDetailedInfo.email || "-"}</p>
                   </div>
+                  <div>
+                    <Label>手机号 Mobile Number</Label>
+                    <p>{personalDetailedInfo.mobileCountryCode ? `+${personalDetailedInfo.mobileCountryCode} ${personalDetailedInfo.mobileNumber}` : personalDetailedInfo.mobileNumber || "-"}</p>
+                  </div>
                   <div className="col-span-2">
                     <Label>居住地址</Label>
                     <p>{personalDetailedInfo.residentialAddress || "-"}</p>
+                  </div>
+                  <div className="col-span-2">
+                    <Label>通讯地址 Billing Address</Label>
+                    <p>{personalDetailedInfo.billingAddressType === 'residential' ? '与居住地址相同 Same as Residential Address' : personalDetailedInfo.billingAddressType === 'office' ? '办公地址 Office Address' : personalDetailedInfo.billingAddressOther || "-"}</p>
+                  </div>
+                  <div>
+                    <Label>账单语言 Preferred Language</Label>
+                    <p>{personalDetailedInfo.preferredLanguage === 'chinese' ? '中文 Chinese' : 'English'}</p>
                   </div>
                 </div>
               </div>
@@ -532,6 +544,153 @@ export default function ApprovalDetail() {
                       })()}
                     </div>
                   </div>
+                  
+                  {/* 完整的风险评估问卷详情 */}
+                  {applicationData?.riskQuestionnaire && (
+                    <div className="mt-4">
+                      <Label className="font-medium">风险评估问卷详情 Risk Assessment Questionnaire Details</Label>
+                      <div className="mt-2 space-y-3 p-3 bg-gray-50 rounded-md">
+                        {/* Q1-Q10 的问题和答案 */}
+                        <div className="text-sm">
+                          <div className="font-medium">Q1: 现在是否持有以下任何投资产品？</div>
+                          <div className="ml-4 mt-1">{(() => {
+                            try {
+                              const q1 = JSON.parse(applicationData.riskQuestionnaire.q1_current_investments || '[]');
+                              const options: Record<string, string> = {
+                                'savings': '储蓄存款',
+                                'bonds': '债券',
+                                'derivatives': '衡生产品'
+                              };
+                              return q1.length > 0 ? q1.map((item: string) => options[item] || item).join('、') : '未选择';
+                            } catch { return '未选择'; }
+                          })()}</div>
+                        </div>
+                        
+                        <div className="text-sm">
+                          <div className="font-medium">Q2: 预期投资年期？</div>
+                          <div className="ml-4 mt-1">{(() => {
+                            const options: Record<string, string> = {
+                              'less_than_1': '少于1年',
+                              '1_to_3': '1-3年',
+                              'more_than_3': '3年以上'
+                            };
+                            return options[applicationData.riskQuestionnaire.q2_investment_period || ''] || '未选择';
+                          })()}</div>
+                        </div>
+                        
+                        <div className="text-sm">
+                          <div className="font-medium">Q3: 可以接受的年度价格波幅？</div>
+                          <div className="ml-4 mt-1">{(() => {
+                            const options: Record<string, string> = {
+                              '10_percent': '10%',
+                              '20_percent': '20%',
+                              '30_percent': '30%以上'
+                            };
+                            return options[applicationData.riskQuestionnaire.q3_price_volatility || ''] || '未选择';
+                          })()}</div>
+                        </div>
+                        
+                        <div className="text-sm">
+                          <div className="font-medium">Q4: 资产净值中可作投资用途的百分比？</div>
+                          <div className="ml-4 mt-1">{(() => {
+                            const options: Record<string, string> = {
+                              'less_than_10': '少于10%',
+                              '10_to_20': '10%-20%',
+                              '21_to_30': '21%-30%',
+                              '31_to_50': '31%-50%',
+                              'more_than_50': '50%以上'
+                            };
+                            return options[applicationData.riskQuestionnaire.q4_investment_percentage || ''] || '未选择';
+                          })()}</div>
+                        </div>
+                        
+                        <div className="text-sm">
+                          <div className="font-medium">Q5: 对金融投资的一般态度？</div>
+                          <div className="ml-4 mt-1">{(() => {
+                            const options: Record<string, string> = {
+                              'no_volatility': '不接受任何波动',
+                              'small_volatility': '接受较小波动',
+                              'some_volatility': '接受一定波动',
+                              'large_volatility': '接受较大波动',
+                              'any_volatility': '接受任何波动'
+                            };
+                            return options[applicationData.riskQuestionnaire.q5_investment_attitude || ''] || '未选择';
+                          })()}</div>
+                        </div>
+                        
+                        <div className="text-sm">
+                          <div className="font-medium">Q6: 对衡生工具产品的认识？</div>
+                          <div className="ml-4 mt-1">{(() => {
+                            try {
+                              const q6 = JSON.parse(applicationData.riskQuestionnaire.q6_derivatives_knowledge || '[]');
+                              const options: Record<string, string> = {
+                                'training': '曾接受相关培训',
+                                'experience': '有相关工作经验',
+                                'transactions': '有交易经验',
+                                'no_knowledge': '没有相关知识'
+                              };
+                              return q6.length > 0 ? q6.map((item: string) => options[item] || item).join('、') : '未选择';
+                            } catch { return '未选择'; }
+                          })()}</div>
+                        </div>
+                        
+                        <div className="text-sm">
+                          <div className="font-medium">Q7: 年龄组别？</div>
+                          <div className="ml-4 mt-1">{(() => {
+                            const options: Record<string, string> = {
+                              '18_to_25': '18-25岁',
+                              '26_to_35': '26-35岁',
+                              '36_to_50': '36-50岁',
+                              '51_to_64': '51-64岁',
+                              '65_plus': '65岁以上'
+                            };
+                            return options[applicationData.riskQuestionnaire.q7_age_group || ''] || '未选择';
+                          })()}</div>
+                        </div>
+                        
+                        <div className="text-sm">
+                          <div className="font-medium">Q8: 教育程度？</div>
+                          <div className="ml-4 mt-1">{(() => {
+                            const options: Record<string, string> = {
+                              'primary_or_below': '小学或以下',
+                              'secondary': '中学',
+                              'tertiary_or_above': '大专或以上'
+                            };
+                            return options[applicationData.riskQuestionnaire.q8_education_level || ''] || '未选择';
+                          })()}</div>
+                        </div>
+                        
+                        <div className="text-sm">
+                          <div className="font-medium">Q9: 投资知识来源？</div>
+                          <div className="ml-4 mt-1">{(() => {
+                            try {
+                              const q9 = JSON.parse(applicationData.riskQuestionnaire.q9_investment_knowledge_sources || '[]');
+                              const options: Record<string, string> = {
+                                'no_interest': '没有兴趣',
+                                'discussion': '与他人讨论',
+                                'reading': '阅读相关资料',
+                                'research': '自行研究'
+                              };
+                              return q9.length > 0 ? q9.map((item: string) => options[item] || item).join('、') : '未选择';
+                            } catch { return '未选择'; }
+                          })()}</div>
+                        </div>
+                        
+                        <div className="text-sm">
+                          <div className="font-medium">Q10: 流动资金需求？</div>
+                          <div className="ml-4 mt-1">{(() => {
+                            const options: Record<string, string> = {
+                              'no_need': '没有需求',
+                              'up_to_30': '最多30天',
+                              '30_to_50': '30-50天',
+                              'over_50': '50天以上'
+                            };
+                            return options[applicationData.riskQuestionnaire.q10_liquidity_needs || ''] || '未选择';
+                          })()}</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
