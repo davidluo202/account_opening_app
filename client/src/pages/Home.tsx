@@ -38,8 +38,8 @@ export default function Home() {
               <a href="/admin">审批系统</a>
             </Button>
             <Button variant="ghost" size="sm">English</Button>
-            <Button asChild>
-              <a href={getLoginUrl()}>登入</a>
+            <Button asChild={agreedToPrivacy} disabled={!agreedToPrivacy}>
+              {agreedToPrivacy ? <a href={getLoginUrl()}>登入</a> : <span>登入</span>}
             </Button>
           </div>
         </div>
@@ -208,8 +208,9 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t bg-white py-8">
-        <div className="container text-center text-sm text-muted-foreground">
+        <div className="container flex flex-col items-center gap-2 text-sm text-muted-foreground">
           <p>© 2026 誠港金融. All rights reserved.</p>
+          <p className="text-xs opacity-50">v1.0.260302.001</p>
         </div>
       </footer>
     </div>
