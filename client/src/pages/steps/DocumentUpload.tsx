@@ -151,6 +151,8 @@ const handleNext = () => {
                       className="hidden"
                       onChange={(e) => {
                         const file = e.target.files?.[0];
+                        // allow re-selecting the same file after a failed upload
+                        e.target.value = "";
                         if (file) {
                           handleFileSelect(docType.value, file);
                         }

@@ -2,20 +2,38 @@
 // Uses the Biz-provided storage proxy (Authorization: Bearer <token>)
 
 import { ENV } from './_core/env';
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 type StorageConfig = { baseUrl: string; apiKey: string };
 
-function getStorageConfig(): StorageConfig {
+function getStorageProxyConfig(): StorageConfig | null {
   const baseUrl = ENV.forgeApiUrl;
   const apiKey = ENV.forgeApiKey;
-
-  if (!baseUrl || !apiKey) {
-    throw new Error(
-      "Storage proxy credentials missing: set BUILT_IN_FORGE_API_URL and BUILT_IN_FORGE_API_KEY"
-    );
-  }
-
+  if (!baseUrl || !apiKey) return null;
   return { baseUrl: baseUrl.replace(/\/+$/, ""), apiKey };
+}
+
+function getS3Config(): {
+  bucket: string;
+  region: string;
+  publicBaseUrl?: string;
+  endpoint?: string;
+} | null {
+  const bucket = process.env.S3_BUCKET;
+  if (!bucket) return null;
+  return {
+    bucket,
+    region: process.env.AWS_REGION || "ap-east-1",
+    publicBaseUrl: process.env.S3_PUBLIC_BASE_URL,
+    endpoint: process.env.S3_ENDPOINT,
+  };
+}
+
+function createS3Client(cfg: { region: string; endpoint?: string }) {
+  return new S3Client({
+    region: cfg.region,
+    endpoint: cfg.endpoint || undefined,
+  });
 }
 
 function buildUploadUrl(baseUrl: string, relKey: string): URL {
@@ -72,28 +90,64 @@ export async function storagePut(
   data: Buffer | Uint8Array | string,
   contentType = "application/octet-stream"
 ): Promise<{ key: string; url: string }> {
-  const { baseUrl, apiKey } = getStorageConfig();
   const key = normalizeKey(relKey);
-  const uploadUrl = buildUploadUrl(baseUrl, key);
-  const formData = toFormData(data, contentType, key.split("/").pop() ?? key);
-  const response = await fetch(uploadUrl, {
-    method: "POST",
-    headers: buildAuthHeaders(apiKey),
-    body: formData,
-  });
 
-  if (!response.ok) {
-    const message = await response.text().catch(() => response.statusText);
-    throw new Error(
-      `Storage upload failed (${response.status} ${response.statusText}): ${message}`
+  // 1) Prefer S3 if configured (CMF-owned)
+  const s3 = getS3Config();
+  if (s3) {
+    const client = createS3Client({ region: s3.region, endpoint: s3.endpoint });
+    const body = typeof data === "string" ? Buffer.from(data) : Buffer.from(data as any);
+
+    await client.send(
+      new PutObjectCommand({
+        Bucket: s3.bucket,
+        Key: key,
+        Body: body,
+        ContentType: contentType,
+      })
     );
+
+    const url = s3.publicBaseUrl
+      ? `${s3.publicBaseUrl.replace(/\/+$/, "")}/${encodeURI(key)}`
+      : `https://${s3.bucket}.s3.${s3.region}.amazonaws.com/${encodeURI(key)}`;
+
+    return { key, url };
   }
-  const url = (await response.json()).url;
-  return { key, url };
+
+  // 2) Fallback to legacy storage proxy (template). Requires BUILT_IN_FORGE_API_URL/KEY
+  const proxy = getStorageProxyConfig();
+  if (proxy) {
+    const uploadUrl = buildUploadUrl(proxy.baseUrl, key);
+    const formData = toFormData(data, contentType, key.split("/").pop() ?? key);
+    const response = await fetch(uploadUrl, {
+      method: "POST",
+      headers: buildAuthHeaders(proxy.apiKey),
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const message = await response.text().catch(() => response.statusText);
+      throw new Error(
+        `Storage upload failed (${response.status} ${response.statusText}): ${message}`
+      );
+    }
+    const url = (await response.json()).url;
+    return { key, url };
+  }
+
+  throw new Error(
+    "Storage is not configured. Please set S3_BUCKET (+AWS credentials) for S3 uploads."
+  );
 }
 
 export async function storageGet(relKey: string): Promise<{ key: string; url: string; }> {
-  const { baseUrl, apiKey } = getStorageConfig();
+  const proxy = getStorageProxyConfig();
+  if (!proxy) {
+    throw new Error(
+      "Storage proxy credentials missing: set BUILT_IN_FORGE_API_URL and BUILT_IN_FORGE_API_KEY"
+    );
+  }
+  const { baseUrl, apiKey } = proxy;
   const key = normalizeKey(relKey);
   return {
     key,
