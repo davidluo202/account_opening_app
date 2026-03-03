@@ -251,13 +251,19 @@ export const appRouter = router({
         if (pdfBuffer) {
           try {
             const { storagePut } = await import('./storage');
-            const result = await storagePut(
-              `applications/${applicationNumber}/application.pdf`,
-              pdfBuffer,
-              'application/pdf'
-            );
-            pdfUrl = result.url;
-            console.log(`PDF uploaded to S3: ${pdfUrl}`);
+            const { buildSignedDownloadLink } = await import('./_core/files');
+
+            const fileKey = `applications/${applicationNumber}/application.pdf`;
+            const result = await storagePut(fileKey, pdfBuffer, 'application/pdf');
+
+            // Store a signed link in emails (points back to our system). It will mint short-lived presigned S3 urls.
+            const proto = (ctx.req.headers['x-forwarded-proto'] as string) || 'https';
+            const host = ctx.req.headers['x-forwarded-host'] || ctx.req.headers.host;
+            const baseUrl = `${proto}://${host}`;
+            pdfUrl = buildSignedDownloadLink(baseUrl, fileKey, 60 * 60 * 24 * 30); // link valid for 30 days
+
+            console.log(`PDF uploaded to storage: ${result.url}`);
+            console.log(`PDF email link (signed): ${pdfUrl}`);
           } catch (error) {
             console.error('Failed to upload PDF to S3:', error);
           }

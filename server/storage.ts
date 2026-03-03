@@ -1,10 +1,18 @@
-// Preconfigured storage helpers for Manus WebDev templates
-// Uses the Biz-provided storage proxy (Authorization: Bearer <token>)
+// Preconfigured storage helpers
+// Prefer CMF-owned S3 when configured; fallback to legacy template storage proxy.
 
 import { ENV } from './_core/env';
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 type StorageConfig = { baseUrl: string; apiKey: string };
+
+type S3Config = {
+  bucket: string;
+  region: string;
+  publicBaseUrl?: string;
+  endpoint?: string;
+};
 
 function getStorageProxyConfig(): StorageConfig | null {
   const baseUrl = ENV.forgeApiUrl;
@@ -13,12 +21,7 @@ function getStorageProxyConfig(): StorageConfig | null {
   return { baseUrl: baseUrl.replace(/\/+$/, ""), apiKey };
 }
 
-function getS3Config(): {
-  bucket: string;
-  region: string;
-  publicBaseUrl?: string;
-  endpoint?: string;
-} | null {
+function getS3Config(): S3Config | null {
   const bucket = process.env.S3_BUCKET;
   if (!bucket) return null;
   return {
@@ -34,29 +37,6 @@ function createS3Client(cfg: { region: string; endpoint?: string }) {
     region: cfg.region,
     endpoint: cfg.endpoint || undefined,
   });
-}
-
-function buildUploadUrl(baseUrl: string, relKey: string): URL {
-  const url = new URL("v1/storage/upload", ensureTrailingSlash(baseUrl));
-  url.searchParams.set("path", normalizeKey(relKey));
-  return url;
-}
-
-async function buildDownloadUrl(
-  baseUrl: string,
-  relKey: string,
-  apiKey: string
-): Promise<string> {
-  const downloadApiUrl = new URL(
-    "v1/storage/downloadUrl",
-    ensureTrailingSlash(baseUrl)
-  );
-  downloadApiUrl.searchParams.set("path", normalizeKey(relKey));
-  const response = await fetch(downloadApiUrl, {
-    method: "GET",
-    headers: buildAuthHeaders(apiKey),
-  });
-  return (await response.json()).url;
 }
 
 function ensureTrailingSlash(value: string): string {
@@ -83,6 +63,29 @@ function toFormData(
 
 function buildAuthHeaders(apiKey: string): HeadersInit {
   return { Authorization: `Bearer ${apiKey}` };
+}
+
+function buildUploadUrl(baseUrl: string, relKey: string): URL {
+  const url = new URL("v1/storage/upload", ensureTrailingSlash(baseUrl));
+  url.searchParams.set("path", normalizeKey(relKey));
+  return url;
+}
+
+async function buildDownloadUrl(
+  baseUrl: string,
+  relKey: string,
+  apiKey: string
+): Promise<string> {
+  const downloadApiUrl = new URL(
+    "v1/storage/downloadUrl",
+    ensureTrailingSlash(baseUrl)
+  );
+  downloadApiUrl.searchParams.set("path", normalizeKey(relKey));
+  const response = await fetch(downloadApiUrl, {
+    method: "GET",
+    headers: buildAuthHeaders(apiKey),
+  });
+  return (await response.json()).url;
 }
 
 export async function storagePut(
@@ -114,7 +117,7 @@ export async function storagePut(
     return { key, url };
   }
 
-  // 2) Fallback to legacy storage proxy (template). Requires BUILT_IN_FORGE_API_URL/KEY
+  // 2) Fallback to legacy storage proxy
   const proxy = getStorageProxyConfig();
   if (proxy) {
     const uploadUrl = buildUploadUrl(proxy.baseUrl, key);
@@ -140,17 +143,37 @@ export async function storagePut(
   );
 }
 
-export async function storageGet(relKey: string): Promise<{ key: string; url: string; }> {
-  const proxy = getStorageProxyConfig();
-  if (!proxy) {
-    throw new Error(
-      "Storage proxy credentials missing: set BUILT_IN_FORGE_API_URL and BUILT_IN_FORGE_API_KEY"
-    );
-  }
-  const { baseUrl, apiKey } = proxy;
+/** Create a presigned (time-limited) GET url. Requires S3 config. */
+export async function storagePresignGet(
+  relKey: string,
+  expiresInSeconds: number
+): Promise<string> {
   const key = normalizeKey(relKey);
+  const s3 = getS3Config();
+  if (!s3) {
+    throw new Error("S3 is not configured for presigned download");
+  }
+
+  const client = createS3Client({ region: s3.region, endpoint: s3.endpoint });
+  const command = new GetObjectCommand({ Bucket: s3.bucket, Key: key });
+  return await getSignedUrl(client, command, { expiresIn: expiresInSeconds });
+}
+
+export async function storageGet(relKey: string): Promise<{ key: string; url: string; }> {
+  const key = normalizeKey(relKey);
+
+  // Prefer proxy downloadUrl behavior if proxy configured (keeps old behavior)
+  const proxy = getStorageProxyConfig();
+  if (proxy) {
+    return {
+      key,
+      url: await buildDownloadUrl(proxy.baseUrl, key, proxy.apiKey),
+    };
+  }
+
+  // Otherwise, presign for S3
   return {
     key,
-    url: await buildDownloadUrl(baseUrl, key, apiKey),
+    url: await storagePresignGet(key, 60 * 30),
   };
 }
