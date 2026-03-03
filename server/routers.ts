@@ -1485,7 +1485,7 @@ export const appRouter = router({
           // PDF生成失败不影响审批流程
         }
         
-        // 发送最终批准邮件到operation@cmfinancial.com，抄送customer-services@cmfinancial.com
+        // 发送最终批准邮件到operation@cmfinancial.com，抄送onboard@cmfinancial.com
         try {
           const { sendFinalApprovalNotificationEmail } = await import('./email');
           if (applicationData) {
@@ -1540,7 +1540,7 @@ export const appRouter = router({
           rejectReason: input.rejectReason,
         });
         
-        // 发送拒绝通知邮件到Customer-services@cmfinancial.com
+        // 发送拒绝通知邮件到onboard@cmfinancial.com
         try {
           const applicationData = await db.getCompleteApplicationData(input.applicationId);
           if (applicationData) {
@@ -1591,7 +1591,7 @@ export const appRouter = router({
           returnReason: input.returnReason,
         });
         
-        // 发送退回通知邮件到Customer-services@cmfinancial.com
+        // 发送退回通知邮件到onboard@cmfinancial.com
         try {
           const applicationData = await db.getCompleteApplicationData(input.applicationId);
           if (applicationData) {
