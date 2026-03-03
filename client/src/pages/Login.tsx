@@ -87,13 +87,11 @@ export default function Login() {
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button className="w-full" type="submit" disabled={isLoading}>
-              {isLoading ? "登录中..." : "登入"}
+              {isLoading ? "登录中..." : "登入 / 自动注册"}
             </Button>
-            <div className="text-sm text-center text-slate-500">
-              还没有账号？{" "}
-              <a href="/register" className="text-blue-600 hover:underline">
-                立即注册
-              </a>
+            <div className="text-sm text-center text-slate-500 bg-blue-50 p-3 rounded-md">
+              <span className="font-semibold text-blue-700">🔧 测试模式说明：</span><br/>
+              无需专门注册！输入<strong className="text-blue-600">任意新邮箱</strong>和密码，点击上方按钮即可<strong className="text-blue-600">自动注册并瞬间登入</strong>。
             </div>
           </CardFooter>
         </form>
