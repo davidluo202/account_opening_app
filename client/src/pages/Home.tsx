@@ -210,7 +210,7 @@ export default function Home() {
       <footer className="border-t bg-white py-8">
         <div className="container flex flex-col items-center gap-2 text-sm text-muted-foreground">
           <p>© 2026 誠港金融. All rights reserved.</p>
-          <p className="text-xs opacity-50">v1.0.260303.001</p>
+          <p className="text-xs opacity-50">v1.0.260303.002</p>
         </div>
       </footer>
     </div>
