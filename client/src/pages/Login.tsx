@@ -23,11 +23,25 @@ export default function Login() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      // TODO: Connect to backend local auth API
-      toast.info("本地登录功能正在开发中...");
-      // Simulate success for now or call backend /api/auth/login
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      
+      if (!response.ok) {
+        throw new Error("登录失败");
+      }
+      
+      const data = await response.json();
+      if (data.success) {
+        toast.success("登录成功");
+        window.location.href = "/applications"; // 强制刷新加载状态
+      } else {
+        toast.error("登录失败，请检查账号密码");
+      }
     } catch (error) {
-      toast.error("登录失败，请检查账号密码");
+      toast.error("登录失败，请检查网络或账号密码");
     } finally {
       setIsLoading(false);
     }
