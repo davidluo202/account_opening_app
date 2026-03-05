@@ -86,6 +86,26 @@ export const appRouter = router({
         
         // 更新emailVerified状态
         await db.updateUserEmailVerified(user.id, true);
+
+        const isCompanyEmail = input.email.endsWith('@cmfinancial.com');
+
+        // 公司邮箱默认赋予管理员权限（便于后台用户管理）
+        if (isCompanyEmail && user.role !== 'admin') {
+          await db.updateUserRole(user.id, 'admin');
+        }
+
+        // 自动创建审批人员记录（若不存在）
+        if (isCompanyEmail) {
+          const approver = await db.getApproverByUserId(user.id);
+          if (!approver) {
+            await db.addApprover({
+              userId: user.id,
+              employeeName: user.name || input.email.split('@')[0],
+              ceNumber: 'TBD',
+              role: 'manager',
+            });
+          }
+        }
         
         // 创建session token
         const { sdk } = await import('./_core/sdk');
