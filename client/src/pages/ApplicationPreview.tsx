@@ -392,11 +392,11 @@ export default function ApplicationPreview() {
             </table>
           </div>
 
-          {/* 个人基本信息 */}
+          {/* 个人/机构基本信息 */}
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>1. 个人基本信息 Personal Basic Information</span>
+                <span>1. {accountSelection?.customerType === 'corporate' ? '机构基本信息 Corporate Basic Information' : '个人基本信息 Personal Basic Information'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(3)}>
                   编辑
                 </Button>

@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ChevronLeft, ChevronRight, FileText } from "lucide-react";
 import { useLocation } from "wouter";
+import { trpc } from "@/lib/trpc";
 
 interface Step {
   id: number;
@@ -59,8 +60,24 @@ export default function ApplicationWizard({
   showReturnToPreview = false,
 }: ApplicationWizardProps) {
   const [, setLocation] = useLocation();
+
+  // 获取账户选择信息以判断客户类型
+  const { data: accountSelection } = trpc.accountSelection.get.useQuery(
+    { applicationId },
+    { enabled: !!applicationId }
+  );
   const progress = (currentStep / steps.length) * 100;
   const currentStepInfo = steps.find(s => s.id === currentStep);
+
+  // 根据客户类型动态调整步骤标题
+  const displaySteps = steps.map(step => {
+    if (step.id === 3 && accountSelection?.customerType === 'corporate') {
+      return { ...step, title: "機構基本信息" };
+    }
+    return step;
+  });
+
+  const displayCurrentStepInfo = displaySteps.find(s => s.id === currentStep);
 
   const handlePrevious = () => {
     if (onPrevious) {
@@ -90,7 +107,7 @@ export default function ApplicationWizard({
                 <img src="/logo-zh.png" alt="誠港金融" className="h-12" />
               </a>
               <div className="hidden sm:block border-l pl-3 ml-1">
-                <h1 className="text-lg font-semibold text-gray-800">诚港金融场外服务公司客户端</h1>
+                <h1 className="text-lg font-semibold text-gray-800">诚港金融开户系统</h1>
               </div>
             </div>
             <Button
@@ -102,12 +119,12 @@ export default function ApplicationWizard({
           </div>
           {/* Mobile Title */}
           <div className="sm:hidden mb-3">
-            <h1 className="text-base font-semibold text-gray-800">诚港金融场外服务公司客户端</h1>
+            <h1 className="text-base font-semibold text-gray-800">诚港金融开户系统</h1>
           </div>
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span className="font-medium">
-                步驟 {currentStep} / {steps.length}: {currentStepInfo?.title}
+                步驟 {currentStep} / {steps.length}: {displayCurrentStepInfo?.title}
               </span>
               <span className="text-muted-foreground">{Math.round(progress)}% 完成</span>
             </div>
@@ -121,8 +138,8 @@ export default function ApplicationWizard({
         <div className="max-w-4xl mx-auto">
           {/* Step Indicator */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold mb-2">{currentStepInfo?.title}</h2>
-            <p className="text-muted-foreground">{currentStepInfo?.description}</p>
+            <h2 className="text-2xl font-bold mb-2">{displayCurrentStepInfo?.title}</h2>
+            <p className="text-muted-foreground">{displayCurrentStepInfo?.description}</p>
           </div>
 
           {/* Form Content */}
@@ -197,7 +214,7 @@ export default function ApplicationWizard({
         <Card className="p-4">
           <h3 className="font-semibold mb-4">申請步驟</h3>
           <div className="space-y-2">
-            {steps.map((step) => (
+            {displaySteps.map((step) => (
               <div
                 key={step.id}
                 className={`p-2 rounded text-sm cursor-pointer transition-colors ${
