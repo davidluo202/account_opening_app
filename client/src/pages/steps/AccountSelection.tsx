@@ -100,12 +100,12 @@ const handleNext = () => {
               </Label>
             </div>
 
-            <div className="flex items-center space-x-2 p-4 border rounded-lg opacity-50 cursor-not-allowed">
-              <RadioGroupItem value="corporate" id="corporate" disabled />
-              <Label htmlFor="corporate" className="flex-1">
+            <div className="flex items-center space-x-2 p-4 border rounded-lg hover:bg-slate-50 cursor-pointer">
+              <RadioGroupItem value="corporate" id="corporate" />
+              <Label htmlFor="corporate" className="flex-1 cursor-pointer">
                 <div>
                   <div className="font-medium">機構賬戶 / Corporate Account</div>
-                  <div className="text-sm text-muted-foreground">暫不開放（即將推出）</div>
+                  <div className="text-sm text-muted-foreground"></div>
                 </div>
               </Label>
             </div>
