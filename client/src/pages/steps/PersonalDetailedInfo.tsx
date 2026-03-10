@@ -98,7 +98,7 @@ export default function PersonalDetailedInfo() {
     onSuccess: (result) => {
       if (result.success && result.data) {
         toast.success("保存成功");
-        setLocation(`/application/${applicationId}/step/5`);
+        setLocation(`/application/${applicationId}/step/4`);
       }
     },
     onError: (error) => {
@@ -297,7 +297,7 @@ export default function PersonalDetailedInfo() {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={4}
+      <ApplicationWizard applicationId={applicationId} currentStep={3}
       showReturnToPreview={showReturnToPreview}
     >
         <div className="flex justify-center py-12">
@@ -310,7 +310,7 @@ export default function PersonalDetailedInfo() {
   return (
     <ApplicationWizard
       applicationId={applicationId}
-      currentStep={4}
+      currentStep={3}
       onNext={handleNext}
       onSave={handleSave}
       isNextLoading={saveMutation.isPending}

@@ -43,7 +43,7 @@ export default function PersonalBasicInfo() {
     onSuccess: (result) => {
       if (result.success && result.data) {
         toast.success("保存成功");
-        setLocation(`/application/${applicationId}/step/4`);
+        setLocation(`/application/${applicationId}/step/3`);
       }
     },
     onError: (error) => {
@@ -156,7 +156,7 @@ export default function PersonalBasicInfo() {
 
   const handleSave = () => {
     if (!validateForm()) {
-      toast.error("請檢查表單中的錯誤");
+      toast.error("請檢查表单中的錯誤");
       return;
     }
 
@@ -198,7 +198,7 @@ export default function PersonalBasicInfo() {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={3}
+      <ApplicationWizard applicationId={applicationId} currentStep={2}
       showReturnToPreview={showReturnToPreview}
     >
         <div className="flex justify-center py-12">
@@ -211,7 +211,7 @@ export default function PersonalBasicInfo() {
   return (
     <ApplicationWizard
       applicationId={applicationId}
-      currentStep={3}
+      currentStep={2}
       onNext={handleNext}
       onSave={handleSave}
       isNextLoading={saveMutation.isPending}
