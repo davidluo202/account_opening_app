@@ -26,7 +26,7 @@ export default function AccountSelection() {
     onSuccess: (result) => {
       if (result.success) {
         toast.success("保存成功");
-        setLocation(`/application/${applicationId}/step/3`);
+        setLocation(`/application/${applicationId}/step/2`);
       }
     },
     onError: (error) => {

@@ -12,20 +12,31 @@ interface Step {
   description: string;
 }
 
-const steps: Step[] = [
-  { id: 1, title: "客戶類型", description: "選擇客戶類型" },
-  { id: 2, title: "賬戶類型", description: "選擇賬戶類型" },
-  { id: 3, title: "個人基本信息", description: "填寫基本資料" },
-  { id: 4, title: "個人詳細信息", description: "填寫詳細資料" },
-  { id: 5, title: "職業信息", description: "填寫職業狀況" },
-  { id: 6, title: "就業詳情", description: "填寫收入資產" },
-  { id: 7, title: "財務與投資", description: "填寫投資信息" },
-  { id: 8, title: "風險評估問卷", description: "完成風險評估" },
-  { id: 9, title: "銀行賬戶", description: "添加銀行賬戶" },
-  { id: 10, title: "稅務信息", description: "填寫稅務資料" },
-  { id: 11, title: "文件上傳", description: "上傳證明文件" },
-  { id: 12, title: "人臉識別", description: "進行人臉驗證" },
-  { id: 13, title: "監管聲明", description: "簽署協議" },
+const individualSteps: Step[] = [
+  { id: 1, title: "客戶與賬戶類型", description: "選擇客戶與賬戶類型" },
+  { id: 2, title: "個人基本信息", description: "填寫基本資料" },
+  { id: 3, title: "個人詳細信息", description: "填寫詳細資料" },
+  { id: 4, title: "職業信息", description: "填寫職業狀況" },
+  { id: 5, title: "就業詳情", description: "填寫收入資產" },
+  { id: 6, title: "財務與投資", description: "填寫投資信息" },
+  { id: 7, title: "風險評估問卷", description: "完成風險評估" },
+  { id: 8, title: "銀行賬戶", description: "添加銀行賬戶" },
+  { id: 9, title: "稅務信息", description: "填寫稅務資料" },
+  { id: 10, title: "文件上傳", description: "上傳證明文件" },
+  { id: 11, title: "人臉識別", description: "進行人臉驗證" },
+  { id: 12, title: "監管聲明", description: "簽署協議" },
+];
+
+const corporateSteps: Step[] = [
+  { id: 1, title: "客戶與賬戶類型", description: "選擇客戶與賬戶類型" },
+  { id: 2, title: "機構基本信息", description: "填寫公司基本資料" },
+  { id: 3, title: "公司財務與投資概況", description: "填寫財務與投資背景" },
+  { id: 4, title: "關聯人士信息", description: "填寫董事及授權人資料" },
+  { id: 5, title: "風險評估問卷", description: "完成風險評估" },
+  { id: 6, title: "結算銀行賬戶", description: "添加公司銀行賬戶" },
+  { id: 7, title: "稅務信息", description: "填寫公司稅務資料" },
+  { id: 8, title: "文件上傳", description: "上傳機構證明文件" },
+  { id: 9, title: "監管聲明", description: "公司蓋章與簽署" },
 ];
 
 interface ApplicationWizardProps {
@@ -66,18 +77,11 @@ export default function ApplicationWizard({
     { applicationId },
     { enabled: !!applicationId }
   );
+
+  // 根据客户类型选择步骤列表
+  const steps = accountSelection?.customerType === 'corporate' ? corporateSteps : individualSteps;
   const progress = (currentStep / steps.length) * 100;
   const currentStepInfo = steps.find(s => s.id === currentStep);
-
-  // 根据客户类型动态调整步骤标题
-  const displaySteps = steps.map(step => {
-    if (step.id === 3 && accountSelection?.customerType === 'corporate') {
-      return { ...step, title: "機構基本信息" };
-    }
-    return step;
-  });
-
-  const displayCurrentStepInfo = displaySteps.find(s => s.id === currentStep);
 
   const handlePrevious = () => {
     if (onPrevious) {
@@ -124,7 +128,7 @@ export default function ApplicationWizard({
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span className="font-medium">
-                步驟 {currentStep} / {steps.length}: {displayCurrentStepInfo?.title}
+                步驟 {currentStep} / {steps.length}: {currentStepInfo?.title}
               </span>
               <span className="text-muted-foreground">{Math.round(progress)}% 完成</span>
             </div>
@@ -138,8 +142,8 @@ export default function ApplicationWizard({
         <div className="max-w-4xl mx-auto">
           {/* Step Indicator */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold mb-2">{displayCurrentStepInfo?.title}</h2>
-            <p className="text-muted-foreground">{displayCurrentStepInfo?.description}</p>
+            <h2 className="text-2xl font-bold mb-2">{currentStepInfo?.title}</h2>
+            <p className="text-muted-foreground">{currentStepInfo?.description}</p>
           </div>
 
           {/* Form Content */}
@@ -214,7 +218,7 @@ export default function ApplicationWizard({
         <Card className="p-4">
           <h3 className="font-semibold mb-4">申請步驟</h3>
           <div className="space-y-2">
-            {displaySteps.map((step) => (
+            {steps.map((step) => (
               <div
                 key={step.id}
                 className={`p-2 rounded text-sm cursor-pointer transition-colors ${
