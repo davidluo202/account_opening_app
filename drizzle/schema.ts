@@ -118,6 +118,7 @@ export const corporateBasicInfo = mysqlTable("corporate_basic_info", {
   contactTitle: varchar("contactTitle", { length: 100 }).notNull(),
   contactPhone: varchar("contactPhone", { length: 50 }).notNull(),
   contactEmail: varchar("contactEmail", { length: 320 }).notNull(),
+  contactEmailVerified: boolean("contactEmailVerified").default(false).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

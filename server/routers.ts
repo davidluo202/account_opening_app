@@ -640,6 +640,7 @@ export const appRouter = router({
         contactPhone: z.string().min(1),
         contactCountryCode: z.string().optional(),
         contactEmail: z.string().email(),
+        contactEmailVerified: z.boolean().optional().default(false),
       }))
       .mutation(async ({ input, ctx }) => {
         const { applicationId, officeCountryCode, contactCountryCode, ...data } = input;

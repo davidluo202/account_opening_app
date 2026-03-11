@@ -10,6 +10,7 @@ import { Loader2 } from "lucide-react";
 import { convertToTraditional } from "@/lib/converter";
 import { industryOptions } from "@/lib/industryOptions";
 import { useReturnToPreview } from "@/hooks/useReturnToPreview";
+import EmailVerification from "@/components/EmailVerification";
 
 const countries = [
   "中国", "香港", "澳门", "台湾", "美国", "加拿大", "英国", "澳大利亚", "新加坡", "日本", "韩国", "other"
@@ -62,10 +63,8 @@ export default function CorporateBasicInfo() {
     contactPhone: "",
     contactCountryCode: "+852",
     contactEmail: "",
-    emailVerificationCode: "",
   });
   const [isEmailVerified, setIsEmailVerified] = useState(false);
-  const [isSendingCode, setIsSendingCode] = useState(false);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -99,7 +98,10 @@ export default function CorporateBasicInfo() {
 
   useEffect(() => {
     if (existingData) {
-      setFormData(existingData);
+      // NOTE: corporateBasic.get() may return merged phone strings (e.g. "+852 12345678").
+      // For now we keep existing behavior; validation will guide user if edits are needed.
+      setFormData(existingData as any);
+      setIsEmailVerified(!!(existingData as any)?.contactEmailVerified);
     }
   }, [existingData]);
 
@@ -111,8 +113,11 @@ export default function CorporateBasicInfo() {
       newErrors.companyEnglishName = "公司英文名稱只能包含英文字母和空格，不能包含特殊符號";
     }
 
-    if (formData.companyChineseName.trim() && !/^[\u4e00-\u9fa5]+$/.test(formData.companyChineseName)) {
-      newErrors.companyChineseName = "公司中文名稱只能包含中文字，不能包含特殊字符";
+    if (
+      formData.companyChineseName.trim() &&
+      !/^[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]+$/.test(formData.companyChineseName)
+    ) {
+      newErrors.companyChineseName = "公司中文名稱只能包含中文字（繁/簡會自動轉繁），不能包含特殊字符";
     }
 
     if (!formData.natureOfEntity.trim()) newErrors.natureOfEntity = "請選擇公司性質";
@@ -136,12 +141,26 @@ export default function CorporateBasicInfo() {
     const validatePhone = (code: string, phone: string, field: string) => {
       if (!phone.trim()) {
         newErrors[field] = "請輸入電話號碼";
-      } else if (!/^\d+$/.test(phone)) {
+        return;
+      }
+      if (!/^\d+$/.test(phone)) {
         newErrors[field] = "只能輸入阿拉伯數字";
-      } else if (code === "+852" && phone.length !== 8) {
-        newErrors[field] = "香港電話號碼必須為8位數字";
-      } else if (code === "+86" && phone.length !== 11) {
-        newErrors[field] = "中國內地電話號碼必須為11位數字";
+        return;
+      }
+
+      const lengthRules: Record<string, number> = {
+        "+852": 8,  // 香港
+        "+86": 11,  // 中國內地
+        "+1": 10,   // 美國/加拿大（不含區號前綴，這裡按常見10位）
+        "+44": 10,  // 英國（常見10位，不含0）
+        "+65": 8,   // 新加坡
+        "+81": 10,  // 日本（常見10位，不含0）
+        "+82": 10,  // 韓國（常見10位，不含0）
+      };
+
+      const requiredLen = lengthRules[code];
+      if (requiredLen && phone.length !== requiredLen) {
+        newErrors[field] = `電話號碼格式錯誤：${code} 需輸入${requiredLen}位阿拉伯數字`;
       }
     };
 
@@ -163,7 +182,7 @@ export default function CorporateBasicInfo() {
     }
 
     if (formData.contactEmail.trim() && !isEmailVerified) {
-      newErrors.emailVerificationCode = "請驗證電郵地址";
+      newErrors.contactEmail = "請先完成電郵驗證";
     }
 
     setErrors(newErrors);
@@ -175,29 +194,17 @@ export default function CorporateBasicInfo() {
       toast.error("請檢查表單中的錯誤");
       return;
     }
-    saveOnlyMutation.mutate({ applicationId, ...formData });
+    saveOnlyMutation.mutate({ applicationId, ...formData, contactEmailVerified: isEmailVerified });
   };
 
-  
-  const handleSendCode = async () => {
-    if (!formData.contactEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contactEmail)) {
-      toast.error("請先輸入有效的電郵地址");
-      return;
-    }
-    setIsSendingCode(true);
-    // Mock sending code
-    setTimeout(() => {
-      setIsSendingCode(false);
-      toast.success("驗證碼已發送，請查收 (模擬: 輸入任意4位以上數字)");
-    }, 1500);
-  };
+
 
   const handleNext = () => {
     if (!validateForm()) {
       toast.error("請檢查表單中的錯誤");
       return;
     }
-    saveMutation.mutate({ applicationId, ...formData });
+    saveMutation.mutate({ applicationId, ...formData, contactEmailVerified: isEmailVerified });
   };
 
   const handleSCT = (text: string) => convertToTraditional(text);
@@ -426,60 +433,18 @@ export default function CorporateBasicInfo() {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="contactEmail">電郵地址 / E-mail <span className="text-destructive">*</span></Label>
-              <div className="flex gap-2">
-                <Input
-                  id="contactEmail"
-                  type="email"
-                  value={formData.contactEmail}
-                  onChange={(e) => {
-                    setFormData({ ...formData, contactEmail: e.target.value });
-                    setIsEmailVerified(false);
-                  }}
-                  className={errors.contactEmail ? "border-destructive flex-1" : "flex-1"}
-                />
-                <button 
-                  type="button" 
-                  onClick={handleSendCode}
-                  disabled={isSendingCode || isEmailVerified}
-                  className="px-3 py-2 bg-secondary text-secondary-foreground rounded-md text-sm whitespace-nowrap border"
-                >
-                  {isSendingCode ? "發送中..." : isEmailVerified ? "已驗證" : "發送驗證碼"}
-                </button>
-              </div>
+              <Label>電郵地址 / E-mail <span className="text-destructive">*</span></Label>
+              <EmailVerification
+                email={formData.contactEmail}
+                onEmailChange={(email) => {
+                  setFormData({ ...formData, contactEmail: email });
+                  setIsEmailVerified(false);
+                }}
+                onVerified={() => setIsEmailVerified(true)}
+                disabled={false}
+              />
               {errors.contactEmail && <p className="text-sm text-destructive">{errors.contactEmail}</p>}
             </div>
-            
-            {!isEmailVerified && (
-              <div className="space-y-2">
-                <Label htmlFor="emailVerificationCode">郵箱驗證碼 / Verification Code <span className="text-destructive">*</span></Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="emailVerificationCode"
-                    value={formData.emailVerificationCode}
-                    onChange={(e) => setFormData({ ...formData, emailVerificationCode: e.target.value })}
-                    placeholder="請輸入驗證碼"
-                    className={errors.emailVerificationCode ? "border-destructive flex-1" : "flex-1"}
-                  />
-                  <button 
-                    type="button" 
-                    onClick={() => {
-                      if (formData.emailVerificationCode.length >= 4) {
-                        setIsEmailVerified(true);
-                        toast.success("驗證成功");
-                        setErrors(prev => { const { emailVerificationCode, ...rest } = prev; return rest; });
-                      } else {
-                        toast.error("驗證碼錯誤");
-                      }
-                    }}
-                    className="px-3 py-2 bg-primary text-primary-foreground rounded-md text-sm whitespace-nowrap"
-                  >
-                    驗證
-                  </button>
-                </div>
-                {errors.emailVerificationCode && <p className="text-sm text-destructive">{errors.emailVerificationCode}</p>}
-              </div>
-            )}
 
           </div>
         </div>
