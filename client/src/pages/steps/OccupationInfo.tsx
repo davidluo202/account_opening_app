@@ -114,6 +114,14 @@ export default function OccupationInfo() {
       }
       if (!formData.industry) newErrors.industry = "請選擇行業";
       if (!formData.companyAddress?.trim()) newErrors.companyAddress = "請輸入公司地址";
+
+      // Office phone / fax: digits only (optional)
+      if (formData.officePhone?.trim() && !/^\d+$/.test(formData.officePhone.trim())) {
+        newErrors.officePhone = "辦公電話只能使用阿拉伯數字";
+      }
+      if (formData.officeFaxNo?.trim() && !/^\d+$/.test(formData.officeFaxNo.trim())) {
+        newErrors.officeFaxNo = "辦公傳真號只能使用阿拉伯數字";
+      }
     }
 
     setErrors(newErrors);
@@ -344,9 +352,11 @@ const handleSave = () => {
                 <Input
                   id="officePhone"
                   value={formData.officePhone}
-                  onChange={(e) => setFormData({ ...formData, officePhone: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, officePhone: e.target.value.replace(/\D/g, "") })}
                   placeholder="請輸入辦公電話"
+                  className={errors.officePhone ? "border-destructive" : ""}
                 />
+                {errors.officePhone && <p className="text-sm text-destructive">{errors.officePhone}</p>}
               </div>
 
               {/* 辦公传真 */}
@@ -357,9 +367,11 @@ const handleSave = () => {
                 <Input
                   id="officeFaxNo"
                   value={formData.officeFaxNo}
-                  onChange={(e) => setFormData({ ...formData, officeFaxNo: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, officeFaxNo: e.target.value.replace(/\D/g, "") })}
                   placeholder="請輸入辦公傳真號"
+                  className={errors.officeFaxNo ? "border-destructive" : ""}
                 />
+                {errors.officeFaxNo && <p className="text-sm text-destructive">{errors.officeFaxNo}</p>}
               </div>
             </div>
           </div>
