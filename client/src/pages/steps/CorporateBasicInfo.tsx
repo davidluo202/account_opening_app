@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, CheckCircle } from "lucide-react";
 import { convertToTraditional } from "@/lib/converter";
 import { industryOptions } from "@/lib/industryOptions";
 import { useReturnToPreview } from "@/hooks/useReturnToPreview";
@@ -138,7 +138,16 @@ export default function CorporateBasicInfo() {
     if (!formData.natureOfEntity.trim()) newErrors.natureOfEntity = "請選擇公司性質";
     if (!formData.natureOfBusiness.trim()) newErrors.natureOfBusiness = "請選擇業務性質";
     if (!formData.countryOfIncorporation) newErrors.countryOfIncorporation = "請選擇註冊國家";
-    if (!formData.dateOfIncorporation) newErrors.dateOfIncorporation = "請選擇註冊日期";
+    if (!formData.dateOfIncorporation) {
+      newErrors.dateOfIncorporation = "請選擇註冊日期";
+    } else {
+      const selectedDate = new Date(formData.dateOfIncorporation);
+      const today = new Date();
+      today.setHours(23, 59, 59, 999);
+      if (selectedDate > today) {
+        newErrors.dateOfIncorporation = "註冊日期不能晚於今天";
+      }
+    }
 
     if (!formData.certificateOfIncorporationNo.trim()) {
       newErrors.certificateOfIncorporationNo = "請輸入公司註冊證書號碼";
@@ -206,7 +215,12 @@ export default function CorporateBasicInfo() {
 
   const handleSave = () => {
     if (!validateForm()) {
-      toast.error("請檢查表單中的錯誤");
+      // Auto-scroll to first error
+      const firstError = document.querySelector('.border-destructive');
+      if (firstError) {
+        (firstError as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
+        (firstError as HTMLElement).focus();
+      }
       return;
     }
     saveOnlyMutation.mutate({ applicationId, ...formData, contactEmailVerified: isEmailVerified });
@@ -216,7 +230,12 @@ export default function CorporateBasicInfo() {
 
   const handleNext = () => {
     if (!validateForm()) {
-      toast.error("請檢查表單中的錯誤");
+      // Auto-scroll to first error
+      const firstError = document.querySelector('.border-destructive');
+      if (firstError) {
+        (firstError as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
+        (firstError as HTMLElement).focus();
+      }
       return;
     }
     saveMutation.mutate({ applicationId, ...formData, contactEmailVerified: isEmailVerified });
@@ -251,13 +270,18 @@ export default function CorporateBasicInfo() {
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="companyEnglishName">公司英文名稱 / Company English Name <span className="text-destructive">*</span></Label>
-              <Input
-                id="companyEnglishName"
-                value={formData.companyEnglishName}
-                onChange={(e) => setFormData({ ...formData, companyEnglishName: e.target.value })}
-                placeholder="Enter Company English Name"
-                className={errors.companyEnglishName ? "border-destructive" : ""}
-              />
+              <div className="relative">
+                <Input
+                  id="companyEnglishName"
+                  value={formData.companyEnglishName}
+                  onChange={(e) => setFormData({ ...formData, companyEnglishName: e.target.value })}
+                  placeholder="Enter Company English Name"
+                  className={errors.companyEnglishName ? "border-destructive pr-10" : "pr-10"}
+                />
+                {formData.companyEnglishName.trim() && !errors.companyEnglishName && (
+                  <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
+                )}
+              </div>
               {errors.companyEnglishName && <p className="text-sm text-destructive">{errors.companyEnglishName}</p>}
             </div>
             <div className="space-y-2">
@@ -268,7 +292,9 @@ export default function CorporateBasicInfo() {
                 onChange={(e) => setFormData({ ...formData, companyChineseName: e.target.value })}
                 onBlur={() => setFormData({ ...formData, companyChineseName: handleSCT(formData.companyChineseName) })}
                 placeholder="請輸入公司中文名稱"
+                className={errors.companyChineseName ? "border-destructive" : ""}
               />
+              {errors.companyChineseName && <p className="text-sm text-destructive">{errors.companyChineseName}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="natureOfEntity">公司性質 / Nature of Entity <span className="text-destructive">*</span></Label>
@@ -310,6 +336,7 @@ export default function CorporateBasicInfo() {
                   ))}
                 </SelectContent>
               </Select>
+              {errors.countryOfIncorporation && <p className="text-sm text-destructive">{errors.countryOfIncorporation}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="dateOfIncorporation">註冊日期 / Date of Incorporation <span className="text-destructive">*</span></Label>
@@ -320,6 +347,7 @@ export default function CorporateBasicInfo() {
                 onChange={(e) => setFormData({ ...formData, dateOfIncorporation: e.target.value })}
                 className={errors.dateOfIncorporation ? "border-destructive" : ""}
               />
+              {errors.dateOfIncorporation && <p className="text-sm text-destructive">{errors.dateOfIncorporation}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="certificateOfIncorporationNo">公司註冊證書號碼 / CI No. <span className="text-destructive">*</span></Label>
@@ -329,6 +357,7 @@ export default function CorporateBasicInfo() {
                 onChange={(e) => setFormData({ ...formData, certificateOfIncorporationNo: e.target.value })}
                 className={errors.certificateOfIncorporationNo ? "border-destructive" : ""}
               />
+              {errors.certificateOfIncorporationNo && <p className="text-sm text-destructive">{errors.certificateOfIncorporationNo}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="businessRegistrationNo">商業登記證號碼 / BR No.</Label>
@@ -336,7 +365,9 @@ export default function CorporateBasicInfo() {
                 id="businessRegistrationNo"
                 value={formData.businessRegistrationNo}
                 onChange={(e) => setFormData({ ...formData, businessRegistrationNo: e.target.value })}
+                className={errors.businessRegistrationNo ? "border-destructive" : ""}
               />
+              {errors.businessRegistrationNo && <p className="text-sm text-destructive">{errors.businessRegistrationNo}</p>}
             </div>
           </div>
         </div>
@@ -354,6 +385,7 @@ export default function CorporateBasicInfo() {
                 onBlur={() => setFormData({ ...formData, registeredAddress: handleSCT(formData.registeredAddress) })}
                 className={errors.registeredAddress ? "border-destructive" : ""}
               />
+              {errors.registeredAddress && <p className="text-sm text-destructive">{errors.registeredAddress}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="businessAddress">營業地址 / Business Address <span className="text-destructive">*</span></Label>
@@ -364,6 +396,7 @@ export default function CorporateBasicInfo() {
                 onBlur={() => setFormData({ ...formData, businessAddress: handleSCT(formData.businessAddress) })}
                 className={errors.businessAddress ? "border-destructive" : ""}
               />
+              {errors.businessAddress && <p className="text-sm text-destructive">{errors.businessAddress}</p>}
             </div>
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-2">
@@ -387,6 +420,7 @@ export default function CorporateBasicInfo() {
                     className={errors.officeNo ? "border-destructive flex-1" : "flex-1"}
                   />
                 </div>
+                {errors.officeNo && <p className="text-sm text-destructive">{errors.officeNo}</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="facsimileNo">傳真號碼 / Fax No.</Label>
@@ -394,7 +428,9 @@ export default function CorporateBasicInfo() {
                   id="facsimileNo"
                   value={formData.facsimileNo}
                   onChange={(e) => setFormData({ ...formData, facsimileNo: e.target.value })}
+                  className={errors.facsimileNo ? "border-destructive" : ""}
                 />
+                {errors.facsimileNo && <p className="text-sm text-destructive">{errors.facsimileNo}</p>}
               </div>
             </div>
           </div>
@@ -413,6 +449,7 @@ export default function CorporateBasicInfo() {
                 onBlur={() => setFormData({ ...formData, contactName: handleSCT(formData.contactName) })}
                 className={errors.contactName ? "border-destructive" : ""}
               />
+              {errors.contactName && <p className="text-sm text-destructive">{errors.contactName}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="contactTitle">職銜 / Title <span className="text-destructive">*</span></Label>
@@ -423,6 +460,7 @@ export default function CorporateBasicInfo() {
                 onBlur={() => setFormData({ ...formData, contactTitle: handleSCT(formData.contactTitle) })}
                 className={errors.contactTitle ? "border-destructive" : ""}
               />
+              {errors.contactTitle && <p className="text-sm text-destructive">{errors.contactTitle}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="contactPhone">電話號碼 / Telephone No. <span className="text-destructive">*</span></Label>
@@ -445,8 +483,9 @@ export default function CorporateBasicInfo() {
                   className={errors.contactPhone ? "border-destructive flex-1" : "flex-1"}
                 />
               </div>
+              {errors.contactPhone && <p className="text-sm text-destructive">{errors.contactPhone}</p>}
             </div>
-            
+
             <div className="space-y-2">
               <Label>電郵地址 / E-mail <span className="text-destructive">*</span></Label>
               <EmailVerification
