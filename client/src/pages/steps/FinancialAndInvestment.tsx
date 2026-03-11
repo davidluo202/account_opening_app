@@ -37,9 +37,10 @@ const experienceLevels = [
 
 
 export default function FinancialAndInvestment() {
-  const params = useParams<{ id: string }>();
+  const params = useParams<{ id: string; step?: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
+  const stepNum = parseInt(params.step || "7");
   const showReturnToPreview = useReturnToPreview();
 
   const [investmentObjectives, setInvestmentObjectives] = useState<string[]>([]);
@@ -56,7 +57,7 @@ export default function FinancialAndInvestment() {
     onSuccess: (result) => {
       if (result.success && result.data) {
         toast.success("保存成功");
-        setLocation(`/application/${applicationId}/step/8`);
+        setLocation(`/application/${applicationId}/step/${stepNum + 1}`);
       }
     },
     onError: (error) => {
@@ -160,7 +161,7 @@ export default function FinancialAndInvestment() {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={7}
+      <ApplicationWizard applicationId={applicationId} currentStep={stepNum}
       showReturnToPreview={showReturnToPreview}
     >
         <div className="flex justify-center py-12">
@@ -173,7 +174,7 @@ export default function FinancialAndInvestment() {
   return (
     <ApplicationWizard
       applicationId={applicationId}
-      currentStep={7}
+      currentStep={stepNum}
       onNext={handleNext}
       onSave={handleSave}
       isNextLoading={saveMutation.isPending}

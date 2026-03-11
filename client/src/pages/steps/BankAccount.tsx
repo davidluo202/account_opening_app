@@ -183,9 +183,10 @@ const hkBanks = [
 ];
 
 export default function BankAccount() {
-  const params = useParams<{ id: string }>();
+  const params = useParams<{ id: string; step?: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
+  const stepNum = parseInt(params.step || "9");
   const showReturnToPreview = useReturnToPreview();
 
   const [isAdding, setIsAdding] = useState(false);
@@ -321,12 +322,12 @@ const handleNext = () => {
       toast.error("請至少添加一個銀行賬戶");
       return;
     }
-    setLocation(`/application/${applicationId}/step/10`);
+    setLocation(`/application/${applicationId}/step/${stepNum + 1}`);
   };
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={9}
+      <ApplicationWizard applicationId={applicationId} currentStep={stepNum}
       showReturnToPreview={showReturnToPreview}
     >
         <div className="flex justify-center py-12">
@@ -339,7 +340,7 @@ const handleNext = () => {
   return (
     <ApplicationWizard
       applicationId={applicationId}
-      currentStep={9}
+      currentStep={stepNum}
       onNext={handleNext}
       isNextDisabled={!bankAccounts || bankAccounts.length === 0}
     

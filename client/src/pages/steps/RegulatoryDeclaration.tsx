@@ -15,9 +15,10 @@ import { toast } from "sonner";
 import { Loader2, FileText } from "lucide-react";
 
 export default function RegulatoryDeclaration() {
-  const params = useParams<{ id: string }>();
+  const params = useParams<{ id: string; step?: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
+  const stepNum = parseInt(params.step || "13");
   const showReturnToPreview = useReturnToPreview();
 
   const [formData, setFormData] = useState({
@@ -120,7 +121,7 @@ const handleNext = () => {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={13}
+      <ApplicationWizard applicationId={applicationId} currentStep={stepNum}
       showReturnToPreview={showReturnToPreview}
     >
         <div className="flex justify-center py-12">
@@ -133,7 +134,7 @@ const handleNext = () => {
   return (
     <ApplicationWizard
       applicationId={applicationId}
-      currentStep={13}
+      currentStep={stepNum}
       onNext={handleNext}
       isNextLoading={saveMutation.isPending}
     

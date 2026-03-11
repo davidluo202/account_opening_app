@@ -22,9 +22,10 @@ const employmentStatuses = [
 const industries = industryOptions;
 
 export default function OccupationInfo() {
-  const params = useParams<{ id: string }>();
+  const params = useParams<{ id: string; step?: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
+  const stepNum = parseInt(params.step || "5");
   const showReturnToPreview = useReturnToPreview();
 
   const [formData, setFormData] = useState({
@@ -49,7 +50,7 @@ export default function OccupationInfo() {
     onSuccess: (result) => {
       if (result.success && result.data) {
         toast.success("保存成功");
-        setLocation(`/application/${applicationId}/step/6`);
+        setLocation(`/application/${applicationId}/step/${stepNum + 1}`);
       }
     },
     onError: (error) => {
@@ -147,7 +148,7 @@ const handleSave = () => {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={5}
+      <ApplicationWizard applicationId={applicationId} currentStep={stepNum}
       showReturnToPreview={showReturnToPreview}
     >
         <div className="flex justify-center py-12">
@@ -160,7 +161,7 @@ const handleSave = () => {
   return (
     <ApplicationWizard
       applicationId={applicationId}
-      currentStep={5}
+      currentStep={stepNum}
       onNext={handleNext}
       onSave={handleSave}
       isNextLoading={saveMutation.isPending}

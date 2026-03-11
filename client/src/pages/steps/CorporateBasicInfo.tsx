@@ -97,12 +97,27 @@ export default function CorporateBasicInfo() {
   });
 
   useEffect(() => {
-    if (existingData) {
-      // NOTE: corporateBasic.get() may return merged phone strings (e.g. "+852 12345678").
-      // For now we keep existing behavior; validation will guide user if edits are needed.
-      setFormData(existingData as any);
-      setIsEmailVerified(!!(existingData as any)?.contactEmailVerified);
-    }
+    if (!existingData) return;
+
+    const parseMergedPhone = (value?: string) => {
+      if (!value) return { code: undefined as string | undefined, number: value };
+      const m = value.trim().match(/^(\+\d+)\s*(\d+)$/);
+      if (!m) return { code: undefined as string | undefined, number: value };
+      return { code: m[1], number: m[2] };
+    };
+
+    const office = parseMergedPhone((existingData as any).officeNo);
+    const contact = parseMergedPhone((existingData as any).contactPhone);
+
+    setFormData({
+      ...(existingData as any),
+      // Split merged phones so UI shows country code in select, number in input
+      officeCountryCode: office.code || (existingData as any).officeCountryCode || "+852",
+      officeNo: office.number || "",
+      contactCountryCode: contact.code || (existingData as any).contactCountryCode || "+852",
+      contactPhone: contact.number || "",
+    });
+    setIsEmailVerified(!!(existingData as any)?.contactEmailVerified);
   }, [existingData]);
 
   const validateForm = () => {

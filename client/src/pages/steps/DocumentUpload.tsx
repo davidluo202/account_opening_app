@@ -17,9 +17,10 @@ const documentTypes = [
 ];
 
 export default function DocumentUpload() {
-  const params = useParams<{ id: string }>();
+  const params = useParams<{ id: string; step?: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
+  const stepNum = parseInt(params.step || "11");
   const showReturnToPreview = useReturnToPreview();
 
   const [uploading, setUploading] = useState<string | null>(null);
@@ -91,12 +92,12 @@ const handleNext = () => {
       toast.error("請上傳所有必需的文件");
       return;
     }
-    setLocation(`/application/${applicationId}/step/12`);
+    setLocation(`/application/${applicationId}/step/${stepNum + 1}`);
   };
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={11}
+      <ApplicationWizard applicationId={applicationId} currentStep={stepNum}
       showReturnToPreview={showReturnToPreview}
     >
         <div className="flex justify-center py-12">
@@ -109,7 +110,7 @@ const handleNext = () => {
   return (
     <ApplicationWizard
       applicationId={applicationId}
-      currentStep={11}
+      currentStep={stepNum}
       onNext={handleNext}
       isNextDisabled={!hasRequiredDocuments()}
     

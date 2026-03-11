@@ -36,8 +36,9 @@ interface FormData {
 export default function RiskQuestionnaire() {
   const [, setLocation] = useLocation();
   const [loading, setLoading] = useState(false);
-  const params = useParams<{ id: string }>();
+  const params = useParams<{ id: string; step?: string }>();
   const applicationId = parseInt(params.id || "0");
+  const stepNum = parseInt(params.step || "7");
   const [formData, setFormData] = useState<FormData>({
     q1_current_investments: [],
     q2_investment_period: "",
@@ -128,7 +129,7 @@ export default function RiskQuestionnaire() {
   const saveMutation = trpc.riskQuestionnaire.save.useMutation({
     onSuccess: () => {
       toast.success("風險評估問卷已保存");
-      setLocation(`/application/${applicationId}/step/9`);
+      setLocation(`/application/${applicationId}/step/${stepNum + 1}`);
     },
     onError: (error: any) => {
       toast.error(`保存失敗: ${error.message}`);
@@ -302,7 +303,7 @@ export default function RiskQuestionnaire() {
 
   return (
     <ApplicationWizard 
-      currentStep={8} 
+      currentStep={stepNum} 
       applicationId={applicationId!}
       onNext={handleSubmit}
       isNextDisabled={loading || saveMutation.isPending}
