@@ -97,6 +97,32 @@ export const accountSelections = mysqlTable("account_selections", {
 });
 
 /**
+ * Case 2: 机构基本信息
+ */
+export const corporateBasicInfo = mysqlTable("corporate_basic_info", {
+  id: int("id").autoincrement().primaryKey(),
+  applicationId: int("applicationId").notNull().unique(),
+  companyEnglishName: varchar("companyEnglishName", { length: 255 }).notNull(),
+  companyChineseName: varchar("companyChineseName", { length: 255 }),
+  natureOfEntity: varchar("natureOfEntity", { length: 100 }).notNull(),
+  natureOfBusiness: varchar("natureOfBusiness", { length: 100 }).notNull(),
+  countryOfIncorporation: varchar("countryOfIncorporation", { length: 100 }).notNull(),
+  dateOfIncorporation: varchar("dateOfIncorporation", { length: 10 }).notNull(), // YYYY-MM-DD
+  certificateOfIncorporationNo: varchar("certificateOfIncorporationNo", { length: 100 }).notNull(),
+  businessRegistrationNo: varchar("businessRegistrationNo", { length: 100 }),
+  registeredAddress: text("registeredAddress").notNull(),
+  businessAddress: text("businessAddress").notNull(),
+  officeNo: varchar("officeNo", { length: 50 }).notNull(),
+  facsimileNo: varchar("facsimileNo", { length: 50 }),
+  contactName: varchar("contactName", { length: 100 }).notNull(),
+  contactTitle: varchar("contactTitle", { length: 100 }).notNull(),
+  contactPhone: varchar("contactPhone", { length: 50 }).notNull(),
+  contactEmail: varchar("contactEmail", { length: 320 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+/**
  * Case 3: 个人基本信息
  */
 export const personalBasicInfo = mysqlTable("personal_basic_info", {
@@ -355,6 +381,7 @@ export type PersonalDetailedInfo = typeof personalDetailedInfo.$inferSelect;
 export type OccupationInfo = typeof occupationInfo.$inferSelect;
 export type EmploymentDetails = typeof employmentDetails.$inferSelect;
 export type FinancialAndInvestment = typeof financialAndInvestment.$inferSelect;
+export type CorporateBasicInfo = typeof corporateBasicInfo.$inferSelect;
 export type BankAccount = typeof bankAccounts.$inferSelect;
 export type TaxInfo = typeof taxInfo.$inferSelect;
 export type UploadedDocument = typeof uploadedDocuments.$inferSelect;

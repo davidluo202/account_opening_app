@@ -600,7 +600,7 @@ export const appRouter = router({
         }
         
         await db.savePersonalBasicInfo(applicationId, data);
-        await db.updateApplicationStep(applicationId, 3);
+        await db.updateApplicationStep(applicationId, 2);
         
         const saved = await db.getPersonalBasicInfo(applicationId);
         return { success: true, data: saved };
@@ -614,6 +614,64 @@ export const appRouter = router({
           throw new Error("申请不存在或无权访问");
         }
         return await db.getPersonalBasicInfo(input.applicationId);
+      }),
+  }),
+
+  // Case 2: 机构基本信息
+  corporateBasic: router({
+    save: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+        companyEnglishName: z.string().min(1),
+        companyChineseName: z.string().optional(),
+        natureOfEntity: z.string().min(1),
+        natureOfBusiness: z.string().min(1),
+        countryOfIncorporation: z.string().min(1),
+        dateOfIncorporation: z.string(),
+        certificateOfIncorporationNo: z.string().min(1),
+        businessRegistrationNo: z.string().optional(),
+        registeredAddress: z.string().min(1),
+        businessAddress: z.string().min(1),
+        officeNo: z.string().min(1),
+        officeCountryCode: z.string().optional(),
+        facsimileNo: z.string().optional(),
+        contactName: z.string().min(1),
+        contactTitle: z.string().min(1),
+        contactPhone: z.string().min(1),
+        contactCountryCode: z.string().optional(),
+        contactEmail: z.string().email(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { applicationId, officeCountryCode, contactCountryCode, ...data } = input;
+        
+        // 合并国家区号与电话号码
+        const officeNo = officeCountryCode ? `${officeCountryCode} ${data.officeNo}` : data.officeNo;
+        const contactPhone = contactCountryCode ? `${contactCountryCode} ${data.contactPhone}` : data.contactPhone;
+        
+        const application = await db.getApplicationById(applicationId);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
+        }
+        
+        await db.saveCorporateBasicInfo(applicationId, {
+          ...data,
+          officeNo,
+          contactPhone,
+        });
+        await db.updateApplicationStep(applicationId, 2);
+        
+        const saved = await db.getCorporateBasicInfo(applicationId);
+        return { success: true, data: saved };
+      }),
+    
+    get: protectedProcedure
+      .input(z.object({ applicationId: z.number() }))
+      .query(async ({ input, ctx }) => {
+        const application = await db.getApplicationById(input.applicationId);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
+        }
+        return await db.getCorporateBasicInfo(input.applicationId);
       }),
   }),
   

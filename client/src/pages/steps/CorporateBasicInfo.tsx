@@ -8,10 +8,33 @@ import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { convertToTraditional } from "@/lib/converter";
+import { industryOptions } from "@/lib/industryOptions";
 import { useReturnToPreview } from "@/hooks/useReturnToPreview";
 
 const countries = [
   "中国", "香港", "澳门", "台湾", "美国", "加拿大", "英国", "澳大利亚", "新加坡", "日本", "韩国", "other"
+];
+
+const entityNatures = [
+  "有限公司 / Limited Company",
+  "無限公司 / Unlimited Company",
+  "獨資經營 / Sole Proprietorship",
+  "合夥企業 / Partnership",
+  "信託 / Trust",
+  "其他 / Other"
+];
+
+// Use the same industry list as Individual Account Opening → Occupation Info
+const businessNatures = industryOptions;
+
+const countryCodes = [
+  { value: "+852", label: "+852 (香港)" },
+  { value: "+86", label: "+86 (中國)" },
+  { value: "+1", label: "+1 (美國/加拿大)" },
+  { value: "+44", label: "+44 (英國)" },
+  { value: "+65", label: "+65 (新加坡)" },
+  { value: "+81", label: "+81 (日本)" },
+  { value: "+82", label: "+82 (韓國)" },
 ];
 
 export default function CorporateBasicInfo() {
@@ -32,10 +55,12 @@ export default function CorporateBasicInfo() {
     registeredAddress: "",
     businessAddress: "",
     officeNo: "",
+    officeCountryCode: "+852",
     facsimileNo: "",
     contactName: "",
     contactTitle: "",
     contactPhone: "",
+    contactCountryCode: "+852",
     contactEmail: "",
   });
 
@@ -78,8 +103,8 @@ export default function CorporateBasicInfo() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.companyEnglishName.trim()) newErrors.companyEnglishName = "請輸入公司英文名稱";
-    if (!formData.natureOfEntity.trim()) newErrors.natureOfEntity = "請輸入公司性質";
-    if (!formData.natureOfBusiness.trim()) newErrors.natureOfBusiness = "請輸入業務性質";
+    if (!formData.natureOfEntity.trim()) newErrors.natureOfEntity = "請選擇公司性質";
+    if (!formData.natureOfBusiness.trim()) newErrors.natureOfBusiness = "請選擇業務性質";
     if (!formData.countryOfIncorporation) newErrors.countryOfIncorporation = "請選擇註冊國家";
     if (!formData.dateOfIncorporation) newErrors.dateOfIncorporation = "請選擇註冊日期";
     if (!formData.certificateOfIncorporationNo.trim()) newErrors.certificateOfIncorporationNo = "請輸入公司註冊證書號碼";
@@ -114,6 +139,8 @@ export default function CorporateBasicInfo() {
     }
     saveMutation.mutate({ applicationId, ...formData });
   };
+
+  const handleSCT = (text: string) => convertToTraditional(text);
 
   if (isLoadingData) {
     return (
@@ -157,30 +184,36 @@ export default function CorporateBasicInfo() {
                 id="companyChineseName"
                 value={formData.companyChineseName}
                 onChange={(e) => setFormData({ ...formData, companyChineseName: e.target.value })}
-                onBlur={() => setFormData({ ...formData, companyChineseName: convertToTraditional(formData.companyChineseName) })}
+                onBlur={() => setFormData({ ...formData, companyChineseName: handleSCT(formData.companyChineseName) })}
                 placeholder="請輸入公司中文名稱"
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="natureOfEntity">公司性質 / Nature of Entity <span className="text-destructive">*</span></Label>
-              <Input
-                id="natureOfEntity"
-                value={formData.natureOfEntity}
-                onChange={(e) => setFormData({ ...formData, natureOfEntity: e.target.value })}
-                placeholder="例如：有限公司"
-                className={errors.natureOfEntity ? "border-destructive" : ""}
-              />
+              <Select value={formData.natureOfEntity} onValueChange={(v) => setFormData({ ...formData, natureOfEntity: v })}>
+                <SelectTrigger className={errors.natureOfEntity ? "border-destructive" : ""}>
+                  <SelectValue placeholder="請選擇公司性質" />
+                </SelectTrigger>
+                <SelectContent>
+                  {entityNatures.map((n) => (
+                    <SelectItem key={n} value={n}>{n}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               {errors.natureOfEntity && <p className="text-sm text-destructive">{errors.natureOfEntity}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="natureOfBusiness">業務性質 / Nature of Business <span className="text-destructive">*</span></Label>
-              <Input
-                id="natureOfBusiness"
-                value={formData.natureOfBusiness}
-                onChange={(e) => setFormData({ ...formData, natureOfBusiness: e.target.value })}
-                placeholder="例如：投資控股"
-                className={errors.natureOfBusiness ? "border-destructive" : ""}
-              />
+              <Select value={formData.natureOfBusiness} onValueChange={(v) => setFormData({ ...formData, natureOfBusiness: v })}>
+                <SelectTrigger className={errors.natureOfBusiness ? "border-destructive" : ""}>
+                  <SelectValue placeholder="請選擇業務性質" />
+                </SelectTrigger>
+                <SelectContent>
+                  {businessNatures.map((n) => (
+                    <SelectItem key={n} value={n}>{n}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               {errors.natureOfBusiness && <p className="text-sm text-destructive">{errors.natureOfBusiness}</p>}
             </div>
             <div className="space-y-2">
@@ -236,6 +269,7 @@ export default function CorporateBasicInfo() {
                 id="registeredAddress"
                 value={formData.registeredAddress}
                 onChange={(e) => setFormData({ ...formData, registeredAddress: e.target.value })}
+                onBlur={() => setFormData({ ...formData, registeredAddress: handleSCT(formData.registeredAddress) })}
                 className={errors.registeredAddress ? "border-destructive" : ""}
               />
             </div>
@@ -245,18 +279,32 @@ export default function CorporateBasicInfo() {
                 id="businessAddress"
                 value={formData.businessAddress}
                 onChange={(e) => setFormData({ ...formData, businessAddress: e.target.value })}
+                onBlur={() => setFormData({ ...formData, businessAddress: handleSCT(formData.businessAddress) })}
                 className={errors.businessAddress ? "border-destructive" : ""}
               />
             </div>
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="officeNo">辦事處電話 / Office No. <span className="text-destructive">*</span></Label>
-                <Input
-                  id="officeNo"
-                  value={formData.officeNo}
-                  onChange={(e) => setFormData({ ...formData, officeNo: e.target.value })}
-                  className={errors.officeNo ? "border-destructive" : ""}
-                />
+                <div className="flex gap-2">
+                  <Select 
+                    value={formData.officeCountryCode} 
+                    onValueChange={(v) => setFormData({ ...formData, officeCountryCode: v })}
+                  >
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {countryCodes.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    id="officeNo"
+                    value={formData.officeNo}
+                    onChange={(e) => setFormData({ ...formData, officeNo: e.target.value })}
+                    className={errors.officeNo ? "border-destructive flex-1" : "flex-1"}
+                  />
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="facsimileNo">傳真號碼 / Facsimile No.</Label>
@@ -280,6 +328,7 @@ export default function CorporateBasicInfo() {
                 id="contactName"
                 value={formData.contactName}
                 onChange={(e) => setFormData({ ...formData, contactName: e.target.value })}
+                onBlur={() => setFormData({ ...formData, contactName: handleSCT(formData.contactName) })}
                 className={errors.contactName ? "border-destructive" : ""}
               />
             </div>
@@ -289,17 +338,31 @@ export default function CorporateBasicInfo() {
                 id="contactTitle"
                 value={formData.contactTitle}
                 onChange={(e) => setFormData({ ...formData, contactTitle: e.target.value })}
+                onBlur={() => setFormData({ ...formData, contactTitle: handleSCT(formData.contactTitle) })}
                 className={errors.contactTitle ? "border-destructive" : ""}
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="contactPhone">電話號碼 / Telephone No. <span className="text-destructive">*</span></Label>
-              <Input
-                id="contactPhone"
-                value={formData.contactPhone}
-                onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })}
-                className={errors.contactPhone ? "border-destructive" : ""}
-              />
+              <div className="flex gap-2">
+                <Select 
+                  value={formData.contactCountryCode} 
+                  onValueChange={(v) => setFormData({ ...formData, contactCountryCode: v })}
+                >
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {countryCodes.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+                <Input
+                  id="contactPhone"
+                  value={formData.contactPhone}
+                  onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })}
+                  className={errors.contactPhone ? "border-destructive flex-1" : "flex-1"}
+                />
+              </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="contactEmail">電郵地址 / E-mail <span className="text-destructive">*</span></Label>

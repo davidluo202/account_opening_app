@@ -148,6 +148,13 @@
       "when": 1772083560430,
       "tag": "0020_dear_impossible_man",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "5",
+      "when": 1773245200000,
+      "tag": "0021_corporate_basic_info",
+      "breakpoints": true
     }
   ]
 }

@@ -10,6 +10,7 @@ import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { convertToTraditional } from "@/lib/converter";
+import { industryOptions } from "@/lib/industryOptions";
 
 const employmentStatuses = [
   { value: "employed", label: "受僱 / Employed" },
@@ -18,18 +19,7 @@ const employmentStatuses = [
   { value: "unemployed", label: "無業 / Unemployed" },
 ];
 
-const industries = [
-  "金融服務 / Financial Services",
-  "資訊科技 / IT",
-  "醫療保健 / Healthcare",
-  "教育 / Education",
-  "零售 / Retail",
-  "製造業 / Manufacturing",
-  "房地產 / Real Estate",
-  "法律 / Legal",
-  "會計 / Accounting",
-  "其他 / Other",
-];
+const industries = industryOptions;
 
 export default function OccupationInfo() {
   const params = useParams<{ id: string }>();
