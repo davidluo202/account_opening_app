@@ -94,8 +94,20 @@ export default function OccupationInfo() {
     }
 
     if (needsEmploymentDetails) {
-      if (!formData.companyName?.trim()) newErrors.companyName = "請輸入公司名稱";
-      if (!formData.position?.trim()) newErrors.position = "請輸入職務名稱";
+      const noSpecialChars = /^[A-Za-z0-9\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\s\-\(\)\/\.&]+$/;
+
+      if (!formData.companyName?.trim()) {
+        newErrors.companyName = "請輸入公司名稱";
+      } else if (!noSpecialChars.test(formData.companyName)) {
+        newErrors.companyName = "公司名稱不能包含特殊字符";
+      }
+
+      if (!formData.position?.trim()) {
+        newErrors.position = "請輸入職務名稱";
+      } else if (!noSpecialChars.test(formData.position)) {
+        newErrors.position = "職務名稱不能包含特殊字符";
+      }
+
       const years = parseInt(formData.yearsOfService);
       if (!formData.yearsOfService || isNaN(years) || years <= 0) {
         newErrors.yearsOfService = "請輸入有效的從業年限";
@@ -327,26 +339,26 @@ const handleSave = () => {
               {/* 辦公电话 */}
               <div className="space-y-2">
                 <Label htmlFor="officePhone">
-                  辦公电话 / Office Phone (可选)
+                  辦公電話 / Office Phone (可選)
                 </Label>
                 <Input
                   id="officePhone"
                   value={formData.officePhone}
                   onChange={(e) => setFormData({ ...formData, officePhone: e.target.value })}
-                  placeholder="请输入辦公电话"
+                  placeholder="請輸入辦公電話"
                 />
               </div>
 
               {/* 辦公传真 */}
               <div className="space-y-2">
                 <Label htmlFor="officeFaxNo">
-                  辦公传真 / Office Fax (可选)
+                  辦公傳真號 / Office Fax No. (可選)
                 </Label>
                 <Input
                   id="officeFaxNo"
                   value={formData.officeFaxNo}
                   onChange={(e) => setFormData({ ...formData, officeFaxNo: e.target.value })}
-                  placeholder="请输入辦公传真"
+                  placeholder="請輸入辦公傳真號"
                 />
               </div>
             </div>
