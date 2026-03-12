@@ -22,8 +22,12 @@ export default function TaxInfo() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // 获取个人基本信息以自动填充税务居住地和证件号码
+  // 获取个人/机构基本信息以自动填充税务居住地和证件号码
   const { data: basicInfo } = trpc.personalBasic.get.useQuery(
+    { applicationId },
+    { enabled: !!applicationId }
+  );
+  const { data: corporateInfo } = trpc.corporateBasic.get.useQuery(
     { applicationId },
     { enabled: !!applicationId }
   );
@@ -62,17 +66,22 @@ export default function TaxInfo() {
   });
 
   useEffect(() => {
-    // 優先從basicInfo和detailedInfo自動同步最新數據
-    if (basicInfo && detailedInfo) {
+    // 機構：納稅居住國=註冊國家，稅務編號=商業登記號
+    if (corporateInfo) {
+      setFormData({
+        taxResidency: corporateInfo.countryOfIncorporation,
+        taxIdNumber: corporateInfo.businessRegistrationNo,
+      });
+    } else if (basicInfo && detailedInfo) {
+      // 個人：從基本信息獲取
       setFormData({
         taxResidency: basicInfo.nationality,
         taxIdNumber: detailedInfo.idNumber,
       });
     } else if (existingData) {
-      // 如果沒有basicInfo和detailedInfo，則使用已保存的數據
       setFormData(existingData);
     }
-  }, [basicInfo, detailedInfo, existingData]);
+  }, [basicInfo, detailedInfo, corporateInfo, existingData]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
