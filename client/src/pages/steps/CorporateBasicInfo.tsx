@@ -153,10 +153,15 @@ export default function CorporateBasicInfo() {
       newErrors.certificateOfIncorporationNo = "請輸入公司註冊證書號碼";
     } else if (!/^\d+$/.test(formData.certificateOfIncorporationNo)) {
       newErrors.certificateOfIncorporationNo = "格式錯誤，只能採用阿拉伯數字";
+    } else if (formData.certificateOfIncorporationNo.length > 8) {
+      newErrors.certificateOfIncorporationNo = "不能超過8位";
     }
 
-    if (formData.businessRegistrationNo.trim() && !/^\d{8}$/.test(formData.businessRegistrationNo)) {
-      newErrors.businessRegistrationNo = "格式錯誤，必須為8位阿拉伯數字";
+    // 商業登記號：7位（不足補0)
+    if (formData.businessRegistrationNo.trim() && !/^\d+$/.test(formData.businessRegistrationNo)) {
+      newErrors.businessRegistrationNo = "格式錯誤，只能採用阿拉伯數字";
+    } else if (formData.businessRegistrationNo.length > 8) {
+      newErrors.businessRegistrationNo = "不能超過8位";
     }
 
     if (!formData.registeredAddress.trim()) newErrors.registeredAddress = "請輸入註冊地址";
@@ -183,7 +188,12 @@ export default function CorporateBasicInfo() {
       };
 
       const requiredLen = lengthRules[code];
-      if (requiredLen && phone.length !== requiredLen) {
+      // 香港電話允許少於8位，其他嚴格校驗位數
+      if (code === "+852") {
+        if (phone.length > 8) {
+          newErrors[field] = `電話號碼格式錯誤：${code} 不能超過8位`;
+        }
+      } else if (requiredLen && phone.length !== requiredLen) {
         newErrors[field] = `電話號碼格式錯誤：${code} 需輸入${requiredLen}位阿拉伯數字`;
       }
     };
