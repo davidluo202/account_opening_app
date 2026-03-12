@@ -8,9 +8,16 @@ import { useEffect, useState } from "react";
 import { useLocation, useRoute } from "wouter";
 import { toast } from "sonner";
 import { translate, formatInvestmentExperience as formatInvExp, formatInvestmentObjectives, formatAmount, getRiskToleranceDescription } from "@/lib/translations";
+import { convertToTraditional } from "@/lib/converter";
 
 // 使用翻譯工具中的函數
 const formatInvestmentExperience = formatInvExp;
+
+// 簡體轉繁體輔助函數
+const toTraditional = (text: string | undefined | null): string => {
+  if (!text) return "-";
+  return convertToTraditional(text);
+};
 
 // 計算風險評估問卷的風險等級
 const calculateRiskLevel = (riskQuestionnaire: any): { totalScore: number; riskLevel: string; riskDescription: string } => {
