@@ -132,6 +132,15 @@ export default function OccupationInfo() {
       }
     }
 
+    // 學生/無業：至少填一項聯繫方式
+    if (formData.employmentStatus === "student" || formData.employmentStatus === "unemployed") {
+      const hasContact = formData.companyAddress?.trim() || formData.officePhone?.trim();
+      if (!hasContact) {
+        newErrors.companyAddress = "學生/無業人士請至少填寫地址或電話";
+        newErrors.officePhone = " ";
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
