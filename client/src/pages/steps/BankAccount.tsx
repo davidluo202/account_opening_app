@@ -203,11 +203,17 @@ export default function BankAccount() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // 获取个人基本信息以自动填充账户持有人姓名
+  // 获取个人/机构基本信息以自动填充账户持有人姓名
   const { data: basicInfo } = trpc.personalBasic.get.useQuery(
     { applicationId },
     { enabled: !!applicationId }
   );
+  const { data: corporateInfo } = trpc.corporateBasic.get.useQuery(
+    { applicationId },
+    { enabled: !!applicationId }
+  );
+  // 機構賬戶名默認為機構英文名
+  const defaultHolderName = corporateInfo?.companyEnglishName || defaultHolderName;
 
   const { data: bankAccounts, isLoading: isLoadingData, refetch } = trpc.bankAccount.list.useQuery(
     { applicationId },
@@ -223,7 +229,7 @@ export default function BankAccount() {
         accountType: "saving",
         accountCurrency: "HKD",
         accountNumber: "",
-        accountHolderName: basicInfo?.englishName || "",
+        accountHolderName: defaultHolderName,
         bankLocation: "HK",
       });
       setBankSearchQuery("");
