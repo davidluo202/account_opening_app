@@ -34,6 +34,13 @@ export default function RegulatoryDeclaration() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [agreementOpen, setAgreementOpen] = useState(false);
 
+  // 獲取客戶類型
+  const { data: accountSelection } = trpc.accountSelection.get.useQuery(
+    { applicationId },
+    { enabled: !!applicationId }
+  );
+  const isCorporate = accountSelection?.customerType === 'corporate';
+
   // 获取个人基本信息以验证签名
   const { data: basicInfo } = trpc.personalBasic.get.useQuery(
     { applicationId },
@@ -141,6 +148,14 @@ const handleNext = () => {
       showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-6">
+        {/* 機構：關聯人士監管聲明標題 */}
+        {isCorporate && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+            <h3 className="font-semibold text-lg text-blue-800">關聯人士監管聲明 / Associated Persons Regulatory Declaration</h3>
+            <p className="text-sm text-blue-600">請由關聯人士（包括董事、授權簽署人、最終受益人）填寫此聲明。</p>
+          </div>
+        )}
+
         {/* PEP 声明 */}
         <Card className="p-6 space-y-4">
           <h4 className="font-semibold text-lg">政治公眾人物聲明 / PEP Declaration</h4>
