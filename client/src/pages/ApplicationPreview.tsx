@@ -272,9 +272,28 @@ export default function ApplicationPreview() {
     setShowSignatureDialog(false);
   };
 
+    // 根據客戶類型轉換步驟編號
+  const getCorporateStep = (individualStep: number): number => {
+    const mapping: Record<number, number> = {
+      2: 2,   // PersonalBasic -> CorporateBasic
+      3: 3,   // PersonalDetailed -> FinancialAndInvestment
+      4: 4,   // Occupation -> Occupation (same)
+      5: 5,   // Employment -> RiskQuestionnaire
+      6: 6,   // Financial -> BankAccount
+      7: 7,   // Risk -> TaxInfo
+      8: 8,   // Bank -> DocumentUpload
+      9: 9,   // Tax -> RegulatoryDeclaration
+      10: 9,  // Doc -> RegulatoryDeclaration
+      11: 9,  // Face -> RegulatoryDeclaration
+      12: 9,  // Regulatory -> RegulatoryDeclaration
+    };
+    return mapping[individualStep] || individualStep;
+  };
+
   const handleEdit = (step: number) => {
-    // 添加returnToPreview参数，告诉目标页面保存后返回预览页
-    setLocation(`/application/${applicationId}/step/${step}?returnToPreview=true`);
+    // 機構客戶需要轉換步驟編號
+    const actualStep = accountSelection?.customerType === 'corporate' ? getCorporateStep(step) : step;
+    setLocation(`/application/${applicationId}/step/${actualStep}?returnToPreview=true`);
   };
 
   // 格式化日期
