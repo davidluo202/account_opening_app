@@ -16,6 +16,14 @@ const documentTypes = [
   { value: "address_proof", label: "住址證明 / Address Proof", required: false },
 ];
 
+// 機構文件類型
+const corporateDocumentTypes = [
+  { value: "ci_doc", label: "公司註冊證書 / Certificate of Incorporation", required: true },
+  { value: "br_doc", label: "商業登記證 / Business Registration Certificate", required: true },
+  { value: "annual_return", label: "周年申報表 / Annual Return", required: false },
+  { value: "board_resolution", label: "董事局議程 / Board Resolution", required: false },
+];
+
 export default function DocumentUpload() {
   const params = useParams<{ id: string; step?: string }>();
   const [, setLocation] = useLocation();
@@ -25,6 +33,14 @@ export default function DocumentUpload() {
 
   const [uploading, setUploading] = useState<string | null>(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  // 獲取客戶類型
+  const { data: accountSelection } = trpc.accountSelection.get.useQuery(
+    { applicationId },
+    { enabled: !!applicationId }
+  );
+  const isCorporate = accountSelection?.customerType === 'corporate';
+  const currentDocTypes = isCorporate ? corporateDocumentTypes : documentTypes;
 
   const { data: documents, isLoading: isLoadingData, refetch } = trpc.document.list.useQuery(
     { applicationId },
@@ -83,7 +99,7 @@ export default function DocumentUpload() {
   };
 
   const hasRequiredDocuments = () => {
-    const requiredTypes = documentTypes.filter(t => t.required).map(t => t.value);
+    const requiredTypes = t.currentDocTypes.filter(t => t.required).map(t => t.value);
     return requiredTypes.every(type => getUploadedDocument(type));
   };
 
@@ -124,7 +140,7 @@ const handleNext = () => {
         </div>
 
         <div className="space-y-4">
-          {documentTypes.map((docType) => {
+          {t.currentDocTypes.map((docType) => {
             const uploaded = getUploadedDocument(docType.value);
             const isUploading = uploading === docType.value;
 
