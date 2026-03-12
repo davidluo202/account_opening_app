@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { convertToTraditional } from "@/lib/converter";
 import { industryOptions } from "@/lib/industryOptions";
 
@@ -40,6 +41,13 @@ export default function OccupationInfo() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // 獲取客戶類型用於區分機構/個人
+  const { data: accountSelection } = trpc.accountSelection.get.useQuery(
+    { applicationId },
+    { enabled: !!applicationId }
+  );
+  const isCorporate = accountSelection?.customerType === 'corporate';
 
   const { data: existingData, isLoading: isLoadingData } = trpc.occupation.get.useQuery(
     { applicationId },
@@ -189,6 +197,24 @@ const handleSave = () => {
       showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-6">
+        {/* 機構開戶：關聯人士提示 */}
+        {isCorporate && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <p className="text-sm text-blue-800">
+              請填寫關聯人士信息。關聯人士包括董事、授權簽署人、最終受益人等。<br/>
+              <span className="text-blue-600">如需添加多位關聯人士，請點擊下方「添加其他關聯人士」按鈕。</span>
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              className="mt-3"
+              onClick={() => toast.info("添加關聯人士功能即將上線")}
+            >
+              + 添加其他關聯人士
+            </Button>
+          </div>
+        )}
+
         {/* 就業狀況 */}
         <div className="space-y-2">
           <Label htmlFor="employmentStatus">
