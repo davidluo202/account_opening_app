@@ -301,6 +301,13 @@ export default function RiskQuestionnaire() {
     );
   }
 
+  // 獲取客戶類型
+  const { data: accountSelection } = trpc.accountSelection.get.useQuery(
+    { applicationId },
+    { enabled: !!applicationId }
+  );
+  const isCorporate = accountSelection?.customerType === 'corporate';
+
   return (
     <ApplicationWizard 
       currentStep={stepNum} 
@@ -311,6 +318,11 @@ export default function RiskQuestionnaire() {
     >
       <div>
         <h3 className="text-xl font-semibold mb-2">風險評估問卷 / Risk Profile Questionnaire</h3>
+        {isCorporate && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+            <p className="text-sm text-blue-800">機構客戶風險評估問卷 - 前6題與個人相同，後續為機構專業題目</p>
+          </div>
+        )}
         <p className="text-sm text-muted-foreground mb-6">
           請根據您的實際情況填寫以下問卷，以評估您的風險承受能力
         </p>
