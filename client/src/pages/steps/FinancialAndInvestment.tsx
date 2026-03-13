@@ -190,13 +190,14 @@ export default function FinancialAndInvestment() {
             </Label>
             <p className="text-sm text-muted-foreground mt-1">請至少選擇一項</p>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-3 bg-slate-50 p-4 rounded-lg border border-slate-200">
             {investmentObjectiveOptions.map((option) => (
-              <div key={option.value} className="flex items-center space-x-2">
+              <div key={option.value} className="flex items-center space-x-3">
                 <Checkbox
                   id={option.value}
                   checked={investmentObjectives.includes(option.value)}
                   onCheckedChange={() => handleObjectiveToggle(option.value)}
+                  className="h-5 w-5 border-2 border-slate-400 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                 />
                 <Label htmlFor={option.value} className="cursor-pointer font-normal">
                   {option.label}
@@ -212,20 +213,20 @@ export default function FinancialAndInvestment() {
         {/* 投資經驗 */}
         <div className="space-y-4">
           <div>
-            <Label className="text-base">
+            <Label className="text-base font-semibold text-slate-800">
               投資經驗 / Investment Experience <span className="text-destructive">*</span>
             </Label>
-            <p className="text-sm text-muted-foreground mt-1">請至少填寫一項投資產品的經驗</p>
+            <p className="text-sm text-slate-600 mt-1">請至少填寫一項投資產品的經驗</p>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
             {investmentProducts.map((product) => (
               <div key={product.key} className="grid md:grid-cols-[200px_1fr] gap-4 items-center">
-                <Label htmlFor={product.key}>{product.label}</Label>
+                <Label htmlFor={product.key} className="font-medium text-slate-700">{product.label}</Label>
                 <Select
                   value={investmentExperience[product.key] || ""}
                   onValueChange={(v) => handleExperienceChange(product.key, v)}
                 >
-                  <SelectTrigger id={product.key}>
+                  <SelectTrigger id={product.key} className="bg-white border-slate-300">
                     <SelectValue placeholder="請選擇經驗年限" />
                   </SelectTrigger>
                   <SelectContent>
