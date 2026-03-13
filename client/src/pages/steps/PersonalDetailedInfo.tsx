@@ -53,10 +53,18 @@ export default function PersonalDetailedInfo() {
   const showReturnToPreview = useReturnToPreview();
 
   // 获取用户基本信息（用于匹配身份证信息）
-  const { data: basicInfo } = trpc.personalBasic.get.useQuery(
+  const { data: basicInfo, error: basicInfoError } = trpc.personalBasic.get.useQuery(
     { applicationId },
-    { enabled: !!applicationId }
+    { 
+      enabled: !!applicationId,
+      retry: 1,
+    }
   );
+
+  // Log error for debugging
+  if (basicInfoError) {
+    console.error("Error fetching basic info:", basicInfoError);
+  }
 
   const [formData, setFormData] = useState({
     idType: "",
@@ -89,10 +97,18 @@ export default function PersonalDetailedInfo() {
   const [countdown, setCountdown] = useState(0);
   const [isSendingCode, setIsSendingCode] = useState(false);
 
-  const { data: existingData, isLoading: isLoadingData } = trpc.personalDetailed.get.useQuery(
+  const { data: existingData, isLoading: isLoadingData, error: detailedInfoError } = trpc.personalDetailed.get.useQuery(
     { applicationId },
-    { enabled: !!applicationId }
+    { 
+      enabled: !!applicationId,
+      retry: 1,
+    }
   );
+
+  // Log error for debugging
+  if (detailedInfoError) {
+    console.error("Error fetching detailed info:", detailedInfoError);
+  }
 
   const saveMutation = trpc.personalDetailed.save.useMutation({
     onSuccess: (result) => {
