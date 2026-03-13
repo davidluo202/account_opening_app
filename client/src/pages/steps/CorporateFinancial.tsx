@@ -154,7 +154,7 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
               onChange={e => setAuthorizedShareCapital(e.target.value)}
               placeholder="请输入金额"
             />
-            <span className="text-sm font-medium text-slate-600 whitespace-nowrap">万港元 / HKD Million</span>
+            <span className="text-sm font-medium text-slate-600 whitespace-nowrap">万港元</span>
           </div>
           {errors.authorizedShareCapital && <p className="text-sm text-destructive">{errors.authorizedShareCapital}</p>}
         </div>
@@ -168,7 +168,7 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
               onChange={e => setIssuedShareCapital(e.target.value)}
               placeholder="请输入金额"
             />
-            <span className="text-sm font-medium text-slate-600 whitespace-nowrap">万港元 / HKD Million</span>
+            <span className="text-sm font-medium text-slate-600 whitespace-nowrap">万港元</span>
           </div>
           {errors.issuedShareCapital && <p className="text-sm text-destructive">{errors.issuedShareCapital}</p>}
         </div>
