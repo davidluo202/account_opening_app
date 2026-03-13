@@ -25,6 +25,48 @@ import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
+export async function syncMissingTables() {
+  const db = await getDb();
+  if (!db) return;
+  try {
+    const { sql } = await import("drizzle-orm");
+    console.log("[Database] Running schema sync for new corporate tables...");
+    
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS \`corporate_financial_info\` (
+        \`id\` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        \`applicationId\` int NOT NULL UNIQUE,
+        \`authorizedShareCapital\` text NOT NULL,
+        \`issuedShareCapital\` text NOT NULL,
+        \`initialSourceOfWealth\` text NOT NULL,
+        \`netAssetValue\` varchar(100) NOT NULL,
+        \`netAssetAuditDate\` varchar(20) DEFAULT NULL,
+        \`profitAfterTax\` varchar(100) NOT NULL,
+        \`profitAuditDate\` varchar(20) DEFAULT NULL,
+        \`assetItems\` text NOT NULL,
+        \`createdAt\` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        \`updatedAt\` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+        INDEX \`idx_applicationId\` (\`applicationId\`)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `);
+
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS \`corporate_related_parties\` (
+        \`id\` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        \`applicationId\` int NOT NULL UNIQUE,
+        \`relatedParties\` text NOT NULL,
+        \`createdAt\` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        \`updatedAt\` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+        INDEX \`idx_applicationId\` (\`applicationId\`)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `);
+    
+    console.log("[Database] Schema sync completed successfully.");
+  } catch (error) {
+    console.error("[Database] Schema sync failed:", error);
+  }
+}
+
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
