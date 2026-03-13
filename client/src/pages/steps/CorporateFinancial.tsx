@@ -140,28 +140,29 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
     >
       <div className="space-y-8">
         <div className="space-y-4">
-          <Label>法定股本 / Authorized Share Capital <span className="text-destructive">*</span></Label>
-          <Input value={authorizedShareCapital} onChange={e => setAuthorizedShareCapital(e.target.value)} />
+          <Label className="text-base font-semibold text-slate-800">法定股本 / Authorized Share Capital <span className="text-destructive">*</span></Label>
+          <Input className="bg-white border-2 border-slate-300 focus:border-blue-500" value={authorizedShareCapital} onChange={e => setAuthorizedShareCapital(e.target.value)} />
           {errors.authorizedShareCapital && <p className="text-sm text-destructive">{errors.authorizedShareCapital}</p>}
         </div>
 
         <div className="space-y-4">
-          <Label>已發行及繳足股本 / Issued Share Capital <span className="text-destructive">*</span></Label>
-          <Input value={issuedShareCapital} onChange={e => setIssuedShareCapital(e.target.value)} />
+          <Label className="text-base font-semibold text-slate-800">已發行及繳足股本 / Issued Share Capital <span className="text-destructive">*</span></Label>
+          <Input className="bg-white border-2 border-slate-300 focus:border-blue-500" value={issuedShareCapital} onChange={e => setIssuedShareCapital(e.target.value)} />
           {errors.issuedShareCapital && <p className="text-sm text-destructive">{errors.issuedShareCapital}</p>}
         </div>
 
         <div className="space-y-4">
-          <Label>初始財富來源 / Initial Source of Wealth <span className="text-destructive">*</span></Label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
+          <Label className="text-base font-semibold text-slate-800">初始財富來源 / Initial Source of Wealth <span className="text-destructive">*</span></Label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border-2 border-slate-200">
             {incomeSources.map(src => (
               <div key={src.value} className="flex items-center space-x-3">
                 <Checkbox
                   id={`wealth-${src.value}`}
+                  className="h-5 w-5 border-2 border-slate-400 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                   checked={initialSourceOfWealth.includes(src.value)}
                   onCheckedChange={() => setInitialSourceOfWealth(prev => prev.includes(src.value) ? prev.filter(v => v !== src.value) : [...prev, src.value])}
                 />
-                <Label htmlFor={`wealth-${src.value}`}>{src.label}</Label>
+                <Label htmlFor={`wealth-${src.value}`} className="font-medium text-slate-700">{src.label}</Label>
               </div>
             ))}
           </div>
@@ -170,45 +171,46 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
-            <Label>淨資產值 / Net Asset Value <span className="text-destructive">*</span></Label>
+            <Label className="text-base font-semibold text-slate-800">淨資產值 / Net Asset Value <span className="text-destructive">*</span></Label>
             <Select value={netAssetValue} onValueChange={setNetAssetValue}>
-              <SelectTrigger><SelectValue placeholder="選擇範圍" /></SelectTrigger>
+              <SelectTrigger className="bg-white border-2 border-slate-300 focus:border-blue-500"><SelectValue placeholder="選擇範圍" /></SelectTrigger>
               <SelectContent>{valueRanges.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}</SelectContent>
             </Select>
             {errors.netAssetValue && <p className="text-sm text-destructive">{errors.netAssetValue}</p>}
           </div>
           <div className="space-y-4">
-            <Label>淨資產審計時間 / Net Asset Audit Date</Label>
-            <Input type="month" value={netAssetAuditDate} onChange={e => setNetAssetAuditDate(e.target.value)} />
+            <Label className="text-base font-semibold text-slate-800">淨資產審計時間 / Net Asset Audit Date</Label>
+            <Input type="month" className="bg-white border-2 border-slate-300 focus:border-blue-500" value={netAssetAuditDate} onChange={e => setNetAssetAuditDate(e.target.value)} />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
-            <Label>稅後盈利 / Profit After Tax <span className="text-destructive">*</span></Label>
+            <Label className="text-base font-semibold text-slate-800">稅後盈利 / Profit After Tax <span className="text-destructive">*</span></Label>
             <Select value={profitAfterTax} onValueChange={setProfitAfterTax}>
-              <SelectTrigger><SelectValue placeholder="選擇範圍" /></SelectTrigger>
+              <SelectTrigger className="bg-white border-2 border-slate-300 focus:border-blue-500"><SelectValue placeholder="選擇範圍" /></SelectTrigger>
               <SelectContent>{valueRanges.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}</SelectContent>
             </Select>
             {errors.profitAfterTax && <p className="text-sm text-destructive">{errors.profitAfterTax}</p>}
           </div>
           <div className="space-y-4">
-            <Label>稅後盈利審計時間 / Profit Audit Date</Label>
-            <Input type="month" value={profitAuditDate} onChange={e => setProfitAuditDate(e.target.value)} />
+            <Label className="text-base font-semibold text-slate-800">稅後盈利審計時間 / Profit Audit Date</Label>
+            <Input type="month" className="bg-white border-2 border-slate-300 focus:border-blue-500" value={profitAuditDate} onChange={e => setProfitAuditDate(e.target.value)} />
           </div>
         </div>
 
         <div className="space-y-4">
-          <Label>資產項目 / Asset Items <span className="text-destructive">*</span></Label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
+          <Label className="text-base font-semibold text-slate-800">資產項目 / Asset Items <span className="text-destructive">*</span></Label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border-2 border-slate-200">
             {assetItemsList.map(item => (
               <div key={item.value} className="flex items-center space-x-3">
                 <Checkbox
                   id={`asset-${item.value}`}
+                  className="h-5 w-5 border-2 border-slate-400 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                   checked={assetItems.includes(item.value)}
                   onCheckedChange={() => setAssetItems(prev => prev.includes(item.value) ? prev.filter(v => v !== item.value) : [...prev, item.value])}
                 />
-                <Label htmlFor={`asset-${item.value}`}>{item.label}</Label>
+                <Label htmlFor={`asset-${item.value}`} className="font-medium text-slate-700">{item.label}</Label>
               </div>
             ))}
           </div>
