@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
 import { useReturnToPreview } from "@/hooks/useReturnToPreview";
 import ApplicationWizard from "@/components/ApplicationWizard";
@@ -9,6 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+
+// Get current month in YYYY-MM format for date validation
+const getCurrentMonth = () => {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+};
 
 const incomeSources = [
   { value: "operation", label: "營業收入 / Operation Income" },
@@ -141,13 +147,29 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
       <div className="space-y-8">
         <div className="space-y-4">
           <Label className="text-base font-semibold text-slate-800">法定股本 / Authorized Share Capital <span className="text-destructive">*</span></Label>
-          <Input className="bg-white border-2 border-slate-300 focus:border-blue-500" value={authorizedShareCapital} onChange={e => setAuthorizedShareCapital(e.target.value)} />
+          <div className="flex items-center gap-2">
+            <Input 
+              className="bg-yellow-50 border-2 border-yellow-300 focus:border-blue-500 font-semibold" 
+              value={authorizedShareCapital} 
+              onChange={e => setAuthorizedShareCapital(e.target.value)}
+              placeholder="请输入金额"
+            />
+            <span className="text-sm font-medium text-slate-600 whitespace-nowrap">万港元 / HKD Million</span>
+          </div>
           {errors.authorizedShareCapital && <p className="text-sm text-destructive">{errors.authorizedShareCapital}</p>}
         </div>
 
         <div className="space-y-4">
           <Label className="text-base font-semibold text-slate-800">已發行及繳足股本 / Issued Share Capital <span className="text-destructive">*</span></Label>
-          <Input className="bg-white border-2 border-slate-300 focus:border-blue-500" value={issuedShareCapital} onChange={e => setIssuedShareCapital(e.target.value)} />
+          <div className="flex items-center gap-2">
+            <Input 
+              className="bg-yellow-50 border-2 border-yellow-300 focus:border-blue-500 font-semibold" 
+              value={issuedShareCapital} 
+              onChange={e => setIssuedShareCapital(e.target.value)}
+              placeholder="请输入金额"
+            />
+            <span className="text-sm font-medium text-slate-600 whitespace-nowrap">万港元 / HKD Million</span>
+          </div>
           {errors.issuedShareCapital && <p className="text-sm text-destructive">{errors.issuedShareCapital}</p>}
         </div>
 
@@ -180,7 +202,13 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
           </div>
           <div className="space-y-4">
             <Label className="text-base font-semibold text-slate-800">淨資產審計時間 / Net Asset Audit Date</Label>
-            <Input type="month" className="bg-white border-2 border-slate-300 focus:border-blue-500" value={netAssetAuditDate} onChange={e => setNetAssetAuditDate(e.target.value)} />
+            <Input 
+              type="month" 
+              max={getCurrentMonth()}
+              className="bg-white border-2 border-slate-300 focus:border-blue-500" 
+              value={netAssetAuditDate} 
+              onChange={e => setNetAssetAuditDate(e.target.value)} 
+            />
           </div>
         </div>
 
@@ -195,7 +223,13 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
           </div>
           <div className="space-y-4">
             <Label className="text-base font-semibold text-slate-800">稅後盈利審計時間 / Profit Audit Date</Label>
-            <Input type="month" className="bg-white border-2 border-slate-300 focus:border-blue-500" value={profitAuditDate} onChange={e => setProfitAuditDate(e.target.value)} />
+            <Input 
+              type="month" 
+              max={getCurrentMonth()}
+              className="bg-white border-2 border-slate-300 focus:border-blue-500" 
+              value={profitAuditDate} 
+              onChange={e => setProfitAuditDate(e.target.value)} 
+            />
           </div>
         </div>
 

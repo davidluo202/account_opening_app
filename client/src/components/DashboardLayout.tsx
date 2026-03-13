@@ -245,7 +245,7 @@ function DashboardLayoutContent({
       <SidebarInset>
         {/* Version info banner - visible in test/dev environments */}
         <div className="bg-amber-100 border-b border-amber-300 px-4 py-1.5 text-center text-amber-900 text-sm font-medium">
-          測試版本 Test Version — v1.0.260313.003
+          測試版本 Test Version — v1.0.260313.004
         </div>
         {isMobile && (
           <div className="flex border-b h-14 items-center justify-between bg-background/95 px-2 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
