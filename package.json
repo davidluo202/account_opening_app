@@ -10,7 +10,7 @@
     "check": "tsc --noEmit",
     "format": "prettier --write .",
     "test": "vitest run",
-    "db:push": "drizzle-kit push --force"
+    "db:push": "echo 'Skipping auto db:push to avoid interactive deadlock'"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.693.0",
