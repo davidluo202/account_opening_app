@@ -53,6 +53,7 @@ interface ApplicationWizardProps {
   hidePrevious?: boolean;
   nextLabel?: string;
   showReturnToPreview?: boolean;
+  customerTypeOverride?: "individual" | "joint" | "corporate";
 }
 
 export default function ApplicationWizard({
@@ -69,6 +70,7 @@ export default function ApplicationWizard({
   hidePrevious = false,
   nextLabel = "下一步",
   showReturnToPreview = false,
+  customerTypeOverride,
 }: ApplicationWizardProps) {
   const [, setLocation] = useLocation();
 
@@ -87,7 +89,8 @@ export default function ApplicationWizard({
   }
 
   // 根据客户类型选择步骤列表
-  const steps = accountSelection?.customerType === 'corporate' ? corporateSteps : individualSteps;
+  const customerType = customerTypeOverride || accountSelection?.customerType || 'individual';
+  const steps = customerType === 'corporate' ? corporateSteps : individualSteps;
   const progress = (currentStep / steps.length) * 100;
   const currentStepInfo = steps.find(s => s.id === currentStep);
 

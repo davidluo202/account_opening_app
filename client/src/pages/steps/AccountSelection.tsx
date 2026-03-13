@@ -51,9 +51,12 @@ const handleNext = () => {
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={1}
-      showReturnToPreview={showReturnToPreview}
-    >
+      <ApplicationWizard 
+        applicationId={applicationId} 
+        currentStep={1}
+        showReturnToPreview={showReturnToPreview}
+        customerTypeOverride={customerType}
+      >
         <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -68,8 +71,8 @@ const handleNext = () => {
       onNext={handleNext}
       isNextLoading={saveMutation.isPending}
       hidePrevious
-    
       showReturnToPreview={showReturnToPreview}
+      customerTypeOverride={customerType}
     >
       <div className="space-y-8">
         {/* Case 1: 客戶類型 */}
