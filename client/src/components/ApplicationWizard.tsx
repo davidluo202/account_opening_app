@@ -73,10 +73,18 @@ export default function ApplicationWizard({
   const [, setLocation] = useLocation();
 
   // 获取账户选择信息以判断客户类型
-  const { data: accountSelection } = trpc.accountSelection.get.useQuery(
+  const { data: accountSelection, error: accountSelectionError } = trpc.accountSelection.get.useQuery(
     { applicationId },
-    { enabled: !!applicationId }
+    { 
+      enabled: !!applicationId,
+      retry: 1,
+    }
   );
+
+  // Log error for debugging
+  if (accountSelectionError) {
+    console.error("Error fetching account selection:", accountSelectionError);
+  }
 
   // 根据客户类型选择步骤列表
   const steps = accountSelection?.customerType === 'corporate' ? corporateSteps : individualSteps;

@@ -38,10 +38,18 @@ function StepRouter() {
   const applicationId = parseInt(id || "0");
   const stepNum = parseInt(step || "1");
 
-  const { data: accountSelection, isLoading } = trpc.accountSelection.get.useQuery(
+  const { data: accountSelection, isLoading, error: accountSelectionError } = trpc.accountSelection.get.useQuery(
     { applicationId },
-    { enabled: !!applicationId }
+    { 
+      enabled: !!applicationId,
+      retry: 1,
+    }
   );
+
+  // Log error for debugging
+  if (accountSelectionError) {
+    console.error("Error fetching account selection in StepRouter:", accountSelectionError);
+  }
 
   if (isLoading) {
     return (
