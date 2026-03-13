@@ -10,6 +10,7 @@ import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2, Plus, Trash2, Save } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { convertToTraditional } from "@/lib/converter";
 
 interface RelatedParty {
   id: string;
@@ -21,10 +22,23 @@ interface RelatedParty {
   idType: "hkid" | "passport" | "mainland_id" | "other" | "";
   idIssuingPlace: string;
   idNumber: string;
+  phoneCountryCode: string;
   phone: string;
   email: string;
   address: string;
 }
+
+const countryCodes = [
+  { value: "+852", label: "+852 香港", length: 8 },
+  { value: "+86", label: "+86 中國內地", length: 11 },
+  { value: "+853", label: "+853 澳門", length: 8 },
+  { value: "+886", label: "+886 台灣", length: 9 },
+  { value: "+1", label: "+1 美國/加拿大", length: 10 },
+  { value: "+44", label: "+44 英國", length: 10 },
+  { value: "+65", label: "+65 新加坡", length: 8 },
+  { value: "+81", label: "+81 日本", length: 10 },
+  { value: "+61", label: "+61 澳洲", length: 9 },
+];
 
 const idIssuingCountries = [
   { value: "HK", label: "香港 Hong Kong" },
@@ -50,6 +64,7 @@ const defaultParty = (): RelatedParty => ({
   idType: "",
   idIssuingPlace: "",
   idNumber: "",
+  phoneCountryCode: "+852",
   phone: "",
   email: "",
   address: "",
@@ -66,6 +81,14 @@ const isAgeAtLeast18 = (dateOfBirth: string): boolean => {
     age--;
   }
   return age >= 18;
+};
+
+// Validate phone number based on country code
+const validatePhone = (phone: string, countryCode: string): boolean => {
+  if (!phone) return true; // Optional field
+  const expectedLength = countryCodes.find(c => c.value === countryCode)?.length;
+  if (!expectedLength) return true;
+  return phone.replace(/\D/g, '').length === expectedLength;
 };
 
 export default function CorporateRelatedParties() {
@@ -104,6 +127,7 @@ export default function CorporateRelatedParties() {
         ...defaultParty(),
         isDefaultContact: true,
         name: corporateBasicInfo.contactName || "",
+        phoneCountryCode: "+852",
         phone: corporateBasicInfo.contactPhone || "",
         email: corporateBasicInfo.contactEmail || "",
       });
@@ -136,6 +160,12 @@ export default function CorporateRelatedParties() {
     if (!party.idIssuingPlace) errs.idIssuingPlace = "請選擇證件簽發地";
     if (!party.idNumber) errs.idNumber = "請輸入證件號碼";
     
+    // Phone validation
+    if (party.phone && !validatePhone(party.phone, party.phoneCountryCode)) {
+      const expectedLength = countryCodes.find(c => c.value === party.phoneCountryCode)?.length;
+      errs.phone = `電話號碼必須為${expectedLength}位數字`;
+    }
+    
     if (!party.phone && !party.email && !party.address) {
       errs.contact = "請至少提供一種聯絡方式";
     }
@@ -146,8 +176,15 @@ export default function CorporateRelatedParties() {
 
   // Add current party to the list
   const handleAddParty = () => {
-    if (validateParty(currentParty, true)) {
-      setSavedParties([...savedParties, { ...currentParty, id: crypto.randomUUID() }]);
+    // Convert name to Traditional Chinese
+    const convertedParty = {
+      ...currentParty,
+      name: convertToTraditional(currentParty.name),
+      address: convertToTraditional(currentParty.address),
+    };
+    
+    if (validateParty(convertedParty, true)) {
+      setSavedParties([...savedParties, { ...convertedParty, id: crypto.randomUUID() }]);
       setCurrentParty(defaultParty());
       setErrors({});
       toast.success("關聯方已添加");
@@ -163,8 +200,13 @@ export default function CorporateRelatedParties() {
   const handleSave = () => {
     if (savedParties.length === 0) {
       // If no saved parties, try to save current form
-      if (validateParty(currentParty)) {
-        saveMutation.mutate({ applicationId, relatedParties: [currentParty] });
+      const convertedParty = {
+        ...currentParty,
+        name: convertToTraditional(currentParty.name),
+        address: convertToTraditional(currentParty.address),
+      };
+      if (validateParty(convertedParty)) {
+        saveMutation.mutate({ applicationId, relatedParties: [convertedParty] });
       }
     } else {
       saveMutation.mutate({ applicationId, relatedParties: savedParties });
@@ -173,8 +215,13 @@ export default function CorporateRelatedParties() {
 
   const handleNext = () => {
     if (savedParties.length === 0) {
-      if (validateParty(currentParty)) {
-        saveMutation.mutate({ applicationId, relatedParties: [currentParty] });
+      const convertedParty = {
+        ...currentParty,
+        name: convertToTraditional(currentParty.name),
+        address: convertToTraditional(currentParty.address),
+      };
+      if (validateParty(convertedParty)) {
+        saveMutation.mutate({ applicationId, relatedParties: [convertedParty] });
       }
     } else {
       saveMutation.mutate({ applicationId, relatedParties: savedParties });
@@ -258,7 +305,16 @@ export default function CorporateRelatedParties() {
 
             <div className="space-y-3">
               <Label>姓名 / Name <span className="text-destructive">*</span></Label>
-              <Input value={currentParty.name} onChange={e => setCurrentParty({ ...currentParty, name: e.target.value })} />
+              <Input 
+                value={currentParty.name} 
+                onChange={e => setCurrentParty({ ...currentParty, name: e.target.value })} 
+                onBlur={(e) => {
+                  const converted = convertToTraditional(e.target.value);
+                  if (converted !== e.target.value) {
+                    setCurrentParty({ ...currentParty, name: converted });
+                  }
+                }}
+              />
               {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
             </div>
 
@@ -319,18 +375,65 @@ export default function CorporateRelatedParties() {
             </div>
 
             <div className="space-y-3">
-              <Label>電話 / Phone</Label>
-              <Input value={currentParty.phone} onChange={e => setCurrentParty({ ...currentParty, phone: e.target.value })} />
+              <Label>電話號碼 / Telephone No.</Label>
+              <div className="flex gap-2">
+                <Select 
+                  value={currentParty.phoneCountryCode} 
+                  onValueChange={(v) => setCurrentParty({ ...currentParty, phoneCountryCode: v })}
+                >
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {countryCodes.map(c => (
+                      <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input 
+                  className="flex-1"
+                  value={currentParty.phone} 
+                  onChange={e => setCurrentParty({ ...currentParty, phone: e.target.value })} 
+                  placeholder="請輸入電話號碼"
+                />
+              </div>
+              {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
             </div>
 
             <div className="space-y-3">
-              <Label>電郵 / Email</Label>
+              <Label>電郵地址 / E-mail</Label>
               <Input type="email" value={currentParty.email} onChange={e => setCurrentParty({ ...currentParty, email: e.target.value })} />
             </div>
 
             <div className="space-y-3 md:col-span-2">
               <Label>地址 / Address</Label>
-              <Input value={currentParty.address} onChange={e => setCurrentParty({ ...currentParty, address: e.target.value })} />
+              <Input 
+                value={currentParty.address} 
+                onChange={e => setCurrentParty({ ...currentParty, address: e.target.value })}
+                onBlur={(e) => {
+                  const converted = convertToTraditional(e.target.value);
+                  if (converted !== e.target.value) {
+                    setCurrentParty({ ...currentParty, address: converted });
+                  }
+                }}
+              />
+              {errors.contact && <p className="text-sm text-destructive">{errors.contact}</p>}
+            </div>
+          </div>
+
+          <Button type="button" onClick={handleAddParty} className="w-full bg-green-600 hover:bg-green-700">
+            <Save className="h-4 w-4 mr-2" />
+            添加此關聯方到列表
+          </Button>
+        </div>
+
+        {savedParties.length === 0 && (
+          <p className="text-center text-slate-500 text-sm">請填寫上方表格並點擊"添加此關聯方到列表"，然後點擊下一步</p>
+        )}
+      </div>
+    </ApplicationWizard>
+  );
+}CurrentParty({ ...currentParty, address: e.target.value })} />
               {errors.contact && <p className="text-sm text-destructive">{errors.contact}</p>}
             </div>
           </div>

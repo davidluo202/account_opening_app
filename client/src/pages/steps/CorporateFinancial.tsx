@@ -201,7 +201,7 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
             {errors.netAssetValue && <p className="text-sm text-destructive">{errors.netAssetValue}</p>}
           </div>
           <div className="space-y-4">
-            <Label className="text-base font-semibold text-slate-800">淨資產審計時間 / Net Asset Audit Date</Label>
+            <Label className="text-base font-semibold text-slate-800">淨資產審計時間 (MM/YYYY) / Net Asset Audit Date</Label>
             <Input 
               type="month" 
               max={getCurrentMonth()}
@@ -222,7 +222,7 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
             {errors.profitAfterTax && <p className="text-sm text-destructive">{errors.profitAfterTax}</p>}
           </div>
           <div className="space-y-4">
-            <Label className="text-base font-semibold text-slate-800">稅後盈利審計時間 / Profit Audit Date</Label>
+            <Label className="text-base font-semibold text-slate-800">稅後盈利審計時間 (MM/YYYY) / Profit Audit Date</Label>
             <Input 
               type="month" 
               max={getCurrentMonth()}
