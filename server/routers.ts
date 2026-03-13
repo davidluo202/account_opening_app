@@ -842,6 +842,81 @@ export const appRouter = router({
       }),
   }),
   
+  corporateFinancial: router({
+    save: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+        authorizedShareCapital: z.string(),
+        issuedShareCapital: z.string(),
+        initialSourceOfWealth: z.array(z.string()),
+        netAssetValue: z.string(),
+        netAssetAuditDate: z.string().optional(),
+        profitAfterTax: z.string(),
+        profitAuditDate: z.string().optional(),
+        assetItems: z.array(z.string()),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { applicationId, initialSourceOfWealth, assetItems, ...rest } = input;
+        const application = await db.getApplicationById(applicationId);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
+        }
+        
+        const data = {
+          ...rest,
+          initialSourceOfWealth: JSON.stringify(initialSourceOfWealth),
+          assetItems: JSON.stringify(assetItems),
+        };
+        
+        await db.saveCorporateFinancialInfo(applicationId, data);
+        await db.updateApplicationStep(applicationId, 3);
+        
+        const saved = await db.getCorporateFinancialInfo(applicationId);
+        return { success: true, data: saved };
+      }),
+    
+    get: protectedProcedure
+      .input(z.object({ applicationId: z.number() }))
+      .query(async ({ input, ctx }) => {
+        const application = await db.getApplicationById(input.applicationId);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
+        }
+        return await db.getCorporateFinancialInfo(input.applicationId);
+      }),
+  }),
+  
+  corporateRelatedParties: router({
+    save: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+        relatedParties: z.array(z.any()),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { applicationId, relatedParties } = input;
+        const application = await db.getApplicationById(applicationId);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
+        }
+        
+        await db.saveCorporateRelatedParties(applicationId, { relatedParties });
+        await db.updateApplicationStep(applicationId, 4);
+        
+        const saved = await db.getCorporateRelatedParties(applicationId);
+        return { success: true, data: saved };
+      }),
+    
+    get: protectedProcedure
+      .input(z.object({ applicationId: z.number() }))
+      .query(async ({ input, ctx }) => {
+        const application = await db.getApplicationById(input.applicationId);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
+        }
+        return await db.getCorporateRelatedParties(input.applicationId);
+      }),
+  }),
+  
   // Case 8: 银行账户
   bankAccount: router({
     add: protectedProcedure

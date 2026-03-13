@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import CorporateFinancial from "./CorporateFinancial";
 
 const investmentObjectiveOptions = [
   { value: "capital_growth", label: "資本增值 / Capital Growth" },
@@ -49,6 +50,11 @@ export default function FinancialAndInvestment() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const { data: existingData, isLoading: isLoadingData } = trpc.financial.get.useQuery(
+    { applicationId },
+    { enabled: !!applicationId }
+  );
+
+  const { data: accountSelection, isLoading: isSelectionLoading } = trpc.accountSelection.get.useQuery(
     { applicationId },
     { enabled: !!applicationId }
   );
@@ -159,7 +165,7 @@ export default function FinancialAndInvestment() {
     });
   };
 
-  if (isLoadingData) {
+  if (isLoadingData || isSelectionLoading) {
     return (
       <ApplicationWizard applicationId={applicationId} currentStep={stepNum}
       showReturnToPreview={showReturnToPreview}
@@ -169,6 +175,10 @@ export default function FinancialAndInvestment() {
         </div>
       </ApplicationWizard>
     );
+  }
+
+  if (accountSelection?.customerType === 'corporate') {
+    return <CorporateFinancial applicationId={applicationId} stepNum={stepNum} />;
   }
 
   return (

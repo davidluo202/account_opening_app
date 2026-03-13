@@ -1,0 +1,220 @@
+import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
+import { useReturnToPreview } from "@/hooks/useReturnToPreview";
+import ApplicationWizard from "@/components/ApplicationWizard";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+
+const incomeSources = [
+  { value: "operation", label: "營業收入 / Operation Income" },
+  { value: "investment", label: "投資收益 / Investment Income" },
+  { value: "interest", label: "利息收入 / Interest Income" },
+  { value: "dividend", label: "股息收入 / Dividend Income" },
+  { value: "shareholder", label: "股東出資 / Shareholder Contribution" },
+  { value: "rental", label: "租金收入 / Rental Income" },
+  { value: "borrowing", label: "貸款 / External Borrowing" },
+  { value: "other", label: "其他 / Other" },
+];
+
+const assetItemsList = [
+  { value: "property", label: "房地產 / Property" },
+  { value: "securities", label: "上市證券 / Listed Securities" },
+  { value: "deposit", label: "存款 / Deposit" },
+  { value: "bonds", label: "債券 / Bonds" },
+  { value: "funds", label: "基金 / Funds" },
+  { value: "other", label: "其他 / Other" },
+];
+
+const valueRanges = [
+  { value: "<1m", label: "<HK$1,000,000" },
+  { value: "1m-5m", label: "HK$1,000,000 - HK$5,000,000" },
+  { value: "5m-10m", label: "HK$5,000,001 - HK$10,000,000" },
+  { value: ">10m", label: ">HK$10,000,000" },
+];
+
+interface Props {
+  applicationId: number;
+  stepNum: number;
+}
+
+export default function CorporateFinancial({ applicationId, stepNum }: Props) {
+  const [, setLocation] = useLocation();
+  const showReturnToPreview = useReturnToPreview();
+
+  const [authorizedShareCapital, setAuthorizedShareCapital] = useState("");
+  const [issuedShareCapital, setIssuedShareCapital] = useState("");
+  const [initialSourceOfWealth, setInitialSourceOfWealth] = useState<string[]>([]);
+  const [netAssetValue, setNetAssetValue] = useState("");
+  const [netAssetAuditDate, setNetAssetAuditDate] = useState("");
+  const [profitAfterTax, setProfitAfterTax] = useState("");
+  const [profitAuditDate, setProfitAuditDate] = useState("");
+  const [assetItems, setAssetItems] = useState<string[]>([]);
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const { data: existingData, isLoading } = trpc.corporateFinancial.get.useQuery(
+    { applicationId },
+    { enabled: !!applicationId }
+  );
+
+  useEffect(() => {
+    if (existingData) {
+      setAuthorizedShareCapital(existingData.authorizedShareCapital || "");
+      setIssuedShareCapital(existingData.issuedShareCapital || "");
+      setNetAssetValue(existingData.netAssetValue || "");
+      setNetAssetAuditDate(existingData.netAssetAuditDate || "");
+      setProfitAfterTax(existingData.profitAfterTax || "");
+      setProfitAuditDate(existingData.profitAuditDate || "");
+      try {
+        setInitialSourceOfWealth(JSON.parse(existingData.initialSourceOfWealth || "[]"));
+        setAssetItems(JSON.parse(existingData.assetItems || "[]"));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, [existingData]);
+
+  const saveMutation = trpc.corporateFinancial.save.useMutation({
+    onSuccess: (result) => {
+      if (result.success) {
+        toast.success("保存成功");
+        setLocation(`/application/${applicationId}/step/${stepNum + 1}`);
+      }
+    },
+    onError: (error) => toast.error(`保存失敗: ${error.message}`)
+  });
+
+  const saveOnlyMutation = trpc.corporateFinancial.save.useMutation({
+    onSuccess: (result) => {
+      if (result.success) toast.success("保存成功");
+    },
+    onError: (error) => toast.error(`保存失敗: ${error.message}`)
+  });
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    if (!authorizedShareCapital) newErrors.authorizedShareCapital = "此欄位必填";
+    if (!issuedShareCapital) newErrors.issuedShareCapital = "此欄位必填";
+    if (initialSourceOfWealth.length === 0) newErrors.initialSourceOfWealth = "請至少選擇一項";
+    if (!netAssetValue) newErrors.netAssetValue = "請選擇淨資產值";
+    if (!profitAfterTax) newErrors.profitAfterTax = "請選擇稅後盈利";
+    if (assetItems.length === 0) newErrors.assetItems = "請至少選擇一項";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const getPayload = () => ({
+    applicationId,
+    authorizedShareCapital,
+    issuedShareCapital,
+    initialSourceOfWealth,
+    netAssetValue,
+    netAssetAuditDate,
+    profitAfterTax,
+    profitAuditDate,
+    assetItems,
+  });
+
+  if (isLoading) {
+    return (
+      <ApplicationWizard applicationId={applicationId} currentStep={stepNum} showReturnToPreview={showReturnToPreview}>
+        <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+      </ApplicationWizard>
+    );
+  }
+
+  return (
+    <ApplicationWizard
+      applicationId={applicationId}
+      currentStep={stepNum}
+      onNext={() => validate() && saveMutation.mutate(getPayload())}
+      onSave={() => validate() && saveOnlyMutation.mutate(getPayload())}
+      isNextLoading={saveMutation.isPending}
+      isSaveLoading={saveOnlyMutation.isPending}
+      showReturnToPreview={showReturnToPreview}
+    >
+      <div className="space-y-8">
+        <div className="space-y-4">
+          <Label>法定股本 / Authorized Share Capital <span className="text-destructive">*</span></Label>
+          <Input value={authorizedShareCapital} onChange={e => setAuthorizedShareCapital(e.target.value)} />
+          {errors.authorizedShareCapital && <p className="text-sm text-destructive">{errors.authorizedShareCapital}</p>}
+        </div>
+
+        <div className="space-y-4">
+          <Label>已發行及繳足股本 / Issued Share Capital <span className="text-destructive">*</span></Label>
+          <Input value={issuedShareCapital} onChange={e => setIssuedShareCapital(e.target.value)} />
+          {errors.issuedShareCapital && <p className="text-sm text-destructive">{errors.issuedShareCapital}</p>}
+        </div>
+
+        <div className="space-y-4">
+          <Label>初始財富來源 / Initial Source of Wealth <span className="text-destructive">*</span></Label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
+            {incomeSources.map(src => (
+              <div key={src.value} className="flex items-center space-x-3">
+                <Checkbox
+                  id={`wealth-${src.value}`}
+                  checked={initialSourceOfWealth.includes(src.value)}
+                  onCheckedChange={() => setInitialSourceOfWealth(prev => prev.includes(src.value) ? prev.filter(v => v !== src.value) : [...prev, src.value])}
+                />
+                <Label htmlFor={`wealth-${src.value}`}>{src.label}</Label>
+              </div>
+            ))}
+          </div>
+          {errors.initialSourceOfWealth && <p className="text-sm text-destructive">{errors.initialSourceOfWealth}</p>}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <Label>淨資產值 / Net Asset Value <span className="text-destructive">*</span></Label>
+            <Select value={netAssetValue} onValueChange={setNetAssetValue}>
+              <SelectTrigger><SelectValue placeholder="選擇範圍" /></SelectTrigger>
+              <SelectContent>{valueRanges.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}</SelectContent>
+            </Select>
+            {errors.netAssetValue && <p className="text-sm text-destructive">{errors.netAssetValue}</p>}
+          </div>
+          <div className="space-y-4">
+            <Label>淨資產審計時間 / Net Asset Audit Date</Label>
+            <Input type="month" value={netAssetAuditDate} onChange={e => setNetAssetAuditDate(e.target.value)} />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <Label>稅後盈利 / Profit After Tax <span className="text-destructive">*</span></Label>
+            <Select value={profitAfterTax} onValueChange={setProfitAfterTax}>
+              <SelectTrigger><SelectValue placeholder="選擇範圍" /></SelectTrigger>
+              <SelectContent>{valueRanges.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}</SelectContent>
+            </Select>
+            {errors.profitAfterTax && <p className="text-sm text-destructive">{errors.profitAfterTax}</p>}
+          </div>
+          <div className="space-y-4">
+            <Label>稅後盈利審計時間 / Profit Audit Date</Label>
+            <Input type="month" value={profitAuditDate} onChange={e => setProfitAuditDate(e.target.value)} />
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <Label>資產項目 / Asset Items <span className="text-destructive">*</span></Label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
+            {assetItemsList.map(item => (
+              <div key={item.value} className="flex items-center space-x-3">
+                <Checkbox
+                  id={`asset-${item.value}`}
+                  checked={assetItems.includes(item.value)}
+                  onCheckedChange={() => setAssetItems(prev => prev.includes(item.value) ? prev.filter(v => v !== item.value) : [...prev, item.value])}
+                />
+                <Label htmlFor={`asset-${item.value}`}>{item.label}</Label>
+              </div>
+            ))}
+          </div>
+          {errors.assetItems && <p className="text-sm text-destructive">{errors.assetItems}</p>}
+        </div>
+      </div>
+    </ApplicationWizard>
+  );
+}

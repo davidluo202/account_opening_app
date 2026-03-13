@@ -396,3 +396,37 @@ export type RiskQuestionnaire = typeof riskQuestionnaires.$inferSelect;
 export type InsertRiskQuestionnaire = typeof riskQuestionnaires.$inferInsert;
 export type CustomerDeclaration = typeof customerDeclarations.$inferSelect;
 export type InsertCustomerDeclaration = typeof customerDeclarations.$inferInsert;
+
+/**
+ * Case 3 (Corporate): 机构财务信息
+ */
+export const corporateFinancialInfo = mysqlTable("corporate_financial_info", {
+  id: int("id").autoincrement().primaryKey(),
+  applicationId: int("applicationId").notNull().unique(),
+  authorizedShareCapital: text("authorizedShareCapital").notNull(),
+  issuedShareCapital: text("issuedShareCapital").notNull(),
+  initialSourceOfWealth: text("initialSourceOfWealth").notNull(), // JSON array
+  netAssetValue: varchar("netAssetValue", { length: 100 }).notNull(),
+  netAssetAuditDate: varchar("netAssetAuditDate", { length: 20 }),
+  profitAfterTax: varchar("profitAfterTax", { length: 100 }).notNull(),
+  profitAuditDate: varchar("profitAuditDate", { length: 20 }),
+  assetItems: text("assetItems").notNull(), // JSON array
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+/**
+ * Case 4 (Corporate): 机构关联方
+ */
+export const corporateRelatedParties = mysqlTable("corporate_related_parties", {
+  id: int("id").autoincrement().primaryKey(),
+  applicationId: int("applicationId").notNull().unique(),
+  relatedParties: text("relatedParties").notNull(), // JSON array of party objects
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CorporateFinancialInfo = typeof corporateFinancialInfo.$inferSelect;
+export type InsertCorporateFinancialInfo = typeof corporateFinancialInfo.$inferInsert;
+export type CorporateRelatedParties = typeof corporateRelatedParties.$inferSelect;
+export type InsertCorporateRelatedParties = typeof corporateRelatedParties.$inferInsert;

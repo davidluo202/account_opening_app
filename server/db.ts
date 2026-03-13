@@ -1141,3 +1141,42 @@ export async function getRiskQuestionnaire(applicationId: number) {
   
   return result[0] || null;
 }
+
+export async function saveCorporateFinancialInfo(applicationId: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.insert(require("../drizzle/schema").corporateFinancialInfo).values({
+    applicationId,
+    ...data
+  }).onDuplicateKeyUpdate({ set: data });
+}
+
+export async function getCorporateFinancialInfo(applicationId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const { corporateFinancialInfo } = require("../drizzle/schema");
+  const result = await db.select().from(corporateFinancialInfo).where(eq(corporateFinancialInfo.applicationId, applicationId)).limit(1);
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function saveCorporateRelatedParties(applicationId: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.insert(require("../drizzle/schema").corporateRelatedParties).values({
+    applicationId,
+    relatedParties: JSON.stringify(data.relatedParties)
+  }).onDuplicateKeyUpdate({ set: { relatedParties: JSON.stringify(data.relatedParties) } });
+}
+
+export async function getCorporateRelatedParties(applicationId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const { corporateRelatedParties } = require("../drizzle/schema");
+  const result = await db.select().from(corporateRelatedParties).where(eq(corporateRelatedParties.applicationId, applicationId)).limit(1);
+  return result.length > 0 ? {
+    ...result[0],
+    relatedParties: JSON.parse(result[0].relatedParties || '[]')
+  } : null;
+}

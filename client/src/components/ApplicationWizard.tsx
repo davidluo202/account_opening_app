@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { ChevronLeft, ChevronRight, FileText } from "lucide-react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
+import { APP_VERSION } from "@/const";
 
 interface Step {
   id: number;
@@ -122,7 +123,10 @@ export default function ApplicationWizard({
                 <img src="/logo-zh.png" alt="誠港金融" className="h-12" />
               </a>
               <div className="hidden sm:block border-l pl-3 ml-1">
-                <h1 className="text-lg font-semibold text-gray-800">诚港金融开户系统</h1>
+                <h1 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                  诚港金融开户系统
+                  <span className="text-xs font-mono bg-blue-100 text-blue-800 px-2 py-0.5 rounded border border-blue-200">v1.0.260313.002</span>
+                </h1>
               </div>
             </div>
             <Button
@@ -134,7 +138,10 @@ export default function ApplicationWizard({
           </div>
           {/* Mobile Title */}
           <div className="sm:hidden mb-3">
-            <h1 className="text-base font-semibold text-gray-800">诚港金融开户系统</h1>
+            <h1 className="text-base font-semibold text-gray-800 flex items-center justify-between">
+              <span>诚港金融开户系统</span>
+              <span className="text-xs font-mono bg-blue-100 text-blue-800 px-2 py-0.5 rounded border border-blue-200">v1.0.260313.002</span>
+            </h1>
           </div>
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
