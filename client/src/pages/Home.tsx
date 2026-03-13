@@ -96,20 +96,22 @@ export default function Home() {
                 。
               </p>
             </div>
-            <div className="flex items-start gap-3 mt-6 p-4 bg-blue-50 rounded-lg">
-              <Checkbox 
-                id="privacy-agreement" 
-                checked={agreedToPrivacy}
-                onCheckedChange={(checked) => setAgreedToPrivacy(checked === true)}
-                className="mt-1"
-              />
+            <div className="flex items-start gap-4 mt-6 p-5 bg-blue-100 border-2 border-blue-400 rounded-lg shadow-sm">
+              <div className="pt-0.5">
+                <Checkbox 
+                  id="privacy-agreement" 
+                  checked={agreedToPrivacy}
+                  onCheckedChange={(checked) => setAgreedToPrivacy(checked === true)}
+                  className="h-6 w-6 border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white shadow-sm"
+                />
+              </div>
               <label 
                 htmlFor="privacy-agreement" 
-                className="text-sm cursor-pointer select-none"
+                className="text-sm font-semibold text-slate-800 cursor-pointer select-none leading-relaxed"
               >
                 我已閱讀並同意上述個人資料私隱保護聲明，並同意本公司按照聲明所述的目的收集、使用及儲存我的個人資料。
                 <br />
-                <span className="text-muted-foreground text-xs">
+                <span className="text-slate-600 text-xs font-normal mt-1 block">
                   I have read and agree to the above Personal Data Privacy Statement, and consent to the collection, use and storage of my personal data by the Company for the purposes stated in the Statement.
                 </span>
               </label>
@@ -207,10 +209,10 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t bg-white py-8">
-        <div className="container flex flex-col items-center gap-2 text-sm text-muted-foreground">
+      <footer className="border-t bg-slate-900 py-8 text-white">
+        <div className="container flex flex-col items-center gap-2 text-sm">
           <p>© 2026 誠港金融. All rights reserved.</p>
-          <p className="text-xs opacity-50">v1.0.260311.005</p>
+          <p className="text-xs font-mono bg-slate-800 px-3 py-1 rounded border border-slate-700">v1.0.260313.001</p>
         </div>
       </footer>
     </div>
