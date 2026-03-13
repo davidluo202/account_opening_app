@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { Loader2, Plus, Trash2, Save } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 
 interface RelatedParty {
@@ -19,11 +19,26 @@ interface RelatedParty {
   gender: "male" | "female" | "other" | "";
   dateOfBirth: string;
   idType: "hkid" | "passport" | "mainland_id" | "other" | "";
+  idIssuingPlace: string;
   idNumber: string;
   phone: string;
   email: string;
   address: string;
 }
+
+const idIssuingCountries = [
+  { value: "HK", label: "香港 Hong Kong" },
+  { value: "CN", label: "中國內地 Mainland China" },
+  { value: "MO", label: "澳門 Macau" },
+  { value: "TW", label: "台灣 Taiwan" },
+  { value: "US", label: "美國 United States" },
+  { value: "GB", label: "英國 United Kingdom" },
+  { value: "SG", label: "新加坡 Singapore" },
+  { value: "AU", label: "澳洲 Australia" },
+  { value: "CA", label: "加拿大 Canada" },
+  { value: "JP", label: "日本 Japan" },
+  { value: "OTHER", label: "其他 Other" },
+];
 
 const defaultParty = (): RelatedParty => ({
   id: crypto.randomUUID(),
@@ -33,11 +48,25 @@ const defaultParty = (): RelatedParty => ({
   gender: "",
   dateOfBirth: "",
   idType: "",
+  idIssuingPlace: "",
   idNumber: "",
   phone: "",
   email: "",
   address: "",
 });
+
+// Helper function to check if age is at least 18
+const isAgeAtLeast18 = (dateOfBirth: string): boolean => {
+  if (!dateOfBirth) return false;
+  const birthDate = new Date(dateOfBirth);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age >= 18;
+};
 
 export default function CorporateRelatedParties() {
   const params = useParams<{ id: string; step?: string }>();
@@ -46,7 +75,10 @@ export default function CorporateRelatedParties() {
   const stepNum = parseInt(params.step || "4");
   const showReturnToPreview = useReturnToPreview();
 
-  const [parties, setParties] = useState<RelatedParty[]>([defaultParty()]);
+  // List of saved parties
+  const [savedParties, setSavedParties] = useState<RelatedParty[]>([]);
+  // Current form party being edited
+  const [currentParty, setCurrentParty] = useState<RelatedParty>(defaultParty());
   const [errors, setErrors] = useState<Record<string, Record<string, string>>>({});
 
   const { data: existingData, isLoading: isLoadingData } = trpc.corporateRelatedParties.get.useQuery(
@@ -61,17 +93,22 @@ export default function CorporateRelatedParties() {
 
   useEffect(() => {
     if (existingData && existingData.relatedParties && existingData.relatedParties.length > 0) {
-      setParties(existingData.relatedParties);
-    } else if (corporateBasicInfo) {
-      setParties([{
+      setSavedParties(existingData.relatedParties);
+    }
+  }, [existingData]);
+
+  // Initialize with default contact from corporate basic info if no saved parties
+  useEffect(() => {
+    if (!isLoadingData && savedParties.length === 0 && corporateBasicInfo) {
+      setCurrentParty({
         ...defaultParty(),
         isDefaultContact: true,
         name: corporateBasicInfo.contactName || "",
         phone: corporateBasicInfo.contactPhone || "",
         email: corporateBasicInfo.contactEmail || "",
-      }]);
+      });
     }
-  }, [existingData, corporateBasicInfo]);
+  }, [isLoadingData, savedParties.length, corporateBasicInfo]);
 
   const saveMutation = trpc.corporateRelatedParties.save.useMutation({
     onSuccess: (result) => {
@@ -83,43 +120,65 @@ export default function CorporateRelatedParties() {
     onError: (error) => toast.error(`保存失敗: ${error.message}`)
   });
 
-  const saveOnlyMutation = trpc.corporateRelatedParties.save.useMutation({
-    onSuccess: (result) => {
-      if (result.success) toast.success("保存成功");
-    },
-    onError: (error) => toast.error(`保存失敗: ${error.message}`)
-  });
-
-  const updateParty = (id: string, field: keyof RelatedParty, value: any) => {
-    setParties(parties.map(p => p.id === id ? { ...p, [field]: value } : p));
+  const validateParty = (party: RelatedParty, forSave: boolean = false) => {
+    const errs: Record<string, string> = {};
+    if (!party.relationshipType) errs.relationshipType = "請選擇關係類型";
+    if (!party.name) errs.name = "請輸入姓名";
+    if (!party.gender) errs.gender = "請選擇性別";
+    
+    if (!party.dateOfBirth) {
+      errs.dateOfBirth = "請選擇出生日期";
+    } else if (!isAgeAtLeast18(party.dateOfBirth)) {
+      errs.dateOfBirth = "關聯人士必須年滿18歲";
+    }
+    
+    if (!party.idType) errs.idType = "請選擇證件類型";
+    if (!party.idIssuingPlace) errs.idIssuingPlace = "請選擇證件簽發地";
+    if (!party.idNumber) errs.idNumber = "請輸入證件號碼";
+    
+    if (!party.phone && !party.email && !party.address) {
+      errs.contact = "請至少提供一種聯絡方式";
+    }
+    
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
   };
 
-  const addParty = () => setParties([...parties, defaultParty()]);
-  const removeParty = (id: string) => setParties(parties.filter(p => p.id !== id));
+  // Add current party to the list
+  const handleAddParty = () => {
+    if (validateParty(currentParty, true)) {
+      setSavedParties([...savedParties, { ...currentParty, id: crypto.randomUUID() }]);
+      setCurrentParty(defaultParty());
+      setErrors({});
+      toast.success("關聯方已添加");
+    }
+  };
 
-  const validate = () => {
-    const newErrors: Record<string, Record<string, string>> = {};
-    let isValid = true;
+  // Remove party from list
+  const removeParty = (id: string) => {
+    setSavedParties(savedParties.filter(p => p.id !== id));
+  };
 
-    parties.forEach(p => {
-      const errs: Record<string, string> = {};
-      if (!p.relationshipType) errs.relationshipType = "此欄位必填";
-      if (!p.name) errs.name = "此欄位必填";
-      if (!p.gender) errs.gender = "此欄位必填";
-      if (!p.dateOfBirth) errs.dateOfBirth = "此欄位必填";
-      if (!p.idType) errs.idType = "此欄位必填";
-      if (!p.idNumber) errs.idNumber = "此欄位必填";
-      if (!p.phone && !p.email && !p.address) {
-        errs.contact = "請至少提供一種聯絡方式 (電話、電郵或地址)";
+  // Handle final save
+  const handleSave = () => {
+    if (savedParties.length === 0) {
+      // If no saved parties, try to save current form
+      if (validateParty(currentParty)) {
+        saveMutation.mutate({ applicationId, relatedParties: [currentParty] });
       }
-      if (Object.keys(errs).length > 0) {
-        newErrors[p.id] = errs;
-        isValid = false;
-      }
-    });
+    } else {
+      saveMutation.mutate({ applicationId, relatedParties: savedParties });
+    }
+  };
 
-    setErrors(newErrors);
-    return isValid;
+  const handleNext = () => {
+    if (savedParties.length === 0) {
+      if (validateParty(currentParty)) {
+        saveMutation.mutate({ applicationId, relatedParties: [currentParty] });
+      }
+    } else {
+      saveMutation.mutate({ applicationId, relatedParties: savedParties });
+    }
   };
 
   if (isLoadingData) {
@@ -134,10 +193,10 @@ export default function CorporateRelatedParties() {
     <ApplicationWizard
       applicationId={applicationId}
       currentStep={stepNum}
-      onNext={() => validate() && saveMutation.mutate({ applicationId, relatedParties: parties })}
-      onSave={() => validate() && saveOnlyMutation.mutate({ applicationId, relatedParties: parties })}
+      onNext={handleNext}
+      onSave={handleSave}
       isNextLoading={saveMutation.isPending}
-      isSaveLoading={saveOnlyMutation.isPending}
+      isSaveLoading={saveMutation.isPending}
       showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-8">
@@ -146,112 +205,145 @@ export default function CorporateRelatedParties() {
           <p className="text-sm text-slate-500 mt-1">請提供所有董事、股東、最終受益人或授權簽署人的信息</p>
         </div>
 
-        {parties.map((party, index) => (
-          <div key={party.id} className="p-6 border border-slate-200 rounded-lg bg-white space-y-6 relative shadow-sm">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-slate-800">關聯方 {index + 1}</h3>
-              {parties.length > 1 && (
+        {/* Saved Parties List */}
+        {savedParties.length > 0 && (
+          <div className="space-y-4">
+            <h3 className="font-semibold text-slate-700">已添加的關聯方 ({savedParties.length})</h3>
+            {savedParties.map((party, index) => (
+              <div key={party.id} className="p-4 border border-green-200 rounded-lg bg-green-50 flex justify-between items-center">
+                <div>
+                  <p className="font-medium">{party.name}</p>
+                  <p className="text-sm text-slate-500">
+                    {party.relationshipType === 'director' ? '董事' : party.relationshipType === 'shareholder' ? '股東' : party.relationshipType === 'beneficial_owner' ? '最終受益人' : party.relationshipType === 'authorized_signatory' ? '授權簽署人' : '其他'}
+                  </p>
+                </div>
                 <Button variant="ghost" size="icon" onClick={() => removeParty(party.id)} className="text-destructive">
                   <Trash2 className="h-4 w-4" />
                 </Button>
-              )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Add New Party Form */}
+        <div className="p-6 border-2 border-blue-200 rounded-lg bg-blue-50 space-y-6">
+          <h3 className="text-lg font-semibold text-slate-800">添加新關聯方</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <Label>關係類型 / Relationship Type <span className="text-destructive">*</span></Label>
+              <Select value={currentParty.relationshipType} onValueChange={(v: any) => setCurrentParty({ ...currentParty, relationshipType: v })}>
+                <SelectTrigger><SelectValue placeholder="選擇類型" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="director">董事 / Director</SelectItem>
+                  <SelectItem value="shareholder">股東 / Shareholder</SelectItem>
+                  <SelectItem value="beneficial_owner">最終受益人 / Beneficial Owner</SelectItem>
+                  <SelectItem value="authorized_signatory">授權簽署人 / Authorized Signatory</SelectItem>
+                  <SelectItem value="other">其他 / Other</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.relationshipType && <p className="text-sm text-destructive">{errors.relationshipType}</p>}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-3">
-                <Label>關係類型 / Relationship Type <span className="text-destructive">*</span></Label>
-                <Select value={party.relationshipType} onValueChange={(v: any) => updateParty(party.id, "relationshipType", v)}>
-                  <SelectTrigger><SelectValue placeholder="選擇類型" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="director">董事 / Director</SelectItem>
-                    <SelectItem value="shareholder">股東 / Shareholder</SelectItem>
-                    <SelectItem value="beneficial_owner">最終受益人 / Beneficial Owner</SelectItem>
-                    <SelectItem value="authorized_signatory">授權簽署人 / Authorized Signatory</SelectItem>
-                    <SelectItem value="other">其他 / Other</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors[party.id]?.relationshipType && <p className="text-sm text-destructive">{errors[party.id].relationshipType}</p>}
+            <div className="space-y-3 flex flex-col justify-end">
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="default-contact" 
+                  checked={currentParty.isDefaultContact}
+                  onCheckedChange={(v) => setCurrentParty({ ...currentParty, isDefaultContact: !!v })}
+                />
+                <Label htmlFor="default-contact">設為默認聯絡人</Label>
               </div>
+            </div>
 
-              <div className="space-y-3 flex flex-col justify-end">
-                <div className="flex items-center space-x-2 h-10">
-                  <Checkbox 
-                    id={`default-${party.id}`} 
-                    checked={party.isDefaultContact}
-                    onCheckedChange={(v) => updateParty(party.id, "isDefaultContact", !!v)}
-                  />
-                  <Label htmlFor={`default-${party.id}`}>設為默認聯絡人 / Default Contact</Label>
-                </div>
-              </div>
+            <div className="space-y-3">
+              <Label>姓名 / Name <span className="text-destructive">*</span></Label>
+              <Input value={currentParty.name} onChange={e => setCurrentParty({ ...currentParty, name: e.target.value })} />
+              {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
+            </div>
 
-              <div className="space-y-3">
-                <Label>姓名 / Name <span className="text-destructive">*</span></Label>
-                <Input value={party.name} onChange={e => updateParty(party.id, "name", e.target.value)} />
-                {errors[party.id]?.name && <p className="text-sm text-destructive">{errors[party.id].name}</p>}
-              </div>
+            <div className="space-y-3">
+              <Label>性別 / Gender <span className="text-destructive">*</span></Label>
+              <Select value={currentParty.gender} onValueChange={(v: any) => setCurrentParty({ ...currentParty, gender: v })}>
+                <SelectTrigger><SelectValue placeholder="選擇性別" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="male">男 / Male</SelectItem>
+                  <SelectItem value="female">女 / Female</SelectItem>
+                  <SelectItem value="other">其他 / Other</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.gender && <p className="text-sm text-destructive">{errors.gender}</p>}
+            </div>
 
-              <div className="space-y-3">
-                <Label>性別 / Gender <span className="text-destructive">*</span></Label>
-                <Select value={party.gender} onValueChange={(v: any) => updateParty(party.id, "gender", v)}>
-                  <SelectTrigger><SelectValue placeholder="選擇性別" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="male">男 / Male</SelectItem>
-                    <SelectItem value="female">女 / Female</SelectItem>
-                    <SelectItem value="other">其他 / Other</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors[party.id]?.gender && <p className="text-sm text-destructive">{errors[party.id].gender}</p>}
-              </div>
+            <div className="space-y-3">
+              <Label>出生日期 / Date of Birth <span className="text-destructive">*</span> (必須年滿18歲)</Label>
+              <Input 
+                type="date" 
+                value={currentParty.dateOfBirth} 
+                onChange={e => setCurrentParty({ ...currentParty, dateOfBirth: e.target.value })} 
+              />
+              {errors.dateOfBirth && <p className="text-sm text-destructive">{errors.dateOfBirth}</p>}
+            </div>
 
-              <div className="space-y-3">
-                <Label>出生日期 / Date of Birth <span className="text-destructive">*</span></Label>
-                <Input type="date" value={party.dateOfBirth} onChange={e => updateParty(party.id, "dateOfBirth", e.target.value)} />
-                {errors[party.id]?.dateOfBirth && <p className="text-sm text-destructive">{errors[party.id].dateOfBirth}</p>}
-              </div>
+            <div className="space-y-3">
+              <Label>證件類型 / ID Type <span className="text-destructive">*</span></Label>
+              <Select value={currentParty.idType} onValueChange={(v: any) => setCurrentParty({ ...currentParty, idType: v })}>
+                <SelectTrigger><SelectValue placeholder="選擇證件" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="hkid">香港身份證 / HKID</SelectItem>
+                  <SelectItem value="passport">護照 / Passport</SelectItem>
+                  <SelectItem value="mainland_id">內地身份證 / Mainland ID</SelectItem>
+                  <SelectItem value="other">其他 / Other</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.idType && <p className="text-sm text-destructive">{errors.idType}</p>}
+            </div>
 
-              <div className="space-y-3">
-                <Label>證件類型 / ID Type <span className="text-destructive">*</span></Label>
-                <Select value={party.idType} onValueChange={(v: any) => updateParty(party.id, "idType", v)}>
-                  <SelectTrigger><SelectValue placeholder="選擇證件" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="hkid">香港身份證 / HKID</SelectItem>
-                    <SelectItem value="passport">護照 / Passport</SelectItem>
-                    <SelectItem value="mainland_id">內地身份證 / Mainland ID</SelectItem>
-                    <SelectItem value="other">其他 / Other</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors[party.id]?.idType && <p className="text-sm text-destructive">{errors[party.id].idType}</p>}
-              </div>
+            <div className="space-y-3">
+              <Label>證件簽發地 / ID Issuing Country <span className="text-destructive">*</span></Label>
+              <Select value={currentParty.idIssuingPlace} onValueChange={(v: any) => setCurrentParty({ ...currentParty, idIssuingPlace: v })}>
+                <SelectTrigger><SelectValue placeholder="選擇國家/地區" /></SelectTrigger>
+                <SelectContent>
+                  {idIssuingCountries.map(c => (
+                    <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.idIssuingPlace && <p className="text-sm text-destructive">{errors.idIssuingPlace}</p>}
+            </div>
 
-              <div className="space-y-3">
-                <Label>證件號碼 / ID Number <span className="text-destructive">*</span></Label>
-                <Input value={party.idNumber} onChange={e => updateParty(party.id, "idNumber", e.target.value)} />
-                {errors[party.id]?.idNumber && <p className="text-sm text-destructive">{errors[party.id].idNumber}</p>}
-              </div>
+            <div className="space-y-3">
+              <Label>證件號碼 / ID Number <span className="text-destructive">*</span></Label>
+              <Input value={currentParty.idNumber} onChange={e => setCurrentParty({ ...currentParty, idNumber: e.target.value })} />
+              {errors.idNumber && <p className="text-sm text-destructive">{errors.idNumber}</p>}
+            </div>
 
-              <div className="space-y-3">
-                <Label>電話 / Phone</Label>
-                <Input value={party.phone} onChange={e => updateParty(party.id, "phone", e.target.value)} />
-              </div>
+            <div className="space-y-3">
+              <Label>電話 / Phone</Label>
+              <Input value={currentParty.phone} onChange={e => setCurrentParty({ ...currentParty, phone: e.target.value })} />
+            </div>
 
-              <div className="space-y-3">
-                <Label>電郵 / Email</Label>
-                <Input type="email" value={party.email} onChange={e => updateParty(party.id, "email", e.target.value)} />
-              </div>
+            <div className="space-y-3">
+              <Label>電郵 / Email</Label>
+              <Input type="email" value={currentParty.email} onChange={e => setCurrentParty({ ...currentParty, email: e.target.value })} />
+            </div>
 
-              <div className="space-y-3 md:col-span-2">
-                <Label>地址 / Address</Label>
-                <Input value={party.address} onChange={e => updateParty(party.id, "address", e.target.value)} />
-                {errors[party.id]?.contact && <p className="text-sm text-destructive">{errors[party.id].contact}</p>}
-              </div>
+            <div className="space-y-3 md:col-span-2">
+              <Label>地址 / Address</Label>
+              <Input value={currentParty.address} onChange={e => setCurrentParty({ ...currentParty, address: e.target.value })} />
+              {errors.contact && <p className="text-sm text-destructive">{errors.contact}</p>}
             </div>
           </div>
-        ))}
 
-        <Button type="button" variant="outline" onClick={addParty} className="w-full flex items-center justify-center gap-2 border-dashed border-2 py-8">
-          <Plus className="h-5 w-5" />
-          <span>添加關聯方 / Add Related Party</span>
-        </Button>
+          <Button type="button" onClick={handleAddParty} className="w-full bg-green-600 hover:bg-green-700">
+            <Save className="h-4 w-4 mr-2" />
+            添加此關聯方到列表
+          </Button>
+        </div>
+
+        {savedParties.length === 0 && (
+          <p className="text-center text-slate-500 text-sm">請填寫上方表格並點擊"添加此關聯方到列表"，然後點擊下一步</p>
+        )}
       </div>
     </ApplicationWizard>
   );
