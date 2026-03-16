@@ -59,15 +59,23 @@ export default function RiskQuestionnaire() {
 
 
   // 載入已保存的數據
-  const { data: savedData, isLoading: loadingData } = trpc.riskQuestionnaire.get.useQuery(
+  const { data: savedData, isLoading: loadingData, error: savedDataError } = trpc.riskQuestionnaire.get.useQuery(
     { applicationId: applicationId },
-    { enabled: applicationId > 0 }
+    { 
+      enabled: applicationId > 0,
+      retry: false,
+      throwOnError: false,
+    }
   );
 
   // 加載個人詳細信息，獲取學歷
   const { data: personalDetailedData } = trpc.personalDetailed.get.useQuery(
     { applicationId: applicationId },
-    { enabled: applicationId > 0 }
+    { 
+      enabled: applicationId > 0,
+      retry: false,
+      throwOnError: false,
+    }
   );
 
   useEffect(() => {
@@ -306,12 +314,24 @@ export default function RiskQuestionnaire() {
   }
 
   // 獲取客戶類型
-  const { data: accountSelection } = trpc.accountSelection.get.useQuery(
+  const { data: accountSelection, error: accountError } = trpc.accountSelection.get.useQuery(
     { applicationId },
-    { enabled: applicationId > 0 }
+    { 
+      enabled: applicationId > 0,
+      retry: false,
+      throwOnError: false,
+    }
   );
   const isCorporate = accountSelection?.customerType === 'corporate';
-  const customerType = accountSelection?.customerType || 'individual';
+
+  // Safe check for rendering
+  if (!applicationId || applicationId === 0) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-red-500">Invalid application ID</p>
+      </div>
+    );
+  }
 
   return (
     <ApplicationWizard 
