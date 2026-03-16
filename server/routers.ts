@@ -43,10 +43,16 @@ export const appRouter = router({
         // 保存验证码到数据库
         await db.saveVerificationCode(input.email, code, expiresAt);
         
-        // 发送邮件
-        const sent = await sendEmail(input.email, code);
-        if (!sent) {
-          throw new Error("邮件发送失败，请稍后重试");
+        // Bypass email sending (SendGrid quota exhausted)
+        const bypassEmail = process.env.BYPASS_EMAIL === 'true';
+        if (!bypassEmail) {
+          // 发送邮件
+          const sent = await sendEmail(input.email, code);
+          if (!sent) {
+            throw new Error("邮件发送失败，请稍后重试");
+          }
+        } else {
+          console.log(`[BYPASS] Verification code for ${input.email}: ${code}`);
         }
         
         console.log(`[Verification Code] Sent to ${input.email}`);
