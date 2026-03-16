@@ -433,21 +433,5 @@ export default function CorporateRelatedParties() {
       </div>
     </ApplicationWizard>
   );
-}CurrentParty({ ...currentParty, address: e.target.value })} />
-              {errors.contact && <p className="text-sm text-destructive">{errors.contact}</p>}
-            </div>
-          </div>
 
-          <Button type="button" onClick={handleAddParty} className="w-full bg-green-600 hover:bg-green-700">
-            <Save className="h-4 w-4 mr-2" />
-            添加此關聯方到列表
-          </Button>
-        </div>
-
-        {savedParties.length === 0 && (
-          <p className="text-center text-slate-500 text-sm">請填寫上方表格並點擊"添加此關聯方到列表"，然後點擊下一步</p>
-        )}
-      </div>
-    </ApplicationWizard>
-  );
 }
