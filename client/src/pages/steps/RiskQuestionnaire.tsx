@@ -60,14 +60,14 @@ export default function RiskQuestionnaire() {
 
   // 載入已保存的數據
   const { data: savedData, isLoading: loadingData } = trpc.riskQuestionnaire.get.useQuery(
-    { applicationId: applicationId! },
-    { enabled: !!applicationId }
+    { applicationId: applicationId },
+    { enabled: applicationId > 0 }
   );
 
   // 加載個人詳細信息，獲取學歷
   const { data: personalDetailedData } = trpc.personalDetailed.get.useQuery(
-    { applicationId: applicationId! },
-    { enabled: !!applicationId }
+    { applicationId: applicationId },
+    { enabled: applicationId > 0 }
   );
 
   useEffect(() => {
@@ -304,7 +304,7 @@ export default function RiskQuestionnaire() {
   // 獲取客戶類型
   const { data: accountSelection } = trpc.accountSelection.get.useQuery(
     { applicationId },
-    { enabled: !!applicationId }
+    { enabled: applicationId > 0 }
   );
   const isCorporate = accountSelection?.customerType === 'corporate';
 
