@@ -222,6 +222,8 @@ export default function CorporateRelatedParties() {
       };
       if (validateParty(convertedParty)) {
         saveMutation.mutate({ applicationId, relatedParties: [convertedParty] });
+      } else {
+        toast.error("請填寫完整信息後再繼續");
       }
     } else {
       saveMutation.mutate({ applicationId, relatedParties: savedParties });
