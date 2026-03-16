@@ -311,14 +311,16 @@ export default function RiskQuestionnaire() {
     { enabled: applicationId > 0 }
   );
   const isCorporate = accountSelection?.customerType === 'corporate';
+  const customerType = accountSelection?.customerType || 'individual';
 
   return (
     <ApplicationWizard 
       currentStep={stepNum} 
-      applicationId={applicationId!}
+      applicationId={applicationId}
       onNext={handleSubmit}
       isNextDisabled={loading || saveMutation.isPending}
       isNextLoading={loading || saveMutation.isPending}
+      customerTypeOverride={isCorporate ? 'corporate' : 'individual'}
     >
       <div>
         <h3 className="text-xl font-semibold mb-2">風險評估問卷 / Risk Profile Questionnaire</h3>
