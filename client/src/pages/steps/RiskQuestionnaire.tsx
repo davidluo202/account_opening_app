@@ -38,7 +38,7 @@ export default function RiskQuestionnaire() {
   const [loading, setLoading] = useState(false);
   const params = useParams<{ id: string; step?: string }>();
   const applicationId = parseInt(params.id || "0");
-  const stepNum = parseInt(params.step || "7");
+  const stepNum = parseInt(params.step || "5");
   const [formData, setFormData] = useState<FormData>({
     q1_current_investments: [],
     q2_investment_period: "",
@@ -72,21 +72,25 @@ export default function RiskQuestionnaire() {
 
   useEffect(() => {
     if (savedData) {
-      setFormData({
-        q1_current_investments: savedData.q1_current_investments ? JSON.parse(savedData.q1_current_investments) : [],
-        q2_investment_period: savedData.q2_investment_period || "",
-        q3_price_volatility: savedData.q3_price_volatility || "",
-        q4_investment_percentage: savedData.q4_investment_percentage || "",
-        q5_investment_attitude: savedData.q5_investment_attitude || "",
-        q6_derivatives_knowledge: savedData.q6_derivatives_knowledge ? JSON.parse(savedData.q6_derivatives_knowledge) : [],
-        q7_age_group: savedData.q7_age_group || "",
-        q8_education_level: savedData.q8_education_level || "",
-        q9_investment_knowledge_sources: savedData.q9_investment_knowledge_sources ? JSON.parse(savedData.q9_investment_knowledge_sources) : [],
-        q10_liquidity_needs: savedData.q10_liquidity_needs || "",
-        totalScore: savedData.totalScore || 0,
-        riskLevel: savedData.riskLevel || "",
-        riskDescription: savedData.riskDescription || "",
-      });
+      try {
+        setFormData({
+          q1_current_investments: savedData.q1_current_investments ? JSON.parse(savedData.q1_current_investments) : [],
+          q2_investment_period: savedData.q2_investment_period || "",
+          q3_price_volatility: savedData.q3_price_volatility || "",
+          q4_investment_percentage: savedData.q4_investment_percentage || "",
+          q5_investment_attitude: savedData.q5_investment_attitude || "",
+          q6_derivatives_knowledge: savedData.q6_derivatives_knowledge ? JSON.parse(savedData.q6_derivatives_knowledge) : [],
+          q7_age_group: savedData.q7_age_group || "",
+          q8_education_level: savedData.q8_education_level || "",
+          q9_investment_knowledge_sources: savedData.q9_investment_knowledge_sources ? JSON.parse(savedData.q9_investment_knowledge_sources) : [],
+          q10_liquidity_needs: savedData.q10_liquidity_needs || "",
+          totalScore: savedData.totalScore || 0,
+          riskLevel: savedData.riskLevel || "",
+          riskDescription: savedData.riskDescription || "",
+        });
+      } catch (e) {
+        console.error("Failed to parse saved risk questionnaire data:", e);
+      }
     }
   }, [savedData]);
 
