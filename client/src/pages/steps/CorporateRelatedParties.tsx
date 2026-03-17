@@ -381,7 +381,12 @@ export default function CorporateRelatedParties() {
 
             <div className="space-y-3">
               <Label>證件號碼 / ID Number <span className="text-destructive">*</span></Label>
-              <Input value={currentParty.idNumber} onChange={e => setCurrentParty({ ...currentParty, idNumber: e.target.value })} />
+              <Input 
+                value={currentParty.idNumber} 
+                onChange={e => setCurrentParty({ ...currentParty, idNumber: e.target.value.toUpperCase() })} 
+                placeholder={currentParty.idType === 'hkid' ? '例如:A123456(0)' : ''}
+                className={currentParty.idType === 'hkid' ? 'placeholder:text-gray-400' : ''}
+              />
               {errors.idNumber && <p className="text-sm text-destructive">{errors.idNumber}</p>}
             </div>
 
