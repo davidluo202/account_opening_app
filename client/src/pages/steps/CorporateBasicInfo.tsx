@@ -455,7 +455,7 @@ export default function CorporateBasicInfo() {
               <Input
                 id="contactName"
                 value={formData.contactName}
-                onChange={(e) => setFormData({ ...formData, contactName: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, contactName: e.target.value.toUpperCase() })}
                 onBlur={() => setFormData({ ...formData, contactName: handleSCT(formData.contactName) })}
                 className={errors.contactName ? "border-destructive" : ""}
               />

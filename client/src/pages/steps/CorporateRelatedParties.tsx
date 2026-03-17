@@ -318,7 +318,7 @@ export default function CorporateRelatedParties() {
               <Label>姓名 / Name <span className="text-destructive">*</span></Label>
               <Input 
                 value={currentParty.name} 
-                onChange={e => setCurrentParty({ ...currentParty, name: e.target.value })} 
+                onChange={e => setCurrentParty({ ...currentParty, name: e.target.value.toUpperCase() })} 
                 onBlur={(e) => {
                   const converted = convertToTraditional(e.target.value);
                   if (converted !== e.target.value) {
@@ -388,8 +388,14 @@ export default function CorporateRelatedParties() {
                   const value = e.target.value.toUpperCase().replace(/（/g, '(').replace(/）/g, ')');
                   setCurrentParty({ ...currentParty, idNumber: value });
                 }} 
-                placeholder={currentParty.idType === 'hkid' ? '例如:A123456(0)' : currentParty.idType === 'mainland_id' ? '由18位數字組成' : ''}
-                className={currentParty.idType === 'hkid' || currentParty.idType === 'mainland_id' ? 'placeholder:text-gray-400' : ''}
+                placeholder={
+                  currentParty.idType === 'hkid' ? '請輸入您的香港身份證號碼，例如:A123456(0)' : 
+                  currentParty.idType === 'mainland_id' ? '請輸入您的二代居民身份證號碼，由18位數字組成。' : 
+                  currentParty.idType === 'passport' ? '請輸入您的護照號碼' : 
+                  currentParty.idType === 'other' ? '請輸入您的證件號碼' : 
+                  '請輸入您的證件號碼'
+                }
+                className={currentParty.idType ? 'placeholder:text-gray-400' : ''}
               />
               {errors.idNumber && <p className="text-sm text-destructive">{errors.idNumber}</p>}
             </div>
