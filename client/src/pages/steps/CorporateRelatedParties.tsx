@@ -383,7 +383,11 @@ export default function CorporateRelatedParties() {
               <Label>證件號碼 / ID Number <span className="text-destructive">*</span></Label>
               <Input 
                 value={currentParty.idNumber} 
-                onChange={e => setCurrentParty({ ...currentParty, idNumber: e.target.value.toUpperCase() })} 
+                onChange={e => {
+                  // 转换为大写并替换中文括号为英文括号
+                  const value = e.target.value.toUpperCase().replace(/（/g, '(').replace(/）/g, ')');
+                  setCurrentParty({ ...currentParty, idNumber: value });
+                }} 
                 placeholder={currentParty.idType === 'hkid' ? '例如:A123456(0)' : currentParty.idType === 'mainland_id' ? '由18位數字組成' : ''}
                 className={currentParty.idType === 'hkid' || currentParty.idType === 'mainland_id' ? 'placeholder:text-gray-400' : ''}
               />

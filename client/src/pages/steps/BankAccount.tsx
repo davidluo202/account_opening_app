@@ -435,7 +435,7 @@ const handleNext = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="HK">香港 / Hong Kong</SelectItem>
-                  <SelectItem value="CN">大陆 / Mainland China</SelectItem>
+                  <SelectItem value="CN">中國大陸 / Mainland China</SelectItem>
                   <SelectItem value="OTHER">其他 / Other</SelectItem>
                 </SelectContent>
               </Select>

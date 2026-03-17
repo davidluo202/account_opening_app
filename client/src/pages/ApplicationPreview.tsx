@@ -123,7 +123,7 @@ const calculateRiskLevel = (riskQuestionnaire: any): { totalScore: number; riskL
 };
 
 /**
- * 申请预览页面 - 参照CMF003申请表的专业表格布局
+ * 申請预览页面 - 参照CMF003申請表的专业表格布局
  */
 export default function ApplicationPreview() {
   const [, params] = useRoute("/application/:id/preview");
@@ -138,25 +138,25 @@ export default function ApplicationPreview() {
   const [signatureName, setSignatureName] = useState("");
   const [signatureMethod, setSignatureMethod] = useState<"typed" | "iamsmart">("typed");
 
-  // 获取完整申请数据
+  // 获取完整申請数据
   const { data: completeData, isLoading, refetch } = trpc.application.getComplete.useQuery(
     { id: applicationId },
     { enabled: !!applicationId && isAuthenticated }
   );
 
-  // 生成申请编号
+  // 生成申請编号
   const generateNumberMutation = trpc.application.generateNumber.useMutation({
     onSuccess: () => {
-      toast.success("申请编号已生成");
+      toast.success("申請编号已生成");
       setHasGeneratedNumber(true);
       refetch();
     },
     onError: (error) => {
-      toast.error(`生成申请编号失败: ${error.message}`);
+      toast.error(`生成申請编号失败: ${error.message}`);
     },
   });
 
-  // 提交申请
+  // 提交申請
   const submitMutation = trpc.application.submit.useMutation({
     onSuccess: (data) => {
       // 显示成功对话框，而不是直接跳转
@@ -194,7 +194,7 @@ export default function ApplicationPreview() {
         // 释放内存
         URL.revokeObjectURL(link.href);
         
-        toast.success("申请表PDF已保存到本地");
+        toast.success("申請表PDF已保存到本地");
       }
     },
     onError: (error) => {
@@ -228,8 +228,8 @@ export default function ApplicationPreview() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Card className="p-8 text-center">
-          <p className="text-lg mb-4">未找到申请数据</p>
-          <Button onClick={() => setLocation("/applications")}>返回申请列表</Button>
+          <p className="text-lg mb-4">未找到申請数据</p>
+          <Button onClick={() => setLocation("/applications")}>返回申請列表</Button>
         </Card>
       </div>
     );
@@ -237,24 +237,24 @@ export default function ApplicationPreview() {
 
   const { application, accountSelection, basicInfo: personalBasic, corporateBasic, detailedInfo: personalDetailed, occupation, employment, financial, corporateFinancial, bankAccounts, taxInfo, riskQuestionnaire, uploadedDocuments: documents, face: faceVerification, regulatory, relatedParties } = completeData;
 
-  // 判断是否为机构客户
+  // 判断是否为機構客戶
   const isCorporate = accountSelection?.customerType === 'corporate';
 
   const handleSaveAndGenerateNumber = () => {
     if (!application?.applicationNumber) {
       generateNumberMutation.mutate({ id: applicationId });
     } else {
-      toast.info("申请编号已存在");
+      toast.info("申請编号已存在");
     }
   };
 
   const handleSubmit = () => {
     if (!application?.applicationNumber) {
-      toast.error("请先保存并生成申请编号");
+      toast.error("请先保存并生成申請编号");
       return;
     }
     if (application?.status === "submitted") {
-      toast.info("申请已提交，无需重复提交");
+      toast.info("申請已提交，无需重复提交");
       return;
     }
     // 显示签名对话框
@@ -366,7 +366,7 @@ export default function ApplicationPreview() {
             <img src="/logo-zh.png" alt="誠港金融" className="h-12" />
           </a>
           <Button variant="ghost" onClick={() => setLocation("/applications")}>
-            返回申请列表
+            返回申請列表
           </Button>
         </div>
       </header>
@@ -374,21 +374,21 @@ export default function ApplicationPreview() {
       <div className="container max-w-5xl py-8">
         {/* 页面标题 */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">申请预览</h1>
-          <p className="text-gray-600 mt-2">请仔细核对以下信息，确认无误后提交申请</p>
+          <h1 className="text-3xl font-bold text-gray-900">申請预览</h1>
+          <p className="text-gray-600 mt-2">请仔细核对以下信息，确认无误后提交申請</p>
         </div>
 
-        {/* 申请编号和状态 */}
+        {/* 申請编号和状态 */}
         <Card className="p-6 mb-6 bg-white border-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p className="text-sm text-gray-600 mb-1">申请编号 Application No.</p>
+              <p className="text-sm text-gray-600 mb-1">申請编号 Application No.</p>
               <p className="text-2xl font-bold text-primary">
                 {application?.applicationNumber || "未生成"}
               </p>
             </div>
             <div>
-              <p className="text-sm text-gray-600 mb-1">申请状态 Status</p>
+              <p className="text-sm text-gray-600 mb-1">申請状态 Status</p>
               <p className="text-2xl font-bold">
                 {application?.status === "draft" && "草稿"}
                 {application?.status === "submitted" && "已提交"}
@@ -407,21 +407,21 @@ export default function ApplicationPreview() {
             <p className="text-sm">{isCorporate ? 'Customer Account Opening Form (Corporate)' : 'Customer Account Opening Form (Ind/Joint)'}</p>
           </div>
 
-          {/* 账户类型 */}
+          {/* 賬戶类型 */}
           <div className="border-b">
             <table className="w-full min-w-[600px]">
               <tbody>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold w-1/3 border-r">客户类型 Customer Type</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/3 border-r">客戶类型 Customer Type</td>
                   <td className="p-3">{translateCustomerType(accountSelection?.customerType)}</td>
-                  <td className="p-3 bg-gray-50 font-semibold w-1/3 border-l">账户类型 Account Type</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/3 border-l">賬戶类型 Account Type</td>
                   <td className="p-3">{translateAccountType(accountSelection?.accountType)}</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          {/* 个人/机构基本信息 */}
+          {/* 個人/機構基本信息 */}
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
@@ -516,7 +516,7 @@ export default function ApplicationPreview() {
             )}
           </div>
 
-          {/* 机构：关联人士信息 / 个人：详细信息 */}
+          {/* 機構：关联人士信息 / 個人：詳細信息 */}
           {isCorporate ? (
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
@@ -564,16 +564,16 @@ export default function ApplicationPreview() {
               <h3 className="font-bold flex items-center justify-between">
                 <span>2. 個人詳細信息 Personal Detailed Information</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(4)}>
-                  编辑
+                  編輯
                 </Button>
               </h3>
             </div>
             <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">证件类型 ID Type</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">證件类型 ID Type</td>
                   <td className="p-3 w-1/4 border-r">{translateIdType(personalDetailed?.idType)}</td>
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">证件号码 ID Number</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">證件号码 ID Number</td>
                   <td className="p-3 w-1/4">{personalDetailed?.idNumber || "-"}</td>
                 </tr>
                 <tr className="border-b">
@@ -593,7 +593,7 @@ export default function ApplicationPreview() {
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">电子邮箱 Email</td>
                   <td className="p-3 border-r">{personalDetailed?.email || "-"}</td>
-                  <td className="p-3 bg-gray-50 font-semibold border-r">电话 Phone</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">電話 Phone</td>
                   <td className="p-3">
                     {personalDetailed?.phoneCountryCode && personalDetailed?.phoneNumber
                       ? `${personalDetailed.phoneCountryCode} ${personalDetailed.phoneNumber}`
@@ -635,13 +635,13 @@ export default function ApplicationPreview() {
           </div>
           )}
 
-          {/* 职业信息 */}
+          {/* 職業信息 */}
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>3. 职业信息 Occupation Information</span>
+                <span>3. 職業信息 Occupation Information</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(5)}>
-                  编辑
+                  編輯
                 </Button>
               </h3>
             </div>
@@ -654,7 +654,7 @@ export default function ApplicationPreview() {
                 {occupation?.employmentStatus === "employed" || occupation?.employmentStatus === "self_employed" ? (
                   <>
                     <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">公司名称 Company Name</td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">公司名稱 Company Name</td>
                       <td className="p-3 border-r">{occupation?.companyName || "-"}</td>
                       <td className="p-3 bg-gray-50 font-semibold border-r">职位 Position</td>
                       <td className="p-3">{occupation?.position || "-"}</td>
@@ -670,7 +670,7 @@ export default function ApplicationPreview() {
                       <td className="p-3" colSpan={3}>{occupation?.companyAddress || "-"}</td>
                     </tr>
                     <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">办公电话 Office Phone</td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">办公電話 Office Phone</td>
                       <td className="p-3 border-r">{occupation?.officePhone || "-"}</td>
                       <td className="p-3 bg-gray-50 font-semibold border-r">办公传真 Office Fax</td>
                       <td className="p-3">{occupation?.officeFaxNo || "-"}</td>
@@ -687,7 +687,7 @@ export default function ApplicationPreview() {
               <h3 className="font-bold flex items-center justify-between">
                 <span>4. 财务状况 Financial Status</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(6)}>
-                  编辑
+                  編輯
                 </Button>
               </h3>
             </div>
@@ -709,11 +709,11 @@ export default function ApplicationPreview() {
             </table>
           </div>
 
-          {/* 投资信息 - 机构或个人信息 */}
+          {/* 投資信息 - 機構或個人信息 */}
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>5. {isCorporate ? '財務信息 Financial Information' : '投资信息 Investment Information'}</span>
+                <span>5. {isCorporate ? '財務信息 Financial Information' : '投資信息 Investment Information'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(7)}>
                   編輯
                 </Button>
@@ -722,7 +722,7 @@ export default function ApplicationPreview() {
             <table className="w-full min-w-[800px]">
               <tbody>
                 {isCorporate ? (
-                  // 机构财务信息
+                  // 機構财务信息
                   <>
                     <tr className="border-b">
                       <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">年度營業額 Annual Turnover</td>
@@ -736,20 +736,20 @@ export default function ApplicationPreview() {
                     </tr>
                   </>
                 ) : (
-                  // 个人投资信息
+                  // 個人投資信息
                   <>
                     <tr className="border-b">
                       <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">投資目的 Investment Objective</td>
                       <td className="p-3" colSpan={3}>{formatInvestmentObjectives(financial?.investmentObjectives) || "-"}</td>
                     </tr>
                     <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">投资经验 Investment Experience</td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">投資经验 Investment Experience</td>
                       <td className="p-3" colSpan={3}>{formatInvestmentExperience(financial?.investmentExperience)}</td>
                     </tr>
                   </>
                 )}
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold border-r">风险承受能力 Risk Tolerance</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">風險承受能力 Risk Tolerance</td>
                   <td className="p-3" colSpan={3}>
                     {riskQuestionnaire ? (
                       <div>
@@ -766,13 +766,13 @@ export default function ApplicationPreview() {
             </table>
           </div>
 
-          {/* 银行账户 */}
+          {/* 銀行賬戶 */}
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>6. 银行账户 Bank Account</span>
+                <span>6. 銀行賬戶 Bank Account</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(8)}>
-                  编辑
+                  編輯
                 </Button>
               </h3>
             </div>
@@ -780,8 +780,8 @@ export default function ApplicationPreview() {
               <table className="w-full min-w-[800px]">
                 <thead className="bg-gray-100">
                   <tr>
-                    <th className="p-3 text-left border-r">银行名称 Bank Name</th>
-                    <th className="p-3 text-left border-r">账户类型 Account Type</th>
+                    <th className="p-3 text-left border-r">銀行名稱 Bank Name</th>
+                    <th className="p-3 text-left border-r">賬戶类型 Account Type</th>
                     <th className="p-3 text-left border-r">币种 Currency</th>
                     <th className="p-3 text-left border-r">账号 Account Number</th>
                     <th className="p-3 text-left">持有人 Holder Name</th>
@@ -800,45 +800,45 @@ export default function ApplicationPreview() {
                 </tbody>
               </table>
             ) : (
-              <div className="p-6 text-center text-gray-500">未添加银行账户</div>
+              <div className="p-6 text-center text-gray-500">未添加銀行賬戶</div>
             )}
           </div>
 
-          {/* 税务信息 */}
+          {/* 稅務信息 */}
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>7. 税务信息 Tax Information</span>
+                <span>7. 稅務信息 Tax Information</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(9)}>
-                  编辑
+                  編輯
                 </Button>
               </h3>
             </div>
             <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">税务居民国家 Tax Residency</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">稅務居民国家 Tax Residency</td>
                   <td className="p-3 w-1/4 border-r">{taxInfo?.taxResidency || "-"}</td>
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">税务识别号 TIN</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">稅務识别号 TIN</td>
                   <td className="p-3 w-1/4">{taxInfo?.taxIdNumber || "-"}</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          {/* 风险评估问卷 */}
+          {/* 風險評估問卷 */}
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>8. 风险评估问卷 Risk Assessment Questionnaire</span>
+                <span>8. 風險評估問卷 Risk Assessment Questionnaire</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(8)}>
-                  编辑
+                  編輯
                 </Button>
               </h3>
             </div>
             {riskQuestionnaire ? (
               <div className="p-6 space-y-6">
-                {/* 问卷答案详情 */}
+                {/* 問卷答案详情 */}
                 <table className="w-full min-w-[800px] border">
                   <thead className="bg-gray-100">
                     <tr>
@@ -972,7 +972,7 @@ export default function ApplicationPreview() {
                 </table>
               </div>
             ) : (
-              <div className="p-6 text-center text-gray-500">未填写风险评估问卷</div>
+              <div className="p-6 text-center text-gray-500">未填写風險評估問卷</div>
             )}
           </div>
 
@@ -982,7 +982,7 @@ export default function ApplicationPreview() {
               <h3 className="font-bold flex items-center justify-between">
                 <span>8. 文件上传 Document Upload</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(10)}>
-                  编辑
+                  編輯
                 </Button>
               </h3>
             </div>
@@ -1020,7 +1020,7 @@ export default function ApplicationPreview() {
               <h3 className="font-bold flex items-center justify-between">
                 <span>9. 人脸识别 Face Verification</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(11)}>
-                  编辑
+                  編輯
                 </Button>
               </h3>
             </div>
@@ -1049,7 +1049,7 @@ export default function ApplicationPreview() {
               <h3 className="font-bold flex items-center justify-between">
                 <span>10. 监管声明 Regulatory Declaration</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(12)}>
-                  编辑
+                  編輯
                 </Button>
               </h3>
             </div>
@@ -1159,11 +1159,11 @@ export default function ApplicationPreview() {
                     <span className="font-medium ml-2">{application.firstApprovalByCeNo || 'N/A'}</span>
                   </div>
                   <div>
-                    <span className="text-gray-600">专业投资者认定 Professional Investor：</span>
+                    <span className="text-gray-600">专业投資者认定 Professional Investor：</span>
                     <span className="font-medium ml-2">{application.isProfessionalInvestor ? '是 Yes' : '否 No'}</span>
                   </div>
                   <div>
-                    <span className="text-gray-600">风险评级 Risk Profile：</span>
+                    <span className="text-gray-600">風險评级 Risk Profile：</span>
                     <span className="font-medium ml-2">{application.approvedRiskProfile ? getRiskToleranceDescription(application.approvedRiskProfile) : 'N/A'}</span>
                   </div>
                   <div className="col-span-2">
@@ -1206,11 +1206,11 @@ export default function ApplicationPreview() {
                     </div>
                   )}
                   <div>
-                    <span className="text-gray-600">专业投资者认定 Professional Investor：</span>
+                    <span className="text-gray-600">专业投資者认定 Professional Investor：</span>
                     <span className="font-medium ml-2">{application.isProfessionalInvestor ? '是 Yes' : '否 No'}</span>
                   </div>
                   <div>
-                    <span className="text-gray-600">风险评级 Risk Profile：</span>
+                    <span className="text-gray-600">風險评级 Risk Profile：</span>
                     <span className="font-medium ml-2">{application.approvedRiskProfile ? getRiskToleranceDescription(application.approvedRiskProfile) : 'N/A'}</span>
                   </div>
                   <div className="col-span-2">
@@ -1254,7 +1254,7 @@ export default function ApplicationPreview() {
                 variant="outline"
               >
                 <Save className="h-4 w-4 mr-2" />
-                {generateNumberMutation.isPending ? "生成中..." : "保存并生成申请编号"}
+                {generateNumberMutation.isPending ? "生成中..." : "保存并生成申請编号"}
               </Button>
             )}
 
@@ -1274,7 +1274,7 @@ export default function ApplicationPreview() {
               disabled={!application?.applicationNumber || application?.status === "submitted" || submitMutation.isPending}
               size="lg"
             >
-              {submitMutation.isPending ? "提交中..." : "提交申请"}
+              {submitMutation.isPending ? "提交中..." : "提交申請"}
             </Button>
           </div>
         </div>
@@ -1283,7 +1283,7 @@ export default function ApplicationPreview() {
         {!application?.applicationNumber && (
           <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
             <p className="text-sm text-yellow-800">
-              <strong>提示：</strong>请先点击“保存并生成申请编号”按钮，生成申请编号后才能提交申请。
+              <strong>提示：</strong>请先点击“保存并生成申請编号”按钮，生成申請编号后才能提交申請。
             </p>
           </div>
         )}
@@ -1340,9 +1340,9 @@ export default function ApplicationPreview() {
             <div className="bg-blue-50 p-3 rounded-lg text-sm text-blue-800">
               <p className="font-semibold mb-1">电子签署声明：</p>
               <ul className="list-disc list-inside space-y-1 text-xs">
-                <li>本人同意使用电子签署方式签署本申请表</li>
+                <li>本人同意使用电子签署方式签署本申請表</li>
                 <li>此电子签署具有与手写签名同等的法律效力</li>
-                <li>签署时间将自动记录并包含在申请表中</li>
+                <li>签署时间将自动记录并包含在申請表中</li>
               </ul>
             </div>
           </div>
@@ -1370,36 +1370,36 @@ export default function ApplicationPreview() {
           <DialogHeader>
             <DialogTitle className="text-2xl text-green-600 flex items-center">
               <Check className="h-6 w-6 mr-2" />
-              申请已成功提交！
+              申請已成功提交！
             </DialogTitle>
             <DialogDescription className="text-base">
-              感谢您的申请，我们已收到您的开户申请。
+              感谢您的申請，我们已收到您的开户申請。
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
             <div className="bg-blue-50 p-4 rounded-lg">
-              <h4 className="font-semibold mb-2">申请编号：{application?.applicationNumber}</h4>
+              <h4 className="font-semibold mb-2">申請编号：{application?.applicationNumber}</h4>
               <p className="text-sm text-gray-600">
                 我们已将确认邮件发送至您的邮箱：<strong>{personalDetailed?.email}</strong>
               </p>
               <p className="text-sm text-gray-600 mt-2">
-                邮件中包含您的申请表PDF文件，请注意查收。
+                邮件中包含您的申請表PDF文件，请注意查收。
               </p>
             </div>
             
             {pdfUrl && (
               <div className="bg-gray-50 p-4 rounded-lg">
-                <h4 className="font-semibold mb-2">下载申请表PDF</h4>
+                <h4 className="font-semibold mb-2">下载申請表PDF</h4>
                 <p className="text-sm text-gray-600 mb-3">
-                  您也可以直接下载申请表PDF文件供存档使用。
+                  您也可以直接下载申請表PDF文件供存档使用。
                 </p>
                 <Button 
                   variant="outline" 
                   onClick={() => window.open(pdfUrl, '_blank')}
                   className="w-full"
                 >
-                  下载申请表PDF
+                  下载申請表PDF
                 </Button>
               </div>
             )}
@@ -1407,9 +1407,9 @@ export default function ApplicationPreview() {
             <div className="text-sm text-gray-600">
               <p className="mb-2">后续流程：</p>
               <ol className="list-decimal list-inside space-y-1 ml-2">
-                <li>我们的客户服务团队将在<strong>1-2个工作日</strong>内审核您的申请</li>
+                <li>我们的客戶服务团队将在<strong>1-2个工作日</strong>内审核您的申請</li>
                 <li>审核通过后，我们将通过邮件通知您</li>
-                <li>如需补充资料，我们会及时与您联系</li>
+                <li>如需补充資料，我们会及时与您聯繫</li>
               </ol>
             </div>
           </div>
@@ -1419,7 +1419,7 @@ export default function ApplicationPreview() {
               setShowSuccessDialog(false);
               setLocation("/applications");
             }}>
-              返回申请列表
+              返回申請列表
             </Button>
           </DialogFooter>
         </DialogContent>
