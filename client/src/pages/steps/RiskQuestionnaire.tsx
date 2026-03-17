@@ -78,6 +78,17 @@ export default function RiskQuestionnaire() {
     }
   );
 
+  // 獲取客戶類型
+  const { data: accountSelection, error: accountError } = trpc.accountSelection.get.useQuery(
+    { applicationId },
+    { 
+      enabled: applicationId > 0,
+      retry: false,
+      throwOnError: false,
+    }
+  );
+  const isCorporate = accountSelection?.customerType === 'corporate';
+
   useEffect(() => {
     if (savedData) {
       try {
@@ -330,17 +341,6 @@ export default function RiskQuestionnaire() {
       </div>
     );
   }
-
-  // 獲取客戶類型
-  const { data: accountSelection, error: accountError } = trpc.accountSelection.get.useQuery(
-    { applicationId },
-    { 
-      enabled: applicationId > 0,
-      retry: false,
-      throwOnError: false,
-    }
-  );
-  const isCorporate = accountSelection?.customerType === 'corporate';
 
   // Safe check for rendering
   if (!applicationId || applicationId === 0) {
