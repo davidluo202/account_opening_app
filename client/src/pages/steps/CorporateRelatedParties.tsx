@@ -123,12 +123,21 @@ export default function CorporateRelatedParties() {
   // Initialize with default contact from corporate basic info if no saved parties
   useEffect(() => {
     if (!isLoadingData && savedParties.length === 0 && corporateBasicInfo) {
+      // 解析可能包含区号的电话号码
+      let contactPhone = corporateBasicInfo.contactPhone || "";
+      let countryCode = "+852";
+      const m = contactPhone.trim().match(/^(\+\d+)\s*(\d+)$/);
+      if (m) {
+        countryCode = m[1];
+        contactPhone = m[2];
+      }
+
       setCurrentParty({
         ...defaultParty(),
         isDefaultContact: true,
         name: corporateBasicInfo.contactName || "",
-        phoneCountryCode: "+852",
-        phone: corporateBasicInfo.contactPhone || "",
+        phoneCountryCode: countryCode,
+        phone: contactPhone,
         email: corporateBasicInfo.contactEmail || "",
       });
     }
