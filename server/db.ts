@@ -1220,8 +1220,8 @@ export async function getCorporateRelatedParties(applicationId: number) {
   if (!db) return null;
   const { corporateRelatedParties } = require("../drizzle/schema");
   const result = await db.select().from(corporateRelatedParties).where(eq(corporateRelatedParties.applicationId, applicationId)).limit(1);
-  return result.length > 0 ? {
-    ...result[0],
-    relatedParties: JSON.parse(result[0].relatedParties || '[]')
-  } : null;
+  // Return just the related parties array, not the whole object
+  if (result.length === 0) return [];
+  const data = result[0];
+  return JSON.parse(data.relatedParties || '[]');
 }

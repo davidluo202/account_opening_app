@@ -435,16 +435,16 @@ export default function ApplicationPreview() {
             <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">公司名稱 Company Name</td>
-                  <td className="p-3 w-3/4" colSpan={3}>{corporateBasic?.companyName || "-"}</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">公司中文名稱 Company Name (Chinese)</td>
+                  <td className="p-3 w-3/4" colSpan={3}>{corporateBasic?.companyChineseName || "-"}</td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">公司英文名稱 Company Name (English)</td>
-                  <td className="p-3" colSpan={3}>{corporateBasic?.companyNameEnglish || "-"}</td>
+                  <td className="p-3" colSpan={3}>{corporateBasic?.companyEnglishName || "-"}</td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">註冊編號 Registration Number</td>
-                  <td className="p-3 w-1/4 border-r">{corporateBasic?.registrationNumber || "-"}</td>
+                  <td className="p-3 w-1/4 border-r">{corporateBasic?.certificateOfIncorporationNo || "-"}</td>
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">成立日期 Date of Incorporation</td>
                   <td className="p-3">{formatDate(corporateBasic?.dateOfIncorporation)}</td>
                 </tr>
