@@ -166,7 +166,7 @@ export default function ApplicationPreview() {
       setShowSuccessDialog(true);
     },
     onError: (error) => {
-      toast.error(`提交失败: ${error.message}`);
+      toast.error(`提交失敗: ${error.message}`);
     },
   });
 
@@ -250,7 +250,7 @@ export default function ApplicationPreview() {
 
   const handleSubmit = () => {
     if (!application?.applicationNumber) {
-      toast.error("请先保存并生成申請编号");
+      toast.error("請先保存並生成申請編號");
       return;
     }
     if (application?.status === "submitted") {
@@ -264,7 +264,7 @@ export default function ApplicationPreview() {
 
   const handleConfirmSignature = () => {
     if (!signatureName.trim()) {
-      toast.error("请输入签名姓名");
+      toast.error("請輸入簽名姓名");
       return;
     }
     submitMutation.mutate({ 
@@ -375,7 +375,7 @@ export default function ApplicationPreview() {
         {/* 页面标题 */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900">申請预览</h1>
-          <p className="text-gray-600 mt-2">请仔细核对以下信息，确认无误后提交申請</p>
+          <p className="text-gray-600 mt-2">請仔細核對以下信息，確認無誤後提交申請</p>
         </div>
 
         {/* 申請编号和状态 */}
@@ -1254,7 +1254,7 @@ export default function ApplicationPreview() {
                 variant="outline"
               >
                 <Save className="h-4 w-4 mr-2" />
-                {generateNumberMutation.isPending ? "生成中..." : "保存并生成申請编号"}
+                {generateNumberMutation.isPending ? "生成中..." : "保存並生成申請編號"}
               </Button>
             )}
 
@@ -1283,7 +1283,7 @@ export default function ApplicationPreview() {
         {!application?.applicationNumber && (
           <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
             <p className="text-sm text-yellow-800">
-              <strong>提示：</strong>请先点击“保存并生成申請编号”按钮，生成申請编号后才能提交申請。
+              <strong>提示：</strong>請先點擊“保存並生成申請編號”按钮，生成申請編號後才能提交申請。
             </p>
           </div>
         )}
@@ -1295,7 +1295,7 @@ export default function ApplicationPreview() {
           <DialogHeader>
             <DialogTitle>电子签署 Electronic Signature</DialogTitle>
             <DialogDescription>
-              请输入您的姓名以完成电子签署。此签名具有法律效力，以香港《电子交易条例》（第553章）为基准。
+              請輸入您的姓名以完成電子簽署。此签名具有法律效力，以香港《电子交易条例》（第553章）为基准。
             </DialogDescription>
           </DialogHeader>
           
@@ -1332,7 +1332,7 @@ export default function ApplicationPreview() {
                 type="text"
                 value={signatureName}
                 onChange={(e) => setSignatureName(e.target.value)}
-                placeholder="请输入您的英文姓名"
+                placeholder="請輸入您的英文姓名"
                 className="w-full px-3 py-2 border rounded-md"
               />
             </div>
@@ -1352,7 +1352,7 @@ export default function ApplicationPreview() {
               取消
             </Button>
             <Button onClick={handleConfirmSignature} disabled={!signatureName.trim()}>
-              确认签署并提交
+              確認簽署並提交
             </Button>
           </DialogFooter>
         </DialogContent>
