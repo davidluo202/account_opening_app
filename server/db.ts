@@ -615,7 +615,8 @@ export async function getCompleteApplicationData(applicationId: number) {
     riskQuestionnaireData,
     documents,
     face,
-    regulatory
+    regulatory,
+    relatedPartiesData
   ] = await Promise.all([
     getApplicationById(applicationId),
     getAccountSelection(applicationId),
@@ -630,7 +631,8 @@ export async function getCompleteApplicationData(applicationId: number) {
     getRiskQuestionnaire(applicationId),
     getUploadedDocuments(applicationId),
     getFaceVerification(applicationId),
-    getRegulatoryDeclarations(applicationId)
+    getRegulatoryDeclarations(applicationId),
+    getCorporateRelatedParties(applicationId)
   ]);
   
   return {
@@ -647,7 +649,8 @@ export async function getCompleteApplicationData(applicationId: number) {
     riskQuestionnaire: riskQuestionnaireData,
     uploadedDocuments: documents,
     face,
-    regulatory
+    regulatory,
+    relatedParties: relatedPartiesData
   };
 }
 

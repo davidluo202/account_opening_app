@@ -235,7 +235,10 @@ export default function ApplicationPreview() {
     );
   }
 
-  const { application, accountSelection, basicInfo: personalBasic, detailedInfo: personalDetailed, occupation, employment, financial, bankAccounts, taxInfo, riskQuestionnaire, uploadedDocuments: documents, face: faceVerification, regulatory } = completeData;
+  const { application, accountSelection, basicInfo: personalBasic, corporateBasic, detailedInfo: personalDetailed, occupation, employment, financial, bankAccounts, taxInfo, riskQuestionnaire, uploadedDocuments: documents, face: faceVerification, regulatory, relatedParties } = completeData;
+
+  // 判断是否为机构客户
+  const isCorporate = accountSelection?.customerType === 'corporate';
 
   const handleSaveAndGenerateNumber = () => {
     if (!application?.applicationNumber) {
@@ -400,8 +403,8 @@ export default function ApplicationPreview() {
         <Card className="p-0 mb-6 overflow-hidden overflow-x-auto">
           {/* 标题 */}
           <div className="bg-primary text-white p-4 text-center">
-            <h2 className="text-xl font-bold">客户開戶申請表（個人/聯名）</h2>
-            <p className="text-sm">Customer Account Opening Form (Ind/Joint)</p>
+            <h2 className="text-xl font-bold">{isCorporate ? '客戶開戶申請表（機構）' : '客戶開戶申請表（個人/聯名）'}</h2>
+            <p className="text-sm">{isCorporate ? 'Customer Account Opening Form (Corporate)' : 'Customer Account Opening Form (Ind/Joint)'}</p>
           </div>
 
           {/* 账户类型 */}
@@ -422,12 +425,50 @@ export default function ApplicationPreview() {
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>1. {accountSelection?.customerType === 'corporate' ? '机构基本信息 Corporate Basic Information' : '个人基本信息 Personal Basic Information'}</span>
-                <Button variant="ghost" size="sm" onClick={() => handleEdit(3)}>
-                  编辑
+                <span>1. {isCorporate ? '機構基本信息 Corporate Basic Information' : '個人基本信息 Personal Basic Information'}</span>
+                <Button variant="ghost" size="sm" onClick={() => handleEdit(2)}>
+                  編輯
                 </Button>
               </h3>
             </div>
+            {isCorporate ? (
+            <table className="w-full min-w-[800px]">
+              <tbody>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">公司名稱 Company Name</td>
+                  <td className="p-3 w-3/4" colSpan={3}>{corporateBasic?.companyName || "-"}</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold border-r">公司英文名稱 Company Name (English)</td>
+                  <td className="p-3" colSpan={3}>{corporateBasic?.companyNameEnglish || "-"}</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">註冊編號 Registration Number</td>
+                  <td className="p-3 w-1/4 border-r">{corporateBasic?.registrationNumber || "-"}</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">成立日期 Date of Incorporation</td>
+                  <td className="p-3">{formatDate(corporateBasic?.dateOfIncorporation)}</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold border-r">註冊地址 Registered Address</td>
+                  <td className="p-3" colSpan={3}>{corporateBasic?.registeredAddress || "-"}</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold border-r">業務地址 Business Address</td>
+                  <td className="p-3" colSpan={3}>{corporateBasic?.businessAddress || "-"}</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">聯絡人姓名 Contact Name</td>
+                  <td className="p-3 w-1/4 border-r">{corporateBasic?.contactName || "-"}</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">聯絡電話 Contact Phone</td>
+                  <td className="p-3">{corporateBasic?.contactPhone ? `${corporateBasic.contactPhone}` : "-"}</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold border-r">電子郵箱 Email</td>
+                  <td className="p-3" colSpan={3}>{corporateBasic?.contactEmail || "-"}</td>
+                </tr>
+              </tbody>
+            </table>
+            ) : (
             <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
@@ -437,7 +478,7 @@ export default function ApplicationPreview() {
                   <td className="p-3 w-1/4">{personalBasic?.englishName || "-"}</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold border-r">性别 Gender</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">性別 Gender</td>
                   <td className="p-3 border-r">{translateGender(personalBasic?.gender)}</td>
                   <td className="p-3 bg-gray-50 font-semibold border-r">出生日期 Date of Birth</td>
                   <td className="p-3">{formatDate(personalBasic?.dateOfBirth)}</td>
@@ -445,11 +486,12 @@ export default function ApplicationPreview() {
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">出生地 Place of Birth</td>
                   <td className="p-3 border-r">{personalBasic?.placeOfBirth || "-"}</td>
-                  <td className="p-3 bg-gray-50 font-semibold border-r">国籍 Nationality</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">國籍 Nationality</td>
                   <td className="p-3">{personalBasic?.nationality || "-"}</td>
                 </tr>
               </tbody>
             </table>
+            )}
           </div>
 
           {/* 个人详细信息 */}
