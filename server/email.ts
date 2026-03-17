@@ -27,7 +27,7 @@ export async function sendVerificationCode(to: string, code: string): Promise<bo
     const { data, error } = await resend.emails.send({
       from: senderEmail,
       to,
-      subject: subject || "",
+      subject: "誠港金融 - 郵箱驗證碼",
       text: `您的驗證碼是：${code}，有效期為5分鐘。請勿將此驗證碼告訴他人。`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -587,7 +587,7 @@ export async function sendPasswordResetEmail(to: string, resetLink: string): Pro
     const msg = {
       to,
       from: senderEmail,
-      subject: subject || "",
+      subject: "誠港金融 - 密碼重置",
       text: `您好，
 
 我們收到了您的密碼重置請求。請點擊以下鏈接重置您的密碼：
