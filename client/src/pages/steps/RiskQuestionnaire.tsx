@@ -81,16 +81,33 @@ export default function RiskQuestionnaire() {
   useEffect(() => {
     if (savedData) {
       try {
+        // 安全解析 JSON 字段
+        let q1 = [];
+        let q6 = [];
+        let q9 = [];
+        
+        try {
+          q1 = savedData.q1_current_investments ? JSON.parse(savedData.q1_current_investments) : [];
+        } catch (e) { console.error("Parse q1 error", e); }
+        
+        try {
+          q6 = savedData.q6_derivatives_knowledge ? JSON.parse(savedData.q6_derivatives_knowledge) : [];
+        } catch (e) { console.error("Parse q6 error", e); }
+        
+        try {
+          q9 = savedData.q9_investment_knowledge_sources ? JSON.parse(savedData.q9_investment_knowledge_sources) : [];
+        } catch (e) { console.error("Parse q9 error", e); }
+        
         setFormData({
-          q1_current_investments: savedData.q1_current_investments ? JSON.parse(savedData.q1_current_investments) : [],
+          q1_current_investments: q1,
           q2_investment_period: savedData.q2_investment_period || "",
           q3_price_volatility: savedData.q3_price_volatility || "",
           q4_investment_percentage: savedData.q4_investment_percentage || "",
           q5_investment_attitude: savedData.q5_investment_attitude || "",
-          q6_derivatives_knowledge: savedData.q6_derivatives_knowledge ? JSON.parse(savedData.q6_derivatives_knowledge) : [],
+          q6_derivatives_knowledge: q6,
           q7_age_group: savedData.q7_age_group || "",
           q8_education_level: savedData.q8_education_level || "",
-          q9_investment_knowledge_sources: savedData.q9_investment_knowledge_sources ? JSON.parse(savedData.q9_investment_knowledge_sources) : [],
+          q9_investment_knowledge_sources: q9,
           q10_liquidity_needs: savedData.q10_liquidity_needs || "",
           totalScore: savedData.totalScore || 0,
           riskLevel: savedData.riskLevel || "",
@@ -103,7 +120,8 @@ export default function RiskQuestionnaire() {
   }, [savedData]);
 
   // 學歷映射函數：將個人詳細信息中的學歷映射到Q8的ABC選項
-  const mapEducationToQ8 = (educationLevel: string): string => {
+  const mapEducationToQ8 = (educationLevel: string | null | undefined): string => {
+    if (!educationLevel) return "tertiary_or_above"; // Default to highest score if missing
     if (educationLevel === "other") {
       return "primary_or_below"; // A選項：小學或以下學歷（10分）
     } else if (educationLevel === "high_school") {
