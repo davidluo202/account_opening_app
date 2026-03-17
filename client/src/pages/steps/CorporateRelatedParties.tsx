@@ -359,7 +359,7 @@ export default function CorporateRelatedParties() {
                 <SelectContent>
                   <SelectItem value="hkid">香港身份證 / HKID</SelectItem>
                   <SelectItem value="passport">護照 / Passport</SelectItem>
-                  <SelectItem value="mainland_id">內地身份證 / Mainland ID</SelectItem>
+                  <SelectItem value="mainland_id">中國大陸居民身份證 / Mainland ID</SelectItem>
                   <SelectItem value="other">其他 / Other</SelectItem>
                 </SelectContent>
               </Select>
@@ -384,8 +384,8 @@ export default function CorporateRelatedParties() {
               <Input 
                 value={currentParty.idNumber} 
                 onChange={e => setCurrentParty({ ...currentParty, idNumber: e.target.value.toUpperCase() })} 
-                placeholder={currentParty.idType === 'hkid' ? '例如:A123456(0)' : ''}
-                className={currentParty.idType === 'hkid' ? 'placeholder:text-gray-400' : ''}
+                placeholder={currentParty.idType === 'hkid' ? '例如:A123456(0)' : currentParty.idType === 'mainland_id' ? '由18位數字組成' : ''}
+                className={currentParty.idType === 'hkid' || currentParty.idType === 'mainland_id' ? 'placeholder:text-gray-400' : ''}
               />
               {errors.idNumber && <p className="text-sm text-destructive">{errors.idNumber}</p>}
             </div>
