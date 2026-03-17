@@ -235,7 +235,7 @@ export default function ApplicationPreview() {
     );
   }
 
-  const { application, accountSelection, basicInfo: personalBasic, corporateBasic, detailedInfo: personalDetailed, occupation, employment, financial, bankAccounts, taxInfo, riskQuestionnaire, uploadedDocuments: documents, face: faceVerification, regulatory, relatedParties } = completeData;
+  const { application, accountSelection, basicInfo: personalBasic, corporateBasic, detailedInfo: personalDetailed, occupation, employment, financial, corporateFinancial, bankAccounts, taxInfo, riskQuestionnaire, uploadedDocuments: documents, face: faceVerification, regulatory, relatedParties } = completeData;
 
   // 判断是否为机构客户
   const isCorporate = accountSelection?.customerType === 'corporate';
@@ -709,26 +709,45 @@ export default function ApplicationPreview() {
             </table>
           </div>
 
-          {/* 投资信息 */}
+          {/* 投资信息 - 机构或个人信息 */}
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>5. 投资信息 Investment Information</span>
+                <span>5. {isCorporate ? '財務信息 Financial Information' : '投资信息 Investment Information'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(7)}>
-                  编辑
+                  編輯
                 </Button>
               </h3>
             </div>
             <table className="w-full min-w-[800px]">
               <tbody>
-                <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">投資目的 Investment Objective</td>
-                  <td className="p-3" colSpan={3}>{formatInvestmentObjectives(financial?.investmentObjectives) || "-"}</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold border-r">投资经验 Investment Experience</td>
-                  <td className="p-3" colSpan={3}>{formatInvestmentExperience(financial?.investmentExperience)}</td>
-                </tr>
+                {isCorporate ? (
+                  // 机构财务信息
+                  <>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">年度營業額 Annual Turnover</td>
+                      <td className="p-3 w-1/4 border-r">{corporateFinancial?.annualTurnover ? `HKD ${formatAmount(corporateFinancial.annualTurnover)}` : "-"}</td>
+                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">總資產 Total Assets</td>
+                      <td className="p-3">{corporateFinancial?.totalAssets ? `HKD ${formatAmount(corporateFinancial.totalAssets)}` : "-"}</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">淨資產 Net Assets</td>
+                      <td className="p-3" colSpan={3}>{corporateFinancial?.netAssets ? `HKD ${formatAmount(corporateFinancial.netAssets)}` : "-"}</td>
+                    </tr>
+                  </>
+                ) : (
+                  // 个人投资信息
+                  <>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">投資目的 Investment Objective</td>
+                      <td className="p-3" colSpan={3}>{formatInvestmentObjectives(financial?.investmentObjectives) || "-"}</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">投资经验 Investment Experience</td>
+                      <td className="p-3" colSpan={3}>{formatInvestmentExperience(financial?.investmentExperience)}</td>
+                    </tr>
+                  </>
+                )}
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">风险承受能力 Risk Tolerance</td>
                   <td className="p-3" colSpan={3}>
