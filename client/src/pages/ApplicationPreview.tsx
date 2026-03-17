@@ -494,11 +494,53 @@ export default function ApplicationPreview() {
             )}
           </div>
 
-          {/* 个人详细信息 */}
+          {/* 机构：关联人士信息 / 个人：详细信息 */}
+          {isCorporate ? (
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>2. 个人详细信息 Personal Detailed Information</span>
+                <span>2. 關聯人士信息 Related Parties</span>
+                <Button variant="ghost" size="sm" onClick={() => handleEdit(4)}>
+                  編輯
+                </Button>
+              </h3>
+            </div>
+            {relatedParties && relatedParties.length > 0 ? (
+              <table className="w-full min-w-[800px]">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="p-3 text-left border-r">姓名 Name</th>
+                    <th className="p-3 text-left border-r">關係類型 Relationship</th>
+                    <th className="p-3 text-left border-r">證件號碼 ID Number</th>
+                    <th className="p-3 text-left">電話 Phone</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {relatedParties.map((party: any, index: number) => (
+                    <tr key={index} className="border-b">
+                      <td className="p-3 border-r">{party.name || "-"}</td>
+                      <td className="p-3 border-r">
+                        {party.relationshipType === 'director' ? '董事 Director' : 
+                         party.relationshipType === 'shareholder' ? '股東 Shareholder' : 
+                         party.relationshipType === 'beneficial_owner' ? '最終受益人 Beneficial Owner' : 
+                         party.relationshipType === 'authorized_signatory' ? '授權簽署人 Authorized Signatory' : 
+                         party.relationshipType || "-"}
+                      </td>
+                      <td className="p-3 border-r">{party.idNumber || "-"}</td>
+                      <td className="p-3">{party.phone ? `${party.phoneCountryCode || '+852'} ${party.phone}` : "-"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div className="p-6 text-center text-gray-500">未添加關聯人士</div>
+            )}
+          </div>
+          ) : (
+          <div className="border-b">
+            <div className="bg-blue-50 p-3 border-b">
+              <h3 className="font-bold flex items-center justify-between">
+                <span>2. 個人詳細信息 Personal Detailed Information</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(4)}>
                   编辑
                 </Button>
@@ -569,6 +611,7 @@ export default function ApplicationPreview() {
               </tbody>
             </table>
           </div>
+          )}
 
           {/* 职业信息 */}
           <div className="border-b">
