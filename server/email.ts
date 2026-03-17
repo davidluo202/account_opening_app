@@ -2,7 +2,7 @@ import { Resend } from 'resend';
 
 // 初始化Resend
 const apiKey = process.env.RESEND_API_KEY || process.env.SENDGRID_API_KEY;
-const senderEmail = process.env.RESEND_SENDER_EMAIL || process.env.SENDGRID_SENDER_EMAIL || 'noreply@cmfinancial.com';
+const senderEmail = process.env.RESEND_SENDER_EMAIL || process.env.SENDGRID_SENDER_EMAIL || 'quote@cmf-otc.com';
 
 const resend = apiKey ? new Resend(apiKey) : null;
 
