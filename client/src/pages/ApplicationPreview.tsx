@@ -443,10 +443,24 @@ export default function ApplicationPreview() {
                   <td className="p-3" colSpan={3}>{corporateBasic?.companyEnglishName || "-"}</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">註冊編號 Registration Number</td>
-                  <td className="p-3 w-1/4 border-r">{corporateBasic?.certificateOfIncorporationNo || "-"}</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">成立地點 Country of Incorporation</td>
+                  <td className="p-3 w-1/4 border-r">{corporateBasic?.countryOfIncorporation || "-"}</td>
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">成立日期 Date of Incorporation</td>
                   <td className="p-3">{formatDate(corporateBasic?.dateOfIncorporation)}</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">公司註冊編號 CI Number</td>
+                  <td className="p-3 w-1/4 border-r">{corporateBasic?.certificateOfIncorporationNo || "-"}</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">商業登記號 BR Number</td>
+                  <td className="p-3">{corporateBasic?.businessRegistrationNo || "-"}</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold border-r">實體性質 Nature of Entity</td>
+                  <td className="p-3" colSpan={3}>{corporateBasic?.natureOfEntity || "-"}</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold border-r">業務性質 Nature of Business</td>
+                  <td className="p-3" colSpan={3}>{corporateBasic?.natureOfBusiness || "-"}</td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">註冊地址 Registered Address</td>
@@ -457,14 +471,22 @@ export default function ApplicationPreview() {
                   <td className="p-3" colSpan={3}>{corporateBasic?.businessAddress || "-"}</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">聯絡人姓名 Contact Name</td>
-                  <td className="p-3 w-1/4 border-r">{corporateBasic?.contactName || "-"}</td>
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">聯絡電話 Contact Phone</td>
-                  <td className="p-3">{corporateBasic?.contactPhone ? `${corporateBasic.contactPhone}` : "-"}</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">辦公電話 Office Phone</td>
+                  <td className="p-3 w-1/4 border-r">{corporateBasic?.officeNo || "-"}</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">傳真號碼 Fax</td>
+                  <td className="p-3">{corporateBasic?.facsimileNo || "-"}</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold border-r">電子郵箱 Email</td>
-                  <td className="p-3" colSpan={3}>{corporateBasic?.contactEmail || "-"}</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">聯絡人姓名 Contact Name</td>
+                  <td className="p-3 w-1/4 border-r">{corporateBasic?.contactName || "-"}</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">聯絡人職銜 Contact Title</td>
+                  <td className="p-3">{corporateBasic?.contactTitle || "-"}</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">聯絡電話 Contact Phone</td>
+                  <td className="p-3 w-1/4 border-r">{corporateBasic?.contactPhone || "-"}</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">電子郵箱 Email</td>
+                  <td className="p-3">{corporateBasic?.contactEmail || "-"}</td>
                 </tr>
               </tbody>
             </table>
