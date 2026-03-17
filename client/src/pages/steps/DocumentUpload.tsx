@@ -99,7 +99,7 @@ export default function DocumentUpload() {
   };
 
   const hasRequiredDocuments = () => {
-    const requiredTypes = t.currentDocTypes.filter(t => t.required).map(t => t.value);
+    const requiredTypes = currentDocTypes.filter(t => t.required).map(t => t.value);
     return requiredTypes.every(type => getUploadedDocument(type));
   };
 
@@ -140,7 +140,7 @@ const handleNext = () => {
         </div>
 
         <div className="space-y-4">
-          {t.currentDocTypes.map((docType) => {
+          {currentDocTypes.map((docType) => {
             const uploaded = getUploadedDocument(docType.value);
             const isUploading = uploading === docType.value;
 
