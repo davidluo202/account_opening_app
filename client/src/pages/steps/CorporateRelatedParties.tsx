@@ -42,7 +42,7 @@ const countryCodes = [
 
 const idIssuingCountries = [
   { value: "HK", label: "香港 Hong Kong" },
-  { value: "CN", label: "中國內地 Mainland China" },
+  { value: "CN", label: "中國內地 Chinese Mainland" },
   { value: "MO", label: "澳門 Macau" },
   { value: "TW", label: "台灣 Taiwan" },
   { value: "US", label: "美國 United States" },
