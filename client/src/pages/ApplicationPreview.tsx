@@ -347,6 +347,53 @@ export default function ApplicationPreview() {
     return range;
   };
 
+  const formatAssetItems = (val: string | null | undefined) => {
+    if (!val) return "-";
+    try {
+      const arr = JSON.parse(val);
+      if (!Array.isArray(arr) || arr.length === 0) return "-";
+      const map: Record<string, string> = {
+        "property": "房地產 / Property",
+        "securities": "上市證券 / Listed Securities",
+        "deposit": "存款 / Deposit",
+        "bonds": "債券 / Bonds",
+        "funds": "基金 / Funds",
+        "other": "其他 / Other",
+      };
+      return arr.map(k => map[k] || k).join(", ");
+    } catch { return val; }
+  };
+
+  const formatSourceOfWealth = (val: string | null | undefined) => {
+    if (!val) return "-";
+    try {
+      const arr = JSON.parse(val);
+      if (!Array.isArray(arr) || arr.length === 0) return "-";
+      const map: Record<string, string> = {
+        "operation": "營業收入 / Operation Income",
+        "investment": "投資收益 / Investment Income",
+        "interest": "利息收入 / Interest Income",
+        "dividend": "股息收入 / Dividend Income",
+        "shareholder": "股東出資 / Shareholder Contribution",
+        "rental": "租金收入 / Rental Income",
+        "borrowing": "貸款 / External Borrowing",
+        "other": "其他 / Other",
+      };
+      return arr.map(k => map[k] || k).join(", ");
+    } catch { return val; }
+  };
+
+  const formatValueRange = (val: string | null | undefined) => {
+    if (!val) return "-";
+    const map: Record<string, string> = {
+      "<1m": "<HK$1,000,000",
+      "1m-5m": "HK$1,000,000 - HK$5,000,000",
+      "5m-10m": "HK$5,000,001 - HK$10,000,000",
+      ">10m": ">HK$10,000,000"
+    };
+    return map[val] || val;
+  };
+
   // 使用統一的翻譯函數
   const translateCustomerType = translate;
   const translateAccountType = translate;
@@ -713,7 +760,7 @@ export default function ApplicationPreview() {
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>5. {isCorporate ? '財務信息 Financial Information' : '投資信息 Investment Information'}</span>
+                <span>5. {isCorporate ? '公司財務與投資概況 Financial & Investment' : '投資信息 Investment Information'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(7)}>
                   編輯
                 </Button>
@@ -725,14 +772,30 @@ export default function ApplicationPreview() {
                   // 機構财务信息
                   <>
                     <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">年度營業額 Annual Turnover</td>
-                      <td className="p-3 w-1/4 border-r">{corporateFinancial?.annualTurnover ? `HKD ${formatAmount(corporateFinancial.annualTurnover)}` : "-"}</td>
-                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">總資產 Total Assets</td>
-                      <td className="p-3">{corporateFinancial?.totalAssets ? `HKD ${formatAmount(corporateFinancial.totalAssets)}` : "-"}</td>
+                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">法定股本<br/>Authorized Share Capital</td>
+                      <td className="p-3 w-1/4 border-r">{corporateFinancial?.authorizedShareCapital ? `${corporateFinancial.authorizedShareCapital} 萬港元` : "-"}</td>
+                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">已發行及繳足股本<br/>Issued Share Capital</td>
+                      <td className="p-3">{corporateFinancial?.issuedShareCapital ? `${corporateFinancial.issuedShareCapital} 萬港元` : "-"}</td>
                     </tr>
                     <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">淨資產 Net Assets</td>
-                      <td className="p-3" colSpan={3}>{corporateFinancial?.netAssets ? `HKD ${formatAmount(corporateFinancial.netAssets)}` : "-"}</td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">初始財富來源<br/>Initial Source of Wealth</td>
+                      <td className="p-3" colSpan={3}>{formatSourceOfWealth(corporateFinancial?.initialSourceOfWealth)}</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">淨資產值<br/>Net Asset Value</td>
+                      <td className="p-3 border-r">{formatValueRange(corporateFinancial?.netAssetValue)}</td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">淨資產審計時間<br/>Net Asset Audit Date</td>
+                      <td className="p-3">{corporateFinancial?.netAssetAuditDate || "-"}</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">稅後盈利<br/>Profit After Tax</td>
+                      <td className="p-3 border-r">{formatValueRange(corporateFinancial?.profitAfterTax)}</td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">稅後盈利審計時間<br/>Profit Audit Date</td>
+                      <td className="p-3">{corporateFinancial?.profitAuditDate || "-"}</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">資產項目<br/>Asset Items</td>
+                      <td className="p-3" colSpan={3}>{formatAssetItems(corporateFinancial?.assetItems)}</td>
                     </tr>
                   </>
                 ) : (

@@ -572,7 +572,11 @@ const handleNext = () => {
                 id="accountHolderName"
                 value={formData.accountHolderName}
                 onChange={(e) => {
-                  setFormData({ ...formData, accountHolderName: e.target.value });
+                  let val = e.target.value;
+                  if (/^[A-Za-z\s]+$/.test(val)) {
+                    val = val.toUpperCase();
+                  }
+                  setFormData({ ...formData, accountHolderName: val });
                   if (errors.accountHolderName) setErrors({ ...errors, accountHolderName: "" });
                 }}
                 placeholder="請輸入賬戶持有人姓名"
