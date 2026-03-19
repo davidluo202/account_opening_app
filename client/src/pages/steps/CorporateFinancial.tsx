@@ -10,10 +10,27 @@ import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
-// Get current month in YYYY-MM format for date validation
-const getCurrentMonth = () => {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+// Convert YYYY-MM to MM/YYYY for display
+const toMMYYYY = (val: string) => {
+  if (!val) return "";
+  const m = val.match(/^(\d{4})-(\d{2})$/);
+  if (m) return `${m[2]}/${m[1]}`;
+  return val;
+};
+
+// Convert MM/YYYY to YYYY-MM for storage
+const toYYYYMM = (val: string) => {
+  const m = val.match(/^(\d{2})\/(\d{4})$/);
+  if (m) return `${m[2]}-${m[1]}`;
+  return val;
+};
+
+// Format input as user types: auto-insert slash after 2 digits
+const formatDateInput = (raw: string, prev: string) => {
+  // Strip non-digit/slash chars
+  const digits = raw.replace(/[^\d]/g, "");
+  if (digits.length <= 2) return digits;
+  return `${digits.slice(0, 2)}/${digits.slice(2, 6)}`;
 };
 
 const incomeSources = [
@@ -57,8 +74,10 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
   const [initialSourceOfWealth, setInitialSourceOfWealth] = useState<string[]>([]);
   const [netAssetValue, setNetAssetValue] = useState("");
   const [netAssetAuditDate, setNetAssetAuditDate] = useState("");
+  const [netAssetAuditDateDisplay, setNetAssetAuditDateDisplay] = useState("");
   const [profitAfterTax, setProfitAfterTax] = useState("");
   const [profitAuditDate, setProfitAuditDate] = useState("");
+  const [profitAuditDateDisplay, setProfitAuditDateDisplay] = useState("");
   const [assetItems, setAssetItems] = useState<string[]>([]);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -74,8 +93,10 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
       setIssuedShareCapital(existingData.issuedShareCapital || "");
       setNetAssetValue(existingData.netAssetValue || "");
       setNetAssetAuditDate(existingData.netAssetAuditDate || "");
+      setNetAssetAuditDateDisplay(toMMYYYY(existingData.netAssetAuditDate || ""));
       setProfitAfterTax(existingData.profitAfterTax || "");
       setProfitAuditDate(existingData.profitAuditDate || "");
+      setProfitAuditDateDisplay(toMMYYYY(existingData.profitAuditDate || ""));
       try {
         setInitialSourceOfWealth(JSON.parse(existingData.initialSourceOfWealth || "[]"));
         setAssetItems(JSON.parse(existingData.assetItems || "[]"));
@@ -152,9 +173,9 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
               className="bg-yellow-50 border-2 border-yellow-300 focus:border-blue-500 font-semibold" 
               value={authorizedShareCapital} 
               onChange={e => setAuthorizedShareCapital(e.target.value)}
-              placeholder="请输入金额"
+              placeholder="請輸入金額"
             />
-            <span className="text-sm font-medium text-slate-600 whitespace-nowrap">万港元</span>
+            <span className="text-sm font-medium text-slate-600 whitespace-nowrap">萬港元</span>
           </div>
           {errors.authorizedShareCapital && <p className="text-sm text-destructive">{errors.authorizedShareCapital}</p>}
         </div>
@@ -166,9 +187,9 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
               className="bg-yellow-50 border-2 border-yellow-300 focus:border-blue-500 font-semibold" 
               value={issuedShareCapital} 
               onChange={e => setIssuedShareCapital(e.target.value)}
-              placeholder="请输入金额"
+              placeholder="請輸入金額"
             />
-            <span className="text-sm font-medium text-slate-600 whitespace-nowrap">万港元</span>
+            <span className="text-sm font-medium text-slate-600 whitespace-nowrap">萬港元</span>
           </div>
           {errors.issuedShareCapital && <p className="text-sm text-destructive">{errors.issuedShareCapital}</p>}
         </div>
@@ -203,11 +224,16 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
           <div className="space-y-4">
             <Label className="text-base font-semibold text-slate-800">淨資產審計時間 (MM/YYYY) / Net Asset Audit Date</Label>
             <Input 
-              type="month" 
-              max={getCurrentMonth()}
+              type="text"
               className="bg-white border-2 border-slate-300 focus:border-blue-500" 
-              value={netAssetAuditDate} 
-              onChange={e => setNetAssetAuditDate(e.target.value)} 
+              value={netAssetAuditDateDisplay}
+              placeholder="MM/YYYY"
+              maxLength={7}
+              onChange={e => {
+                const formatted = formatDateInput(e.target.value, netAssetAuditDateDisplay);
+                setNetAssetAuditDateDisplay(formatted);
+                setNetAssetAuditDate(toYYYYMM(formatted));
+              }}
             />
           </div>
         </div>
@@ -224,11 +250,16 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
           <div className="space-y-4">
             <Label className="text-base font-semibold text-slate-800">稅後盈利審計時間 (MM/YYYY) / Profit Audit Date</Label>
             <Input 
-              type="month" 
-              max={getCurrentMonth()}
+              type="text"
               className="bg-white border-2 border-slate-300 focus:border-blue-500" 
-              value={profitAuditDate} 
-              onChange={e => setProfitAuditDate(e.target.value)} 
+              value={profitAuditDateDisplay}
+              placeholder="MM/YYYY"
+              maxLength={7}
+              onChange={e => {
+                const formatted = formatDateInput(e.target.value, profitAuditDateDisplay);
+                setProfitAuditDateDisplay(formatted);
+                setProfitAuditDate(toYYYYMM(formatted));
+              }}
             />
           </div>
         </div>

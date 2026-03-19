@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Save } from "lucide-react";
+import { Loader2, Plus, Trash2, Save, Edit } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { convertToTraditional } from "@/lib/converter";
 
@@ -42,7 +42,7 @@ const countryCodes = [
 
 const idIssuingCountries = [
   { value: "HK", label: "香港 Hong Kong" },
-  { value: "CN", label: "中國內地 Mainland China" },
+  { value: "CN", label: "中國內地 Chinese Mainland" },
   { value: "MO", label: "澳門 Macau" },
   { value: "TW", label: "台灣 Taiwan" },
   { value: "US", label: "美國 United States" },
@@ -153,10 +153,11 @@ export default function CorporateRelatedParties() {
     onError: (error) => toast.error(`保存失敗: ${error.message}`)
   });
 
-  // 靜默自動保存（不跳轉）
-  const autoSaveMutation = trpc.corporateRelatedParties.save.useMutation({
-    onSuccess: () => {},
-    onError: () => {}
+  const saveOnlyMutation = trpc.corporateRelatedParties.save.useMutation({
+    onSuccess: (result) => {
+      // 靜默保存，不提示
+    },
+    onError: (error) => toast.error(`自動保存失敗: ${error.message}`)
   });
 
   const validateParty = (party: RelatedParty, forSave: boolean = false) => {
@@ -189,7 +190,7 @@ export default function CorporateRelatedParties() {
     return Object.keys(errs).length === 0;
   };
 
-  // Add current party to the list and auto-save to backend
+  // Add current party to the list
   const handleAddParty = () => {
     // Convert name to Traditional Chinese
     const convertedParty = {
@@ -199,22 +200,34 @@ export default function CorporateRelatedParties() {
     };
     
     if (validateParty(convertedParty, true)) {
-      const newParty = { ...convertedParty, id: crypto.randomUUID() };
-      const updatedParties = [...savedParties, newParty];
-      setSavedParties(updatedParties);
+      const existingIndex = savedParties.findIndex(p => p.id === convertedParty.id);
+      let newList;
+      if (existingIndex >= 0) {
+        newList = [...savedParties];
+        newList[existingIndex] = convertedParty;
+        toast.success("關聯方已更新");
+      } else {
+        newList = [...savedParties, convertedParty];
+        toast.success("關聯方已添加");
+      }
+      setSavedParties(newList);
+      saveOnlyMutation.mutate({ applicationId, relatedParties: newList });
       setCurrentParty(defaultParty());
       setErrors({});
-      toast.success("關聯方已添加並自動保存");
-      // 自動保存到後端，防止折返時丟失
-      autoSaveMutation.mutate({ applicationId, relatedParties: updatedParties });
     }
   };
 
-  // Remove party from list and auto-save
+  // Remove party from list
   const removeParty = (id: string) => {
-    const updatedParties = savedParties.filter(p => p.id !== id);
-    setSavedParties(updatedParties);
-    autoSaveMutation.mutate({ applicationId, relatedParties: updatedParties });
+    const newList = savedParties.filter(p => p.id !== id);
+    setSavedParties(newList);
+    saveOnlyMutation.mutate({ applicationId, relatedParties: newList });
+  };
+
+  // Edit party
+  const editParty = (party: RelatedParty) => {
+    setCurrentParty(party);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Handle final save
@@ -287,9 +300,14 @@ export default function CorporateRelatedParties() {
                     {party.relationshipType === 'director' ? '董事' : party.relationshipType === 'shareholder' ? '股東' : party.relationshipType === 'beneficial_owner' ? '最終受益人' : party.relationshipType === 'authorized_signatory' ? '授權簽署人' : '其他'}
                   </p>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => removeParty(party.id)} className="text-destructive">
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                <div className="flex items-center gap-1">
+                  <Button variant="ghost" size="icon" onClick={() => editParty(party)} className="text-blue-600 mr-1">
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={() => removeParty(party.id)} className="text-destructive">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             ))}
           </div>

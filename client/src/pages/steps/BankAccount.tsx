@@ -22,9 +22,9 @@ const currencies = [
 ];
 
 const accountTypes = [
-  { value: "saving", label: "储蓄账户 / Saving" },
-  { value: "current", label: "活期账户 / Current" },
-  { value: "checking", label: "支票账户 / Checking" },
+  { value: "saving", label: "儲蓄賬戶 / Saving" },
+  { value: "current", label: "活期賬戶 / Current" },
+  { value: "checking", label: "支票賬戶 / Checking" },
   { value: "others", label: "其他 / Others" },
 ];
 
@@ -366,10 +366,10 @@ const handleNext = () => {
                       賬戶號碼: {account.accountNumber}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      账户类型: {account.accountType === "saving" ? "储蓄" : account.accountType === "current" ? "活期" : account.accountType === "checking" ? "支票" : "其他"}
+                      賬戶類型: {account.accountType === "saving" ? "儲蓄" : account.accountType === "current" ? "活期" : account.accountType === "checking" ? "支票" : "其他"}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      币种: {account.accountCurrency}
+                      幣種: {account.accountCurrency}
                     </div>
                     <div className="text-sm text-muted-foreground">
                       持有人: {account.accountHolderName}
@@ -418,7 +418,7 @@ const handleNext = () => {
             {/* 银行所在地 */}
             <div className="space-y-2">
               <Label htmlFor="bankLocation">
-                银行所在地 / Bank Location <span className="text-destructive">*</span>
+                銀行所在地 / Bank Location <span className="text-destructive">*</span>
               </Label>
               <Select 
                 value={formData.bankLocation} 
@@ -435,7 +435,7 @@ const handleNext = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="HK">香港 / Hong Kong</SelectItem>
-                  <SelectItem value="CN">中國大陸 / Mainland China</SelectItem>
+                  <SelectItem value="CN">中國內地 / Chinese Mainland</SelectItem>
                   <SelectItem value="OTHER">其他 / Other</SelectItem>
                 </SelectContent>
               </Select>
@@ -444,13 +444,13 @@ const handleNext = () => {
             {/* 银行名称 */}
             <div className="space-y-2">
               <Label htmlFor="bankName">
-                银行名称 / Bank Name <span className="text-destructive">*</span>
+                銀行名稱 / Bank Name <span className="text-destructive">*</span>
               </Label>
               {formData.bankLocation === "HK" ? (
                 <>
                   {/* 搜索输入框 */}
                   <Input
-                    placeholder="输入银行名称或代码搜索..."
+                    placeholder="輸入銀行名稱或代碼搜索..."
                     value={bankSearchQuery}
                     onChange={(e) => setBankSearchQuery(e.target.value)}
                     className="mb-2"
@@ -467,7 +467,7 @@ const handleNext = () => {
                     }}
                   >
                     <SelectTrigger className={errors.bankName ? "border-destructive" : ""}>
-                      <SelectValue placeholder="选择银行" />
+                      <SelectValue placeholder="選擇銀行" />
                     </SelectTrigger>
                     <SelectContent className="max-h-[300px]">
                       {hkBanks
@@ -494,7 +494,7 @@ const handleNext = () => {
                     if (errors.bankName) setErrors({ ...errors, bankName: "" });
                   }}
                   onBlur={(e) => handleChineseBlur('bankName', e.target.value)}
-                  placeholder="请输入银行名称"
+                  placeholder="請輸入銀行名稱"
                   className={errors.bankName ? "border-destructive" : ""}
                 />
               )}
@@ -504,7 +504,7 @@ const handleNext = () => {
             {/* 账户类型 */}
             <div className="space-y-2">
               <Label htmlFor="accountType">
-                账户类型 / Account Type (可选)
+                賬戶類型 / Account Type (可選)
               </Label>
               <Select 
                 value={formData.accountType} 
@@ -526,7 +526,7 @@ const handleNext = () => {
             {/* 账户币种 */}
             <div className="space-y-2">
               <Label htmlFor="accountCurrency">
-                账户币种 / Currency <span className="text-destructive">*</span>
+                賬戶幣種 / Currency <span className="text-destructive">*</span>
               </Label>
               <Select 
                 value={formData.accountCurrency} 
@@ -572,7 +572,11 @@ const handleNext = () => {
                 id="accountHolderName"
                 value={formData.accountHolderName}
                 onChange={(e) => {
-                  setFormData({ ...formData, accountHolderName: e.target.value });
+                  let val = e.target.value;
+                  if (/^[A-Za-z\s]+$/.test(val)) {
+                    val = val.toUpperCase();
+                  }
+                  setFormData({ ...formData, accountHolderName: val });
                   if (errors.accountHolderName) setErrors({ ...errors, accountHolderName: "" });
                 }}
                 placeholder="請輸入賬戶持有人姓名"
