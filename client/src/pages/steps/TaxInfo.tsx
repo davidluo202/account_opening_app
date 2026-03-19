@@ -66,8 +66,11 @@ export default function TaxInfo() {
   });
 
   useEffect(() => {
-    // 機構：納稅居住國=註冊國家，稅務編號=商業登記號
-    if (corporateInfo) {
+    // 優先使用已保存數據，若無已保存數據則用默認值填充
+    if (existingData && (existingData.taxResidency || existingData.taxIdNumber)) {
+      setFormData(existingData);
+    } else if (corporateInfo) {
+      // 機構：納稅居住國=註冊國家，稅務編號=商業登記證號碼
       setFormData({
         taxResidency: corporateInfo.countryOfIncorporation,
         taxIdNumber: corporateInfo.businessRegistrationNo,
@@ -78,8 +81,6 @@ export default function TaxInfo() {
         taxResidency: basicInfo.nationality,
         taxIdNumber: detailedInfo.idNumber,
       });
-    } else if (existingData) {
-      setFormData(existingData);
     }
   }, [basicInfo, detailedInfo, corporateInfo, existingData]);
 

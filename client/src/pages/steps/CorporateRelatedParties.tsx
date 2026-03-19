@@ -153,6 +153,12 @@ export default function CorporateRelatedParties() {
     onError: (error) => toast.error(`保存失敗: ${error.message}`)
   });
 
+  // 靜默自動保存（不跳轉）
+  const autoSaveMutation = trpc.corporateRelatedParties.save.useMutation({
+    onSuccess: () => {},
+    onError: () => {}
+  });
+
   const validateParty = (party: RelatedParty, forSave: boolean = false) => {
     const errs: Record<string, string> = {};
     if (!party.relationshipType) errs.relationshipType = "請選擇關係類型";
@@ -183,7 +189,7 @@ export default function CorporateRelatedParties() {
     return Object.keys(errs).length === 0;
   };
 
-  // Add current party to the list
+  // Add current party to the list and auto-save to backend
   const handleAddParty = () => {
     // Convert name to Traditional Chinese
     const convertedParty = {
@@ -193,16 +199,22 @@ export default function CorporateRelatedParties() {
     };
     
     if (validateParty(convertedParty, true)) {
-      setSavedParties([...savedParties, { ...convertedParty, id: crypto.randomUUID() }]);
+      const newParty = { ...convertedParty, id: crypto.randomUUID() };
+      const updatedParties = [...savedParties, newParty];
+      setSavedParties(updatedParties);
       setCurrentParty(defaultParty());
       setErrors({});
-      toast.success("關聯方已添加");
+      toast.success("關聯方已添加並自動保存");
+      // 自動保存到後端，防止折返時丟失
+      autoSaveMutation.mutate({ applicationId, relatedParties: updatedParties });
     }
   };
 
-  // Remove party from list
+  // Remove party from list and auto-save
   const removeParty = (id: string) => {
-    setSavedParties(savedParties.filter(p => p.id !== id));
+    const updatedParties = savedParties.filter(p => p.id !== id);
+    setSavedParties(updatedParties);
+    autoSaveMutation.mutate({ applicationId, relatedParties: updatedParties });
   };
 
   // Handle final save
