@@ -94,6 +94,7 @@ const validatePhone = (phone: string, countryCode: string): boolean => {
 export default function CorporateRelatedParties() {
   const params = useParams<{ id: string; step?: string }>();
   const [, setLocation] = useLocation();
+  const draftStorageKey = `corporateRelatedParties:draft:${params.id || "0"}`;
   const applicationId = parseInt(params.id || "0");
   const stepNum = parseInt(params.step || "4");
   const showReturnToPreview = useReturnToPreview();
@@ -120,9 +121,32 @@ export default function CorporateRelatedParties() {
     }
   }, [existingData]);
 
-  // Initialize with default contact from corporate basic info if no saved parties
+  // Restore draft (unsaved current form) from localStorage so it won't be lost when user navigates back/forward
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(draftStorageKey);
+      if (raw) {
+        const draft = JSON.parse(raw) as RelatedParty;
+        if (draft && typeof draft === "object") {
+          setCurrentParty({ ...defaultParty(), ...draft });
+        }
+      }
+    } catch {
+      // ignore
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [applicationId]);
+
+  // Initialize with default contact from corporate basic info if no saved parties (only when there is no draft)
   useEffect(() => {
     if (!isLoadingData && savedParties.length === 0 && corporateBasicInfo) {
+      // If user already has a draft, don't overwrite it
+      try {
+        const raw = localStorage.getItem(draftStorageKey);
+        if (raw) return;
+      } catch {
+        // ignore
+      }
       // 解析可能包含区号的电话号码
       let contactPhone = corporateBasicInfo.contactPhone || "";
       let countryCode = "+852";
@@ -141,7 +165,30 @@ export default function CorporateRelatedParties() {
         email: corporateBasicInfo.contactEmail || "",
       });
     }
-  }, [isLoadingData, savedParties.length, corporateBasicInfo]);
+  }, [isLoadingData, savedParties.length, corporateBasicInfo, draftStorageKey]);
+
+  // Persist current draft to localStorage (debounced)
+  useEffect(() => {
+    const hasAnyValue = Object.entries(currentParty).some(([k, v]) => {
+      if (k === "id") return false;
+      if (typeof v === "boolean") return v;
+      return String(v || "").trim().length > 0;
+    });
+
+    const t = setTimeout(() => {
+      try {
+        if (!hasAnyValue) {
+          localStorage.removeItem(draftStorageKey);
+        } else {
+          localStorage.setItem(draftStorageKey, JSON.stringify(currentParty));
+        }
+      } catch {
+        // ignore
+      }
+    }, 300);
+
+    return () => clearTimeout(t);
+  }, [currentParty, draftStorageKey]);
 
   const saveMutation = trpc.corporateRelatedParties.save.useMutation({
     onSuccess: (result) => {
@@ -212,6 +259,8 @@ export default function CorporateRelatedParties() {
       }
       setSavedParties(newList);
       saveOnlyMutation.mutate({ applicationId, relatedParties: newList });
+      // 清除草稿（已成功加入列表並保存）
+      try { localStorage.removeItem(draftStorageKey); } catch {}
       setCurrentParty(defaultParty());
       setErrors({});
     }
@@ -276,6 +325,15 @@ export default function CorporateRelatedParties() {
     <ApplicationWizard
       applicationId={applicationId}
       currentStep={stepNum}
+      onPrevious={() => {
+        // Ensure draft is persisted before navigating away
+        try {
+          localStorage.setItem(draftStorageKey, JSON.stringify(currentParty));
+        } catch {
+          // ignore
+        }
+        setLocation(`/application/${applicationId}/step/${stepNum - 1}`);
+      }}
       onNext={handleNext}
       onSave={handleSave}
       isNextLoading={saveMutation.isPending}
