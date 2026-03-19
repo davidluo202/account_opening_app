@@ -143,7 +143,7 @@ const handleSave = () => {
       <div className="space-y-6">
         <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
           <p className="text-sm text-blue-900">
-            <strong>提示：</strong>以下信息已從您的個人資料中自動導入，請確認或修改
+            <strong>提示：</strong>以下信息已從{corporateInfo ? "公司資料" : "您的個人資料"}中自動導入，請確認或修改
           </p>
         </div>
 
@@ -163,7 +163,7 @@ const handleSave = () => {
             className={errors.taxResidency ? "border-destructive" : ""}
           />
           {errors.taxResidency && <p className="text-sm text-destructive">{errors.taxResidency}</p>}
-          <p className="text-sm text-muted-foreground">默認為您的國籍</p>
+          <p className="text-sm text-muted-foreground">{corporateInfo ? "默認為公司註冊國家或地區" : "默認為您的國籍"}</p>
         </div>
 
         {/* 稅務識別號 */}
@@ -182,7 +182,7 @@ const handleSave = () => {
             className={errors.taxIdNumber ? "border-destructive" : ""}
           />
           {errors.taxIdNumber && <p className="text-sm text-destructive">{errors.taxIdNumber}</p>}
-          <p className="text-sm text-muted-foreground">默認為您的證件號碼</p>
+          <p className="text-sm text-muted-foreground">{corporateInfo ? "默認為商業登記證號碼" : "默認為您的證件號碼"}</p>
         </div>
       </div>
     </ApplicationWizard>
