@@ -624,21 +624,21 @@ export default function ApplicationPreview() {
                   <td className="p-3 w-1/4">{personalDetailed?.idNumber || "-"}</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold border-r">签发地 Issuing Place</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">簽發地 Issuing Place</td>
                   <td className="p-3 border-r">{personalDetailed?.idIssuingPlace || "-"}</td>
                   <td className="p-3 bg-gray-50 font-semibold border-r">有效期 Expiry Date</td>
                   <td className="p-3">
-                    {personalDetailed?.idIsPermanent ? "长期有效" : formatDate(personalDetailed?.idExpiryDate)}
+                    {personalDetailed?.idIsPermanent ? "長期有效" : formatDate(personalDetailed?.idExpiryDate)}
                   </td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold border-r">婚姻状况 Marital Status</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">婚姻狀況 Marital Status</td>
                   <td className="p-3 border-r">{translateMaritalStatus(personalDetailed?.maritalStatus)}</td>
                   <td className="p-3 bg-gray-50 font-semibold border-r">学历 Education</td>
                   <td className="p-3">{translateEducationLevel(personalDetailed?.educationLevel)}</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold border-r">电子邮箱 Email</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">電子郵箱 Email</td>
                   <td className="p-3 border-r">{personalDetailed?.email || "-"}</td>
                   <td className="p-3 bg-gray-50 font-semibold border-r">電話 Phone</td>
                   <td className="p-3">
@@ -648,7 +648,7 @@ export default function ApplicationPreview() {
                   </td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold border-r">手机号码 Mobile</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">手機號碼 Mobile</td>
                   <td className="p-3 border-r">
                     {personalDetailed?.mobileCountryCode && personalDetailed?.mobileNumber
                       ? `${personalDetailed.mobileCountryCode} ${personalDetailed.mobileNumber}`
@@ -662,17 +662,17 @@ export default function ApplicationPreview() {
                   <td className="p-3" colSpan={3}>{personalDetailed?.residentialAddress || "-"}</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold border-r">账单通讯地址 Billing Address</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">賬單通訊地址 Billing Address</td>
                   <td className="p-3" colSpan={3}>
                     {personalDetailed?.billingAddressType === "residential" && "住宅地址 (Residential Address)"}
-                    {personalDetailed?.billingAddressType === "office" && "办公地址 (Office Address)"}
+                    {personalDetailed?.billingAddressType === "office" && "辦公地址 (Office Address)"}
                     {personalDetailed?.billingAddressType === "other" && (
                       <span>其他 (Other): {personalDetailed?.billingAddressOther || "-"}</span>
                     )}
                   </td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold border-r">账单首选语言 Preferred Language</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">賬單首選語言 Preferred Language</td>
                   <td className="p-3" colSpan={3}>
                     {personalDetailed?.preferredLanguage === "chinese" ? "中文 (Chinese)" : "英文 (English)"}
                   </td>
@@ -713,7 +713,7 @@ export default function ApplicationPreview() {
                       <td className="p-3">{occupation?.industry || "-"}</td>
                     </tr>
                     <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">办公地址 Office Address</td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">辦公地址 Office Address</td>
                       <td className="p-3" colSpan={3}>{occupation?.companyAddress || "-"}</td>
                     </tr>
                     <tr className="border-b">
