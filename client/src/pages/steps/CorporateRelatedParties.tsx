@@ -116,8 +116,13 @@ export default function CorporateRelatedParties() {
   );
 
   useEffect(() => {
-    if (existingData && existingData.relatedParties && existingData.relatedParties.length > 0) {
-      setSavedParties(existingData.relatedParties);
+    // existingData may be an array directly (backend returns the array itself)
+    // or an object with a relatedParties property — handle both
+    const parties = Array.isArray(existingData)
+      ? existingData
+      : (existingData as any)?.relatedParties;
+    if (parties && Array.isArray(parties) && parties.length > 0) {
+      setSavedParties(parties as RelatedParty[]);
     }
   }, [existingData]);
 
@@ -190,9 +195,12 @@ export default function CorporateRelatedParties() {
     return () => clearTimeout(t);
   }, [currentParty, draftStorageKey]);
 
+  const utils = trpc.useContext();
+
   const saveMutation = trpc.corporateRelatedParties.save.useMutation({
     onSuccess: (result) => {
       if (result.success) {
+        utils.corporateRelatedParties.get.invalidate({ applicationId });
         toast.success("保存成功");
         setLocation(`/application/${applicationId}/step/${stepNum + 1}`);
       }
@@ -203,6 +211,7 @@ export default function CorporateRelatedParties() {
   const saveOnlyMutation = trpc.corporateRelatedParties.save.useMutation({
     onSuccess: (result) => {
       // 靜默保存，不提示
+      utils.corporateRelatedParties.get.invalidate({ applicationId });
     },
     onError: (error) => toast.error(`自動保存失敗: ${error.message}`)
   });
