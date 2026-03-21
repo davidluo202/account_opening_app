@@ -29,6 +29,7 @@ import ApprovalDetail from "./pages/admin/ApprovalDetail";
 import ApproverManagement from "./pages/admin/ApproverManagement";
 import UserManagement from "./pages/admin/UserManagement";
 import ForgotPassword from "./pages/ForgotPassword";
+import AdminForgotPassword from "./pages/admin/AdminForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import { trpc } from "@/lib/trpc";
 import { Loader2 } from "lucide-react";
@@ -117,6 +118,7 @@ function Router() {
       <Route path={"/admin/approvers"} component={ApproverManagement} />
       <Route path={"/admin/users"} component={UserManagement} />
       <Route path={"/forgot-password"} component={ForgotPassword} />
+      <Route path={"/admin/forgot-password"} component={AdminForgotPassword} />
       <Route path={"/reset-password"} component={ResetPassword} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
