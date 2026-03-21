@@ -65,9 +65,23 @@ async function startServer() {
     console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
   }
 
-  server.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}/`);
-  });
+  if (process.env.VERCEL) {
+    console.log(`Running in Vercel Serverless mode`);
+  } else {
+    server.listen(port, () => {
+      console.log(`Server running on http://localhost:${port}/`);
+    });
+  }
+  return app;
 }
 
-startServer().catch(console.error);
+const appPromise = startServer().catch(console.error);
+export default async function (req: any, res: any) {
+  const app = await appPromise;
+  if (app) {
+    app(req, res);
+  } else {
+    res.status(500).send("Server failed to initialize");
+  }
+}
+
