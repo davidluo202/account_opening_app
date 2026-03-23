@@ -560,7 +560,7 @@ export async function sendReturnNotificationEmail(
       `,
     };
 
-    await sendViaResend(to, subject, html);
+    await sendViaResend(msg.to, msg.subject, msg.html);
     console.log(`Return notification sent to ${customerServiceEmail} for application ${applicationNumber}`);
     return true;
   } catch (error: any) {
@@ -620,7 +620,7 @@ ${resetLink}
       `,
     };
 
-    await sendViaResend(to, subject, html);
+    await sendViaResend(msg.to, msg.subject, msg.html);
     console.log(`Password reset email sent to ${to}`);
     return true;
   } catch (error: any) {
