@@ -104,6 +104,7 @@ function Router() {
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path={"/login"} component={Login} />
+      <Route path={"/register"} component={Register} />
       <Route path={"/applications"} component={Applications} />
       
       {/* 统一的步骤路由 */}
