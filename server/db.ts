@@ -60,6 +60,26 @@ export async function syncMissingTables() {
         INDEX \`idx_applicationId\` (\`applicationId\`)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
+
+    // Ensure password and reset token columns exist in users table
+    try {
+      await db.execute(sql`ALTER TABLE \`users\` ADD COLUMN \`password\` varchar(255) DEFAULT NULL`);
+    } catch (e: any) {
+      // Ignore if column already exists (Duplicate column name)
+      if (e?.code !== 'ER_DUP_FIELDNAME') console.error('Add password column error:', e);
+    }
+    
+    try {
+      await db.execute(sql`ALTER TABLE \`users\` ADD COLUMN \`passwordResetToken\` varchar(255) DEFAULT NULL`);
+    } catch (e: any) {
+      if (e?.code !== 'ER_DUP_FIELDNAME') console.error('Add passwordResetToken column error:', e);
+    }
+
+    try {
+      await db.execute(sql`ALTER TABLE \`users\` ADD COLUMN \`passwordResetExpires\` timestamp DEFAULT NULL`);
+    } catch (e: any) {
+      if (e?.code !== 'ER_DUP_FIELDNAME') console.error('Add passwordResetExpires column error:', e);
+    }
     
     console.log("[Database] Schema sync completed successfully.");
   } catch (error) {
