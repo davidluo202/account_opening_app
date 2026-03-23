@@ -30,19 +30,20 @@ export default function Login() {
         body: JSON.stringify({ email, password }),
       });
       
+      const data = await response.json();
+      
       if (!response.ok) {
-        throw new Error("登录失败");
+        throw new Error(data.error || "登录失败");
       }
       
-      const data = await response.json();
       if (data.success) {
         toast.success("登录成功");
         window.location.href = "/applications";
       } else {
-        toast.error("登录失败，请检查账号密码");
+        toast.error(data.error || "登录失败，请检查账号密码");
       }
-    } catch (error) {
-      toast.error("登录失败，请检查网络或账号密码");
+    } catch (error: any) {
+      toast.error(error.message || "登录失败，请检查网络或账号密码");
     } finally {
       setIsLoading(false);
     }

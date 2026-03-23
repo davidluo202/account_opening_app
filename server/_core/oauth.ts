@@ -71,14 +71,14 @@ export function registerOAuthRoutes(app: Express) {
       if (user.password) {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-          return res.status(401).json({ error: "Invalid credentials" });
+          return res.status(401).json({ error: "邮箱或密码错误" });
         }
       } else {
         // Allow legacy auto-created test users to login with any password temporarily,
         // but it's better to force them to reset. Given the prompt "my password is correct but system says no",
         // maybe David has a password but there was an issue, or he didn't have one and login failed?
         // Actually, let's enforce password check. If they don't have a password, they MUST reset it or re-register.
-        return res.status(401).json({ error: "Please use forgot password to set a new password." });
+        return res.status(401).json({ error: "该账号为验证码注册，尚未设置密码，请点击下方「忘记密码」设置新密码。" });
       }
 
       const sessionToken = await sdk.createSessionToken(user.openId, {
