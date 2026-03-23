@@ -8,6 +8,7 @@ import { Plus, FileText, Loader2, LogOut, Filter } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
+import { TopHeader } from "@/components/TopHeader";
 
 const statusLabels: Record<string, { zh: string; en: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   draft: { zh: "草稿", en: "Draft", variant: "secondary" },
@@ -71,21 +72,13 @@ export default function Applications() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container py-4 flex justify-between items-center">
-          <a href="/" className="flex items-center">
-            <img src="/logo-zh.png" alt="誠港金融" className="h-12" />
-          </a>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">歡迎, {user?.name || user?.email}</span>
-            <Button variant="ghost" size="sm" onClick={handleLogout}>
-              <LogOut className="h-4 w-4 mr-2" />
-              登出
-            </Button>
-          </div>
-        </div>
-      </header>
+      <TopHeader>
+        <span className="text-sm text-muted-foreground">歡迎, {user?.name || user?.email}</span>
+        <Button variant="ghost" size="sm" onClick={handleLogout}>
+          <LogOut className="h-4 w-4 mr-2" />
+          登出
+        </Button>
+      </TopHeader>
 
       <main className="container py-8">
         <div className="flex justify-between items-center mb-8">

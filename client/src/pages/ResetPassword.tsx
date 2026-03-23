@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { TopHeader } from "@/components/TopHeader";
 
 export default function ResetPassword() {
   const [, setLocation] = useLocation();
@@ -15,14 +16,13 @@ export default function ResetPassword() {
   const [resetSuccess, setResetSuccess] = useState(false);
 
   useEffect(() => {
-    // 从URL获取token参数
     const params = new URLSearchParams(window.location.search);
     const tokenParam = params.get("token");
     if (tokenParam) {
       setToken(tokenParam);
     } else {
       toast.error("无效的重置链接");
-      setTimeout(() => setLocation("/admin"), 2000);
+      setTimeout(() => setLocation("/login"), 2000);
     }
   }, [setLocation]);
 
@@ -30,7 +30,7 @@ export default function ResetPassword() {
     onSuccess: (data) => {
       toast.success(data.message || "密码重置成功");
       setResetSuccess(true);
-      setTimeout(() => setLocation("/admin"), 3000);
+      setTimeout(() => setLocation("/login"), 3000);
     },
     onError: (error) => {
       toast.error(error.message || "重置失败，请重试");
@@ -42,31 +42,21 @@ export default function ResetPassword() {
       toast.error("密码长度至少为6位");
       return;
     }
-    
     if (newPassword !== confirmPassword) {
       toast.error("两次输入的密码不一致");
       return;
     }
-    
     resetPasswordMutation.mutate({ token, newPassword });
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      {/* Logo Header */}
-      <div className="absolute top-8 left-8">
-        <a href="/" className="flex items-center cursor-pointer">
-          <img src="/logo-zh.png" alt="誠港金融" className="h-12" />
-        </a>
-      </div>
-
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <Card className="w-full max-w-md shadow-xl">
+    <div className="min-h-screen flex flex-col bg-slate-50">
+      <TopHeader />
+      <div className="flex-1 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
           <CardHeader className="space-y-2">
             <CardTitle className="text-2xl font-bold">重置密码</CardTitle>
-            <CardDescription>
-              请输入您的新密码
-            </CardDescription>
+            <CardDescription>请输入您的新密码</CardDescription>
           </CardHeader>
           <CardContent>
             {!resetSuccess ? (
@@ -81,7 +71,6 @@ export default function ResetPassword() {
                     onChange={(e) => setNewPassword(e.target.value)}
                   />
                 </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="confirm-password">确认密码</Label>
                   <Input
@@ -91,30 +80,19 @@ export default function ResetPassword() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter' && newPassword && confirmPassword) {
-                        handleSubmit();
-                      }
+                      if (e.key === "Enter" && newPassword && confirmPassword) handleSubmit();
                     }}
                   />
                 </div>
-
                 <Button
                   onClick={handleSubmit}
                   disabled={resetPasswordMutation.isPending || !newPassword || !confirmPassword}
                   className="w-full"
-                  size="lg"
                 >
                   {resetPasswordMutation.isPending ? "重置中..." : "重置密码"}
                 </Button>
-
-                <div className="text-center">
-                  <Button
-                    variant="link"
-                    className="text-sm"
-                    onClick={() => setLocation("/admin")}
-                  >
-                    返回登录
-                  </Button>
+                <div className="text-sm text-center text-slate-500">
+                  <a href="/login" className="text-blue-600 hover:underline">返回登录</a>
                 </div>
               </div>
             ) : (
@@ -125,11 +103,7 @@ export default function ResetPassword() {
                     您的密码已成功重置。页面将在3秒后自动跳转到登录页面。
                   </p>
                 </div>
-
-                <Button
-                  onClick={() => setLocation("/admin")}
-                  className="w-full"
-                >
+                <Button onClick={() => setLocation("/login")} className="w-full">
                   立即前往登录
                 </Button>
               </div>

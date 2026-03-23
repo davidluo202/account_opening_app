@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
+import { TopHeader } from "@/components/TopHeader";
 
 export default function Register() {
   const [, setLocation] = useLocation();
@@ -38,7 +39,7 @@ export default function Register() {
       
       if (data.success) {
         toast.success("注册成功");
-        window.location.href = "/applications"; // 强制刷新加载状态
+        window.location.href = "/applications";
       } else {
         toast.error(data.error || "注册失败，请检查填写信息");
       }
@@ -50,64 +51,67 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold">注册新账号</CardTitle>
-          <CardDescription>
-            请输入您的信息以创建开户系统账号
-          </CardDescription>
-        </CardHeader>
-        <form onSubmit={handleRegister}>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">姓名</Label>
-              <Input 
-                id="name" 
-                type="text" 
-                placeholder="您的姓名" 
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required 
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">邮箱</Label>
-              <Input 
-                id="email" 
-                type="email" 
-                placeholder="name@example.com" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required 
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">密码</Label>
-              <Input 
-                id="password" 
-                type="password" 
-                placeholder="请输入密码"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required 
-                minLength={6}
-              />
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
-            <Button className="w-full" type="submit" disabled={isLoading}>
-              {isLoading ? "注册中..." : "立即注册"}
-            </Button>
-            <div className="text-sm text-center text-slate-500">
-              已有账号？{" "}
-              <a href="/login" className="text-blue-600 hover:underline">
-                返回登入
-              </a>
-            </div>
-          </CardFooter>
-        </form>
-      </Card>
+    <div className="min-h-screen flex flex-col bg-slate-50">
+      <TopHeader />
+      <div className="flex-1 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1 text-center">
+            <CardTitle className="text-2xl font-bold">注册新账号</CardTitle>
+            <CardDescription>
+              请输入您的信息以创建开户系统账号
+            </CardDescription>
+          </CardHeader>
+          <form onSubmit={handleRegister}>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">姓名</Label>
+                <Input 
+                  id="name" 
+                  type="text" 
+                  placeholder="您的姓名" 
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">邮箱</Label>
+                <Input 
+                  id="email" 
+                  type="email" 
+                  placeholder="name@example.com" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">密码</Label>
+                <Input 
+                  id="password" 
+                  type="password" 
+                  placeholder="请输入密码（至少6位）"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required 
+                  minLength={6}
+                />
+              </div>
+            </CardContent>
+            <CardFooter className="flex flex-col space-y-4">
+              <Button className="w-full" type="submit" disabled={isLoading}>
+                {isLoading ? "注册中..." : "立即注册"}
+              </Button>
+              <div className="text-sm text-center text-slate-500">
+                已有账号？{" "}
+                <a href="/login" className="text-blue-600 hover:underline">
+                  返回登入
+                </a>
+              </div>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
     </div>
   );
 }

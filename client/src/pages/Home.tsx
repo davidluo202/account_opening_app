@@ -5,6 +5,7 @@ import { useLocation } from "wouter";
 import { FileText, Shield, Zap, Users } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
+import { TopHeader } from "@/components/TopHeader";
 
 export default function Home() {
   const { user, loading, isAuthenticated } = useAuth();
@@ -28,22 +29,16 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-blue-50 to-white">
       {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container py-4 flex justify-between items-center">
-          <a href="/" className="flex items-center">
-            <img src="/logo-zh.png" alt="誠港金融" className="h-12" />
-          </a>
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" asChild>
-              <a href="/admin">审批系统</a>
-            </Button>
-            <Button variant="ghost" size="sm">English</Button>
-            <Button asChild={agreedToPrivacy} disabled={!agreedToPrivacy}>
-              {agreedToPrivacy ? <a href={getLoginUrl()}>登入</a> : <span>登入</span>}
-            </Button>
-          </div>
-        </div>
-      </header>
+      <TopHeader>
+        <Button variant="outline" size="sm" asChild>
+          <a href="/admin">审批系统</a>
+        </Button>
+        <Button variant="ghost" size="sm">English</Button>
+        <Button asChild={agreedToPrivacy} disabled={!agreedToPrivacy}>
+          {agreedToPrivacy ? <a href={getLoginUrl()}>登入</a> : <span>登入</span>}
+        </Button>
+      </TopHeader>
+
 
       {/* Hero Section */}
       <main className="flex-1">
