@@ -58,6 +58,13 @@ async function startServer() {
     serveStatic(app);
   }
 
+  // In Vercel Serverless, we must NOT bind/listen/scan ports.
+  // Just return the Express app and let the platform invoke it.
+  if (process.env.VERCEL) {
+    console.log(`Running in Vercel Serverless mode`);
+    return app;
+  }
+
   const preferredPort = parseInt(process.env.PORT || "3000");
   const port = await findAvailablePort(preferredPort);
 
@@ -65,13 +72,10 @@ async function startServer() {
     console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
   }
 
-  if (process.env.VERCEL) {
-    console.log(`Running in Vercel Serverless mode`);
-  } else {
-    server.listen(port, () => {
-      console.log(`Server running on http://localhost:${port}/`);
-    });
-  }
+  server.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}/`);
+  });
+
   return app;
 }
 
