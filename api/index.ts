@@ -27,5 +27,15 @@ app.use(
 );
 
 export default function handler(req: any, res: any) {
+  // When using Vercel rewrites to a single handler, preserve the original path.
+  // vercel.json: /api/(.*) -> /api/index?path=$1
+  const path = req?.query?.path;
+  if (typeof path === "string" && path.length > 0) {
+    // keep any existing querystring (except our internal `path`)
+    const url = new URL(req.url, "http://localhost");
+    url.searchParams.delete("path");
+    req.url = `/api/${path}${url.search}`;
+  }
+
   return app(req, res);
 }
