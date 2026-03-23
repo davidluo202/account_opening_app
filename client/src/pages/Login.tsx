@@ -30,12 +30,18 @@ export default function Login() {
         body: JSON.stringify({ email, password }),
       });
       
-      const data = await response.json();
-      
+      const text = await response.text();
+      let data: any = null;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error(text || "Server error");
+      }
+
       if (!response.ok) {
         throw new Error(data.error || "登录失败");
       }
-      
+
       if (data.success) {
         toast.success("登录成功");
         window.location.href = "/applications";
