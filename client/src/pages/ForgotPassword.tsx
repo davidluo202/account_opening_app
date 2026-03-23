@@ -84,7 +84,8 @@ export default function ForgotPassword() {
                   <Label htmlFor="email">注册邮箱</Label>
                   <Input
                     id="email"
-                    type="email"
+                    type="text"
+                    inputMode="email"
                     placeholder="name@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}

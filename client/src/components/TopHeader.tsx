@@ -11,7 +11,7 @@ export function TopHeader({ children }: { children?: React.ReactNode }) {
             <div className="flex items-center gap-2">
               <span className="font-bold text-lg text-slate-800">客户开户系统</span>
               <span className="text-xs font-mono bg-slate-100 text-slate-600 px-2 py-0.5 rounded border border-slate-200">
-                v1.0.260323.005
+                v1.0.260323.006
               </span>
             </div>
           </div>

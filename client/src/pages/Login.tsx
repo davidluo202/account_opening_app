@@ -66,7 +66,8 @@ export default function Login() {
                 <Label htmlFor="email">邮箱</Label>
                 <Input 
                   id="email" 
-                  type="email" 
+                  type="text"
+                  inputMode="email" 
                   placeholder="name@example.com" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
