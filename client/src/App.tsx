@@ -6,6 +6,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Applications from "./pages/Applications";
 import AccountSelection from "./pages/steps/AccountSelection";
 import PersonalBasicInfo from "./pages/steps/PersonalBasicInfo";

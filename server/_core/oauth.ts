@@ -7,30 +7,78 @@ import bcrypt from "bcryptjs";
 import { nanoid } from "nanoid";
 
 export function registerOAuthRoutes(app: Express) {
+  app.post("/api/auth/register", async (req: Request, res: Response) => {
+    try {
+      const { email, password, name } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ error: "Email and password are required" });
+      }
+
+      const existingUser = await db.getUserByEmail(email);
+      if (existingUser) {
+        return res.status(400).json({ error: "User already exists" });
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      const openId = nanoid();
+
+      await db.upsertUser({
+        openId,
+        email,
+        name: name || email.split("@")[0],
+        password: hashedPassword,
+        loginMethod: "local",
+        lastSignedIn: new Date()
+      });
+
+      const user = await db.getUserByOpenId(openId);
+      
+      if (!user) {
+        return res.status(500).json({ error: "Failed to create user" });
+      }
+
+      const sessionToken = await sdk.createSessionToken(user.openId, {
+        name: user.name || "",
+        expiresInMs: ONE_YEAR_MS,
+      });
+
+      const cookieOptions = getSessionCookieOptions(req);
+      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+
+      res.json({ success: true, user });
+    } catch (error) {
+      console.error("[Auth] Register failed", error);
+      res.status(500).json({ error: "Registration failed" });
+    }
+  });
+
   app.post("/api/auth/login", async (req: Request, res: Response) => {
     try {
       const { email, password } = req.body;
       
-      // Since we just removed Manus and might not have passwords set yet
-      // This is a placeholder local login. In production, check bcrypt.
-      // For now, let's allow "admin@cmfinancial.com" / "admin" as dummy
+      if (!email || !password) {
+        return res.status(400).json({ error: "Email and password are required" });
+      }
+
       let user = await db.getUserByEmail(email);
       
       if (!user) {
-        // Auto-create for testing purposes until full register flow is built
-        const openId = nanoid();
-        await db.upsertUser({
-          openId,
-          email,
-          name: email.split("@")[0],
-          loginMethod: "local",
-          lastSignedIn: new Date()
-        });
-        user = await db.getUserByOpenId(openId);
+        return res.status(401).json({ error: "Invalid credentials" });
       }
 
-      if (!user) {
-        return res.status(401).json({ error: "Invalid credentials" });
+      if (user.password) {
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+          return res.status(401).json({ error: "Invalid credentials" });
+        }
+      } else {
+        // Allow legacy auto-created test users to login with any password temporarily,
+        // but it's better to force them to reset. Given the prompt "my password is correct but system says no",
+        // maybe David has a password but there was an issue, or he didn't have one and login failed?
+        // Actually, let's enforce password check. If they don't have a password, they MUST reset it or re-register.
+        return res.status(401).json({ error: "Please use forgot password to set a new password." });
       }
 
       const sessionToken = await sdk.createSessionToken(user.openId, {
@@ -63,3 +111,4 @@ export function registerOAuthRoutes(app: Express) {
     }
   });
 }
+

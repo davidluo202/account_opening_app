@@ -7,10 +7,11 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
 
-export default function Login() {
+export default function Register() {
   const [, setLocation] = useLocation();
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -19,29 +20,30 @@ export default function Login() {
     return null;
   }
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch("/api/auth/login", {
+      const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ name, email, password }),
       });
       
+      const data = await response.json();
+      
       if (!response.ok) {
-        throw new Error("登录失败");
+        throw new Error(data.error || "注册失败");
       }
       
-      const data = await response.json();
       if (data.success) {
-        toast.success("登录成功");
+        toast.success("注册成功");
         window.location.href = "/applications"; // 强制刷新加载状态
       } else {
-        toast.error("登录失败，请检查账号密码");
+        toast.error(data.error || "注册失败，请检查填写信息");
       }
-    } catch (error) {
-      toast.error("登录失败，请检查网络或账号密码");
+    } catch (error: any) {
+      toast.error(error.message || "注册失败，请检查网络或填写信息");
     } finally {
       setIsLoading(false);
     }
@@ -51,13 +53,24 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold">登入开户系统</CardTitle>
+          <CardTitle className="text-2xl font-bold">注册新账号</CardTitle>
           <CardDescription>
-            请输入您的邮箱和密码登录
+            请输入您的信息以创建开户系统账号
           </CardDescription>
         </CardHeader>
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleRegister}>
           <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">姓名</Label>
+              <Input 
+                id="name" 
+                type="text" 
+                placeholder="您的姓名" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required 
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="email">邮箱</Label>
               <Input 
@@ -70,29 +83,26 @@ export default function Login() {
               />
             </div>
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">密码</Label>
-                <a href="/forgot-password" className="text-sm text-blue-600 hover:underline">
-                  忘记密码？
-                </a>
-              </div>
+              <Label htmlFor="password">密码</Label>
               <Input 
                 id="password" 
                 type="password" 
+                placeholder="请输入密码"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required 
+                minLength={6}
               />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button className="w-full" type="submit" disabled={isLoading}>
-              {isLoading ? "登录中..." : "登入"}
+              {isLoading ? "注册中..." : "立即注册"}
             </Button>
             <div className="text-sm text-center text-slate-500">
-              还没有账号？{" "}
-              <a href="/register" className="text-blue-600 hover:underline">
-                立即注册
+              已有账号？{" "}
+              <a href="/login" className="text-blue-600 hover:underline">
+                返回登入
               </a>
             </div>
           </CardFooter>
