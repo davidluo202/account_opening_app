@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useLocation } from "wouter";
 import { Mail, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
-import { trpc } from "@/lib/trpc";
+
 import { TopHeader } from "@/components/TopHeader";
 
 export default function ForgotPassword() {
@@ -14,19 +14,39 @@ export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
 
-  const requestReset = trpc.approver.requestPasswordReset.useMutation({
-    onSuccess: () => {
-      setSent(true);
-    },
-    onError: (err) => {
-      toast.error(err.message || "发送失败，请稍后重试");
-    },
-  });
+  const [isSending, setIsSending] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    requestReset.mutate({ email });
+
+    setIsSending(true);
+    try {
+      const resp = await fetch("/api/auth/request-password-reset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      // Always try JSON; if hosting returns non-JSON, show raw text to help debugging
+      const text = await resp.text();
+      let data: any = null;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error(text || "Server error");
+      }
+
+      if (!resp.ok || !data?.success) {
+        throw new Error(data?.error || "发送失败，请稍后重试");
+      }
+
+      setSent(true);
+    } catch (err: any) {
+      toast.error(err?.message || "发送失败，请稍后重试");
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -71,9 +91,9 @@ export default function ForgotPassword() {
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={requestReset.isPending}>
+                <Button type="submit" className="w-full" disabled={isSending}>
                   <Mail className="h-4 w-4 mr-2" />
-                  {requestReset.isPending ? "发送中..." : "发送重置链接"}
+                  {isSending ? "发送中..." : "发送重置链接"}
                 </Button>
                 <div className="text-sm text-center text-slate-500">
                   想起密码了？{" "}

@@ -96,6 +96,44 @@ export function registerOAuthRoutes(app: Express) {
     }
   });
 
+  // Password reset (public) — keep JSON response stable (avoid tRPC JSON parse issues on hosting)
+  app.post("/api/auth/request-password-reset", async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
+      if (!email) {
+        return res.status(400).json({ success: false, error: "Email is required" });
+      }
+
+      const user = await db.getUserByEmail(email);
+      if (!user) {
+        // do not reveal whether user exists
+        return res.json({ success: true, message: "如果该邮箱存在，您将收到密码重置邮件" });
+      }
+
+      const { generateResetToken, generateResetLink } = await import("../password");
+      const { sendPasswordResetEmail } = await import("../email");
+
+      const resetToken = generateResetToken();
+      const resetExpires = new Date(Date.now() + 60 * 60 * 1000);
+      await db.savePasswordResetToken(user.id, resetToken, resetExpires);
+
+      const protocol = (req.headers["x-forwarded-proto"] as string) || (req.secure ? "https" : "http");
+      const host = (req.headers["x-forwarded-host"] as string) || (req.headers["host"] as string) || "localhost:3000";
+      const baseUrl = `${protocol}://${host}`;
+      const resetLink = generateResetLink(resetToken, baseUrl);
+
+      const sent = await sendPasswordResetEmail(email, resetLink);
+      if (!sent) {
+        return res.status(500).json({ success: false, error: "邮件发送失败，请稍后重试" });
+      }
+
+      return res.json({ success: true, message: "密码重置邮件已发送" });
+    } catch (error: any) {
+      console.error("[Auth] request-password-reset failed", error);
+      return res.status(500).json({ success: false, error: error?.message || "Server error" });
+    }
+  });
+
   app.post("/api/auth/logout", (req: Request, res: Response) => {
     const cookieOptions = getSessionCookieOptions(req);
     res.clearCookie(COOKIE_NAME, cookieOptions);
