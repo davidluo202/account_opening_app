@@ -5,8 +5,12 @@ import { nanoid } from "nanoid";
 import path from "path";
 
 export async function setupVite(app: Express, server: Server) {
-  const { createServer as createViteServer } = await import("vite");
-  const viteConfig = (await import("../../vite.config" as any)).default;
+  // Use string concatenation/variables to hide the import from Vercel's Node File Trace (nft)
+  // so that it doesn't bundle Vite and Rollup into the production serverless function.
+  const viteName = "vite";
+  const viteConfigName = "../../vite.config";
+  const { createServer as createViteServer } = await import(viteName);
+  const viteConfig = (await import(viteConfigName as any)).default;
 
   const serverOptions = {
     middlewareMode: true,
