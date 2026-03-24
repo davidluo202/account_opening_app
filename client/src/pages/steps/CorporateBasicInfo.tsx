@@ -157,8 +157,10 @@ export default function CorporateBasicInfo() {
       newErrors.certificateOfIncorporationNo = "不能超過8位";
     }
 
-    // 商業登記號：7位（不足補0)
-    if (formData.businessRegistrationNo.trim() && !/^\d+$/.test(formData.businessRegistrationNo)) {
+    // 商業登記號：若註冊國家為香港則必填
+    if (formData.countryOfIncorporation === "香港" && !formData.businessRegistrationNo.trim()) {
+      newErrors.businessRegistrationNo = "請輸入商業登記證號碼";
+    } else if (formData.businessRegistrationNo.trim() && !/^\d+$/.test(formData.businessRegistrationNo)) {
       newErrors.businessRegistrationNo = "格式錯誤，只能採用阿拉伯數字";
     } else if (formData.businessRegistrationNo.length > 8) {
       newErrors.businessRegistrationNo = "不能超過8位";

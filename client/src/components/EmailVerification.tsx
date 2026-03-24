@@ -36,7 +36,7 @@ export default function EmailVerification({
   // 发送验证码
   const sendCodeMutation = trpc.auth.sendVerificationCode.useMutation({
     onSuccess: () => {
-      toast.success("验证码已发送至您的邮箱");
+      toast.success("驗證碼已發送至您的電郵");
       setShowCodeInput(true);
       setCountdown(90); // 90秒倒计时
       setCanResend(false);
@@ -49,7 +49,7 @@ export default function EmailVerification({
   // 验证验证码
   const verifyCodeMutation = trpc.auth.verifyCode.useMutation({
     onSuccess: () => {
-      toast.success("邮箱验证成功！");
+      toast.success("電郵驗證成功！");
       setIsVerified(true);
       setShowCodeInput(false);
       onVerified();
@@ -84,13 +84,13 @@ export default function EmailVerification({
     const fullEmail = getFullEmail(inputEmail);
     
     if (!fullEmail) {
-      setEmailError("请输入邮箱地址");
+      setEmailError("請輸入電郵地址");
       return false;
     }
     
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(fullEmail)) {
-      setEmailError("请输入有效的邮箱地址");
+      setEmailError("請輸入有效的電郵地址");
       return false;
     }
     
@@ -128,7 +128,7 @@ export default function EmailVerification({
   // 验证验证码
   const handleVerifyCode = () => {
     if (verificationCode.length !== 6) {
-      toast.error("请输入6位验证码");
+      toast.error("請輸入6位驗證碼");
       return;
     }
     
@@ -150,7 +150,7 @@ export default function EmailVerification({
     <div className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email">
-          邮箱地址 {requiredDomain && <span className="text-sm text-muted-foreground">({requiredDomain})</span>}
+          電郵地址 {requiredDomain && <span className="text-sm text-muted-foreground">({requiredDomain})</span>}
         </Label>
         <div className="flex gap-2">
           <div className="relative flex-1">
@@ -178,7 +178,7 @@ export default function EmailVerification({
               onClick={handleSendCode}
               disabled={disabled || sendCodeMutation.isPending || !!emailError || !email}
             >
-              {sendCodeMutation.isPending ? "发送中..." : "验证"}
+              {sendCodeMutation.isPending ? "發送中..." : "驗證"}
             </Button>
           )}
         </div>
@@ -192,7 +192,7 @@ export default function EmailVerification({
           <Alert>
             <Clock className="h-4 w-4" />
             <AlertDescription>
-              验证码已发送至 <strong>{email}</strong>
+              驗證碼已發送至 <strong>{email}</strong>
               <br />
               {countdown > 0 ? (
                 <span className="text-sm text-muted-foreground">
@@ -200,18 +200,18 @@ export default function EmailVerification({
                 </span>
               ) : (
                 <span className="text-sm text-destructive">
-                  验证码已过期，请重新发送
+                  驗證碼已過期，請重新發送
                 </span>
               )}
             </AlertDescription>
           </Alert>
           
           <div className="space-y-2">
-            <Label htmlFor="code">验证码</Label>
+            <Label htmlFor="code">驗證碼</Label>
             <Input
               id="code"
               type="text"
-              placeholder="输入6位验证码"
+              placeholder="輸入6位驗證碼"
               value={verificationCode}
               onChange={(e) => {
                 const value = e.target.value.replace(/\D/g, "").slice(0, 6);
@@ -228,7 +228,7 @@ export default function EmailVerification({
               disabled={verifyCodeMutation.isPending || verificationCode.length !== 6}
               className="flex-1"
             >
-              {verifyCodeMutation.isPending ? "验证中..." : "提交验证"}
+              {verifyCodeMutation.isPending ? "驗證中..." : "提交驗證"}
             </Button>
             <Button
               onClick={handleResendCode}
@@ -236,7 +236,7 @@ export default function EmailVerification({
               variant="outline"
               className="flex-1"
             >
-              {sendCodeMutation.isPending ? "发送中..." : "重发"}
+              {sendCodeMutation.isPending ? "發送中..." : "重發"}
             </Button>
           </div>
           
@@ -250,7 +250,7 @@ export default function EmailVerification({
             size="sm"
             className="w-full"
           >
-            返回修改邮箱
+            返回修改電郵
           </Button>
         </div>
       )}
@@ -259,7 +259,7 @@ export default function EmailVerification({
         <Alert className="bg-green-50 border-green-200">
           <CheckCircle className="h-4 w-4 text-green-600" />
           <AlertDescription className="text-green-800">
-            邮箱已验证成功
+            電郵已驗證成功
           </AlertDescription>
         </Alert>
       )}

@@ -230,12 +230,28 @@ export default function CorporateRelatedParties() {
     
     if (!party.idType) errs.idType = "請選擇證件類型";
     if (!party.idIssuingPlace) errs.idIssuingPlace = "請選擇證件簽發地";
-    if (!party.idNumber) errs.idNumber = "請輸入證件號碼";
+
+    if (!party.idNumber) {
+      errs.idNumber = "請輸入證件號碼";
+    } else if (party.idType === "mainland_id") {
+      // 中國大陸居民身份證：必須18位阿拉伯數字
+      if (!/^\d{18}$/.test(party.idNumber)) {
+        errs.idNumber = "請輸入正確的18位二代居民身份證號碼";
+      }
+    }
     
     // Phone validation
     if (party.phone && !validatePhone(party.phone, party.phoneCountryCode)) {
       const expectedLength = countryCodes.find(c => c.value === party.phoneCountryCode)?.length;
       errs.phone = `電話號碼必須為${expectedLength}位數字`;
+    }
+
+    // Email validation (optional, but if filled, must be valid)
+    if (party.email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(party.email)) {
+        errs.email = "電郵格式不正確";
+      }
     }
     
     if (!party.phone && !party.email && !party.address) {
@@ -525,7 +541,14 @@ export default function CorporateRelatedParties() {
 
             <div className="space-y-3">
               <Label>電郵地址 / E-mail</Label>
-              <Input type="email" value={currentParty.email} onChange={e => setCurrentParty({ ...currentParty, email: e.target.value })} />
+              <Input
+                type="email"
+                value={currentParty.email}
+                onChange={e => setCurrentParty({ ...currentParty, email: e.target.value })}
+                placeholder="your email@example.com"
+                className="placeholder:text-gray-400"
+              />
+              {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
             </div>
 
             <div className="space-y-3 md:col-span-2">
