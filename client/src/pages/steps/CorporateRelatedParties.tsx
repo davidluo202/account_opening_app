@@ -238,6 +238,14 @@ export default function CorporateRelatedParties() {
       if (!/^\d{18}$/.test(party.idNumber)) {
         errs.idNumber = "請輸入正確的18位二代居民身份證號碼";
       }
+    } else if (party.idType === "hkid") {
+      // 香港身份證：1位大楷英文字母 + 6位數字 + (1位數字或大楷英文字母)
+      // 兼容：括號可選、可有空格、中文括號已在 onChange 轉換
+      const normalized = party.idNumber.replace(/\s+/g, "");
+      const hkidRegex = /^[A-Z]\d{6}\([0-9A-Z]\)$|^[A-Z]\d{6}[0-9A-Z]$/;
+      if (!hkidRegex.test(normalized)) {
+        errs.idNumber = "請輸入正確的香港身份證號碼";
+      }
     }
     
     // Phone validation
