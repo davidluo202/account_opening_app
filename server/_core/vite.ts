@@ -9,7 +9,8 @@ export async function setupVite(app: Express, server: Server) {
   // so that it doesn't bundle Vite and Rollup into the production serverless function.
   const viteName = "vite";
   const viteConfigName = "../../vite.config";
-  const { createServer as createViteServer } = await import(viteName);
+  const viteModule = await import(viteName);
+  const createViteServer = viteModule.createServer;
   const viteConfig = (await import(viteConfigName as any)).default;
 
   const serverOptions = {
