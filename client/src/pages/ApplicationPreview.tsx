@@ -275,20 +275,32 @@ export default function ApplicationPreview() {
     setShowSignatureDialog(false);
   };
 
-    // 根據客戶類型轉換步驟編號
+  // 根據客戶類型轉換步驟編號（機構流程只有 step 1-9）
   const getCorporateStep = (individualStep: number): number => {
+    // 機構正確順序：
+    // 1 AccountSelection
+    // 2 CorporateBasic
+    // 3 FinancialAndInvestment（公司財務與投資概況）
+    // 4 CorporateRelatedParties
+    // 5 RiskQuestionnaire
+    // 6 BankAccount
+    // 7 TaxInfo
+    // 8 DocumentUpload
+    // 9 RegulatoryDeclaration
     const mapping: Record<number, number> = {
-      2: 2,   // PersonalBasic -> CorporateBasic
-      3: 3,   // PersonalDetailed -> FinancialAndInvestment
-      4: 4,   // Occupation -> Occupation (same)
-      5: 5,   // Employment -> RiskQuestionnaire
-      6: 6,   // Financial -> BankAccount
-      7: 7,   // Risk -> TaxInfo
-      8: 8,   // Bank -> DocumentUpload
-      9: 9,   // Tax -> RegulatoryDeclaration
-      10: 9,  // Doc -> RegulatoryDeclaration
-      11: 9,  // Face -> RegulatoryDeclaration
-      12: 9,  // Regulatory -> RegulatoryDeclaration
+      2: 2,
+      3: 3,
+      4: 4,
+      5: 5,
+      6: 6,
+      7: 7,
+      8: 8,
+      9: 9,
+      // 個人第10步(文件) 對應 機構第8步
+      10: 8,
+      // 個人第11步(人臉) / 第12步(監管) 對應 機構第9步
+      11: 9,
+      12: 9,
     };
     return mapping[individualStep] || individualStep;
   };
@@ -563,48 +575,93 @@ export default function ApplicationPreview() {
             )}
           </div>
 
-          {/* 機構：关联人士信息 / 個人：詳細信息 */}
+          {/* 機構：公司財務與投資概況(2) + 關聯人士(3)；個人：詳細信息 */}
           {isCorporate ? (
-          <div className="border-b">
-            <div className="bg-blue-50 p-3 border-b">
-              <h3 className="font-bold flex items-center justify-between">
-                <span>2. 關聯人士信息 Related Parties</span>
-                <Button variant="ghost" size="sm" onClick={() => handleEdit(4)}>
-                  編輯
-                </Button>
-              </h3>
-            </div>
-            {relatedParties && relatedParties.length > 0 ? (
+          <>
+            {/* 2. 公司財務與投資概況 */}
+            <div className="border-b">
+              <div className="bg-blue-50 p-3 border-b">
+                <h3 className="font-bold flex items-center justify-between">
+                  <span>2. 公司財務與投資概況 Financial & Investment</span>
+                  <Button variant="ghost" size="sm" onClick={() => handleEdit(3)}>
+                    編輯
+                  </Button>
+                </h3>
+              </div>
               <table className="w-full min-w-[800px]">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="p-3 text-left border-r">姓名 Name</th>
-                    <th className="p-3 text-left border-r">關係類型 Relationship</th>
-                    <th className="p-3 text-left border-r">證件號碼 ID Number</th>
-                    <th className="p-3 text-left">電話 Phone</th>
-                  </tr>
-                </thead>
                 <tbody>
-                  {relatedParties.map((party: any, index: number) => (
-                    <tr key={index} className="border-b">
-                      <td className="p-3 border-r">{party.name || "-"}</td>
-                      <td className="p-3 border-r">
-                        {party.relationshipType === 'director' ? '董事 Director' : 
-                         party.relationshipType === 'shareholder' ? '股東 Shareholder' : 
-                         party.relationshipType === 'beneficial_owner' ? '最終受益人 Beneficial Owner' : 
-                         party.relationshipType === 'authorized_signatory' ? '授權簽署人 Authorized Signatory' : 
-                         party.relationshipType || "-"}
-                      </td>
-                      <td className="p-3 border-r">{party.idNumber || "-"}</td>
-                      <td className="p-3">{party.phone ? `${party.phoneCountryCode || '+852'} ${party.phone}` : "-"}</td>
-                    </tr>
-                  ))}
+                  <tr className="border-b">
+                    <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">法定股本<br/>Authorized Share Capital</td>
+                    <td className="p-3 w-1/4 border-r">{corporateFinancial?.authorizedShareCapital ? `${corporateFinancial.authorizedShareCapital} 萬港元` : "-"}</td>
+                    <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">已發行及繳足股本<br/>Issued Share Capital</td>
+                    <td className="p-3">{corporateFinancial?.issuedShareCapital ? `${corporateFinancial.issuedShareCapital} 萬港元` : "-"}</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-3 bg-gray-50 font-semibold border-r">初始財富來源<br/>Initial Source of Wealth</td>
+                    <td className="p-3" colSpan={3}>{formatSourceOfWealth(corporateFinancial?.initialSourceOfWealth)}</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-3 bg-gray-50 font-semibold border-r">淨資產值<br/>Net Asset Value</td>
+                    <td className="p-3 border-r">{formatValueRange(corporateFinancial?.netAssetValue)}</td>
+                    <td className="p-3 bg-gray-50 font-semibold border-r">淨資產審計時間<br/>Net Asset Audit Date</td>
+                    <td className="p-3">{corporateFinancial?.netAssetAuditDate || "-"}</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-3 bg-gray-50 font-semibold border-r">稅後盈利<br/>Profit After Tax</td>
+                    <td className="p-3 border-r">{formatValueRange(corporateFinancial?.profitAfterTax)}</td>
+                    <td className="p-3 bg-gray-50 font-semibold border-r">稅後盈利審計時間<br/>Profit Audit Date</td>
+                    <td className="p-3">{corporateFinancial?.profitAuditDate || "-"}</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-3 bg-gray-50 font-semibold border-r">資產項目<br/>Asset Items</td>
+                    <td className="p-3" colSpan={3}>{formatAssetItems(corporateFinancial?.assetItems)}</td>
+                  </tr>
                 </tbody>
               </table>
-            ) : (
-              <div className="p-6 text-center text-gray-500">未添加關聯人士</div>
-            )}
-          </div>
+            </div>
+
+            {/* 3. 關聯人士信息 */}
+            <div className="border-b">
+              <div className="bg-blue-50 p-3 border-b">
+                <h3 className="font-bold flex items-center justify-between">
+                  <span>3. 關聯人士信息 Related Parties</span>
+                  <Button variant="ghost" size="sm" onClick={() => handleEdit(4)}>
+                    編輯
+                  </Button>
+                </h3>
+              </div>
+              {relatedParties && relatedParties.length > 0 ? (
+                <table className="w-full min-w-[800px]">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="p-3 text-left border-r">姓名 Name</th>
+                      <th className="p-3 text-left border-r">關係類型 Relationship</th>
+                      <th className="p-3 text-left border-r">證件號碼 ID Number</th>
+                      <th className="p-3 text-left">電話 Phone</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {relatedParties.map((party: any, index: number) => (
+                      <tr key={index} className="border-b">
+                        <td className="p-3 border-r">{party.name || "-"}</td>
+                        <td className="p-3 border-r">
+                          {party.relationshipType === 'director' ? '董事 Director' : 
+                           party.relationshipType === 'shareholder' ? '股東 Shareholder' : 
+                           party.relationshipType === 'beneficial_owner' ? '最終受益人 Beneficial Owner' : 
+                           party.relationshipType === 'authorized_signatory' ? '授權簽署人 Authorized Signatory' : 
+                           party.relationshipType || "-"}
+                        </td>
+                        <td className="p-3 border-r">{party.idNumber || "-"}</td>
+                        <td className="p-3">{party.phone ? `${party.phoneCountryCode || '+852'} ${party.phone}` : "-"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <div className="p-6 text-center text-gray-500">未添加關聯人士</div>
+              )}
+            </div>
+          </>
           ) : (
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
@@ -756,61 +813,44 @@ export default function ApplicationPreview() {
             </table>
           </div>
 
-          {/* 投資信息 - 機構或個人信息 */}
+          {/* 投資信息 - 個人投資信息（機構第2節已在上面顯示公司財務與投資概況） */}
+          {!isCorporate && (
+            <div className="border-b">
+              <div className="bg-blue-50 p-3 border-b">
+                <h3 className="font-bold flex items-center justify-between">
+                  <span>5. 投資信息 Investment Information</span>
+                  <Button variant="ghost" size="sm" onClick={() => handleEdit(7)}>
+                    編輯
+                  </Button>
+                </h3>
+              </div>
+              <table className="w-full min-w-[800px]">
+                <tbody>
+                  <tr className="border-b">
+                    <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">投資目的 Investment Objective</td>
+                    <td className="p-3" colSpan={3}>{formatInvestmentObjectives(financial?.investmentObjectives) || "-"}</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-3 bg-gray-50 font-semibold border-r">投資经验 Investment Experience</td>
+                    <td className="p-3" colSpan={3}>{formatInvestmentExperience(financial?.investmentExperience)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* 風險評估問卷（機構：第4節；個人：第6節） */}
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>5. {isCorporate ? '公司財務與投資概況 Financial & Investment' : '投資信息 Investment Information'}</span>
-                <Button variant="ghost" size="sm" onClick={() => handleEdit(7)}>
+                <span>{isCorporate ? '4. 風險評估問卷 Risk Questionnaire' : '6. 風險評估問卷 Risk Questionnaire'}</span>
+                <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 5 : 7)}>
                   編輯
                 </Button>
               </h3>
             </div>
             <table className="w-full min-w-[800px]">
               <tbody>
-                {isCorporate ? (
-                  // 機構财务信息
-                  <>
-                    <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">法定股本<br/>Authorized Share Capital</td>
-                      <td className="p-3 w-1/4 border-r">{corporateFinancial?.authorizedShareCapital ? `${corporateFinancial.authorizedShareCapital} 萬港元` : "-"}</td>
-                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">已發行及繳足股本<br/>Issued Share Capital</td>
-                      <td className="p-3">{corporateFinancial?.issuedShareCapital ? `${corporateFinancial.issuedShareCapital} 萬港元` : "-"}</td>
-                    </tr>
-                    <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">初始財富來源<br/>Initial Source of Wealth</td>
-                      <td className="p-3" colSpan={3}>{formatSourceOfWealth(corporateFinancial?.initialSourceOfWealth)}</td>
-                    </tr>
-                    <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">淨資產值<br/>Net Asset Value</td>
-                      <td className="p-3 border-r">{formatValueRange(corporateFinancial?.netAssetValue)}</td>
-                      <td className="p-3 bg-gray-50 font-semibold border-r">淨資產審計時間<br/>Net Asset Audit Date</td>
-                      <td className="p-3">{corporateFinancial?.netAssetAuditDate || "-"}</td>
-                    </tr>
-                    <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">稅後盈利<br/>Profit After Tax</td>
-                      <td className="p-3 border-r">{formatValueRange(corporateFinancial?.profitAfterTax)}</td>
-                      <td className="p-3 bg-gray-50 font-semibold border-r">稅後盈利審計時間<br/>Profit Audit Date</td>
-                      <td className="p-3">{corporateFinancial?.profitAuditDate || "-"}</td>
-                    </tr>
-                    <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">資產項目<br/>Asset Items</td>
-                      <td className="p-3" colSpan={3}>{formatAssetItems(corporateFinancial?.assetItems)}</td>
-                    </tr>
-                  </>
-                ) : (
-                  // 個人投資信息
-                  <>
-                    <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">投資目的 Investment Objective</td>
-                      <td className="p-3" colSpan={3}>{formatInvestmentObjectives(financial?.investmentObjectives) || "-"}</td>
-                    </tr>
-                    <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">投資经验 Investment Experience</td>
-                      <td className="p-3" colSpan={3}>{formatInvestmentExperience(financial?.investmentExperience)}</td>
-                    </tr>
-                  </>
-                )}
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">風險承受能力 Risk Tolerance</td>
                   <td className="p-3" colSpan={3}>
@@ -889,12 +929,12 @@ export default function ApplicationPreview() {
             </table>
           </div>
 
-          {/* 風險評估問卷 */}
+          {/* 風險評估問卷（個人第7步；機構第5步） */}
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>8. 風險評估問卷 Risk Assessment Questionnaire</span>
-                <Button variant="ghost" size="sm" onClick={() => handleEdit(8)}>
+                <span>{isCorporate ? '4. 風險評估問卷 Risk Assessment Questionnaire' : '8. 風險評估問卷 Risk Assessment Questionnaire'}</span>
+                <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 5 : 8)}>
                   編輯
                 </Button>
               </h3>
@@ -1039,11 +1079,11 @@ export default function ApplicationPreview() {
             )}
           </div>
 
-          {/* 文件上传 */}
+          {/* 文件上传（個人第10步；機構第8步） */}
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>8. 文件上传 Document Upload</span>
+                <span>{isCorporate ? '7. 文件上傳 Document Upload' : '8. 文件上传 Document Upload'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(10)}>
                   編輯
                 </Button>
@@ -1077,7 +1117,8 @@ export default function ApplicationPreview() {
             )}
           </div>
 
-          {/* 人脸识别 */}
+          {/* 人脸识别（只限個人流程） */}
+          {!isCorporate && (
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
@@ -1105,13 +1146,14 @@ export default function ApplicationPreview() {
               </tbody>
             </table>
           </div>
+          )}
 
-          {/* 监管声明 */}
+          {/* 监管声明（個人第12步；機構第9步） */}
           <div>
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>10. 监管声明 Regulatory Declaration</span>
-                <Button variant="ghost" size="sm" onClick={() => handleEdit(12)}>
+                <span>{isCorporate ? '8. 監管聲明 Regulatory Declaration' : '10. 监管声明 Regulatory Declaration'}</span>
+                <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 9 : 12)}>
                   編輯
                 </Button>
               </h3>
@@ -1304,7 +1346,14 @@ export default function ApplicationPreview() {
 
         {/* 操作按钮 */}
         <div className="flex justify-between items-center gap-4">
-          <Button variant="outline" onClick={() => setLocation(`/application/${applicationId}/step/12`)}>
+          <Button
+            variant="outline"
+            onClick={() => {
+              // Corporate: 上一步應回到「監管聲明」(step 9)；Individual: step 12
+              const prevStep = isCorporate ? 9 : 12;
+              setLocation(`/application/${applicationId}/step/${prevStep}`);
+            }}
+          >
             <ArrowLeft className="h-4 w-4 mr-2" />
             上一步
           </Button>
