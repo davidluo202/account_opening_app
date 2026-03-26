@@ -149,9 +149,10 @@ export default function EmailVerification({
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="email">
-          電郵地址 {requiredDomain && <span className="text-sm text-muted-foreground">({requiredDomain})</span>}
-        </Label>
+        {/** 父層已經有「電郵地址 / E-mail」label，避免重複顯示 */}
+        {requiredDomain ? (
+          <p className="text-sm text-muted-foreground">({requiredDomain})</p>
+        ) : null}
         <div className="flex gap-2">
           <div className="relative flex-1">
             <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />

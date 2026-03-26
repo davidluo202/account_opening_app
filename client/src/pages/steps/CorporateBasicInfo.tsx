@@ -206,7 +206,11 @@ export default function CorporateBasicInfo() {
       newErrors.facsimileNo = "格式錯誤，只能包含數字、+、空格或-";
     }
 
-    if (!formData.contactName.trim()) newErrors.contactName = "請輸入聯絡人姓名";
+    if (!formData.contactName.trim()) {
+      newErrors.contactName = "請輸入聯絡人姓名";
+    } else if (!/^[A-Za-z\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\s·\-’',]+$/.test(formData.contactName)) {
+      newErrors.contactName = "姓名只允許中文（繁/簡會自動轉繁）、英文字母、空格、·、-、’、英文逗號,；不允許數字及其他符號";
+    }
     if (!formData.contactTitle.trim()) newErrors.contactTitle = "請輸入職銜";
 
     validatePhone(formData.contactCountryCode, formData.contactPhone, 'contactPhone');
@@ -457,7 +461,13 @@ export default function CorporateBasicInfo() {
               <Input
                 id="contactName"
                 value={formData.contactName}
-                onChange={(e) => setFormData({ ...formData, contactName: e.target.value.toUpperCase() })}
+                onChange={(e) => {
+                  // 只允許：中文（繁/簡）、英文字母、空格、·、-、’、英文逗號 ,
+                  // 其餘（數字/其他符號/全形符號）一律移除
+                  const raw = e.target.value;
+                  const filtered = raw.replace(/[^A-Za-z\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\s·\-’',]/g, "");
+                  setFormData({ ...formData, contactName: filtered });
+                }}
                 onBlur={() => setFormData({ ...formData, contactName: handleSCT(formData.contactName) })}
                 className={errors.contactName ? "border-destructive" : ""}
               />

@@ -190,6 +190,7 @@ export default function BankAccount() {
   const showReturnToPreview = useReturnToPreview();
 
   const [isAdding, setIsAdding] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [bankSearchQuery, setBankSearchQuery] = useState("");
   const [formData, setFormData] = useState({
     bankName: "",
@@ -213,7 +214,7 @@ export default function BankAccount() {
     { enabled: !!applicationId }
   );
   // 機構賬戶名默認為機構英文名
-  const defaultHolderName = corporateInfo?.companyEnglishName || defaultHolderName;
+  const defaultHolderName = corporateInfo?.companyEnglishName || "";
 
   const { data: bankAccounts, isLoading: isLoadingData, refetch } = trpc.bankAccount.list.useQuery(
     { applicationId },
@@ -222,7 +223,7 @@ export default function BankAccount() {
 
   const addMutation = trpc.bankAccount.add.useMutation({
     onSuccess: () => {
-      toast.success("銀行賬戶已添加");
+      toast.success(editingId ? "銀行賬戶已更新" : "銀行賬戶已添加");
       setFormData({
         bankName: "",
         bankCode: "",
@@ -234,10 +235,11 @@ export default function BankAccount() {
       });
       setBankSearchQuery("");
       setIsAdding(false);
+      setEditingId(null);
       refetch();
     },
     onError: (error) => {
-      toast.error(`添加失敗: ${error.message}`);
+      toast.error(`${editingId ? "更新" : "添加"}失敗: ${error.message}`);
     },
   });
 
@@ -250,6 +252,24 @@ export default function BankAccount() {
       toast.error(`刪除失敗: ${error.message}`);
     },
   });
+
+  const handleEdit = (account: any) => {
+    setIsAdding(true);
+    setEditingId(account.id);
+    setErrors({});
+
+    setFormData({
+      bankName: account.bankName || "",
+      bankCode: "", // 暫不回填 HK bankCode（僅作選擇用）
+      accountType: (account.accountType || "saving") as any,
+      accountCurrency: account.accountCurrency || "HKD",
+      accountNumber: account.accountNumber || "",
+      accountHolderName: account.accountHolderName || defaultHolderName,
+      bankLocation: (account.bankLocation || "HK") as any,
+    });
+
+    setBankSearchQuery("");
+  };
 
 
 
@@ -306,15 +326,30 @@ export default function BankAccount() {
       return;
     }
 
-    addMutation.mutate({
-      applicationId,
-      bankName: formData.bankName,
-      bankLocation: formData.bankLocation as "HK" | "CN" | "OTHER",
-      accountType: formData.accountType as "saving" | "current" | "checking" | "others",
-      accountCurrency: formData.accountCurrency,
-      accountNumber: formData.accountNumber,
-      accountHolderName: formData.accountHolderName,
-    });
+    // 目前後端未提供 update API；先用「刪除 + 新增」達到可編輯效果
+    // 注意：會生成新 id（如需保留同一條記錄 id，需新增 update 接口）
+    const doAdd = () =>
+      addMutation.mutate({
+        applicationId,
+        bankName: formData.bankName,
+        bankLocation: formData.bankLocation as "HK" | "CN" | "OTHER",
+        accountType: formData.accountType as "saving" | "current" | "checking" | "others",
+        accountCurrency: formData.accountCurrency,
+        accountNumber: formData.accountNumber,
+        accountHolderName: formData.accountHolderName,
+      });
+
+    if (editingId) {
+      deleteMutation.mutate(
+        { id: editingId },
+        {
+          onSuccess: () => doAdd(),
+        }
+      );
+      return;
+    }
+
+    doAdd();
   };
 
   const handleDelete = (id: number) => {
@@ -375,14 +410,26 @@ const handleNext = () => {
                       持有人: {account.accountHolderName}
                     </div>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDelete(account.id)}
-                    disabled={deleteMutation.isPending}
-                  >
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEdit(account)}
+                      disabled={deleteMutation.isPending || addMutation.isPending}
+                      title="編輯"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDelete(account.id)}
+                      disabled={deleteMutation.isPending}
+                      title="刪除"
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
                 </div>
               </Card>
             ))}
@@ -402,12 +449,13 @@ const handleNext = () => {
         ) : (
           <Card className="p-6 space-y-6">
             <div className="flex justify-between items-center">
-              <h4 className="font-semibold">添加新銀行賬戶</h4>
+              <h4 className="font-semibold">{editingId ? "編輯銀行賬戶" : "添加新銀行賬戶"}</h4>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => {
                   setIsAdding(false);
+                  setEditingId(null);
                   setErrors({});
                 }}
               >
@@ -583,7 +631,7 @@ const handleNext = () => {
                 className={errors.accountHolderName ? "border-destructive" : ""}
               />
               {errors.accountHolderName && <p className="text-sm text-destructive">{errors.accountHolderName}</p>}
-              <p className="text-sm text-muted-foreground">默認為您的英文姓名</p>
+              <p className="text-sm text-muted-foreground">默認為公司英文名稱</p>
             </div>
 
             <Button
