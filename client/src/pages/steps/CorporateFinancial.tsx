@@ -129,7 +129,9 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
     if (!issuedShareCapital) newErrors.issuedShareCapital = "此欄位必填";
     if (initialSourceOfWealth.length === 0) newErrors.initialSourceOfWealth = "請至少選擇一項";
     if (!netAssetValue) newErrors.netAssetValue = "請選擇淨資產值";
+    if (!netAssetAuditDate) newErrors.netAssetAuditDate = "請填寫淨資產審計時間";
     if (!profitAfterTax) newErrors.profitAfterTax = "請選擇稅後盈利";
+    if (!profitAuditDate) newErrors.profitAuditDate = "請填寫稅後盈利審計時間";
     if (assetItems.length === 0) newErrors.assetItems = "請至少選擇一項";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -222,7 +224,7 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
             {errors.netAssetValue && <p className="text-sm text-destructive">{errors.netAssetValue}</p>}
           </div>
           <div className="space-y-4">
-            <Label className="text-base font-semibold text-slate-800">淨資產審計時間 (MM/YYYY) / Net Asset Audit Date</Label>
+            <Label className="text-base font-semibold text-slate-800">淨資產審計時間 (MM/YYYY) / Net Asset Audit Date <span className="text-destructive">*</span></Label>
             <Input 
               type="text"
               className="bg-white border-2 border-slate-300 focus:border-blue-500" 
@@ -235,6 +237,7 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
                 setNetAssetAuditDate(toYYYYMM(formatted));
               }}
             />
+            {errors.netAssetAuditDate && <p className="text-sm text-destructive">{errors.netAssetAuditDate}</p>}
           </div>
         </div>
 
@@ -248,7 +251,7 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
             {errors.profitAfterTax && <p className="text-sm text-destructive">{errors.profitAfterTax}</p>}
           </div>
           <div className="space-y-4">
-            <Label className="text-base font-semibold text-slate-800">稅後盈利審計時間 (MM/YYYY) / Profit Audit Date</Label>
+            <Label className="text-base font-semibold text-slate-800">稅後盈利審計時間 (MM/YYYY) / Profit Audit Date <span className="text-destructive">*</span></Label>
             <Input 
               type="text"
               className="bg-white border-2 border-slate-300 focus:border-blue-500" 
@@ -261,6 +264,7 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
                 setProfitAuditDate(toYYYYMM(formatted));
               }}
             />
+            {errors.profitAuditDate && <p className="text-sm text-destructive">{errors.profitAuditDate}</p>}
           </div>
         </div>
 
