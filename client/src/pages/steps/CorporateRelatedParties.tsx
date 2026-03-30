@@ -21,7 +21,9 @@ interface RelatedParty {
   gender: "male" | "female" | "other" | "";
   dateOfBirth: string;
   idType: "hkid" | "passport" | "mainland_id" | "other" | "";
+  idTypeOther?: string;
   idIssuingPlace: string;
+  idIssuingPlaceOther?: string;
   idNumber: string;
   phoneCountryCode: string;
   phone: string;
@@ -64,7 +66,9 @@ const defaultParty = (): RelatedParty => ({
   gender: "",
   dateOfBirth: "",
   idType: "",
+  idTypeOther: "",
   idIssuingPlace: "",
+  idIssuingPlaceOther: "",
   idNumber: "",
   phoneCountryCode: "+852",
   phone: "",
@@ -491,28 +495,48 @@ export default function CorporateRelatedParties() {
 
             <div className="space-y-3">
               <Label>證件類型 / ID Type <span className="text-destructive">*</span></Label>
-              <Select value={currentParty.idType} onValueChange={(v: any) => setCurrentParty({ ...currentParty, idType: v })}>
-                <SelectTrigger><SelectValue placeholder="選擇證件" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="hkid">香港身份證 / HKID</SelectItem>
-                  <SelectItem value="passport">護照 / Passport</SelectItem>
-                  <SelectItem value="mainland_id">中國大陸居民身份證 / Mainland ID</SelectItem>
-                  <SelectItem value="other">其他 / Other</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="flex gap-2">
+                <Select value={currentParty.idType} onValueChange={(v: any) => setCurrentParty({ ...currentParty, idType: v })}>
+                  <SelectTrigger><SelectValue placeholder="選擇證件" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="hkid">香港身份證 / HKID</SelectItem>
+                    <SelectItem value="passport">護照 / Passport</SelectItem>
+                    <SelectItem value="mainland_id">中國大陸居民身份證 / Mainland ID</SelectItem>
+                    <SelectItem value="other">其他 / Other</SelectItem>
+                  </SelectContent>
+                </Select>
+                {currentParty.idType === "other" && (
+                  <Input
+                    value={currentParty.idTypeOther || ""}
+                    onChange={e => setCurrentParty({ ...currentParty, idTypeOther: e.target.value })}
+                    placeholder="請輸入證件類型"
+                    className="flex-1"
+                  />
+                )}
+              </div>
               {errors.idType && <p className="text-sm text-destructive">{errors.idType}</p>}
             </div>
 
             <div className="space-y-3">
               <Label>證件簽發地 / ID Issuing Country <span className="text-destructive">*</span></Label>
-              <Select value={currentParty.idIssuingPlace} onValueChange={(v: any) => setCurrentParty({ ...currentParty, idIssuingPlace: v })}>
-                <SelectTrigger><SelectValue placeholder="選擇國家/地區" /></SelectTrigger>
-                <SelectContent>
-                  {idIssuingCountries.map(c => (
-                    <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex gap-2">
+                <Select value={currentParty.idIssuingPlace} onValueChange={(v: any) => setCurrentParty({ ...currentParty, idIssuingPlace: v })}>
+                  <SelectTrigger><SelectValue placeholder="選擇國家/地區" /></SelectTrigger>
+                  <SelectContent>
+                    {idIssuingCountries.map(c => (
+                      <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {currentParty.idIssuingPlace === "OTHER" && (
+                  <Input
+                    value={currentParty.idIssuingPlaceOther || ""}
+                    onChange={e => setCurrentParty({ ...currentParty, idIssuingPlaceOther: e.target.value })}
+                    placeholder="請輸入國家/地區"
+                    className="flex-1"
+                  />
+                )}
+              </div>
               {errors.idIssuingPlace && <p className="text-sm text-destructive">{errors.idIssuingPlace}</p>}
             </div>
 

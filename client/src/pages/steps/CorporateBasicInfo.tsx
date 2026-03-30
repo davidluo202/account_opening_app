@@ -48,6 +48,7 @@ export default function CorporateBasicInfo() {
     companyEnglishName: "",
     companyChineseName: "",
     natureOfEntity: "",
+    natureOfEntityOther: "",
     natureOfBusiness: "",
     natureOfBusinessOther: "",
     countryOfIncorporation: "",
@@ -316,16 +317,26 @@ export default function CorporateBasicInfo() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="natureOfEntity">公司性質 / Nature of Entity <span className="text-destructive">*</span></Label>
-              <Select value={formData.natureOfEntity} onValueChange={(v) => setFormData({ ...formData, natureOfEntity: v })}>
-                <SelectTrigger className={errors.natureOfEntity ? "border-destructive" : ""}>
-                  <SelectValue placeholder="請選擇公司性質" />
-                </SelectTrigger>
-                <SelectContent>
-                  {entityNatures.map((n) => (
-                    <SelectItem key={n} value={n}>{n}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex gap-2">
+                <Select value={formData.natureOfEntity} onValueChange={(v) => setFormData({ ...formData, natureOfEntity: v })}>
+                  <SelectTrigger className={errors.natureOfEntity ? "border-destructive" : ""}>
+                    <SelectValue placeholder="請選擇公司性質" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {entityNatures.map((n) => (
+                      <SelectItem key={n} value={n}>{n}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {formData.natureOfEntity === "其他 / Other" && (
+                  <Input
+                    value={formData.natureOfEntityOther}
+                    onChange={(e) => setFormData({ ...formData, natureOfEntityOther: e.target.value })}
+                    placeholder="請輸入公司性質"
+                    className="flex-1"
+                  />
+                )}
+              </div>
               {errors.natureOfEntity && <p className="text-sm text-destructive">{errors.natureOfEntity}</p>}
             </div>
             <div className="space-y-2">
