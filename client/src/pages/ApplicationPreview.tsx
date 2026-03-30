@@ -836,8 +836,8 @@ export default function ApplicationPreview() {
             </div>
           )}
 
-          {/* 風險評估問卷（機構：第4節；個人：第6節） */}
-          <div className="border-b">
+          {/* 風險評估問卷摘要（僅個人客戶顯示） */}
+          {false && <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
                 <span>{isCorporate ? '4. 風險評估問卷 Risk Questionnaire' : '6. 風險評估問卷 Risk Questionnaire'}</span>
@@ -864,73 +864,12 @@ export default function ApplicationPreview() {
                 </tr>
               </tbody>
             </table>
-          </div>
-
-          {/* 銀行賬戶 */}
+          </div>}
+          {/* 風險評估問卷詳情（個人第7步；機構第5步） */}
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>6. 銀行賬戶 Bank Account</span>
-                <Button variant="ghost" size="sm" onClick={() => handleEdit(8)}>
-                  編輯
-                </Button>
-              </h3>
-            </div>
-            {bankAccounts && bankAccounts.length > 0 ? (
-              <table className="w-full min-w-[800px]">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="p-3 text-left border-r">銀行名稱 Bank Name</th>
-                    <th className="p-3 text-left border-r">賬戶类型 Account Type</th>
-                    <th className="p-3 text-left border-r">币种 Currency</th>
-                    <th className="p-3 text-left border-r">账号 Account Number</th>
-                    <th className="p-3 text-left">持有人 Holder Name</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {bankAccounts.map((account, index) => (
-                    <tr key={index} className="border-b">
-                      <td className="p-3 border-r">{account.bankName}</td>
-                      <td className="p-3 border-r">{translateBankAccountType(account.accountType)}</td>
-                      <td className="p-3 border-r">{account.accountCurrency}</td>
-                      <td className="p-3 border-r">{account.accountNumber}</td>
-                      <td className="p-3">{account.accountHolderName}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <div className="p-6 text-center text-gray-500">未添加銀行賬戶</div>
-            )}
-          </div>
-
-          {/* 稅務信息 */}
-          <div className="border-b">
-            <div className="bg-blue-50 p-3 border-b">
-              <h3 className="font-bold flex items-center justify-between">
-                <span>7. 稅務信息 Tax Information</span>
-                <Button variant="ghost" size="sm" onClick={() => handleEdit(9)}>
-                  編輯
-                </Button>
-              </h3>
-            </div>
-            <table className="w-full min-w-[800px]">
-              <tbody>
-                <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">稅務居民国家 Tax Residency</td>
-                  <td className="p-3 w-1/4 border-r">{taxInfo?.taxResidency || "-"}</td>
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">稅務识别号 TIN</td>
-                  <td className="p-3 w-1/4">{taxInfo?.taxIdNumber || "-"}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* 風險評估問卷（個人第7步；機構第5步） */}
-          <div className="border-b">
-            <div className="bg-blue-50 p-3 border-b">
-              <h3 className="font-bold flex items-center justify-between">
-                <span>{isCorporate ? '4. 風險評估問卷 Risk Assessment Questionnaire' : '8. 風險評估問卷 Risk Assessment Questionnaire'}</span>
+                <span>{isCorporate ? '4. 風險評估問卷 Risk Assessment Questionnaire' : '6. 風險評估問卷 Risk Assessment Questionnaire'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 5 : 8)}>
                   編輯
                 </Button>
@@ -1072,11 +1011,72 @@ export default function ApplicationPreview() {
             )}
           </div>
 
+
+          {/* 銀行賬戶 */}
+          <div className="border-b">
+            <div className="bg-blue-50 p-3 border-b">
+              <h3 className="font-bold flex items-center justify-between">
+                <span>{isCorporate ? '5. 結算銀行賬戶 Settlement Bank Account' : '7. 銀行賬戶 Bank Account'}</span>
+                <Button variant="ghost" size="sm" onClick={() => handleEdit(8)}>
+                  編輯
+                </Button>
+              </h3>
+            </div>
+            {bankAccounts && bankAccounts.length > 0 ? (
+              <table className="w-full min-w-[800px]">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="p-3 text-left border-r">銀行名稱 Bank Name</th>
+                    <th className="p-3 text-left border-r">賬戶类型 Account Type</th>
+                    <th className="p-3 text-left border-r">币种 Currency</th>
+                    <th className="p-3 text-left border-r">账号 Account Number</th>
+                    <th className="p-3 text-left">持有人 Holder Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bankAccounts.map((account, index) => (
+                    <tr key={index} className="border-b">
+                      <td className="p-3 border-r">{account.bankName}</td>
+                      <td className="p-3 border-r">{translateBankAccountType(account.accountType)}</td>
+                      <td className="p-3 border-r">{account.accountCurrency}</td>
+                      <td className="p-3 border-r">{account.accountNumber}</td>
+                      <td className="p-3">{account.accountHolderName}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div className="p-6 text-center text-gray-500">未添加銀行賬戶</div>
+            )}
+          </div>
+
+          {/* 稅務信息 */}
+          <div className="border-b">
+            <div className="bg-blue-50 p-3 border-b">
+              <h3 className="font-bold flex items-center justify-between">
+                <span>{isCorporate ? '6. 稅務信息 Tax Information' : '8. 稅務信息 Tax Information'}</span>
+                <Button variant="ghost" size="sm" onClick={() => handleEdit(9)}>
+                  編輯
+                </Button>
+              </h3>
+            </div>
+            <table className="w-full min-w-[800px]">
+              <tbody>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">稅務居民国家 Tax Residency</td>
+                  <td className="p-3 w-1/4 border-r">{taxInfo?.taxResidency || "-"}</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">稅務识别号 TIN</td>
+                  <td className="p-3 w-1/4">{taxInfo?.taxIdNumber || "-"}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
           {/* 文件上传（個人第10步；機構第8步） */}
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>{isCorporate ? '7. 文件上傳 Document Upload' : '8. 文件上传 Document Upload'}</span>
+                <span>{isCorporate ? '7. 文件上傳 Document Upload' : '9. 文件上传 Document Upload'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(10)}>
                   編輯
                 </Button>
@@ -1115,7 +1115,7 @@ export default function ApplicationPreview() {
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>9. 人脸识别 Face Verification</span>
+                <span>{isCorporate ? '' : '10. '}人脸识别 Face Verification</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(11)}>
                   編輯
                 </Button>
@@ -1145,7 +1145,7 @@ export default function ApplicationPreview() {
           <div>
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>{isCorporate ? '8. 監管聲明 Regulatory Declaration' : '10. 监管声明 Regulatory Declaration'}</span>
+                <span>{isCorporate ? '8. 監管聲明 Regulatory Declaration' : '11. 监管声明 Regulatory Declaration'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 9 : 12)}>
                   編輯
                 </Button>
