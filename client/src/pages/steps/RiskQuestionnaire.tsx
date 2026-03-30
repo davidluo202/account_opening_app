@@ -533,9 +533,9 @@ export default function RiskQuestionnaire() {
             </div>
           </div>
 
-          {/* PART 2A: 適用個人/聯名客戶 */}
+          {/* PART 2A: 適用所有客戶 */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold border-b pb-2">PART 2A: 適用個人/聯名客戶</h3>
+            <h3 className="text-lg font-semibold border-b pb-2">PART 2A: 適用所有客戶</h3>
 
             {/* Q7 */}
             <div className="space-y-3">

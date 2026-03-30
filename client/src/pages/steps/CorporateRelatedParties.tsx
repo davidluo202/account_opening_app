@@ -15,6 +15,7 @@ import { convertToTraditional } from "@/lib/converter";
 interface RelatedParty {
   id: string;
   relationshipType: "director" | "shareholder" | "beneficial_owner" | "authorized_signatory" | "other";
+  relationshipTypeOther?: string;
   isDefaultContact: boolean;
   name: string;
   gender: "male" | "female" | "other" | "";
@@ -57,6 +58,7 @@ const idIssuingCountries = [
 const defaultParty = (): RelatedParty => ({
   id: crypto.randomUUID(),
   relationshipType: "director",
+  relationshipTypeOther: "",
   isDefaultContact: false,
   name: "",
   gender: "",
@@ -417,16 +419,26 @@ export default function CorporateRelatedParties() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
               <Label>關係類型 / Relationship Type <span className="text-destructive">*</span></Label>
-              <Select value={currentParty.relationshipType} onValueChange={(v: any) => setCurrentParty({ ...currentParty, relationshipType: v })}>
-                <SelectTrigger><SelectValue placeholder="選擇類型" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="director">董事 / Director</SelectItem>
-                  <SelectItem value="shareholder">股東 / Shareholder</SelectItem>
-                  <SelectItem value="beneficial_owner">最終受益人 / Beneficial Owner</SelectItem>
-                  <SelectItem value="authorized_signatory">授權簽署人 / Authorized Signatory</SelectItem>
-                  <SelectItem value="other">其他 / Other</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="flex gap-2">
+                <Select value={currentParty.relationshipType} onValueChange={(v: any) => setCurrentParty({ ...currentParty, relationshipType: v })}>
+                  <SelectTrigger><SelectValue placeholder="選擇類型" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="director">董事 / Director</SelectItem>
+                    <SelectItem value="shareholder">股東 / Shareholder</SelectItem>
+                    <SelectItem value="beneficial_owner">最終受益人 / Beneficial Owner</SelectItem>
+                    <SelectItem value="authorized_signatory">授權簽署人 / Authorized Signatory</SelectItem>
+                    <SelectItem value="other">其他 / Other</SelectItem>
+                  </SelectContent>
+                </Select>
+                {currentParty.relationshipType === "other" && (
+                  <Input
+                    value={currentParty.relationshipTypeOther || ""}
+                    onChange={e => setCurrentParty({ ...currentParty, relationshipTypeOther: e.target.value })}
+                    placeholder="請輸入關係類型"
+                    className="flex-1"
+                  />
+                )}
+              </div>
               {errors.relationshipType && <p className="text-sm text-destructive">{errors.relationshipType}</p>}
             </div>
 
@@ -437,20 +449,18 @@ export default function CorporateRelatedParties() {
                   checked={currentParty.isDefaultContact}
                   onCheckedChange={(v) => setCurrentParty({ ...currentParty, isDefaultContact: !!v })}
                 />
-                <Label htmlFor="default-contact">設為默認聯絡人</Label>
+                <Label htmlFor="default-contact">設為默認賬戶聯繫人</Label>
               </div>
             </div>
 
             <div className="space-y-3">
               <Label>姓名 / Name <span className="text-destructive">*</span></Label>
-              <Input 
-                value={currentParty.name} 
-                onChange={e => setCurrentParty({ ...currentParty, name: e.target.value.toUpperCase() })} 
-                onBlur={(e) => {
-                  const converted = convertToTraditional(e.target.value);
-                  if (converted !== e.target.value) {
-                    setCurrentParty({ ...currentParty, name: converted });
-                  }
+              <Input
+                value={currentParty.name}
+                onChange={e => setCurrentParty({ ...currentParty, name: e.target.value })}
+                onBlur={() => {
+                  const converted = convertToTraditional(currentParty.name.toUpperCase());
+                  setCurrentParty({ ...currentParty, name: converted });
                 }}
               />
               {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
@@ -508,13 +518,14 @@ export default function CorporateRelatedParties() {
 
             <div className="space-y-3">
               <Label>證件號碼 / ID Number <span className="text-destructive">*</span></Label>
-              <Input 
-                value={currentParty.idNumber} 
+              <Input
+                value={currentParty.idNumber}
                 onChange={e => {
-                  // 转换为大写并替换中文括号为英文括号
-                  const value = e.target.value.toUpperCase().replace(/（/g, '(').replace(/）/g, ')');
+                  // 替换中文括号为英文括号
+                  const value = e.target.value.replace(/（/g, '(').replace(/）/g, ')');
                   setCurrentParty({ ...currentParty, idNumber: value });
-                }} 
+                }}
+                onBlur={() => setCurrentParty({ ...currentParty, idNumber: currentParty.idNumber.toUpperCase() })}
                 placeholder={
                   currentParty.idType === 'hkid' ? '請輸入您的香港身份證號碼，例如:A123456(0)' : 
                   currentParty.idType === 'mainland_id' ? '請輸入您的二代居民身份證號碼，由18位數字組成。' : 

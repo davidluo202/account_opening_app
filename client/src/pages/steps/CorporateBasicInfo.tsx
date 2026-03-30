@@ -49,7 +49,9 @@ export default function CorporateBasicInfo() {
     companyChineseName: "",
     natureOfEntity: "",
     natureOfBusiness: "",
+    natureOfBusinessOther: "",
     countryOfIncorporation: "",
+    countryOfIncorporationOther: "",
     dateOfIncorporation: "",
     certificateOfIncorporationNo: "",
     businessRegistrationNo: "",
@@ -328,30 +330,50 @@ export default function CorporateBasicInfo() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="natureOfBusiness">業務性質 / Nature of Business <span className="text-destructive">*</span></Label>
-              <Select value={formData.natureOfBusiness} onValueChange={(v) => setFormData({ ...formData, natureOfBusiness: v })}>
-                <SelectTrigger className={errors.natureOfBusiness ? "border-destructive" : ""}>
-                  <SelectValue placeholder="請選擇業務性質" />
-                </SelectTrigger>
-                <SelectContent>
-                  {businessNatures.map((n) => (
-                    <SelectItem key={n} value={n}>{n}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex gap-2">
+                <Select value={formData.natureOfBusiness} onValueChange={(v) => setFormData({ ...formData, natureOfBusiness: v })}>
+                  <SelectTrigger className={errors.natureOfBusiness ? "border-destructive" : ""}>
+                    <SelectValue placeholder="請選擇業務性質" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {businessNatures.map((n) => (
+                      <SelectItem key={n} value={n}>{n}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {formData.natureOfBusiness === "其他 / Other" && (
+                  <Input
+                    value={formData.natureOfBusinessOther}
+                    onChange={(e) => setFormData({ ...formData, natureOfBusinessOther: e.target.value })}
+                    placeholder="請輸入業務性質"
+                    className="flex-1"
+                  />
+                )}
+              </div>
               {errors.natureOfBusiness && <p className="text-sm text-destructive">{errors.natureOfBusiness}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="countryOfIncorporation">註冊國家 / Country of Incorporation <span className="text-destructive">*</span></Label>
-              <Select value={formData.countryOfIncorporation} onValueChange={(v) => setFormData({ ...formData, countryOfIncorporation: v })}>
-                <SelectTrigger className={errors.countryOfIncorporation ? "border-destructive" : ""}>
-                  <SelectValue placeholder="請選擇國家" />
-                </SelectTrigger>
-                <SelectContent>
-                  {countries.map((c) => (
-                    <SelectItem key={c} value={c}>{c === "other" ? "其他 / Other" : c}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex gap-2">
+                <Select value={formData.countryOfIncorporation} onValueChange={(v) => setFormData({ ...formData, countryOfIncorporation: v })}>
+                  <SelectTrigger className={errors.countryOfIncorporation ? "border-destructive" : ""}>
+                    <SelectValue placeholder="請選擇國家" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {countries.map((c) => (
+                      <SelectItem key={c} value={c}>{c === "other" ? "其他 / Other" : c}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {formData.countryOfIncorporation === "other" && (
+                  <Input
+                    value={formData.countryOfIncorporationOther}
+                    onChange={(e) => setFormData({ ...formData, countryOfIncorporationOther: e.target.value })}
+                    placeholder="請輸入國家"
+                    className="flex-1"
+                  />
+                )}
+              </div>
               {errors.countryOfIncorporation && <p className="text-sm text-destructive">{errors.countryOfIncorporation}</p>}
             </div>
             <div className="space-y-2">
