@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
@@ -22,10 +21,10 @@ interface FormData {
   q6_derivatives_knowledge: string[]; // 多選
   
   // PART 2A: 適用個人/聯名客戶 (Q7-Q10)
-  q7_age_group: string; // 單選
-  q8_education_level: string; // 自動填充，不顯示
-  q9_investment_knowledge_sources: string[]; // 多選
-  q10_liquidity_needs: string; // 單選
+  q7_age_group: string; // 單選 - 投資金額
+  q8_education_level: string; // 單選 - 高風險比例
+  q9_investment_knowledge_sources: string; // 單選 - 專業投資人員
+  q10_liquidity_needs: string; // 單選 - 營運開支儲備
   
   // 評分結果
   totalScore: number;
@@ -48,7 +47,7 @@ export default function RiskQuestionnaire() {
     q6_derivatives_knowledge: [],
     q7_age_group: "",
     q8_education_level: "",
-    q9_investment_knowledge_sources: [],
+    q9_investment_knowledge_sources: "",
     q10_liquidity_needs: "",
     totalScore: 0,
     riskLevel: "",
@@ -60,16 +59,6 @@ export default function RiskQuestionnaire() {
 
   // 載入已保存的數據
   const { data: savedData, isLoading: loadingData, error: savedDataError } = trpc.riskQuestionnaire.get.useQuery(
-    { applicationId: applicationId },
-    { 
-      enabled: applicationId > 0,
-      retry: false,
-      throwOnError: false,
-    }
-  );
-
-  // 加載個人詳細信息，獲取學歷
-  const { data: personalDetailedData } = trpc.personalDetailed.get.useQuery(
     { applicationId: applicationId },
     { 
       enabled: applicationId > 0,
@@ -106,7 +95,7 @@ export default function RiskQuestionnaire() {
         } catch (e) { console.error("Parse q6 error", e); }
         
         try {
-          q9 = savedData.q9_investment_knowledge_sources ? JSON.parse(savedData.q9_investment_knowledge_sources) : [];
+          q9 = savedData.q9_investment_knowledge_sources || "";
         } catch (e) { console.error("Parse q9 error", e); }
         
         setFormData({
@@ -118,7 +107,7 @@ export default function RiskQuestionnaire() {
           q6_derivatives_knowledge: q6,
           q7_age_group: savedData.q7_age_group || "",
           q8_education_level: savedData.q8_education_level || "",
-          q9_investment_knowledge_sources: q9,
+          q9_investment_knowledge_sources: typeof q9 === 'string' ? q9 : (Array.isArray(q9) ? q9[0] || '' : ''),
           q10_liquidity_needs: savedData.q10_liquidity_needs || "",
           totalScore: savedData.totalScore || 0,
           riskLevel: savedData.riskLevel || "",
@@ -129,42 +118,6 @@ export default function RiskQuestionnaire() {
       }
     }
   }, [savedData]);
-
-  // 學歷映射函數：將個人詳細信息中的學歷映射到Q8的ABC選項
-  const mapEducationToQ8 = (educationLevel: string | null | undefined): string => {
-    if (!educationLevel) return "tertiary_or_above"; // Default to highest score if missing
-    if (educationLevel === "other") {
-      return "primary_or_below"; // A選項：小學或以下學歷（10分）
-    } else if (educationLevel === "high_school") {
-      return "secondary"; // B選項：中學（30分）
-    } else {
-      return "tertiary_or_above"; // C選項：大專或以上學歷（50分）
-    }
-  };
-
-  // 獲取Q8選項的顯示文字
-  const getQ8DisplayText = (q8Value: string): string => {
-    if (q8Value === "primary_or_below") {
-      return "A. 小學或以下學歷";
-    } else if (q8Value === "secondary") {
-      return "B. 中學";
-    } else if (q8Value === "tertiary_or_above") {
-      return "C. 大專或以上學歷";
-    } else {
-      return "未填寫";
-    }
-  };
-
-  // 自動填充Q8（學歷）
-  useEffect(() => {
-    if (personalDetailedData?.educationLevel) {
-      const mappedValue = mapEducationToQ8(personalDetailedData.educationLevel);
-      setFormData(prev => ({
-        ...prev,
-        q8_education_level: mappedValue,
-      }));
-    }
-  }, [personalDetailedData]);
 
   // 保存mutation
   const saveMutation = trpc.riskQuestionnaire.save.useMutation({
@@ -216,29 +169,29 @@ export default function RiskQuestionnaire() {
     if (formData.q6_derivatives_knowledge.includes("transactions")) score += 40;
     if (formData.q6_derivatives_knowledge.includes("no_knowledge")) score += 0;
 
-    // Q7: 年齡組別（A=20分，B=30分，C=40分，D=20分，E=10分）
-    if (formData.q7_age_group === "18_to_25") score += 20;
-    else if (formData.q7_age_group === "26_to_35") score += 30;
-    else if (formData.q7_age_group === "36_to_50") score += 40;
-    else if (formData.q7_age_group === "51_to_64") score += 20;
-    else if (formData.q7_age_group === "65_plus") score += 10;
+    // Q7: 投資金額（A=10分，B=30分，C=40分，D=50分）
+    if (formData.q7_age_group === "less_than_1m") score += 10;
+    else if (formData.q7_age_group === "1m_to_5m") score += 30;
+    else if (formData.q7_age_group === "5m_to_10m") score += 40;
+    else if (formData.q7_age_group === "over_10m") score += 50;
 
-    // Q8: 教育程度（A=10分，B=30分，C=50分）
-    if (formData.q8_education_level === "primary_or_below") score += 10;
-    else if (formData.q8_education_level === "secondary") score += 30;
-    else if (formData.q8_education_level === "tertiary_or_above") score += 50;
+    // Q8: 高風險比例（A=10分，B=30分，C=40分，D=50分）
+    if (formData.q8_education_level === "less_than_25") score += 10;
+    else if (formData.q8_education_level === "25_to_50") score += 30;
+    else if (formData.q8_education_level === "51_to_75") score += 40;
+    else if (formData.q8_education_level === "over_75") score += 50;
 
-    // Q9: 投資知識來源（A=0分，B/C/D各40分）
-    if (formData.q9_investment_knowledge_sources.includes("no_interest")) score += 0;
-    if (formData.q9_investment_knowledge_sources.includes("discussion")) score += 40;
-    if (formData.q9_investment_knowledge_sources.includes("reading")) score += 40;
-    if (formData.q9_investment_knowledge_sources.includes("research")) score += 40;
+    // Q9: 專業投資人員（A=10分，B=30分，C=40分，D=50分）
+    if (formData.q9_investment_knowledge_sources === "no_no_knowledge") score += 10;
+    else if (formData.q9_investment_knowledge_sources === "no_adequate_knowledge") score += 30;
+    else if (formData.q9_investment_knowledge_sources === "yes_little_knowledge") score += 40;
+    else if (formData.q9_investment_knowledge_sources === "yes_adequate_knowledge") score += 50;
 
-    // Q10: 流動資金需求（A=50分，B=30分，C=20分，D=10分）
-    if (formData.q10_liquidity_needs === "no_need") score += 50;
-    else if (formData.q10_liquidity_needs === "up_to_30") score += 30;
-    else if (formData.q10_liquidity_needs === "30_to_50") score += 20;
-    else if (formData.q10_liquidity_needs === "over_50") score += 10;
+    // Q10: 營運開支儲備（A=10分，B=30分，C=40分，D=50分）
+    if (formData.q10_liquidity_needs === "less_than_3m") score += 10;
+    else if (formData.q10_liquidity_needs === "3m_to_6m") score += 30;
+    else if (formData.q10_liquidity_needs === "6m_to_12m") score += 40;
+    else if (formData.q10_liquidity_needs === "12m_plus") score += 50;
 
     // 判定風險等級（根據總分直接對應風險水平）
     let riskLevel = "";
@@ -278,8 +231,8 @@ export default function RiskQuestionnaire() {
     if (!formData.q5_investment_attitude) newErrors.q5 = "請選擇一項";
     if (formData.q6_derivatives_knowledge.length === 0) newErrors.q6 = "請至少選擇一項";
     if (!formData.q7_age_group) newErrors.q7 = "請選擇一項";
-    // Q8自動填充，不需要驗證
-    if (formData.q9_investment_knowledge_sources.length === 0) newErrors.q9 = "請至少選擇一項";
+    if (!formData.q8_education_level) newErrors.q8 = "請選擇一項";
+    if (!formData.q9_investment_knowledge_sources) newErrors.q9 = "請選擇一項";
     if (!formData.q10_liquidity_needs) newErrors.q10 = "請選擇一項";
 
     setErrors(newErrors);
@@ -314,7 +267,7 @@ export default function RiskQuestionnaire() {
       q6_derivatives_knowledge: JSON.stringify(formData.q6_derivatives_knowledge),
       q7_age_group: formData.q7_age_group,
       q8_education_level: formData.q8_education_level,
-      q9_investment_knowledge_sources: JSON.stringify(formData.q9_investment_knowledge_sources),
+      q9_investment_knowledge_sources: formData.q9_investment_knowledge_sources,
       q10_liquidity_needs: formData.q10_liquidity_needs,
       totalScore,
       riskLevel,
@@ -583,104 +536,101 @@ export default function RiskQuestionnaire() {
           {/* PART 2A: 適用個人/聯名客戶 */}
           <div className="space-y-6">
             <h3 className="text-lg font-semibold border-b pb-2">PART 2A: 適用個人/聯名客戶</h3>
-            
+
             {/* Q7 */}
             <div className="space-y-3">
-              <Label className="text-base font-medium">Q7. 您屬於以下哪個年齡組別？*</Label>
+              <Label className="text-base font-medium">
+                Q7. What is the amount that your company will set aside for investing in investment products during its investment period? / 貴公司預留多少資金用在投資期內的投資?*
+              </Label>
               <RadioGroup
                 value={formData.q7_age_group}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, q7_age_group: value }))}
                 className="space-y-2 pl-4"
               >
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="18_to_25" id="q7-18-to-25" />
-                  <Label htmlFor="q7-18-to-25">介乎18至25歲</Label>
+                  <RadioGroupItem value="less_than_1m" id="q7-less-than-1m" />
+                  <Label htmlFor="q7-less-than-1m">A. Less than HK$1,000,000 少於港幣$1,000,000</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="26_to_35" id="q7-26-to-35" />
-                  <Label htmlFor="q7-26-to-35">介乎26至35歲</Label>
+                  <RadioGroupItem value="1m_to_5m" id="q7-1m-to-5m" />
+                  <Label htmlFor="q7-1m-to-5m">B. Between HK$1,000,001 to HK$5,000,000 介乎港幣$1,000,001至港幣$5,000,000</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="36_to_50" id="q7-36-to-50" />
-                  <Label htmlFor="q7-36-to-50">介乎36至50歲</Label>
+                  <RadioGroupItem value="5m_to_10m" id="q7-5m-to-10m" />
+                  <Label htmlFor="q7-5m-to-10m">C. Between HK$5,000,001 to HK$10,000,000 介乎港幣$5,000,001至港幣$10,000,000</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="51_to_64" id="q7-51-to-64" />
-                  <Label htmlFor="q7-51-to-64">介乎51至64歲</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="65_plus" id="q7-65-plus" />
-                  <Label htmlFor="q7-65-plus">65歲或以上</Label>
+                  <RadioGroupItem value="over_10m" id="q7-over-10m" />
+                  <Label htmlFor="q7-over-10m">D. Over HK$10,000,000 多於港幣$10,000,000</Label>
                 </div>
               </RadioGroup>
               {errors.q7 && <p className="text-sm text-destructive">{errors.q7}</p>}
             </div>
 
-            {/* Q8 - 自動從個人詳細信息獲取，顯示為只讀 */}
+            {/* Q8 */}
             <div className="space-y-3">
-              <Label className="text-base font-medium">Q8. 您的教育程度*</Label>
-              <Input
-                value={getQ8DisplayText(formData.q8_education_level)}
-                disabled
-                className="bg-muted"
-              />
-              <p className="text-sm text-muted-foreground">此信息自動從個人詳細信息中獲取，如需修改請返回個人詳細信息頁面</p>
+              <Label className="text-base font-medium">
+                Q8. What is the percentage investing in higher risk products of your portfolio? (eg. Warrant, CBBCs etc.) / 貴公司會把多少比例的資產投資於較高風險的投資項目？（如：窩輪，牛熊證等）*
+              </Label>
+              <RadioGroup
+                value={formData.q8_education_level}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, q8_education_level: value }))}
+                className="space-y-2 pl-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="less_than_25" id="q8-less-than-25" />
+                  <Label htmlFor="q8-less-than-25">A. Less than 25% 少於25%</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="25_to_50" id="q8-25-to-50" />
+                  <Label htmlFor="q8-25-to-50">B. Between 25% to 50% 介乎25%至50%</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="51_to_75" id="q8-51-to-75" />
+                  <Label htmlFor="q8-51-to-75">C. Between 51% to 75% 介乎51%至75%</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="over_75" id="q8-over-75" />
+                  <Label htmlFor="q8-over-75">D. More than 75% 多於75%</Label>
+                </div>
+              </RadioGroup>
+              {errors.q8 && <p className="text-sm text-destructive">{errors.q8}</p>}
             </div>
 
             {/* Q9 */}
             <div className="space-y-3">
               <Label className="text-base font-medium">
-                Q9. 您曾經或現時從以下哪些途徑汲取投資知識？* (可多選)
+                Q9. Does your company employ any dedicated professionals responsible for making investment decisions? / 貴公司是否聘用專業人員負責作出投資決定?*
               </Label>
-              <div className="space-y-2 pl-4">
+              <RadioGroup
+                value={formData.q9_investment_knowledge_sources}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, q9_investment_knowledge_sources: value }))}
+                className="space-y-2 pl-4"
+              >
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q9-no-interest"
-                    checked={formData.q9_investment_knowledge_sources.includes("no_interest")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q9_investment_knowledge_sources", "no_interest", checked as boolean)}
-                  />
-                  <label htmlFor="q9-no-interest" className="text-sm">
-                    從未汲取及/或沒有興趣汲取任何投資知識
-                  </label>
+                  <RadioGroupItem value="no_no_knowledge" id="q9-no-no-knowledge" />
+                  <Label htmlFor="q9-no-no-knowledge">A. No, we do not have knowledge on making investment decisions. 否，本公司對投資決定沒有相關知識。</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q9-discussion"
-                    checked={formData.q9_investment_knowledge_sources.includes("discussion")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q9_investment_knowledge_sources", "discussion", checked as boolean)}
-                  />
-                  <label htmlFor="q9-discussion" className="text-sm">
-                    與親友及/或同事討論投資或理財話題
-                  </label>
+                  <RadioGroupItem value="no_adequate_knowledge" id="q9-no-adequate" />
+                  <Label htmlFor="q9-no-adequate">B. No, but we have adequate knowledge on making investment decisions. 否, 但本公司對投資決定有足夠相關知識。</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q9-reading"
-                    checked={formData.q9_investment_knowledge_sources.includes("reading")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q9_investment_knowledge_sources", "reading", checked as boolean)}
-                  />
-                  <label htmlFor="q9-reading" className="text-sm">
-                    閱讀及/或收聽有關投資或財經新聞
-                  </label>
+                  <RadioGroupItem value="yes_little_knowledge" id="q9-yes-little" />
+                  <Label htmlFor="q9-yes-little">C. Yes, but we have only some or little knowledge on making investment decisions. 是，但本公司對投資決定只有一些或少許相關知識。</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="q9-research"
-                    checked={formData.q9_investment_knowledge_sources.includes("research")}
-                    onCheckedChange={(checked) => handleCheckboxChange("q9_investment_knowledge_sources", "research", checked as boolean)}
-                  />
-                  <label htmlFor="q9-research" className="text-sm">
-                    研究投資或財務相關事宜，或參加投資或財務相關課程、論壇、簡報會、研討會或工作坊
-                  </label>
+                  <RadioGroupItem value="yes_adequate_knowledge" id="q9-yes-adequate" />
+                  <Label htmlFor="q9-yes-adequate">D. Yes, we have senior management with adequate knowledge to make investment decisions. 是，本公司有足夠相關知識的管理層作出投資決定。</Label>
                 </div>
-              </div>
+              </RadioGroup>
               {errors.q9 && <p className="text-sm text-destructive">{errors.q9}</p>}
             </div>
 
             {/* Q10 */}
             <div className="space-y-3">
               <Label className="text-base font-medium">
-                Q10. 您需要將多少投資兌現，以滿足突發事件的流動資金需求？*
+                Q10. In general, how much liquid assets (e.g. cash, foreign currency, bank deposits, etc.) has your company reserved for monthly operational expenses? / 在一般情況下，貴公司會預留多少流動資金(當中包括現金, 外幣, 銀行存款等)作為每月營運開支儲備?*
               </Label>
               <RadioGroup
                 value={formData.q10_liquidity_needs}
@@ -688,20 +638,20 @@ export default function RiskQuestionnaire() {
                 className="space-y-2 pl-4"
               >
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="no_need" id="q10-no-need" />
-                  <Label htmlFor="q10-no-need">不需要出售任何投資</Label>
+                  <RadioGroupItem value="less_than_3m" id="q10-less-than-3m" />
+                  <Label htmlFor="q10-less-than-3m">A. Less than 3 months operational expenses 少於3個月的營運開支儲備</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="up_to_30" id="q10-up-to-30" />
-                  <Label htmlFor="q10-up-to-30">我會出售不超過30%的投資</Label>
+                  <RadioGroupItem value="3m_to_6m" id="q10-3m-to-6m" />
+                  <Label htmlFor="q10-3m-to-6m">B. 3 months to 6-months operational expenses 3個月至6個月的營運開支儲備</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="30_to_50" id="q10-30-to-50" />
-                  <Label htmlFor="q10-30-to-50">我會出售超過30%但不到50%的投資</Label>
+                  <RadioGroupItem value="6m_to_12m" id="q10-6m-to-12m" />
+                  <Label htmlFor="q10-6m-to-12m">C. 6 months to 12-months operational expenses 6個月至12個月的營運開支儲備</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="over_50" id="q10-over-50" />
-                  <Label htmlFor="q10-over-50">我會出售超過50%的投資</Label>
+                  <RadioGroupItem value="12m_plus" id="q10-12m-plus" />
+                  <Label htmlFor="q10-12m-plus">D. 12 months or above operational expenses 12個月以上的營運開支儲備</Label>
                 </div>
               </RadioGroup>
               {errors.q10 && <p className="text-sm text-destructive">{errors.q10}</p>}
