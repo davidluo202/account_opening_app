@@ -631,7 +631,7 @@ const handleNext = () => {
                 className={errors.accountHolderName ? "border-destructive" : ""}
               />
               {errors.accountHolderName && <p className="text-sm text-destructive">{errors.accountHolderName}</p>}
-              <p className="text-sm text-muted-foreground">默認為公司英文名稱</p>
+              <p className="text-sm text-muted-foreground">默認為英文名稱</p>
             </div>
 
             <Button
