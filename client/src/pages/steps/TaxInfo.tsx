@@ -150,7 +150,7 @@ const handleSave = () => {
         {/* 稅務居住地 */}
         <div className="space-y-2">
           <Label htmlFor="taxResidency">
-            稅務管轄區 / Jurisdiction <span className="text-destructive">*</span>
+            稅務管轄區 / Tax Jurisdiction <span className="text-destructive">*</span>
           </Label>
           <Input
             id="taxResidency"
