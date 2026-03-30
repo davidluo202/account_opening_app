@@ -20,7 +20,7 @@ interface FormData {
   q5_investment_attitude: string; // 單選
   q6_derivatives_knowledge: string[]; // 多選
   
-  // PART 2A: 適用個人/聯名客戶 (Q7-Q10)
+  // PART 2: 適用公司客戶 (Q7-Q10)
   q7_age_group: string; // 單選 - 投資金額
   q8_education_level: string; // 單選 - 高風險比例
   q9_investment_knowledge_sources: string; // 單選 - 專業投資人員
@@ -533,14 +533,14 @@ export default function RiskQuestionnaire() {
             </div>
           </div>
 
-          {/* PART 2A: 適用所有客戶 */}
+          {/* PART 2: 適用公司客戶 */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold border-b pb-2">PART 2A: 適用所有客戶</h3>
+            <h3 className="text-lg font-semibold border-b pb-2">PART 2: 適用公司客戶</h3>
 
             {/* Q7 */}
             <div className="space-y-3">
               <Label className="text-base font-medium">
-                Q7. What is the amount that your company will set aside for investing in investment products during its investment period? / 貴公司預留多少資金用在投資期內的投資?*
+                Q7. 貴公司預留多少資金用在投資期內的投資?*
               </Label>
               <RadioGroup
                 value={formData.q7_age_group}
@@ -549,19 +549,19 @@ export default function RiskQuestionnaire() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="less_than_1m" id="q7-less-than-1m" />
-                  <Label htmlFor="q7-less-than-1m">A. Less than HK$1,000,000 少於港幣$1,000,000</Label>
+                  <Label htmlFor="q7-less-than-1m">A. 少於港幣$1,000,000</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="1m_to_5m" id="q7-1m-to-5m" />
-                  <Label htmlFor="q7-1m-to-5m">B. Between HK$1,000,001 to HK$5,000,000 介乎港幣$1,000,001至港幣$5,000,000</Label>
+                  <Label htmlFor="q7-1m-to-5m">B. 介乎港幣$1,000,001至港幣$5,000,000</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="5m_to_10m" id="q7-5m-to-10m" />
-                  <Label htmlFor="q7-5m-to-10m">C. Between HK$5,000,001 to HK$10,000,000 介乎港幣$5,000,001至港幣$10,000,000</Label>
+                  <Label htmlFor="q7-5m-to-10m">C. 介乎港幣$5,000,001至港幣$10,000,000</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="over_10m" id="q7-over-10m" />
-                  <Label htmlFor="q7-over-10m">D. Over HK$10,000,000 多於港幣$10,000,000</Label>
+                  <Label htmlFor="q7-over-10m">D. 多於港幣$10,000,000</Label>
                 </div>
               </RadioGroup>
               {errors.q7 && <p className="text-sm text-destructive">{errors.q7}</p>}
@@ -570,7 +570,7 @@ export default function RiskQuestionnaire() {
             {/* Q8 */}
             <div className="space-y-3">
               <Label className="text-base font-medium">
-                Q8. What is the percentage investing in higher risk products of your portfolio? (eg. Warrant, CBBCs etc.) / 貴公司會把多少比例的資產投資於較高風險的投資項目？（如：窩輪，牛熊證等）*
+                Q8. 貴公司會把多少比例的資產投資於較高風險的投資項目？（如：窩輪，牛熊證等）*
               </Label>
               <RadioGroup
                 value={formData.q8_education_level}
@@ -579,19 +579,19 @@ export default function RiskQuestionnaire() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="less_than_25" id="q8-less-than-25" />
-                  <Label htmlFor="q8-less-than-25">A. Less than 25% 少於25%</Label>
+                  <Label htmlFor="q8-less-than-25">A. 少於25%</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="25_to_50" id="q8-25-to-50" />
-                  <Label htmlFor="q8-25-to-50">B. Between 25% to 50% 介乎25%至50%</Label>
+                  <Label htmlFor="q8-25-to-50">B. 介乎25%至50%</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="51_to_75" id="q8-51-to-75" />
-                  <Label htmlFor="q8-51-to-75">C. Between 51% to 75% 介乎51%至75%</Label>
+                  <Label htmlFor="q8-51-to-75">C. 介乎51%至75%</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="over_75" id="q8-over-75" />
-                  <Label htmlFor="q8-over-75">D. More than 75% 多於75%</Label>
+                  <Label htmlFor="q8-over-75">D. 多於75%</Label>
                 </div>
               </RadioGroup>
               {errors.q8 && <p className="text-sm text-destructive">{errors.q8}</p>}
@@ -600,7 +600,7 @@ export default function RiskQuestionnaire() {
             {/* Q9 */}
             <div className="space-y-3">
               <Label className="text-base font-medium">
-                Q9. Does your company employ any dedicated professionals responsible for making investment decisions? / 貴公司是否聘用專業人員負責作出投資決定?*
+                Q9. 貴公司是否聘用專業人員負責作出投資決定?*
               </Label>
               <RadioGroup
                 value={formData.q9_investment_knowledge_sources}
@@ -609,19 +609,19 @@ export default function RiskQuestionnaire() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="no_no_knowledge" id="q9-no-no-knowledge" />
-                  <Label htmlFor="q9-no-no-knowledge">A. No, we do not have knowledge on making investment decisions. 否，本公司對投資決定沒有相關知識。</Label>
+                  <Label htmlFor="q9-no-no-knowledge">A. 否，本公司對投資決定沒有相關知識。</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="no_adequate_knowledge" id="q9-no-adequate" />
-                  <Label htmlFor="q9-no-adequate">B. No, but we have adequate knowledge on making investment decisions. 否, 但本公司對投資決定有足夠相關知識。</Label>
+                  <Label htmlFor="q9-no-adequate">B. 否，但本公司對投資決定有足夠相關知識。</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="yes_little_knowledge" id="q9-yes-little" />
-                  <Label htmlFor="q9-yes-little">C. Yes, but we have only some or little knowledge on making investment decisions. 是，但本公司對投資決定只有一些或少許相關知識。</Label>
+                  <Label htmlFor="q9-yes-little">C. 是，但本公司對投資決定只有一些或少許相關知識。</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="yes_adequate_knowledge" id="q9-yes-adequate" />
-                  <Label htmlFor="q9-yes-adequate">D. Yes, we have senior management with adequate knowledge to make investment decisions. 是，本公司有足夠相關知識的管理層作出投資決定。</Label>
+                  <Label htmlFor="q9-yes-adequate">D. 是，本公司有足夠相關知識的管理層作出投資決定。</Label>
                 </div>
               </RadioGroup>
               {errors.q9 && <p className="text-sm text-destructive">{errors.q9}</p>}
@@ -630,7 +630,7 @@ export default function RiskQuestionnaire() {
             {/* Q10 */}
             <div className="space-y-3">
               <Label className="text-base font-medium">
-                Q10. In general, how much liquid assets (e.g. cash, foreign currency, bank deposits, etc.) has your company reserved for monthly operational expenses? / 在一般情況下，貴公司會預留多少流動資金(當中包括現金, 外幣, 銀行存款等)作為每月營運開支儲備?*
+                Q10. 在一般情況下，貴公司會預留多少流動資金(當中包括現金、外幣、銀行存款等)作為每月營運開支儲備?*
               </Label>
               <RadioGroup
                 value={formData.q10_liquidity_needs}
@@ -639,19 +639,19 @@ export default function RiskQuestionnaire() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="less_than_3m" id="q10-less-than-3m" />
-                  <Label htmlFor="q10-less-than-3m">A. Less than 3 months operational expenses 少於3個月的營運開支儲備</Label>
+                  <Label htmlFor="q10-less-than-3m">A. 少於3個月的營運開支儲備</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="3m_to_6m" id="q10-3m-to-6m" />
-                  <Label htmlFor="q10-3m-to-6m">B. 3 months to 6-months operational expenses 3個月至6個月的營運開支儲備</Label>
+                  <Label htmlFor="q10-3m-to-6m">B. 3個月至6個月的營運開支儲備</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="6m_to_12m" id="q10-6m-to-12m" />
-                  <Label htmlFor="q10-6m-to-12m">C. 6 months to 12-months operational expenses 6個月至12個月的營運開支儲備</Label>
+                  <Label htmlFor="q10-6m-to-12m">C. 6個月至12個月的營運開支儲備</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="12m_plus" id="q10-12m-plus" />
-                  <Label htmlFor="q10-12m-plus">D. 12 months or above operational expenses 12個月以上的營運開支儲備</Label>
+                  <Label htmlFor="q10-12m-plus">D. 12個月以上的營運開支儲備</Label>
                 </div>
               </RadioGroup>
               {errors.q10 && <p className="text-sm text-destructive">{errors.q10}</p>}
