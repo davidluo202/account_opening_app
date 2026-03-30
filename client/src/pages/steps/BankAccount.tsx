@@ -620,12 +620,14 @@ const handleNext = () => {
                 id="accountHolderName"
                 value={formData.accountHolderName}
                 onChange={(e) => {
-                  let val = e.target.value;
-                  if (/^[A-Za-z\s]+$/.test(val)) {
-                    val = val.toUpperCase();
-                  }
-                  setFormData({ ...formData, accountHolderName: val });
+                  setFormData({ ...formData, accountHolderName: e.target.value });
                   if (errors.accountHolderName) setErrors({ ...errors, accountHolderName: "" });
+                }}
+                onBlur={() => {
+                  const val = formData.accountHolderName;
+                  if (/^[A-Za-z\s]+$/.test(val)) {
+                    setFormData({ ...formData, accountHolderName: val.toUpperCase() });
+                  }
                 }}
                 placeholder="請輸入賬戶持有人姓名"
                 className={errors.accountHolderName ? "border-destructive" : ""}
