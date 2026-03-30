@@ -87,7 +87,7 @@ export default function TaxInfo() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.taxResidency.trim()) newErrors.taxResidency = "請輸入稅務居住地";
+    if (!formData.taxResidency.trim()) newErrors.taxResidency = "請輸入稅務管轄區";
     if (!formData.taxIdNumber.trim()) newErrors.taxIdNumber = "請輸入稅務識別號";
 
     setErrors(newErrors);
@@ -150,7 +150,7 @@ const handleSave = () => {
         {/* 稅務居住地 */}
         <div className="space-y-2">
           <Label htmlFor="taxResidency">
-            稅務居住地 / Tax Residency <span className="text-destructive">*</span>
+            稅務管轄區 / Jurisdiction <span className="text-destructive">*</span>
           </Label>
           <Input
             id="taxResidency"
@@ -159,7 +159,7 @@ const handleSave = () => {
               setFormData({ ...formData, taxResidency: e.target.value });
               if (errors.taxResidency) setErrors({ ...errors, taxResidency: "" });
             }}
-            placeholder="請輸入稅務居住地"
+            placeholder="請輸入稅務管轄區"
             className={errors.taxResidency ? "border-destructive" : ""}
           />
           {errors.taxResidency && <p className="text-sm text-destructive">{errors.taxResidency}</p>}

@@ -1063,7 +1063,7 @@ export default function ApplicationPreview() {
             <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">稅務居民国家 Tax Residency</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">稅務管轄區 Jurisdiction</td>
                   <td className="p-3 w-1/4 border-r">{taxInfo?.taxResidency || "-"}</td>
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">稅務识别号 TIN</td>
                   <td className="p-3 w-1/4">{taxInfo?.taxIdNumber || "-"}</td>
