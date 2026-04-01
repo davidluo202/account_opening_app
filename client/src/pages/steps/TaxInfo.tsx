@@ -70,9 +70,12 @@ export default function TaxInfo() {
     if (existingData && (existingData.taxResidency || existingData.taxIdNumber)) {
       setFormData(existingData);
     } else if (corporateInfo) {
-      // 機構：納稅居住國=註冊國家，稅務編號=商業登記證號碼
+      // 機構：納稅居住國=註冊國家（若選擇"other"則用補充說明），稅務編號=商業登記證號碼
+      const taxResidency = corporateInfo.countryOfIncorporation === "other" 
+        ? corporateInfo.countryOfIncorporationOther 
+        : corporateInfo.countryOfIncorporation;
       setFormData({
-        taxResidency: corporateInfo.countryOfIncorporation,
+        taxResidency: taxResidency,
         taxIdNumber: corporateInfo.businessRegistrationNo,
       });
     } else if (basicInfo && detailedInfo) {
@@ -150,7 +153,7 @@ const handleSave = () => {
         {/* 稅務居住地 */}
         <div className="space-y-2">
           <Label htmlFor="taxResidency">
-            稅務管轄區 / Tax Jurisdiction <span className="text-destructive">*</span>
+            稅務管轄區 / Jurisdiction of Tax Residence <span className="text-destructive">*</span>
           </Label>
           <Input
             id="taxResidency"
@@ -169,7 +172,7 @@ const handleSave = () => {
         {/* 稅務識別號 */}
         <div className="space-y-2">
           <Label htmlFor="taxIdNumber">
-            稅務識別號 / Tax ID Number <span className="text-destructive">*</span>
+            稅務識別號 / Tax Identification Number（"TIN"）<span className="text-destructive">*</span>
           </Label>
           <Input
             id="taxIdNumber"
