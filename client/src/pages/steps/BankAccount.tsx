@@ -318,9 +318,11 @@ export default function BankAccount() {
     
     if (!formData.accountHolderName.trim()) newErrors.accountHolderName = "請輸入賬戶持有人姓名";
     
-    // SWIFT Code 驗證：8-11位英文和數字
-    if (formData.swiftCode && !/^[A-Z0-9]{8,11}$/i.test(formData.swiftCode)) {
-      newErrors.swiftCode = "SWIFT Code 應為8-11位英文或數字";
+    // SWIFT Code 驗證：必填，8-11位英文和數字
+    if (!formData.swiftCode.trim()) {
+      newErrors.swiftCode = "請輸入SWIFT代碼";
+    } else if (!/^[A-Z0-9]{8,11}$/i.test(formData.swiftCode)) {
+      newErrors.swiftCode = "SWIFT代碼應為8-11位英文或數字";
     }
 
     setErrors(newErrors);
@@ -561,7 +563,7 @@ const handleNext = () => {
             {/* SWIFT Code */}
             <div className="space-y-2">
               <Label htmlFor="swiftCode">
-                SWIFT Code / BIC Code <span className="text-destructive">*</span>
+                SWIFT 代碼 / SWIFT Code <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="swiftCode"
