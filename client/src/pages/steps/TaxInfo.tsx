@@ -18,6 +18,8 @@ export default function TaxInfo() {
   const [formData, setFormData] = useState({
     taxResidency: "",
     taxIdNumber: "",
+    noTaxId: false, // 沒有稅務編號
+    noTaxIdReason: "", // 沒有稅務編號的理由
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -91,7 +93,8 @@ export default function TaxInfo() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.taxResidency.trim()) newErrors.taxResidency = "請輸入稅務管轄區";
-    if (!formData.taxIdNumber.trim()) newErrors.taxIdNumber = "請輸入稅務識別號";
+    if (!formData.noTaxId && !formData.taxIdNumber.trim()) newErrors.taxIdNumber = "請輸入稅務識別號";
+    if (formData.noTaxId && !formData.noTaxIdReason.trim()) newErrors.noTaxIdReason = "請輸入沒有稅務編號的理由";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -186,6 +189,42 @@ const handleSave = () => {
           />
           {errors.taxIdNumber && <p className="text-sm text-destructive">{errors.taxIdNumber}</p>}
           <p className="text-sm text-muted-foreground">{corporateInfo ? "默認為商業登記證號碼" : "默認為您的證件號碼"}</p>
+        </div>
+
+        {/* 沒有稅務編號 */}
+        <div className="space-y-3">
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="noTaxId"
+              checked={formData.noTaxId}
+              onChange={(e) => {
+                setFormData({ ...formData, noTaxId: e.target.checked, taxIdNumber: e.target.checked ? "" : formData.taxIdNumber, noTaxIdReason: "" });
+                if (errors.taxIdNumber) setErrors({ ...errors, taxIdNumber: "" });
+                if (errors.noTaxIdReason) setErrors({ ...errors, noTaxIdReason: "" });
+              }}
+              className="w-4 h-4"
+            />
+            <Label htmlFor="noTaxId" className="cursor-pointer">沒有稅務編號 / No Tax ID</Label>
+          </div>
+          {formData.noTaxId && (
+            <div className="space-y-2">
+              <Label htmlFor="noTaxIdReason">
+                請說明理由 / Please provide reason <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="noTaxIdReason"
+                value={formData.noTaxIdReason}
+                onChange={(e) => {
+                  setFormData({ ...formData, noTaxIdReason: e.target.value });
+                  if (errors.noTaxIdReason) setErrors({ ...errors, noTaxIdReason: "" });
+                }}
+                placeholder="請輸入理由"
+                className={errors.noTaxIdReason ? "border-destructive" : ""}
+              />
+              {errors.noTaxIdReason && <p className="text-sm text-destructive">{errors.noTaxIdReason}</p>}
+            </div>
+          )}
         </div>
       </div>
     </ApplicationWizard>

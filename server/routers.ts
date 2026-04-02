@@ -936,6 +936,8 @@ export const appRouter = router({
         accountCurrency: z.string(),
         accountNumber: z.string(),
         accountHolderName: z.string(),
+        accountHolderAddress: z.string().optional(), // 持有人地址
+        swiftCode: z.string().optional(), // SWIFT Code
       }))
       .mutation(async ({ input, ctx }) => {
         const { applicationId, ...data } = input;
@@ -975,6 +977,8 @@ export const appRouter = router({
         applicationId: z.number(),
         taxResidency: z.string(),
         taxIdNumber: z.string(),
+        noTaxId: z.boolean().optional().default(false),
+        noTaxIdReason: z.string().optional(),
       }))
       .mutation(async ({ input, ctx }) => {
         const { applicationId, ...data } = input;

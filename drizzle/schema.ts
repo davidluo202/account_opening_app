@@ -231,6 +231,8 @@ export const bankAccounts = mysqlTable("bank_accounts", {
   accountCurrency: varchar("accountCurrency", { length: 10 }).notNull(),
   accountNumber: varchar("accountNumber", { length: 100 }).notNull(),
   accountHolderName: varchar("accountHolderName", { length: 200 }).notNull(),
+  accountHolderAddress: varchar("accountHolderAddress", { length: 500 }), // 持有人地址
+  swiftCode: varchar("swiftCode", { length: 20 }), // SWIFT Code
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -243,6 +245,8 @@ export const taxInfo = mysqlTable("tax_info", {
   applicationId: int("applicationId").notNull().unique(),
   taxResidency: varchar("taxResidency", { length: 100 }).notNull(),
   taxIdNumber: varchar("taxIdNumber", { length: 100 }).notNull(),
+  noTaxId: boolean("noTaxId").default(false), // 沒有稅務編號
+  noTaxIdReason: text("noTaxIdReason"), // 沒有稅務編號的理由
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

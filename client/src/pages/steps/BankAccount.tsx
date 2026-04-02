@@ -195,10 +195,12 @@ export default function BankAccount() {
   const [formData, setFormData] = useState({
     bankName: "",
     bankCode: "", // 銀行代碼
+    swiftCode: "", // SWIFT Code
     accountType: "saving", // 默认为Saving
     accountCurrency: "HKD",
     accountNumber: "",
     accountHolderName: "",
+    accountHolderAddress: "", // 持有人地址
     bankLocation: "HK", // 默认香港
   });
 
@@ -315,6 +317,11 @@ export default function BankAccount() {
     }
     
     if (!formData.accountHolderName.trim()) newErrors.accountHolderName = "請輸入賬戶持有人姓名";
+    
+    // SWIFT Code 驗證：8-11位英文和數字
+    if (formData.swiftCode && !/^[A-Z0-9]{8,11}$/i.test(formData.swiftCode)) {
+      newErrors.swiftCode = "SWIFT Code 應為8-11位英文或數字";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -337,6 +344,8 @@ export default function BankAccount() {
         accountCurrency: formData.accountCurrency,
         accountNumber: formData.accountNumber,
         accountHolderName: formData.accountHolderName,
+        accountHolderAddress: formData.accountHolderAddress,
+        swiftCode: formData.swiftCode,
       });
 
     if (editingId) {
@@ -549,6 +558,31 @@ const handleNext = () => {
               {errors.bankName && <p className="text-sm text-destructive">{errors.bankName}</p>}
             </div>
 
+            {/* SWIFT Code */}
+            <div className="space-y-2">
+              <Label htmlFor="swiftCode">
+                SWIFT Code / BIC Code <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="swiftCode"
+                value={formData.swiftCode}
+                onChange={(e) => {
+                  setFormData({ ...formData, swiftCode: e.target.value.toUpperCase() });
+                  if (errors.swiftCode) setErrors({ ...errors, swiftCode: "" });
+                }}
+                onBlur={() => {
+                  // 失焦时转换为大写
+                  if (formData.swiftCode) {
+                    setFormData({ ...formData, swiftCode: formData.swiftCode.toUpperCase() });
+                  }
+                }}
+                placeholder="請輸入8-11位SWIFT Code"
+                className={errors.swiftCode ? "border-destructive" : ""}
+                maxLength={11}
+              />
+              {errors.swiftCode && <p className="text-sm text-destructive">{errors.swiftCode}</p>}
+            </div>
+
             {/* 账户类型 */}
             <div className="space-y-2">
               <Label htmlFor="accountType">
@@ -634,6 +668,19 @@ const handleNext = () => {
               />
               {errors.accountHolderName && <p className="text-sm text-destructive">{errors.accountHolderName}</p>}
               <p className="text-sm text-muted-foreground">默認為英文名稱</p>
+            </div>
+
+            {/* 持有人地址 */}
+            <div className="space-y-2">
+              <Label htmlFor="accountHolderAddress">
+                持有人地址 / Holder Address <span className="text-gray-400">(選填)</span>
+              </Label>
+              <Input
+                id="accountHolderAddress"
+                value={formData.accountHolderAddress}
+                onChange={(e) => setFormData({ ...formData, accountHolderAddress: e.target.value })}
+                placeholder="請輸入持有人地址"
+              />
             </div>
 
             <Button
