@@ -205,7 +205,7 @@ const handleSave = () => {
               }}
               className="w-4 h-4"
             />
-            <Label htmlFor="noTaxId" className="cursor-pointer">沒有稅務編號 / No Tax ID</Label>
+            <Label htmlFor="noTaxId" className="cursor-pointer">沒有稅務識別號 / No TIN</Label>
           </div>
           {formData.noTaxId && (
             <div className="space-y-2">
