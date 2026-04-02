@@ -147,7 +147,9 @@ export const personalDetailedInfo = mysqlTable("personal_detailed_info", {
   applicationId: int("applicationId").notNull().unique(),
   idType: varchar("idType", { length: 50 }).notNull(), // 身份证件类型
   idNumber: varchar("idNumber", { length: 100 }).notNull(),
+  idIssuingCountry: varchar("idIssuingCountry", { length: 10 }), // 证件签发国家
   idIssuingPlace: varchar("idIssuingPlace", { length: 200 }).notNull(),
+  idIssuingPlaceOther: varchar("idIssuingPlaceOther", { length: 200 }), // 当选择"其他"时填写
   idExpiryDate: varchar("idExpiryDate", { length: 10 }), // YYYY-MM-DD or null if permanent
   idIsPermanent: boolean("idIsPermanent").default(false).notNull(),
   maritalStatus: varchar("maritalStatus", { length: 50 }).notNull(),

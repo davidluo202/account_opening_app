@@ -13,6 +13,20 @@ import { Loader2 } from "lucide-react";
 import { convertToTraditional } from "@/lib/converter";
 import { validateHKID, validateChinaIDWithMatch, validateIDExpiry } from "@/lib/validators";
 
+const idIssuingCountries = [
+  { value: "HK", label: "香港 Hong Kong" },
+  { value: "CN", label: "中國內地 Chinese Mainland" },
+  { value: "MO", label: "澳門 Macau" },
+  { value: "TW", label: "台灣 Taiwan" },
+  { value: "US", label: "美國 United States" },
+  { value: "GB", label: "英國 United Kingdom" },
+  { value: "SG", label: "新加坡 Singapore" },
+  { value: "AU", label: "澳洲 Australia" },
+  { value: "CA", label: "加拿大 Canada" },
+  { value: "JP", label: "日本 Japan" },
+  { value: "OTHER", label: "其他 Other" },
+];
+
 const idTypes = [
   { value: "hkid", label: "香港身份證 / HKID" },
   { value: "passport", label: "護照 / Passport" },
@@ -69,6 +83,8 @@ export default function PersonalDetailedInfo() {
   const [formData, setFormData] = useState({
     idType: "",
     idNumber: "",
+    idIssuingCountry: "",
+    idIssuingPlaceOther: "",
     idIssuingPlace: "",
     idExpiryDate: "",
     idIsPermanent: false,
@@ -142,6 +158,8 @@ export default function PersonalDetailedInfo() {
         phoneCountryCode: existingData.phoneCountryCode || "+852",
         phoneNumber: existingData.phoneNumber || "",
         billingAddressOther: existingData.billingAddressOther || "",
+        idIssuingCountry: existingData.idIssuingCountry || "",
+        idIssuingPlaceOther: existingData.idIssuingPlaceOther || "",
       });
       // 从数据库读取邮箱验证状态
       if (existingData.emailVerified) {
@@ -243,6 +261,9 @@ export default function PersonalDetailedInfo() {
       }
     }
     if (!formData.idIssuingPlace.trim()) newErrors.idIssuingPlace = "請輸入證件簽發地";
+    if (formData.idIssuingCountry === "OTHER" && !formData.idIssuingPlaceOther?.trim()) {
+      newErrors.idIssuingPlaceOther = "請輸入證件簽發國家/地區";
+    }
     
     // 使用validators.ts中的證件有效期校驗
     if (!formData.idIsPermanent) {
@@ -379,30 +400,52 @@ export default function PersonalDetailedInfo() {
             {errors.idNumber && <p className="text-sm text-destructive">{errors.idNumber}</p>}
           </div>
 
-          {/* 證件簽發地 */}
+          {/* 證件簽發國家/地區 */}
           <div className="space-y-2">
-            <Label htmlFor="idIssuingPlace">
-              證件簽發地 / Issuing Place <span className="text-destructive">*</span>
+            <Label htmlFor="idIssuingCountry">
+              證件簽發國家/地區 / Issuing Country <span className="text-destructive">*</span>
             </Label>
-            <Input
-              id="idIssuingPlace"
-              value={formData.idIssuingPlace}
-              onChange={(e) => {
-                setFormData({ ...formData, idIssuingPlace: e.target.value });
-                if (errors.idIssuingPlace) setErrors({ ...errors, idIssuingPlace: "" });
+            <Select
+              value={formData.idIssuingCountry}
+              onValueChange={(v) => {
+                setFormData({ ...formData, idIssuingCountry: v, idIssuingPlaceOther: "" });
+                if (errors.idIssuingCountry) setErrors({ ...errors, idIssuingCountry: "" });
+                if (errors.idIssuingPlaceOther) setErrors({ ...errors, idIssuingPlaceOther: "" });
               }}
-              onBlur={() => {
-                // 失焦时自动转换简体为繁体
-                const converted = convertToTraditional(formData.idIssuingPlace);
-                if (converted !== formData.idIssuingPlace) {
-                  setFormData({ ...formData, idIssuingPlace: converted });
-                }
-              }}
-              placeholder="請輸入證件簽發地"
-              className={errors.idIssuingPlace ? "border-destructive" : ""}
-            />
-            {errors.idIssuingPlace && <p className="text-sm text-destructive">{errors.idIssuingPlace}</p>}
+            >
+              <SelectTrigger className={errors.idIssuingCountry ? "border-destructive" : ""}>
+                <SelectValue placeholder="請選擇國家/地區" />
+              </SelectTrigger>
+              <SelectContent>
+                {idIssuingCountries.map((country) => (
+                  <SelectItem key={country.value} value={country.value}>
+                    {country.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {errors.idIssuingCountry && <p className="text-sm text-destructive">{errors.idIssuingCountry}</p>}
           </div>
+
+          {/* 當選擇"其他"時顯示輸入框 */}
+          {formData.idIssuingCountry === "OTHER" && (
+            <div className="space-y-2">
+              <Label htmlFor="idIssuingPlaceOther">
+                請輸入國家/地區 <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="idIssuingPlaceOther"
+                value={formData.idIssuingPlaceOther}
+                onChange={(e) => {
+                  setFormData({ ...formData, idIssuingPlaceOther: e.target.value });
+                  if (errors.idIssuingPlaceOther) setErrors({ ...errors, idIssuingPlaceOther: "" });
+                }}
+                placeholder="請輸入國家/地區"
+                className={errors.idIssuingPlaceOther ? "border-destructive" : ""}
+              />
+              {errors.idIssuingPlaceOther && <p className="text-sm text-destructive">{errors.idIssuingPlaceOther}</p>}
+            </div>
+          )}
         </div>
 
         {/* 證件有效期 */}

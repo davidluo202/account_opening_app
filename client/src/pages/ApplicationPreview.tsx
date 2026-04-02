@@ -412,6 +412,25 @@ export default function ApplicationPreview() {
   const translateEducationLevel = translate;
   const translateEmploymentStatus = translate;
   const translateBankAccountType = translate;
+  
+  // 翻譯證件簽發國家
+  const translateIssuingCountry = (country: string | undefined) => {
+    if (!country) return "-";
+    const countryMap: Record<string, string> = {
+      "HK": "香港 Hong Kong",
+      "CN": "中國內地 Chinese Mainland",
+      "MO": "澳門 Macau",
+      "TW": "台灣 Taiwan",
+      "US": "美國 United States",
+      "GB": "英國 United Kingdom",
+      "SG": "新加坡 Singapore",
+      "AU": "澳洲 Australia",
+      "CA": "加拿大 Canada",
+      "JP": "日本 Japan",
+      "OTHER": "其他 Other",
+    };
+    return countryMap[country] || country;
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -678,13 +697,20 @@ export default function ApplicationPreview() {
                   <td className="p-3 w-1/4">{personalDetailed?.idNumber || "-"}</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold border-r">簽發地 Issuing Place</td>
-                  <td className="p-3 border-r">{personalDetailed?.idIssuingPlace || "-"}</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">簽發國家/地區 Issuing Country</td>
+                  <td className="p-3 border-r">
+                    {personalDetailed?.idIssuingCountry === "OTHER" 
+                      ? personalDetailed?.idIssuingPlaceOther 
+                      : translateIssuingCountry(personalDetailed?.idIssuingCountry)}
+                  </td>
                   <td className="p-3 bg-gray-50 font-semibold border-r">有效期 Expiry Date</td>
                   <td className="p-3">
                     {personalDetailed?.idIsPermanent ? "長期有效" : formatDate(personalDetailed?.idExpiryDate)}
                   </td>
                 </tr>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold border-r">簽發地 Issuing Place</td>
+                  <td className="p-3 border-r">{personalDetailed?.idIssuingPlace || "-"}</td>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">婚姻狀況 Marital Status</td>
                   <td className="p-3 border-r">{translateMaritalStatus(personalDetailed?.maritalStatus)}</td>
