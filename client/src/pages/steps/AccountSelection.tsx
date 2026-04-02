@@ -108,7 +108,7 @@ const handleNext = () => {
               <Label htmlFor="corporate" className="flex-1 cursor-pointer">
                 <div>
                   <div className="font-medium">機構賬戶 / Corporate Account</div>
-                  <div className="text-sm text-muted-foreground"></div>
+                  <div className="text-sm text-gray-500">適用於機構投資</div>
                 </div>
               </Label>
             </div>
