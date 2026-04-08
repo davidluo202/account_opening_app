@@ -19,19 +19,19 @@ const documentTypes = [
 // 機構文件類型
 const corporateDocumentTypes = [
   { value: "ci_doc", label: "公司註冊證書 / Certificate of Incorporation", required: true },
-  { value: "name_change_doc", label: "更名證明 / Certified of Change of Name (if applied)", required: false },
-  { value: "br_doc", label: "商業登記證 / Business Registration Certificate", required: false },
-  { value: "license_cert", label: "牌照認證/交易所上市證明 / License Certification/Exchange Listed", required: false },
+  { value: "name_change_doc", label: "更名證明（如適用）/ Certified of Change of Name (if applied)", required: false },
+  { value: "br_doc", label: "商業登記證（如適用）/ Business Registration Certificate (if applied)", required: false },
+  { value: "license_cert", label: "牌照認證/交易所上市證明（如CIMA、SFC等，如適用）/ License Certification/Exchange Listed (if applied)", required: false },
   { value: "memo_articles", label: "公司章程/組織大綱 / Memorandum/Articles of Association", required: true },
   { value: "board_resolution", label: "董事局議程 / Certified Extract Board of Resolution", required: true },
-  { value: "ownership_chart", label: "股權結構圖 / Ownership Chart", required: false },
+  { value: "ownership_chart", label: "股權結構圖（若持有牌照認證可豁免）/ Ownership Chart (can waive if have License Certification)", required: false },
   { value: "authorized_signatures", label: "授權簽名人名單 / Authorized Signature List", required: true },
   { value: "directors_id", label: "全體董事身份證件 / HKID/Chinese ID/Passport of all directors", required: true },
-  { value: "directors_address", label: "全體董事三個月內地址證明 / Valid proof of address for all directors", required: true },
+  { value: "directors_address", label: "全體董事三個月內地址證明 / Valid proof of address for all directors, dated within the last 3 months", required: true },
   { value: "signers_id", label: "全體授權簽名人身份證件 / HKID/Chinese ID/Passport of all authorized signers", required: true },
-  { value: "signers_address", label: "全體授權簽名人三個月內地址證明 / Valid proof of address for all authorized signers", required: true },
-  { value: "asset_cert", label: "資產證明文件 / Asset certification document", required: false },
-  { value: "w8imy_w8ben", label: "美國稅務申報表 / W8IMY/W8BEN-E", required: false },
+  { value: "signers_address", label: "全體授權簽名人三個月內地址證明 / Valid proof of address for all authorized signers, dated within the last 3 months", required: true },
+  { value: "asset_cert", label: "資產證明文件（如適用）/ Asset certification document (if applied)", required: false },
+  { value: "w8imy_w8ben", label: "美國稅務申報表（如適用）/ W8IMY/W8BEN-E (if applied)", required: false },
 ];
 
 export default function DocumentUpload() {
