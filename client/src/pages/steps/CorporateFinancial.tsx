@@ -289,7 +289,7 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
 
         <div className="space-y-4">
           <Label className="text-base font-semibold text-slate-800">曾投資產品 / Experienced Products <span className="text-destructive">*</span></Label>
-          <p className="text-sm text-slate-500">(可多選 / one or more)</p>
+          <p className="text-sm text-slate-500">(可選 / one or more)</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border-2 border-slate-200">
             {experiencedProductsList.map(item => (
               <div key={item.value} className="flex items-center space-x-3">
