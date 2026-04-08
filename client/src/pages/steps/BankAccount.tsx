@@ -675,7 +675,7 @@ const handleNext = () => {
             {/* 持有人地址 */}
             <div className="space-y-2">
               <Label htmlFor="accountHolderAddress">
-                持有人地址 / Holder Address <span className="text-gray-400">(選填)</span>
+                持有人地址 / Holder Address
               </Label>
               <Input
                 id="accountHolderAddress"
