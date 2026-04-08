@@ -63,10 +63,9 @@ const valueRanges = [
 
 // 曾投資產品
 const experiencedProductsList = [
-  { value: "stocks", label: "證券投資 / Stocks" },
-  { value: "derivatives", label: "衍生權證 / Derivative Warrants" },
-  { value: "futures_options", label: "期貨/期權 / Futures/Options" },
-  { value: "forex_bullion", label: "外匯/黃金 / Forex/Bullion" },
+  { value: "property", label: "房地產 / Property" },
+  { value: "securities", label: "上市證券 / Listed Securities" },
+  { value: "deposit", label: "存款 / Deposit" },
   { value: "bonds", label: "債券 / Bonds" },
   { value: "funds", label: "基金 / Funds" },
   { value: "other", label: "其他 / Other" },
@@ -93,6 +92,7 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
   const [assetItems, setAssetItems] = useState<string[]>([]);
   const [experiencedProducts, setExperiencedProducts] = useState<string[]>([]);
   const [experiencedProductsOther, setExperiencedProductsOther] = useState("");
+  const [assetItemsOther, setAssetItemsOther] = useState("");
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -163,6 +163,7 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
     profitAfterTax,
     profitAuditDate,
     assetItems,
+    assetItemsOther,
     experiencedProducts,
     experiencedProductsOther,
   });
@@ -332,6 +333,18 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
               </div>
             ))}
           </div>
+          {assetItems.includes("other") && (
+            <div className="flex gap-2 items-center">
+              <Label className="text-sm text-slate-600">其他說明 / Other:</Label>
+              <Input
+                value={assetItemsOther}
+                onChange={e => setAssetItemsOther(e.target.value)}
+                onBlur={() => setAssetItemsOther(convertToTraditional(assetItemsOther))}
+                placeholder="請輸入其他資產項目"
+                className="flex-1"
+              />
+            </div>
+          )}
           {errors.assetItems && <p className="text-sm text-destructive">{errors.assetItems}</p>}
         </div>
       </div>

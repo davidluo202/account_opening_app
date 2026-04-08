@@ -862,6 +862,7 @@ export const appRouter = router({
         profitAfterTax: z.string(),
         profitAuditDate: z.string().optional(),
         assetItems: z.array(z.string()),
+        assetItemsOther: z.string().optional(),
         experiencedProducts: z.array(z.string()),
         experiencedProductsOther: z.string().optional(),
       }))
