@@ -862,9 +862,11 @@ export const appRouter = router({
         profitAfterTax: z.string(),
         profitAuditDate: z.string().optional(),
         assetItems: z.array(z.string()),
+        experiencedProducts: z.array(z.string()),
+        experiencedProductsOther: z.string().optional(),
       }))
       .mutation(async ({ input, ctx }) => {
-        const { applicationId, initialSourceOfWealth, assetItems, ...rest } = input;
+        const { applicationId, initialSourceOfWealth, assetItems, experiencedProducts, ...rest } = input;
         const application = await db.getApplicationById(applicationId);
         if (!application || application.userId !== ctx.user.id) {
           throw new Error("申请不存在或无权访问");
@@ -874,6 +876,7 @@ export const appRouter = router({
           ...rest,
           initialSourceOfWealth: JSON.stringify(initialSourceOfWealth),
           assetItems: JSON.stringify(assetItems),
+          experiencedProducts: JSON.stringify(experiencedProducts),
         };
         
         await db.saveCorporateFinancialInfo(applicationId, data);

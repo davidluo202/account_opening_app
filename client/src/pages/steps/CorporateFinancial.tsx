@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { convertToTraditional } from "@/lib/converter";
 
 // Convert YYYY-MM to MM/YYYY for display
 const toMMYYYY = (val: string) => {
@@ -60,6 +61,17 @@ const valueRanges = [
   { value: ">10m", label: ">HK$10,000,000" },
 ];
 
+// 曾投資產品
+const experiencedProductsList = [
+  { value: "stocks", label: "證券投資 / Stocks" },
+  { value: "derivatives", label: "衍生權證 / Derivative Warrants" },
+  { value: "futures_options", label: "期貨/期權 / Futures/Options" },
+  { value: "forex_bullion", label: "外匯/黃金 / Forex/Bullion" },
+  { value: "bonds", label: "債券 / Bonds" },
+  { value: "funds", label: "基金 / Funds" },
+  { value: "other", label: "其他 / Other" },
+];
+
 interface Props {
   applicationId: number;
   stepNum: number;
@@ -79,6 +91,8 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
   const [profitAuditDate, setProfitAuditDate] = useState("");
   const [profitAuditDateDisplay, setProfitAuditDateDisplay] = useState("");
   const [assetItems, setAssetItems] = useState<string[]>([]);
+  const [experiencedProducts, setExperiencedProducts] = useState<string[]>([]);
+  const [experiencedProductsOther, setExperiencedProductsOther] = useState("");
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -100,6 +114,7 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
       try {
         setInitialSourceOfWealth(JSON.parse(existingData.initialSourceOfWealth || "[]"));
         setAssetItems(JSON.parse(existingData.assetItems || "[]"));
+        setExperiencedProducts(JSON.parse(existingData.experiencedProducts || "[]"));
       } catch (e) {
         console.error(e);
       }
@@ -132,6 +147,7 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
     if (!netAssetAuditDate) newErrors.netAssetAuditDate = "請填寫淨資產審計時間";
     if (!profitAfterTax) newErrors.profitAfterTax = "請選擇稅後盈利";
     if (!profitAuditDate) newErrors.profitAuditDate = "請填寫稅後盈利審計時間";
+    if (experiencedProducts.length === 0) newErrors.experiencedProducts = "請至少選擇一項";
     if (assetItems.length === 0) newErrors.assetItems = "請至少選擇一項";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -147,6 +163,8 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
     profitAfterTax,
     profitAuditDate,
     assetItems,
+    experiencedProducts,
+    experiencedProductsOther,
   });
 
   if (isLoading) {
@@ -266,6 +284,37 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
             />
             {errors.profitAuditDate && <p className="text-sm text-destructive">{errors.profitAuditDate}</p>}
           </div>
+        </div>
+
+        <div className="space-y-4">
+          <Label className="text-base font-semibold text-slate-800">曾投資產品 / Experienced Products <span className="text-destructive">*</span></Label>
+          <p className="text-sm text-slate-500">(可多選 / one or more)</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border-2 border-slate-200">
+            {experiencedProductsList.map(item => (
+              <div key={item.value} className="flex items-center space-x-3">
+                <Checkbox
+                  id={`experienced-${item.value}`}
+                  className="h-5 w-5 border-2 border-slate-400 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                  checked={experiencedProducts.includes(item.value)}
+                  onCheckedChange={() => setExperiencedProducts(prev => prev.includes(item.value) ? prev.filter(v => v !== item.value) : [...prev, item.value])}
+                />
+                <Label htmlFor={`experienced-${item.value}`} className="font-medium text-slate-700">{item.label}</Label>
+              </div>
+            ))}
+          </div>
+          {experiencedProducts.includes("other") && (
+            <div className="flex gap-2 items-center">
+              <Label className="text-sm text-slate-600">其他說明 / Other:</Label>
+              <Input
+                value={experiencedProductsOther}
+                onChange={e => setExperiencedProductsOther(e.target.value)}
+                onBlur={() => setExperiencedProductsOther(convertToTraditional(experiencedProductsOther))}
+                placeholder="請輸入其他投資產品"
+                className="flex-1"
+              />
+            </div>
+          )}
+          {errors.experiencedProducts && <p className="text-sm text-destructive">{errors.experiencedProducts}</p>}
         </div>
 
         <div className="space-y-4">

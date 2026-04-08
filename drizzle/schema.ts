@@ -417,6 +417,8 @@ export const corporateFinancialInfo = mysqlTable("corporate_financial_info", {
   profitAfterTax: varchar("profitAfterTax", { length: 100 }).notNull(),
   profitAuditDate: varchar("profitAuditDate", { length: 20 }),
   assetItems: text("assetItems").notNull(), // JSON array
+  experiencedProducts: text("experiencedProducts"), // JSON array
+  experiencedProductsOther: text("experiencedProductsOther"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
