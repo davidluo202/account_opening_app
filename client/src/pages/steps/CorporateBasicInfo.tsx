@@ -332,6 +332,7 @@ export default function CorporateBasicInfo() {
                   <Input
                     value={formData.natureOfEntityOther}
                     onChange={(e) => setFormData({ ...formData, natureOfEntityOther: e.target.value })}
+                    onBlur={() => setFormData({ ...formData, natureOfEntityOther: convertToTraditional(formData.natureOfEntityOther) })}
                     placeholder="請輸入公司性質"
                     className="flex-1"
                   />
@@ -356,6 +357,7 @@ export default function CorporateBasicInfo() {
                   <Input
                     value={formData.natureOfBusinessOther}
                     onChange={(e) => setFormData({ ...formData, natureOfBusinessOther: e.target.value })}
+                    onBlur={() => setFormData({ ...formData, natureOfBusinessOther: convertToTraditional(formData.natureOfBusinessOther) })}
                     placeholder="請輸入業務性質"
                     className="flex-1"
                   />

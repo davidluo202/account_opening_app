@@ -289,6 +289,8 @@ export default function CorporateRelatedParties() {
       ...currentParty,
       name: convertToTraditional(currentParty.name),
       address: convertToTraditional(currentParty.address),
+      idTypeOther: currentParty.idTypeOther ? convertToTraditional(currentParty.idTypeOther) : undefined,
+      idIssuingPlaceOther: currentParty.idIssuingPlaceOther ? convertToTraditional(currentParty.idIssuingPlaceOther) : undefined,
     };
     
     if (validateParty(convertedParty, true)) {
@@ -509,6 +511,11 @@ export default function CorporateRelatedParties() {
                   <Input
                     value={currentParty.idTypeOther || ""}
                     onChange={e => setCurrentParty({ ...currentParty, idTypeOther: e.target.value })}
+                    onBlur={() => {
+                      if (currentParty.idTypeOther) {
+                        setCurrentParty({ ...currentParty, idTypeOther: convertToTraditional(currentParty.idTypeOther) });
+                      }
+                    }}
                     placeholder="請輸入證件類型"
                     className="flex-1"
                   />
@@ -532,6 +539,11 @@ export default function CorporateRelatedParties() {
                   <Input
                     value={currentParty.idIssuingPlaceOther || ""}
                     onChange={e => setCurrentParty({ ...currentParty, idIssuingPlaceOther: e.target.value })}
+                    onBlur={() => {
+                      if (currentParty.idIssuingPlaceOther) {
+                        setCurrentParty({ ...currentParty, idIssuingPlaceOther: convertToTraditional(currentParty.idIssuingPlaceOther) });
+                      }
+                    }}
                     placeholder="請輸入國家/地區"
                     className="flex-1"
                   />
