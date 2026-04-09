@@ -53,10 +53,10 @@ export async function syncMissingTables() {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
 
-    // MySQL doesn't support IF NOT EXISTS for ADD COLUMN, use try-catch
-    try { await db.execute(sql`ALTER TABLE \`corporate_financial_info\` ADD COLUMN \`assetItemsOther\` text DEFAULT NULL;`); } catch (e) { /* column may already exist */ }
-    try { await db.execute(sql`ALTER TABLE \`corporate_financial_info\` ADD COLUMN \`experiencedProducts\` text DEFAULT NULL;`); } catch (e) { /* column may already exist */ }
-    try { await db.execute(sql`ALTER TABLE \`corporate_financial_info\` ADD COLUMN \`experiencedProductsOther\` text DEFAULT NULL;`); } catch (e) { /* column may already exist */ }
+    // Use sql.raw() — drizzle's sql`` template escapes backticks incorrectly for ALTER TABLE
+    try { await db.execute(sql.raw("ALTER TABLE `corporate_financial_info` ADD COLUMN `assetItemsOther` text DEFAULT NULL")); } catch (e) { /* column may already exist */ }
+    try { await db.execute(sql.raw("ALTER TABLE `corporate_financial_info` ADD COLUMN `experiencedProducts` text DEFAULT NULL")); } catch (e) { /* column may already exist */ }
+    try { await db.execute(sql.raw("ALTER TABLE `corporate_financial_info` ADD COLUMN `experiencedProductsOther` text DEFAULT NULL")); } catch (e) { /* column may already exist */ }
 
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS \`corporate_related_parties\` (
