@@ -53,9 +53,10 @@ export async function syncMissingTables() {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
 
-    await db.execute(sql`ALTER TABLE \`corporate_financial_info\` ADD COLUMN IF NOT EXISTS \`assetItemsOther\` text DEFAULT NULL;`);
-    await db.execute(sql`ALTER TABLE \`corporate_financial_info\` ADD COLUMN IF NOT EXISTS \`experiencedProducts\` text DEFAULT NULL;`);
-    await db.execute(sql`ALTER TABLE \`corporate_financial_info\` ADD COLUMN IF NOT EXISTS \`experiencedProductsOther\` text DEFAULT NULL;`);
+    // MySQL doesn't support IF NOT EXISTS for ADD COLUMN, use try-catch
+    try { await db.execute(sql`ALTER TABLE \`corporate_financial_info\` ADD COLUMN \`assetItemsOther\` text DEFAULT NULL;`); } catch (e) { /* column may already exist */ }
+    try { await db.execute(sql`ALTER TABLE \`corporate_financial_info\` ADD COLUMN \`experiencedProducts\` text DEFAULT NULL;`); } catch (e) { /* column may already exist */ }
+    try { await db.execute(sql`ALTER TABLE \`corporate_financial_info\` ADD COLUMN \`experiencedProductsOther\` text DEFAULT NULL;`); } catch (e) { /* column may already exist */ }
 
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS \`corporate_related_parties\` (
