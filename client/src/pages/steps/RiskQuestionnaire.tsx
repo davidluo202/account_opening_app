@@ -331,7 +331,7 @@ export default function RiskQuestionnaire() {
             {/* Q1 */}
             <div className="space-y-3">
               <Label className="text-base font-medium">
-                Q1. 現在是否持有以下任何投資產品？* (可多選)
+                Q1. 現在是否持有以下任何投資產品？*
               </Label>
               <div className="space-y-2 pl-4">
                 <div className="flex items-center space-x-2">
@@ -486,7 +486,7 @@ export default function RiskQuestionnaire() {
 
             {/* Q6 */}
             <div className="space-y-3">
-              <Label className="text-base font-medium">Q6. 對衍生工具產品的認識* (可多選)</Label>
+              <Label className="text-base font-medium">Q6. 對衍生工具產品的認識*</Label>
               <div className="space-y-2 pl-4">
                 <div className="flex items-center space-x-2">
                   <Checkbox
