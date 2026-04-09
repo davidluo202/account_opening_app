@@ -1,4 +1,4 @@
-import { eq, and, desc, gt } from "drizzle-orm";
+import { eq, and, desc, gt, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, 
@@ -1220,11 +1220,41 @@ export async function getRiskQuestionnaire(applicationId: number) {
 export async function saveCorporateFinancialInfo(applicationId: number, data: any) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
-  await db.insert(require("../drizzle/schema").corporateFinancialInfo).values({
-    applicationId,
-    ...data
-  }).onDuplicateKeyUpdate({ set: data });
+
+  await db.execute(sql`
+    INSERT INTO \
+      \`corporate_financial_info\` (
+        \`applicationId\`,
+        \`authorizedShareCapital\`,
+        \`issuedShareCapital\`,
+        \`initialSourceOfWealth\`,
+        \`netAssetValue\`,
+        \`netAssetAuditDate\`,
+        \`profitAfterTax\`,
+        \`profitAuditDate\`,
+        \`assetItems\`
+      )
+    VALUES (
+      ${applicationId},
+      ${data.authorizedShareCapital},
+      ${data.issuedShareCapital},
+      ${data.initialSourceOfWealth},
+      ${data.netAssetValue},
+      ${data.netAssetAuditDate ?? null},
+      ${data.profitAfterTax},
+      ${data.profitAuditDate ?? null},
+      ${data.assetItems}
+    )
+    ON DUPLICATE KEY UPDATE
+      \`authorizedShareCapital\` = ${data.authorizedShareCapital},
+      \`issuedShareCapital\` = ${data.issuedShareCapital},
+      \`initialSourceOfWealth\` = ${data.initialSourceOfWealth},
+      \`netAssetValue\` = ${data.netAssetValue},
+      \`netAssetAuditDate\` = ${data.netAssetAuditDate ?? null},
+      \`profitAfterTax\` = ${data.profitAfterTax},
+      \`profitAuditDate\` = ${data.profitAuditDate ?? null},
+      \`assetItems\` = ${data.assetItems}
+  `);
 }
 
 export async function getCorporateFinancialInfo(applicationId: number) {
