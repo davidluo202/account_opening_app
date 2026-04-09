@@ -1233,7 +1233,10 @@ export async function saveCorporateFinancialInfo(applicationId: number, data: an
         \`netAssetAuditDate\`,
         \`profitAfterTax\`,
         \`profitAuditDate\`,
-        \`assetItems\`
+        \`assetItems\`,
+        \`assetItemsOther\`,
+        \`experiencedProducts\`,
+        \`experiencedProductsOther\`
       )
     VALUES (
       ${applicationId},
@@ -1244,7 +1247,10 @@ export async function saveCorporateFinancialInfo(applicationId: number, data: an
       ${data.netAssetAuditDate ?? null},
       ${data.profitAfterTax},
       ${data.profitAuditDate ?? null},
-      ${data.assetItems}
+      ${data.assetItems},
+      ${data.assetItemsOther ?? null},
+      ${data.experiencedProducts ?? null},
+      ${data.experiencedProductsOther ?? null}
     )
     ON DUPLICATE KEY UPDATE
       \`authorizedShareCapital\` = ${data.authorizedShareCapital},
@@ -1254,7 +1260,10 @@ export async function saveCorporateFinancialInfo(applicationId: number, data: an
       \`netAssetAuditDate\` = ${data.netAssetAuditDate ?? null},
       \`profitAfterTax\` = ${data.profitAfterTax},
       \`profitAuditDate\` = ${data.profitAuditDate ?? null},
-      \`assetItems\` = ${data.assetItems}
+      \`assetItems\` = ${data.assetItems},
+      \`assetItemsOther\` = ${data.assetItemsOther ?? null},
+      \`experiencedProducts\` = ${data.experiencedProducts ?? null},
+      \`experiencedProductsOther\` = ${data.experiencedProductsOther ?? null}
   `);
 }
 
