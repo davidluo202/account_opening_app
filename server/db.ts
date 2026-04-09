@@ -44,11 +44,18 @@ export async function syncMissingTables() {
         \`profitAfterTax\` varchar(100) NOT NULL,
         \`profitAuditDate\` varchar(20) DEFAULT NULL,
         \`assetItems\` text NOT NULL,
+        \`assetItemsOther\` text DEFAULT NULL,
+        \`experiencedProducts\` text DEFAULT NULL,
+        \`experiencedProductsOther\` text DEFAULT NULL,
         \`createdAt\` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
         \`updatedAt\` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
         INDEX \`idx_applicationId\` (\`applicationId\`)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
+
+    await db.execute(sql`ALTER TABLE \`corporate_financial_info\` ADD COLUMN IF NOT EXISTS \`assetItemsOther\` text DEFAULT NULL;`);
+    await db.execute(sql`ALTER TABLE \`corporate_financial_info\` ADD COLUMN IF NOT EXISTS \`experiencedProducts\` text DEFAULT NULL;`);
+    await db.execute(sql`ALTER TABLE \`corporate_financial_info\` ADD COLUMN IF NOT EXISTS \`experiencedProductsOther\` text DEFAULT NULL;`);
 
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS \`corporate_related_parties\` (
