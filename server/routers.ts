@@ -992,7 +992,7 @@ export const appRouter = router({
         taxResidency: z.string(),
         taxIdNumber: z.string(),
         noTaxId: z.boolean().optional().default(false),
-        noTaxIdReason: z.string().optional(),
+        noTaxIdReason: z.string().nullish(),
       }))
       .mutation(async ({ input, ctx }) => {
         const { applicationId, ...data } = input;
