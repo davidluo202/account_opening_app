@@ -867,7 +867,15 @@ export const appRouter = router({
         experiencedProductsOther: z.string().optional(),
       }))
       .mutation(async ({ input, ctx }) => {
-        const { applicationId, initialSourceOfWealth, assetItems, experiencedProducts, ...rest } = input;
+        const {
+          applicationId,
+          initialSourceOfWealth,
+          assetItems,
+          experiencedProducts,
+          assetItemsOther,
+          experiencedProductsOther,
+          ...rest
+        } = input;
         const application = await db.getApplicationById(applicationId);
         if (!application || application.userId !== ctx.user.id) {
           throw new Error("申请不存在或无权访问");
