@@ -39,6 +39,41 @@ async function startServer() {
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  // DB migration diagnostic endpoint
+  app.get("/api/db-migrate", async (_req, res) => {
+    try {
+      const { getDb } = await import("../db");
+      const { sql } = await import("drizzle-orm");
+      const db = await getDb();
+      if (!db) return res.json({ error: "no db" });
+
+      const results: string[] = [];
+
+      // Check which columns exist
+      const [cols]: any = await db.execute(sql`SHOW COLUMNS FROM \`corporate_financial_info\``);
+      const existingCols = Array.isArray(cols) ? cols.map((c: any) => c.Field || c.field) : [];
+      results.push(`existing columns: ${JSON.stringify(existingCols)}`);
+
+      const needed = ["assetItemsOther", "experiencedProducts", "experiencedProductsOther"];
+      for (const col of needed) {
+        if (!existingCols.includes(col)) {
+          try {
+            await db.execute(sql.raw(`ALTER TABLE \`corporate_financial_info\` ADD COLUMN \`${col}\` text DEFAULT NULL`));
+            results.push(`added: ${col}`);
+          } catch (e: any) {
+            results.push(`failed to add ${col}: ${e?.message || e}`);
+          }
+        } else {
+          results.push(`exists: ${col}`);
+        }
+      }
+
+      res.json({ ok: true, results });
+    } catch (e: any) {
+      res.json({ error: e?.message || String(e) });
+    }
+  });
+
   // Auth routes
   registerOAuthRoutes(app);
   // File download (signed link → presigned S3 url)
