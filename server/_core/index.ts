@@ -74,6 +74,21 @@ async function startServer() {
     }
   });
 
+  // Debug endpoint to check actual DB data
+  app.get("/api/db-debug/:appId", async (req, res) => {
+    try {
+      const { getDb } = await import("../db");
+      const { sql } = await import("drizzle-orm");
+      const db = await getDb();
+      if (!db) return res.json({ error: "no db" });
+      const appId = parseInt(req.params.appId);
+      const [rows]: any = await db.execute(sql.raw(`SELECT * FROM corporate_financial_info WHERE applicationId = ${appId}`));
+      res.json({ row: rows?.[0] || null });
+    } catch (e: any) {
+      res.json({ error: e?.message || String(e) });
+    }
+  });
+
   // Auth routes
   registerOAuthRoutes(app);
   // File download (signed link → presigned S3 url)
