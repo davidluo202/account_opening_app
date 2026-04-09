@@ -72,7 +72,7 @@ function StepRouter() {
     switch (stepNum) {
       case 2: return <CorporateBasicInfo />;
       // 暂时重定向到现有组件，后续开发专属组件
-      case 3: return <CorporateFinancial />; // 公司财务概况
+      case 3: return <CorporateFinancial applicationId={applicationId} stepNum={stepNum} />; // 公司财务概况
       case 4: return <CorporateRelatedParties />; // 关联人士
       case 5: return <RiskQuestionnaire />;
       case 6: return <BankAccount />;
