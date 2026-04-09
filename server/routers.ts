@@ -885,7 +885,9 @@ export const appRouter = router({
           ...rest,
           initialSourceOfWealth: JSON.stringify(initialSourceOfWealth),
           assetItems: JSON.stringify(assetItems),
+          assetItemsOther: assetItemsOther || null,
           experiencedProducts: JSON.stringify(experiencedProducts),
+          experiencedProductsOther: experiencedProductsOther || null,
         };
         
         await db.saveCorporateFinancialInfo(applicationId, data);
