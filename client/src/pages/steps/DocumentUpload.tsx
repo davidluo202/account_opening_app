@@ -30,8 +30,8 @@ const corporateDocumentTypes = [
   { value: "directors_address", label: "全體董事三個月內地址證明 / Valid proof of address for all directors, dated within the last 3 months", required: true },
   { value: "signers_id", label: "全體授權簽名人身份證件 / HKID/Chinese ID/Passport of all authorized signers", required: true },
   { value: "signers_address", label: "全體授權簽名人三個月內地址證明 / Valid proof of address for all authorized signers, dated within the last 3 months", required: true },
-  { value: "asset_cert", label: "資產證明文件 / Asset certification document", required: true },
-  { value: "w8imy_w8ben", label: "美國稅務申報表 / W8IMY/W8BEN-E", required: true },
+  { value: "asset_cert", label: "資產證明文件 / Asset certification document", required: false },
+  { value: "w8imy_w8ben", label: "美國稅務申報表 / W8IMY/W8BEN-E", required: false },
 ];
 
 export default function DocumentUpload() {
