@@ -272,18 +272,19 @@ export default function ApplicationPreview() {
     setShowSignatureDialog(false);
   };
 
-  // 根據客戶類型轉換步驟編號（機構流程只有 step 1-9）
+  // 根據客戶類型轉換步驟編號（機構流程有 step 1-10）
   const getCorporateStep = (individualStep: number): number => {
     // 機構正確順序：
     // 1 AccountSelection
     // 2 CorporateBasic
-    // 3 FinancialAndInvestment（公司財務與投資概況）
-    // 4 CorporateRelatedParties
-    // 5 RiskQuestionnaire
-    // 6 BankAccount
-    // 7 TaxInfo
-    // 8 DocumentUpload
-    // 9 RegulatoryDeclaration
+    // 3 CorporateFinancial（公司財務狀況）
+    // 4 CorporateInvestment（公司投資經驗與目標）
+    // 5 CorporateRelatedParties
+    // 6 RiskQuestionnaire
+    // 7 BankAccount
+    // 8 TaxInfo
+    // 9 DocumentUpload
+    // 10 RegulatoryDeclaration
     const mapping: Record<number, number> = {
       2: 2,
       3: 3,
@@ -293,11 +294,11 @@ export default function ApplicationPreview() {
       7: 7,
       8: 8,
       9: 9,
-      // 個人第10步(文件) 對應 機構第8步
-      10: 8,
-      // 個人第11步(人臉) / 第12步(監管) 對應 機構第9步
-      11: 9,
-      12: 9,
+      10: 10,
+      // 個人第10步(文件) 對應 機構第9步
+      // 個人第11步(人臉) / 第12步(監管) 對應 機構第10步
+      11: 10,
+      12: 10,
     };
     return mapping[individualStep] || individualStep;
   };
@@ -591,14 +592,14 @@ export default function ApplicationPreview() {
             )}
           </div>
 
-          {/* 機構：公司財務與投資概況(2) + 關聯人士(3)；個人：詳細信息 */}
+          {/* 機構：公司財務狀況(2) + 關聯人士(3)；個人：詳細信息 */}
           {isCorporate ? (
           <>
-            {/* 2. 公司財務與投資概況 */}
+            {/* 2. 公司財務狀況 */}
             <div className="border-b">
               <div className="bg-blue-50 p-3 border-b">
                 <h3 className="font-bold flex items-center justify-between">
-                  <span>2. 公司財務與投資概況 Financial & Investment</span>
+                  <span>2. 公司財務狀況 Financial Status</span>
                   <Button variant="ghost" size="sm" onClick={() => handleEdit(3)}>
                     編輯
                   </Button>
@@ -636,12 +637,27 @@ export default function ApplicationPreview() {
               </table>
             </div>
 
-            {/* 3. 關聯人士信息 */}
+            {/* 3. 公司投資經驗與目標 */}
             <div className="border-b">
               <div className="bg-blue-50 p-3 border-b">
                 <h3 className="font-bold flex items-center justify-between">
-                  <span>3. 關聯人士信息 Related Parties</span>
+                  <span>3. 公司投資經驗與目標 Investment Experience & Objective</span>
                   <Button variant="ghost" size="sm" onClick={() => handleEdit(4)}>
+                    編輯
+                  </Button>
+                </h3>
+              </div>
+              <div className="p-4 text-sm text-gray-500">
+                （投資經驗與目標詳情請參閱步驟4）
+              </div>
+            </div>
+
+            {/* 4. 關聯人士信息 */}
+            <div className="border-b">
+              <div className="bg-blue-50 p-3 border-b">
+                <h3 className="font-bold flex items-center justify-between">
+                  <span>4. 關聯人士信息 Related Parties</span>
+                  <Button variant="ghost" size="sm" onClick={() => handleEdit(5)}>
                     編輯
                   </Button>
                 </h3>
@@ -837,7 +853,7 @@ export default function ApplicationPreview() {
             </table>
           </div>
 
-          {/* 投資信息 - 個人投資信息（機構第2節已在上面顯示公司財務與投資概況） */}
+          {/* 投資信息 - 個人投資信息（機構第2節已在上面顯示公司財務狀況） */}
           {!isCorporate && (
             <div className="border-b">
               <div className="bg-blue-50 p-3 border-b">

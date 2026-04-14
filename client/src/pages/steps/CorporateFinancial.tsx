@@ -147,8 +147,7 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
     if (!netAssetAuditDate) newErrors.netAssetAuditDate = "請填寫淨資產審計時間";
     if (!profitAfterTax) newErrors.profitAfterTax = "請選擇稅後盈利";
     if (!profitAuditDate) newErrors.profitAuditDate = "請填寫稅後盈利審計時間";
-    if (experiencedProducts.length === 0) newErrors.experiencedProducts = "請至少選擇一項";
-    if (assetItems.length === 0) newErrors.assetItems = "請至少選擇一項";
+    // 曾投資產品和資產項目已移至步驟4
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -287,66 +286,7 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
           </div>
         </div>
 
-        <div className="space-y-4">
-          <Label className="text-base font-semibold text-slate-800">曾投資產品 / Experienced Products <span className="text-destructive">*</span></Label>
-          <p className="text-sm text-slate-500"></p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border-2 border-slate-200">
-            {experiencedProductsList.map(item => (
-              <div key={item.value} className="flex items-center space-x-3">
-                <Checkbox
-                  id={`experienced-${item.value}`}
-                  className="h-5 w-5 border-2 border-slate-400 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-                  checked={experiencedProducts.includes(item.value)}
-                  onCheckedChange={() => setExperiencedProducts(prev => prev.includes(item.value) ? prev.filter(v => v !== item.value) : [...prev, item.value])}
-                />
-                <Label htmlFor={`experienced-${item.value}`} className="font-medium text-slate-700">{item.label}</Label>
-              </div>
-            ))}
-          </div>
-          {experiencedProducts.includes("other") && (
-            <div className="flex gap-2 items-center">
-              <Label className="text-sm text-slate-600">其他說明 / Other:</Label>
-              <Input
-                value={experiencedProductsOther}
-                onChange={e => setExperiencedProductsOther(e.target.value)}
-                onBlur={() => setExperiencedProductsOther(convertToTraditional(experiencedProductsOther))}
-                placeholder="請輸入其他投資產品"
-                className="flex-1"
-              />
-            </div>
-          )}
-          {errors.experiencedProducts && <p className="text-sm text-destructive">{errors.experiencedProducts}</p>}
-        </div>
-
-        <div className="space-y-4">
-          <Label className="text-base font-semibold text-slate-800">資產項目 / Asset Items <span className="text-destructive">*</span></Label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border-2 border-slate-200">
-            {assetItemsList.map(item => (
-              <div key={item.value} className="flex items-center space-x-3">
-                <Checkbox
-                  id={`asset-${item.value}`}
-                  className="h-5 w-5 border-2 border-slate-400 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-                  checked={assetItems.includes(item.value)}
-                  onCheckedChange={() => setAssetItems(prev => prev.includes(item.value) ? prev.filter(v => v !== item.value) : [...prev, item.value])}
-                />
-                <Label htmlFor={`asset-${item.value}`} className="font-medium text-slate-700">{item.label}</Label>
-              </div>
-            ))}
-          </div>
-          {assetItems.includes("other") && (
-            <div className="flex gap-2 items-center">
-              <Label className="text-sm text-slate-600">其他說明 / Other:</Label>
-              <Input
-                value={assetItemsOther}
-                onChange={e => setAssetItemsOther(e.target.value)}
-                onBlur={() => setAssetItemsOther(convertToTraditional(assetItemsOther))}
-                placeholder="請輸入其他資產項目"
-                className="flex-1"
-              />
-            </div>
-          )}
-          {errors.assetItems && <p className="text-sm text-destructive">{errors.assetItems}</p>}
-        </div>
+        {/* 曾投資產品和資產項目已移至步驟4「公司投資經驗與目標」 */}
       </div>
     </ApplicationWizard>
   );

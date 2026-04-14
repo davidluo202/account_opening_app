@@ -102,7 +102,7 @@ export default function CorporateRelatedParties() {
   const [, setLocation] = useLocation();
   const draftStorageKey = `corporateRelatedParties:draft:${params.id || "0"}`;
   const applicationId = parseInt(params.id || "0");
-  const stepNum = parseInt(params.step || "4");
+  const stepNum = parseInt(params.step || "5");
   const showReturnToPreview = useReturnToPreview();
 
   // List of saved parties

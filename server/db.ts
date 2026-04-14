@@ -64,6 +64,26 @@ export async function syncMissingTables() {
     try { await db.execute(sql.raw("ALTER TABLE `corporate_basic_info` ADD COLUMN `regulatorName` varchar(255) DEFAULT NULL")); } catch (e) { /* column may already exist */ }
 
     await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS \`corporate_investment_info\` (
+        \`id\` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        \`applicationId\` int NOT NULL UNIQUE,
+        \`investmentObjectives\` text NOT NULL,
+        \`investmentObjectivesOther\` text DEFAULT NULL,
+        \`estimatedInvestmentAmount\` varchar(100) NOT NULL,
+        \`riskVolatility\` varchar(50) NOT NULL,
+        \`investmentExperience\` varchar(100) NOT NULL,
+        \`knowledgeOfDerivatives\` varchar(10) NOT NULL,
+        \`experiencedProducts\` text NOT NULL,
+        \`experiencedProductsOther\` text DEFAULT NULL,
+        \`assetItems\` text NOT NULL,
+        \`assetItemsOther\` text DEFAULT NULL,
+        \`createdAt\` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        \`updatedAt\` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+        INDEX \`idx_ci_applicationId\` (\`applicationId\`)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `);
+
+    await db.execute(sql`
       CREATE TABLE IF NOT EXISTS \`corporate_related_parties\` (
         \`id\` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
         \`applicationId\` int NOT NULL UNIQUE,
@@ -644,6 +664,7 @@ export async function getCompleteApplicationData(applicationId: number) {
     employment,
     financial,
     corporateFinancial,
+    corporateInvestment,
     bankAccountsList,
     tax,
     riskQuestionnaireData,
@@ -661,6 +682,7 @@ export async function getCompleteApplicationData(applicationId: number) {
     getEmploymentDetails(applicationId),
     getFinancialAndInvestment(applicationId),
     getCorporateFinancialInfo(applicationId),
+    getCorporateInvestmentInfo(applicationId),
     getBankAccounts(applicationId),
     getTaxInfo(applicationId),
     getRiskQuestionnaire(applicationId),
@@ -669,7 +691,7 @@ export async function getCompleteApplicationData(applicationId: number) {
     getRegulatoryDeclarations(applicationId),
     getCorporateRelatedParties(applicationId)
   ]);
-  
+
   return {
     application,
     accountSelection,
@@ -680,6 +702,7 @@ export async function getCompleteApplicationData(applicationId: number) {
     employment,
     financial,
     corporateFinancial,
+    corporateInvestment,
     bankAccounts: bankAccountsList,
     taxInfo: tax,
     riskQuestionnaire: riskQuestionnaireData,
@@ -1277,6 +1300,61 @@ export async function getCorporateFinancialInfo(applicationId: number) {
   if (!db) return null;
   const { corporateFinancialInfo } = require("../drizzle/schema");
   const result = await db.select().from(corporateFinancialInfo).where(eq(corporateFinancialInfo.applicationId, applicationId)).limit(1);
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function saveCorporateInvestmentInfo(applicationId: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const { sql } = await import("drizzle-orm");
+
+  await db.execute(sql`
+    INSERT INTO \
+      \`corporate_investment_info\` (
+        \`applicationId\`,
+        \`investmentObjectives\`,
+        \`investmentObjectivesOther\`,
+        \`estimatedInvestmentAmount\`,
+        \`riskVolatility\`,
+        \`investmentExperience\`,
+        \`knowledgeOfDerivatives\`,
+        \`experiencedProducts\`,
+        \`experiencedProductsOther\`,
+        \`assetItems\`,
+        \`assetItemsOther\`
+      )
+    VALUES (
+      ${applicationId},
+      ${data.investmentObjectives},
+      ${data.investmentObjectivesOther ?? null},
+      ${data.estimatedInvestmentAmount},
+      ${data.riskVolatility},
+      ${data.investmentExperience},
+      ${data.knowledgeOfDerivatives},
+      ${data.experiencedProducts},
+      ${data.experiencedProductsOther ?? null},
+      ${data.assetItems},
+      ${data.assetItemsOther ?? null}
+    )
+    ON DUPLICATE KEY UPDATE
+      \`investmentObjectives\` = ${data.investmentObjectives},
+      \`investmentObjectivesOther\` = ${data.investmentObjectivesOther ?? null},
+      \`estimatedInvestmentAmount\` = ${data.estimatedInvestmentAmount},
+      \`riskVolatility\` = ${data.riskVolatility},
+      \`investmentExperience\` = ${data.investmentExperience},
+      \`knowledgeOfDerivatives\` = ${data.knowledgeOfDerivatives},
+      \`experiencedProducts\` = ${data.experiencedProducts},
+      \`experiencedProductsOther\` = ${data.experiencedProductsOther ?? null},
+      \`assetItems\` = ${data.assetItems},
+      \`assetItemsOther\` = ${data.assetItemsOther ?? null}
+  `);
+}
+
+export async function getCorporateInvestmentInfo(applicationId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const { corporateInvestmentInfo } = require("../drizzle/schema");
+  const result = await db.select().from(corporateInvestmentInfo).where(eq(corporateInvestmentInfo.applicationId, applicationId)).limit(1);
   return result.length > 0 ? result[0] : null;
 }
 

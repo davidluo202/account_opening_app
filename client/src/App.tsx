@@ -13,6 +13,7 @@ import PersonalBasicInfo from "./pages/steps/PersonalBasicInfo";
 import CorporateBasicInfo from "./pages/steps/CorporateBasicInfo";
 import CorporateRelatedParties from "./pages/steps/CorporateRelatedParties";
 import CorporateFinancial from "./pages/steps/CorporateFinancial";
+import CorporateInvestment from "./pages/steps/CorporateInvestment";
 import PersonalDetailedInfo from "./pages/steps/PersonalDetailedInfo";
 import OccupationInfo from "./pages/steps/OccupationInfo";
 import EmploymentDetails from "./pages/steps/EmploymentDetails";
@@ -71,14 +72,14 @@ function StepRouter() {
   if (customerType === 'corporate') {
     switch (stepNum) {
       case 2: return <CorporateBasicInfo />;
-      // 暂时重定向到现有组件，后续开发专属组件
-      case 3: return <CorporateFinancial applicationId={applicationId} stepNum={stepNum} />; // 公司财务概况
-      case 4: return <CorporateRelatedParties />; // 关联人士
-      case 5: return <RiskQuestionnaire />;
-      case 6: return <BankAccount />;
-      case 7: return <TaxInfo />;
-      case 8: return <DocumentUpload />;
-      case 9: return <RegulatoryDeclaration />;
+      case 3: return <CorporateFinancial applicationId={applicationId} stepNum={stepNum} />; // 公司財務狀況
+      case 4: return <CorporateInvestment applicationId={applicationId} stepNum={stepNum} />; // 公司投資經驗與目標
+      case 5: return <CorporateRelatedParties />; // 关联人士
+      case 6: return <RiskQuestionnaire />;
+      case 7: return <BankAccount />;
+      case 8: return <TaxInfo />;
+      case 9: return <DocumentUpload />;
+      case 10: return <RegulatoryDeclaration />;
       default: return <NotFound />;
     }
   } else {

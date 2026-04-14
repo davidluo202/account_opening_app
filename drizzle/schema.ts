@@ -429,7 +429,27 @@ export const corporateFinancialInfo = mysqlTable("corporate_financial_info", {
 });
 
 /**
- * Case 4 (Corporate): 机构关联方
+ * Case 4 (Corporate): 公司投資經驗與目標
+ */
+export const corporateInvestmentInfo = mysqlTable("corporate_investment_info", {
+  id: int("id").autoincrement().primaryKey(),
+  applicationId: int("applicationId").notNull().unique(),
+  investmentObjectives: text("investmentObjectives").notNull(), // JSON array
+  investmentObjectivesOther: text("investmentObjectivesOther"),
+  estimatedInvestmentAmount: varchar("estimatedInvestmentAmount", { length: 100 }).notNull(),
+  riskVolatility: varchar("riskVolatility", { length: 50 }).notNull(),
+  investmentExperience: varchar("investmentExperience", { length: 100 }).notNull(),
+  knowledgeOfDerivatives: varchar("knowledgeOfDerivatives", { length: 10 }).notNull(),
+  experiencedProducts: text("experiencedProducts").notNull(), // JSON array
+  experiencedProductsOther: text("experiencedProductsOther"),
+  assetItems: text("assetItems").notNull(), // JSON array
+  assetItemsOther: text("assetItemsOther"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+/**
+ * Case 5 (Corporate): 机构关联方
  */
 export const corporateRelatedParties = mysqlTable("corporate_related_parties", {
   id: int("id").autoincrement().primaryKey(),
@@ -441,5 +461,7 @@ export const corporateRelatedParties = mysqlTable("corporate_related_parties", {
 
 export type CorporateFinancialInfo = typeof corporateFinancialInfo.$inferSelect;
 export type InsertCorporateFinancialInfo = typeof corporateFinancialInfo.$inferInsert;
+export type CorporateInvestmentInfo = typeof corporateInvestmentInfo.$inferSelect;
+export type InsertCorporateInvestmentInfo = typeof corporateInvestmentInfo.$inferInsert;
 export type CorporateRelatedParties = typeof corporateRelatedParties.$inferSelect;
 export type InsertCorporateRelatedParties = typeof corporateRelatedParties.$inferInsert;

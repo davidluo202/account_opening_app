@@ -31,13 +31,14 @@ const individualSteps: Step[] = [
 const corporateSteps: Step[] = [
   { id: 1, title: "客戶與賬戶類型", description: "選擇客戶與賬戶類型" },
   { id: 2, title: "機構基本信息", description: "填寫公司基本資料" },
-  { id: 3, title: "公司財務與投資概況", description: "填寫財務與投資背景" },
-  { id: 4, title: "關聯人士信息", description: "填寫董事及授權人資料" },
-  { id: 5, title: "風險評估問卷", description: "完成風險評估" },
-  { id: 6, title: "結算銀行賬戶", description: "添加公司銀行賬戶" },
-  { id: 7, title: "稅務信息", description: "填寫公司稅務資料" },
-  { id: 8, title: "文件上傳", description: "上傳機構證明文件" },
-  { id: 9, title: "監管聲明", description: "公司蓋章與簽署" },
+  { id: 3, title: "公司財務狀況", description: "填寫公司財務資料" },
+  { id: 4, title: "公司投資經驗與目標", description: "填寫投資經驗與目標" },
+  { id: 5, title: "關聯人士信息", description: "填寫董事及授權人資料" },
+  { id: 6, title: "風險評估問卷", description: "完成風險評估" },
+  { id: 7, title: "結算銀行賬戶", description: "添加公司銀行賬戶" },
+  { id: 8, title: "稅務信息", description: "填寫公司稅務資料" },
+  { id: 9, title: "文件上傳", description: "上傳機構證明文件" },
+  { id: 10, title: "監管聲明", description: "公司蓋章與簽署" },
 ];
 
 interface ApplicationWizardProps {
@@ -125,7 +126,7 @@ export default function ApplicationWizard({
               <div className="hidden sm:block border-l pl-3 ml-1">
                 <h1 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                   诚港金融开户系统
-                  <span className="text-xs font-mono bg-blue-100 text-blue-800 px-2 py-0.5 rounded border border-blue-200">v1.0.260414.001</span>
+                  <span className="text-xs font-mono bg-blue-100 text-blue-800 px-2 py-0.5 rounded border border-blue-200">v1.0.260414.002</span>
                 </h1>
               </div>
             </div>
@@ -140,7 +141,7 @@ export default function ApplicationWizard({
           <div className="sm:hidden mb-3">
             <h1 className="text-base font-semibold text-gray-800 flex items-center justify-between">
               <span>诚港金融开户系统</span>
-              <span className="text-xs font-mono bg-blue-100 text-blue-800 px-2 py-0.5 rounded border border-blue-200">v1.0.260414.001</span>
+              <span className="text-xs font-mono bg-blue-100 text-blue-800 px-2 py-0.5 rounded border border-blue-200">v1.0.260414.002</span>
             </h1>
           </div>
           <div className="space-y-2">
