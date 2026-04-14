@@ -66,6 +66,10 @@ export default function CorporateBasicInfo() {
     contactPhone: "",
     contactCountryCode: "+852",
     contactEmail: "",
+    // 機構專業投資者專用
+    website: "",
+    isRegulated: "no",
+    regulatorName: "",
   });
   const [isEmailVerified, setIsEmailVerified] = useState(false);
 
@@ -558,6 +562,61 @@ export default function CorporateBasicInfo() {
             </div>
 
           </div>
+        </div>
+
+        {/* 機構專業投資者專用 */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold border-b pb-2">機構專業投資者專用 / For use by institutional professional investors only</h3>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="website">網站 / Website</Label>
+              <Input
+                id="website"
+                value={formData.website}
+                onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                placeholder="https://www.example.com"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>客戶是否為受監管公司 / Is the client a regulated company?</Label>
+              <div className="flex gap-4 mt-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="isRegulated"
+                    value="no"
+                    checked={formData.isRegulated === "no"}
+                    onChange={() => setFormData({ ...formData, isRegulated: "no", regulatorName: "" })}
+                    className="w-4 h-4"
+                  />
+                  <span>否 / No</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="isRegulated"
+                    value="yes"
+                    checked={formData.isRegulated === "yes"}
+                    onChange={() => setFormData({ ...formData, isRegulated: "yes" })}
+                    className="w-4 h-4"
+                  />
+                  <span>是 / Yes</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          {formData.isRegulated === "yes" && (
+            <div className="space-y-2">
+              <Label htmlFor="regulatorName">監管名稱或監管活動類型 / Name of regulator or type of regulated activity</Label>
+              <Input
+                id="regulatorName"
+                value={formData.regulatorName}
+                onChange={(e) => setFormData({ ...formData, regulatorName: e.target.value })}
+                onBlur={() => setFormData({ ...formData, regulatorName: handleSCT(formData.regulatorName) })}
+                placeholder="如：香港證監會 SFC / 中國銀保監會 CBIRC"
+              />
+            </div>
+          )}
         </div>
       </div>
     </ApplicationWizard>

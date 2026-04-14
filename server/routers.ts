@@ -647,6 +647,10 @@ export const appRouter = router({
         contactCountryCode: z.string().optional(),
         contactEmail: z.string().email(),
         contactEmailVerified: z.boolean().optional().default(false),
+        // 機構專業投資者專用
+        website: z.string().optional(),
+        isRegulated: z.string().optional().default("no"),
+        regulatorName: z.string().optional(),
       }))
       .mutation(async ({ input, ctx }) => {
         const { applicationId, officeCountryCode, contactCountryCode, ...data } = input;

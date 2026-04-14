@@ -58,6 +58,11 @@ export async function syncMissingTables() {
     try { await db.execute(sql.raw("ALTER TABLE `corporate_financial_info` ADD COLUMN `experiencedProducts` text DEFAULT NULL")); } catch (e) { /* column may already exist */ }
     try { await db.execute(sql.raw("ALTER TABLE `corporate_financial_info` ADD COLUMN `experiencedProductsOther` text DEFAULT NULL")); } catch (e) { /* column may already exist */ }
 
+    // 機構專業投資者專用字段
+    try { await db.execute(sql.raw("ALTER TABLE `corporate_basic_info` ADD COLUMN `website` varchar(500) DEFAULT NULL")); } catch (e) { /* column may already exist */ }
+    try { await db.execute(sql.raw("ALTER TABLE `corporate_basic_info` ADD COLUMN `isRegulated` varchar(10) DEFAULT 'no'")); } catch (e) { /* column may already exist */ }
+    try { await db.execute(sql.raw("ALTER TABLE `corporate_basic_info` ADD COLUMN `regulatorName` varchar(255) DEFAULT NULL")); } catch (e) { /* column may already exist */ }
+
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS \`corporate_related_parties\` (
         \`id\` int NOT NULL AUTO_INCREMENT PRIMARY KEY,

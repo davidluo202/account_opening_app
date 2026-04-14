@@ -119,6 +119,10 @@ export const corporateBasicInfo = mysqlTable("corporate_basic_info", {
   contactPhone: varchar("contactPhone", { length: 50 }).notNull(),
   contactEmail: varchar("contactEmail", { length: 320 }).notNull(),
   contactEmailVerified: boolean("contactEmailVerified").default(false).notNull(),
+  // 機構專業投資者專用
+  website: varchar("website", { length: 500 }),
+  isRegulated: varchar("isRegulated", { length: 10 }).default("no"),
+  regulatorName: varchar("regulatorName", { length: 255 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
