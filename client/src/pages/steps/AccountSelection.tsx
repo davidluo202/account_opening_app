@@ -15,6 +15,7 @@ export default function AccountSelection() {
   const showReturnToPreview = useReturnToPreview();
 
   const [customerType, setCustomerType] = useState<"individual" | "joint" | "corporate">("individual");
+  const [corporateSubType, setCorporateSubType] = useState<"corporate_pi" | "institutional_pi" | "">("");
   const [accountType, setAccountType] = useState<"cash" | "margin" | "derivatives">("cash");
 
   const { data: existingData, isLoading: isLoadingData } = trpc.accountSelection.get.useQuery(
@@ -112,6 +113,35 @@ const handleNext = () => {
                 </div>
               </Label>
             </div>
+
+            {/* Corporate sub-type options */}
+            {customerType === "corporate" && (
+              <div className="ml-8 space-y-2 border-l-2 border-blue-200 pl-4">
+                <p className="text-xs text-muted-foreground font-medium">請選擇機構類型：</p>
+                <div
+                  className={`flex items-center space-x-2 p-3 border rounded-lg cursor-pointer transition-colors ${corporateSubType === 'corporate_pi' ? 'bg-blue-50 border-blue-300' : 'hover:bg-slate-50'}`}
+                  onClick={() => setCorporateSubType('corporate_pi')}
+                >
+                  <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${corporateSubType === 'corporate_pi' ? 'border-blue-600' : 'border-gray-300'}`}>
+                    {corporateSubType === 'corporate_pi' && <div className="w-2 h-2 rounded-full bg-blue-600" />}
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium text-sm">公司專業投資者 / Corporate Professional Investor</div>
+                  </div>
+                </div>
+                <div
+                  className={`flex items-center space-x-2 p-3 border rounded-lg cursor-pointer transition-colors ${corporateSubType === 'institutional_pi' ? 'bg-blue-50 border-blue-300' : 'hover:bg-slate-50'}`}
+                  onClick={() => setCorporateSubType('institutional_pi')}
+                >
+                  <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${corporateSubType === 'institutional_pi' ? 'border-blue-600' : 'border-gray-300'}`}>
+                    {corporateSubType === 'institutional_pi' && <div className="w-2 h-2 rounded-full bg-blue-600" />}
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium text-sm">機構專業投資者 / Institutional Professional Investor</div>
+                  </div>
+                </div>
+              </div>
+            )}
           </RadioGroup>
         </div>
 
