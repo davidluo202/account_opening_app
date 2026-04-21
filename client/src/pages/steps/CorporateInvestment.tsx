@@ -139,7 +139,7 @@ export default function CorporateInvestment({ applicationId, stepNum }: Props) {
     if (!estimatedInvestmentAmount) newErrors.estimatedInvestmentAmount = "請選擇預計投資金額";
     if (!riskVolatility) newErrors.riskVolatility = "請選擇可承受波幅";
     if (!investmentExperience) newErrors.investmentExperience = "請選擇投資經驗";
-    if (!knowledgeOfDerivatives) newErrors.knowledgeOfDerivatives = "請選擇衍生產品認識";
+    if (!knowledgeOfDerivatives) newErrors.knowledgeOfDerivatives = "請選擇對衍生產品認識";
     if (experiencedProducts.length === 0) newErrors.experiencedProducts = "請至少選擇一項";
     if (assetItems.length === 0) newErrors.assetItems = "請至少選擇一項";
     setErrors(newErrors);
@@ -246,7 +246,7 @@ export default function CorporateInvestment({ applicationId, stepNum }: Props) {
 
         {/* 衍生產品認識 */}
         <div className="space-y-4">
-          <Label className="text-base font-semibold text-slate-800">衍生產品認識 / Knowledge of Derivatives <span className="text-destructive">*</span></Label>
+          <Label className="text-base font-semibold text-slate-800">對衍生產品認識 / Knowledge of Derivatives <span className="text-destructive">*</span></Label>
           <RadioGroup value={knowledgeOfDerivatives} onValueChange={setKnowledgeOfDerivatives} className="space-y-3 bg-slate-50 p-4 rounded-lg border-2 border-slate-200">
             {derivativesKnowledgeOptions.map(opt => (
               <div key={opt.value} className="flex items-start space-x-3">
