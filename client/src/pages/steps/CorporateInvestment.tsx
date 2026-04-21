@@ -45,10 +45,10 @@ const investmentExperienceOptions = [
 ];
 
 const derivativesKnowledgeOptions = [
-  { value: "a", label: "a) 代表本公司作出投資決定的人，已接受有關衍生產品的性質或風險的培訓或課程（如由學術機構或金融機構所提供之網上課程或教室課程）" },
-  { value: "b", label: "b) 代表本公司作出投資決定的人，已有相關之交易經驗，即於過去三年內已進行了五次或以上有關衍生產品交易。（如：衍生權證，牛熊證，股票/指數期貨及期權，商品結構性產品及交易所基金等，無論是否於交易所進行的交易）" },
-  { value: "c", label: "c) 代表本公司作出投資決定的人，現時或過去從事衍生產品有關的工作經驗。" },
-  { value: "d", label: "d) 本公司對衍生產品沒有任何認識。" },
+  { value: "a", label: "代表本公司作出投資決定的人，已接受有關衍生產品的性質或風險的培訓或課程（如由學術機構或金融機構所提供之網上課程或教室課程）/ The person(s) who is/are responsible for making investment decisions for or on our behalf has/have undergone training or attended courses that provide general knowledge of nature or risk of derivatives (e.g. relevant online or classroom courses offered by academic institutions or financial institutions)" },
+  { value: "b", label: "代表本公司作出投資決定的人，已有相關之交易經驗，即於過去三年內已進行了五次或以上有關衍生產品交易。（如：衍生權證，牛熊證，股票/指數期貨及期權，商品結構性產品及交易所基金等，無論是否於交易所進行的交易）/ The person(s) who is/are responsible for making investment decisions for or on our behalf has/have relevant trading experience, i.e. has/have executed 5 or more transactions in derivatives in the past 3 years (e.g. derivative warrants, CBBCs, stock/index futures and options, commodity structured products and ETFs, whether or not traded on an exchange)" },
+  { value: "c", label: "代表本公司作出投資決定的人，現時或過去從事衍生產品有關的工作經驗。/ The person(s) who is/are responsible for making investment decisions for or on our behalf has/have current or previous work experience related to derivatives." },
+  { value: "d", label: "本公司對衍生產品沒有任何認識。/ We do not have any knowledge of derivatives." },
 ];
 
 const experiencedProductsList = [
