@@ -559,6 +559,7 @@ export const appRouter = router({
         applicationId: z.number(),
         customerType: z.enum(["individual", "joint", "corporate"]),
         accountType: z.enum(["cash", "margin", "derivatives"]),
+        corporateSubType: z.enum(["corporate_pi", "institutional_pi"]).optional(),
       }))
       .mutation(async ({ input, ctx }) => {
         const { applicationId, ...data } = input;
