@@ -55,6 +55,7 @@ export default function CorporateBasicInfo() {
     countryOfIncorporationOther: "",
     dateOfIncorporation: "",
     certificateOfIncorporationNo: "",
+    jurisdictionOfResidence: "",
     businessRegistrationNo: "",
     registeredAddress: "",
     businessAddress: "",
@@ -143,7 +144,7 @@ export default function CorporateBasicInfo() {
     }
 
     if (!formData.natureOfEntity.trim()) newErrors.natureOfEntity = "請選擇公司性質";
-    if (!formData.natureOfBusiness.trim()) newErrors.natureOfBusiness = "請選擇業務性質";
+    if (!formData.natureOfBusiness.trim()) newErrors.natureOfBusiness = "請選擇工作性質";
     if (!formData.countryOfIncorporation) newErrors.countryOfIncorporation = "請選擇註冊國家";
     if (!formData.dateOfIncorporation) {
       newErrors.dateOfIncorporation = "請選擇註冊日期";
@@ -345,11 +346,11 @@ export default function CorporateBasicInfo() {
               {errors.natureOfEntity && <p className="text-sm text-destructive">{errors.natureOfEntity}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="natureOfBusiness">業務性質 / Nature of Business <span className="text-destructive">*</span></Label>
+              <Label htmlFor="natureOfBusiness">工作性質 / Nature of Business <span className="text-destructive">*</span></Label>
               <div className="flex gap-2">
                 <Select value={formData.natureOfBusiness} onValueChange={(v) => setFormData({ ...formData, natureOfBusiness: v })}>
                   <SelectTrigger className={errors.natureOfBusiness ? "border-destructive" : ""}>
-                    <SelectValue placeholder="請選擇業務性質" />
+                    <SelectValue placeholder="請選擇工作性質" />
                   </SelectTrigger>
                   <SelectContent>
                     {businessNatures.map((n) => (
@@ -362,7 +363,7 @@ export default function CorporateBasicInfo() {
                     value={formData.natureOfBusinessOther}
                     onChange={(e) => setFormData({ ...formData, natureOfBusinessOther: e.target.value })}
                     onBlur={() => setFormData({ ...formData, natureOfBusinessOther: convertToTraditional(formData.natureOfBusinessOther) })}
-                    placeholder="請輸入業務性質"
+                    placeholder="請輸入工作性質"
                     className="flex-1"
                   />
                 )}
@@ -405,7 +406,7 @@ export default function CorporateBasicInfo() {
               {errors.dateOfIncorporation && <p className="text-sm text-destructive">{errors.dateOfIncorporation}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="certificateOfIncorporationNo">公司註冊證書號碼 / CI No. <span className="text-destructive">*</span></Label>
+              <Label htmlFor="certificateOfIncorporationNo">公司註冊證書號碼 / Certificate of Incorporation <span className="text-destructive">*</span></Label>
               <Input
                 id="certificateOfIncorporationNo"
                 value={formData.certificateOfIncorporationNo}
@@ -415,13 +416,23 @@ export default function CorporateBasicInfo() {
               {errors.certificateOfIncorporationNo && <p className="text-sm text-destructive">{errors.certificateOfIncorporationNo}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="businessRegistrationNo">商業登記證號碼 / BR No.</Label>
+              <Label htmlFor="jurisdictionOfResidence">居留司法管轄 / Jurisdiction(s) of Residence</Label>
+              <Input
+                id="jurisdictionOfResidence"
+                value={formData.jurisdictionOfResidence || ''}
+                onChange={(e) => setFormData({ ...formData, jurisdictionOfResidence: e.target.value })}
+                placeholder="例如：香港 / Hong Kong"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="businessRegistrationNo">商業登記證號碼 / Business Registration No.</Label>
               <Input
                 id="businessRegistrationNo"
                 value={formData.businessRegistrationNo}
                 onChange={(e) => setFormData({ ...formData, businessRegistrationNo: e.target.value })}
                 className={errors.businessRegistrationNo ? "border-destructive" : ""}
               />
+              <p className="text-xs text-muted-foreground">只適用於香港登記公司 / For Hong Kong Registration Company only</p>
               {errors.businessRegistrationNo && <p className="text-sm text-destructive">{errors.businessRegistrationNo}</p>}
             </div>
           </div>

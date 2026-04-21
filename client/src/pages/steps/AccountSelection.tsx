@@ -43,10 +43,16 @@ export default function AccountSelection() {
   }, [existingData]);
 
 const handleNext = () => {
+    // 機構賬戶必須選擇子類型
+    if (customerType === 'corporate' && !corporateSubType) {
+      alert('請選擇機構類型（公司專業投資者或機構專業投資者）');
+      return;
+    }
     saveMutation.mutate({
       applicationId,
       customerType,
       accountType,
+      corporateSubType: customerType === 'corporate' ? corporateSubType : undefined,
     });
   };
 
