@@ -501,7 +501,7 @@ export default function ApplicationPreview() {
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>1. {isCorporate ? '機構基本信息 Corporate Basic Information' : '個人基本信息 Personal Basic Information'}</span>
+                <span>1. {isCorporate ? '公司基本信息 Corporate Basic Information' : '個人基本信息 Personal Basic Information'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(2)}>
                   編輯
                 </Button>
