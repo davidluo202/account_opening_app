@@ -562,7 +562,7 @@ export const appRouter = router({
         corporateSubType: z.enum(["corporate_pi", "institutional_pi"]).optional(),
       }))
       .mutation(async ({ input, ctx }) => {
-        const { applicationId, corporateSubType, ...data } = input;
+        const { applicationId, corporateSubType: _corporateSubType, ...data } = input;
         const application = await db.getApplicationById(applicationId);
         if (!application || application.userId !== ctx.user.id) {
           throw new Error("申请不存在或无权访问");
