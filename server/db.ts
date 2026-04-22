@@ -653,7 +653,10 @@ export async function getRegulatoryDeclarations(applicationId: number) {
 export async function getCompleteApplicationData(applicationId: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
+  // Safely query each table - catch errors for tables that may not exist yet
+  const safe = <T>(fn: () => Promise<T>): Promise<T | null> => fn().catch(() => null);
+
   const [
     application,
     accountSelection,
@@ -674,22 +677,22 @@ export async function getCompleteApplicationData(applicationId: number) {
     relatedPartiesData
   ] = await Promise.all([
     getApplicationById(applicationId),
-    getAccountSelection(applicationId),
-    getPersonalBasicInfo(applicationId),
-    getCorporateBasicInfo(applicationId),
-    getPersonalDetailedInfo(applicationId),
-    getOccupationInfo(applicationId),
-    getEmploymentDetails(applicationId),
-    getFinancialAndInvestment(applicationId),
-    getCorporateFinancialInfo(applicationId),
-    getCorporateInvestmentInfo(applicationId),
-    getBankAccounts(applicationId),
-    getTaxInfo(applicationId),
-    getRiskQuestionnaire(applicationId),
-    getUploadedDocuments(applicationId),
-    getFaceVerification(applicationId),
-    getRegulatoryDeclarations(applicationId),
-    getCorporateRelatedParties(applicationId)
+    safe(() => getAccountSelection(applicationId)),
+    safe(() => getPersonalBasicInfo(applicationId)),
+    safe(() => getCorporateBasicInfo(applicationId)),
+    safe(() => getPersonalDetailedInfo(applicationId)),
+    safe(() => getOccupationInfo(applicationId)),
+    safe(() => getEmploymentDetails(applicationId)),
+    safe(() => getFinancialAndInvestment(applicationId)),
+    safe(() => getCorporateFinancialInfo(applicationId)),
+    safe(() => getCorporateInvestmentInfo(applicationId)),
+    safe(() => getBankAccounts(applicationId)),
+    safe(() => getTaxInfo(applicationId)),
+    safe(() => getRiskQuestionnaire(applicationId)),
+    safe(() => getUploadedDocuments(applicationId)),
+    safe(() => getFaceVerification(applicationId)),
+    safe(() => getRegulatoryDeclarations(applicationId)),
+    safe(() => getCorporateRelatedParties(applicationId))
   ]);
 
   return {
