@@ -648,13 +648,14 @@ export const appRouter = router({
         contactCountryCode: z.string().optional(),
         contactEmail: z.string().email(),
         contactEmailVerified: z.boolean().optional().default(false),
+        jurisdictionOfResidence: z.string().optional(),
         // 機構專業投資者專用
         website: z.string().optional(),
         isRegulated: z.string().optional().default("no"),
         regulatorName: z.string().optional(),
       }))
       .mutation(async ({ input, ctx }) => {
-        const { applicationId, officeCountryCode, contactCountryCode, ...data } = input;
+        const { applicationId, officeCountryCode, contactCountryCode, jurisdictionOfResidence: _jor, ...data } = input;
         
         // 合并国家区号与电话号码
         const officeNo = officeCountryCode ? `${officeCountryCode} ${data.officeNo}` : data.officeNo;
