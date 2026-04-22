@@ -136,10 +136,15 @@ export default function ApplicationPreview() {
   const [signatureMethod, setSignatureMethod] = useState<"typed" | "iamsmart">("typed");
 
   // 获取完整申請数据
-  const { data: completeData, isLoading, refetch } = trpc.application.getComplete.useQuery(
+  const { data: completeData, isLoading, error: queryError, refetch } = trpc.application.getComplete.useQuery(
     { id: applicationId },
     { enabled: !!applicationId && isAuthenticated }
   );
+
+  // Debug: log query error to help diagnose preview failures
+  if (queryError) {
+    console.error('[Preview] getComplete error:', queryError.message);
+  }
 
   // 生成申請编号
   const generateNumberMutation = trpc.application.generateNumber.useMutation({
@@ -226,6 +231,8 @@ export default function ApplicationPreview() {
       <div className="min-h-screen flex items-center justify-center">
         <Card className="p-8 text-center">
           <p className="text-lg mb-4">未找到申請数据</p>
+          {queryError && <p className="text-sm text-red-500 mb-4">錯誤: {queryError.message}</p>}
+          <p className="text-xs text-gray-500 mb-4">Application ID: {applicationId}</p>
           <Button onClick={() => setLocation("/applications")}>返回申請列表</Button>
         </Card>
       </div>
