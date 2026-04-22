@@ -239,7 +239,7 @@ export default function ApplicationPreview() {
     );
   }
 
-  const { application, accountSelection, basicInfo: personalBasic, corporateBasic, detailedInfo: personalDetailed, occupation, employment, financial, corporateFinancial, bankAccounts, taxInfo, riskQuestionnaire, uploadedDocuments: documents, face: faceVerification, regulatory, relatedParties } = completeData;
+  const { application, accountSelection, basicInfo: personalBasic, corporateBasic, detailedInfo: personalDetailed, occupation, employment, financial, corporateFinancial, corporateInvestment, bankAccounts, taxInfo, riskQuestionnaire, uploadedDocuments: documents, face: faceVerification, regulatory, relatedParties } = completeData;
 
   // 判断是否为機構客戶
   const isCorporate = accountSelection?.customerType === 'corporate';
@@ -526,7 +526,7 @@ export default function ApplicationPreview() {
                   <td className="p-3" colSpan={3}>{corporateBasic?.companyEnglishName || "-"}</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">成立地點 Country of Incorporation</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">註冊國家 Country of Incorporation</td>
                   <td className="p-3 w-1/4 border-r">{corporateBasic?.countryOfIncorporation || "-"}</td>
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">成立日期 Date of Incorporation</td>
                   <td className="p-3">{formatDate(corporateBasic?.dateOfIncorporation)}</td>
@@ -538,11 +538,11 @@ export default function ApplicationPreview() {
                   <td className="p-3">{corporateBasic?.businessRegistrationNo || "-"}</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold border-r">實體性質 Nature of Entity</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">公司性質 Nature of Entity</td>
                   <td className="p-3" colSpan={3}>{corporateBasic?.natureOfEntity || "-"}</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold border-r">業務性質 Nature of Business</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">工作性質 Nature of Business</td>
                   <td className="p-3" colSpan={3}>{corporateBasic?.natureOfBusiness || "-"}</td>
                 </tr>
                 <tr className="border-b">
@@ -606,7 +606,7 @@ export default function ApplicationPreview() {
             <div className="border-b">
               <div className="bg-blue-50 p-3 border-b">
                 <h3 className="font-bold flex items-center justify-between">
-                  <span>2. 公司財務狀況 Financial Status</span>
+                  <span>2. 公司財務與投資概覽 Financial & Investment Overview</span>
                   <Button variant="ghost" size="sm" onClick={() => handleEdit(3)}>
                     編輯
                   </Button>
@@ -654,9 +654,36 @@ export default function ApplicationPreview() {
                   </Button>
                 </h3>
               </div>
-              <div className="p-4 text-sm text-gray-500">
-                （投資經驗與目標詳情請參閱步驟4）
-              </div>
+              <table className="w-full min-w-[800px]">
+                <tbody>
+                  <tr className="border-b">
+                    <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">投資目標<br/>Investment Objective</td>
+                    <td className="p-3" colSpan={3}>{corporateInvestment?.investmentObjectives ? JSON.parse(corporateInvestment.investmentObjectives).join(", ") : "-"}</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">預計投資金額<br/>Estimated Investment Amount</td>
+                    <td className="p-3 w-1/4 border-r">{corporateInvestment?.estimatedInvestmentAmount || "-"}</td>
+                    <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">可承受波幅<br/>Risk Volatility</td>
+                    <td className="p-3">{corporateInvestment?.riskVolatility ? `±${corporateInvestment.riskVolatility}%` : "-"}</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-3 bg-gray-50 font-semibold border-r">投資經驗<br/>Investment Experience</td>
+                    <td className="p-3" colSpan={3}>{corporateInvestment?.investmentExperience || "-"}</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-3 bg-gray-50 font-semibold border-r">對衍生產品認識<br/>Knowledge of Derivatives</td>
+                    <td className="p-3" colSpan={3}>{corporateInvestment?.knowledgeOfDerivatives || "-"}</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-3 bg-gray-50 font-semibold border-r">曾投資產品<br/>Experienced Products</td>
+                    <td className="p-3" colSpan={3}>{corporateInvestment?.experiencedProducts ? JSON.parse(corporateInvestment.experiencedProducts).join(", ") : "-"}</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-3 bg-gray-50 font-semibold border-r">資產項目<br/>Asset Items</td>
+                    <td className="p-3" colSpan={3}>{corporateInvestment?.assetItems ? JSON.parse(corporateInvestment.assetItems).join(", ") : "-"}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
 
             {/* 4. 關聯人士信息 */}
@@ -1486,10 +1513,16 @@ export default function ApplicationPreview() {
               <input
                 type="text"
                 value={signatureName}
-                onChange={(e) => setSignatureName(e.target.value)}
-                placeholder="請輸入您的英文姓名"
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === "" || /^[A-Za-z\s''\-,.]+$/.test(val)) {
+                    setSignatureName(val);
+                  }
+                }}
+                placeholder="Please enter your English name"
                 className="w-full px-3 py-2 border rounded-md"
               />
+              <p className="text-xs text-gray-500 mt-1">只接受英文字母 / English characters only</p>
             </div>
             
             <div className="bg-blue-50 p-3 rounded-lg text-sm text-blue-800">

@@ -329,14 +329,18 @@ const handleNext = () => {
               id="signature"
               value={formData.signature}
               onChange={(e) => {
-                setFormData({ ...formData, signature: e.target.value });
-                if (errors.signature) {
-                  setErrors({ ...errors, signature: "" });
+                const val = e.target.value;
+                if (val === "" || /^[A-Za-z\s''\-,.]+$/.test(val)) {
+                  setFormData({ ...formData, signature: val });
+                  if (errors.signature) {
+                    setErrors({ ...errors, signature: "" });
+                  }
                 }
               }}
-              placeholder="請輸入您的英文姓名"
+              placeholder="Please enter your English name"
               className={errors.signature ? "border-destructive" : ""}
             />
+            <p className="text-xs text-muted-foreground">只接受英文字母 / English characters only</p>
             {errors.signature && <p className="text-sm text-destructive">{errors.signature}</p>}
             <p className="text-sm text-muted-foreground">
               請輸入您的英文姓名（必須與Case 3中填寫的英文姓名一致）
