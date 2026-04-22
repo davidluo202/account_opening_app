@@ -416,15 +416,6 @@ export default function CorporateBasicInfo() {
               {errors.certificateOfIncorporationNo && <p className="text-sm text-destructive">{errors.certificateOfIncorporationNo}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="jurisdictionOfResidence">居留司法管轄 / Jurisdiction(s) of Residence</Label>
-              <Input
-                id="jurisdictionOfResidence"
-                value={formData.jurisdictionOfResidence || ''}
-                onChange={(e) => setFormData({ ...formData, jurisdictionOfResidence: e.target.value })}
-                placeholder="例如：香港 / Hong Kong"
-              />
-            </div>
-            <div className="space-y-2">
               <Label htmlFor="businessRegistrationNo">商業登記證號碼 / Business Registration No.</Label>
               <Input
                 id="businessRegistrationNo"

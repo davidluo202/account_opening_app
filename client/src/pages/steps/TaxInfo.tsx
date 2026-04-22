@@ -92,7 +92,7 @@ export default function TaxInfo() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.taxResidency.trim()) newErrors.taxResidency = "請輸入稅務管轄區";
+    if (!formData.taxResidency.trim()) newErrors.taxResidency = "請輸入居留司法管轄區";
     if (!formData.noTaxId && !formData.taxIdNumber.trim()) newErrors.taxIdNumber = "請輸入稅務識別號";
     if (formData.noTaxId && !formData.noTaxIdReason.trim()) newErrors.noTaxIdReason = "請輸入沒有稅務編號的理由";
 
@@ -156,7 +156,7 @@ const handleSave = () => {
         {/* 稅務居住地 */}
         <div className="space-y-2">
           <Label htmlFor="taxResidency">
-            稅務管轄區 / Jurisdiction of Tax Residence <span className="text-destructive">*</span>
+            居留司法管轄區 / Jurisdiction(s) of Residence <span className="text-destructive">*</span>
           </Label>
           <Input
             id="taxResidency"
@@ -165,7 +165,7 @@ const handleSave = () => {
               setFormData({ ...formData, taxResidency: e.target.value });
               if (errors.taxResidency) setErrors({ ...errors, taxResidency: "" });
             }}
-            placeholder="請輸入稅務管轄區"
+            placeholder="請輸入居留司法管轄區"
             className={errors.taxResidency ? "border-destructive" : ""}
           />
           {errors.taxResidency && <p className="text-sm text-destructive">{errors.taxResidency}</p>}
