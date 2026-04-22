@@ -632,10 +632,14 @@ export const appRouter = router({
         companyEnglishName: z.string().min(1),
         companyChineseName: z.string().optional(),
         natureOfEntity: z.string().min(1),
+        natureOfEntityOther: z.string().optional(),
         natureOfBusiness: z.string().min(1),
+        natureOfBusinessOther: z.string().optional(),
         countryOfIncorporation: z.string().min(1),
+        countryOfIncorporationOther: z.string().optional(),
         dateOfIncorporation: z.string(),
         certificateOfIncorporationNo: z.string().min(1),
+        jurisdictionOfResidence: z.string().optional(),
         businessRegistrationNo: z.string().optional(),
         registeredAddress: z.string().min(1),
         businessAddress: z.string().min(1),
@@ -648,14 +652,13 @@ export const appRouter = router({
         contactCountryCode: z.string().optional(),
         contactEmail: z.string().email(),
         contactEmailVerified: z.boolean().optional().default(false),
-        jurisdictionOfResidence: z.string().optional(),
         // 機構專業投資者專用
         website: z.string().optional(),
         isRegulated: z.string().optional().default("no"),
         regulatorName: z.string().optional(),
       }))
       .mutation(async ({ input, ctx }) => {
-        const { applicationId, officeCountryCode, contactCountryCode, jurisdictionOfResidence: _jor, ...data } = input;
+        const { applicationId, officeCountryCode, contactCountryCode, jurisdictionOfResidence: _jor, natureOfEntityOther: _neo, natureOfBusinessOther: _nbo, countryOfIncorporationOther: _cio, ...data } = input;
         
         // 合并国家区号与电话号码
         const officeNo = officeCountryCode ? `${officeCountryCode} ${data.officeNo}` : data.officeNo;
