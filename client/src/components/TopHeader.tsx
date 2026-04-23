@@ -9,9 +9,9 @@ export function TopHeader({ children }: { children?: React.ReactNode }) {
           <div className="flex items-center gap-3 cursor-pointer">
             <img src="/logo-zh.png" alt="誠港金融" className="h-10" />
             <div className="flex items-center gap-2">
-              <span className="font-bold text-lg text-slate-800">客户开户系统</span>
+              <span className="font-bold text-lg text-slate-800">客戶開戶系統</span>
               <span className="text-xs font-mono bg-slate-100 text-slate-600 px-2 py-0.5 rounded border border-slate-200">
-                v1.0.260420.001
+                v1.0.260423.001
               </span>
             </div>
           </div>
