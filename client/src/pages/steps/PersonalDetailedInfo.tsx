@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { convertToTraditional } from "@/lib/converter";
@@ -65,6 +66,7 @@ export default function PersonalDetailedInfo() {
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
   const showReturnToPreview = useReturnToPreview();
+  const { user } = useAuth();
 
   // 获取用户基本信息（用于匹配身份证信息）
   const { data: basicInfo, error: basicInfoError } = trpc.personalBasic.get.useQuery(
@@ -160,13 +162,22 @@ export default function PersonalDetailedInfo() {
         billingAddressOther: existingData.billingAddressOther || "",
         idIssuingCountry: existingData.idIssuingCountry || "",
         idIssuingPlaceOther: existingData.idIssuingPlaceOther || "",
+        // 如果表格中尚無電郵，自動填入註冊時驗證過的電郵
+        email: existingData.email || (user?.email ?? ""),
       });
       // 从数据库读取邮箱验证状态
       if (existingData.emailVerified) {
         setEmailVerified(true);
+      } else if (!existingData.email && user?.email) {
+        // 註冊時已驗證過電郵，自動標記為已驗證
+        setEmailVerified(true);
       }
+    } else if (user?.email) {
+      // 首次進入，用註冊電郵預填
+      setFormData(prev => ({ ...prev, email: user.email }));
+      setEmailVerified(true);
     }
-  }, [existingData]);
+  }, [existingData, user]);
 
   // 倒计时器
   useEffect(() => {

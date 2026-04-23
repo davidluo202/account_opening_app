@@ -29,7 +29,7 @@ export default function Login() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      
+
       const text = await response.text();
       let data: any = null;
       try {
@@ -39,17 +39,17 @@ export default function Login() {
       }
 
       if (!response.ok) {
-        throw new Error(data.error || "登录失败");
+        throw new Error(data.error || "登入失敗");
       }
 
       if (data.success) {
-        toast.success("登录成功");
+        toast.success("登入成功");
         window.location.href = "/applications";
       } else {
-        toast.error(data.error || "登录失败，请检查账号密码");
+        toast.error(data.error || "登入失敗，請檢查賬號密碼");
       }
     } catch (error: any) {
-      toast.error(error.message || "登录失败，请检查网络或账号密码");
+      toast.error(error.message || "登入失敗，請檢查網絡或賬號密碼");
     } finally {
       setIsLoading(false);
     }
@@ -63,47 +63,47 @@ export default function Login() {
           <CardHeader className="space-y-1 text-center">
             <CardTitle className="text-2xl font-bold">登入</CardTitle>
             <CardDescription>
-              请输入您的邮箱和密码登录
+              請輸入您的電郵地址和密碼登入
             </CardDescription>
           </CardHeader>
           <form onSubmit={handleLogin}>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">邮箱</Label>
-                <Input 
-                  id="email" 
+                <Label htmlFor="email">電郵地址</Label>
+                <Input
+                  id="email"
                   type="text"
-                  inputMode="email" 
-                  placeholder="name@example.com" 
+                  inputMode="email"
+                  placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  required 
+                  required
                 />
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password">密码</Label>
+                  <Label htmlFor="password">密碼</Label>
                   <a href="/forgot-password" className="text-sm text-blue-600 hover:underline">
-                    忘记密码？
+                    忘記密碼？
                   </a>
                 </div>
-                <Input 
-                  id="password" 
-                  type="password" 
+                <Input
+                  id="password"
+                  type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  required 
+                  required
                 />
               </div>
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
               <Button className="w-full" type="submit" disabled={isLoading}>
-                {isLoading ? "登录中..." : "登入"}
+                {isLoading ? "登入中..." : "登入"}
               </Button>
               <div className="text-sm text-center text-slate-500">
-                还没有账号？{" "}
+                還沒有賬號？{" "}
                 <a href="/register" className="text-blue-600 hover:underline">
-                  立即注册
+                  立即註冊
                 </a>
               </div>
             </CardFooter>

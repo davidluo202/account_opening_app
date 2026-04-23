@@ -21,29 +21,29 @@ export default function ResetPassword() {
     if (tokenParam) {
       setToken(tokenParam);
     } else {
-      toast.error("无效的重置链接");
+      toast.error("無效的重置連結");
       setTimeout(() => setLocation("/login"), 2000);
     }
   }, [setLocation]);
 
   const resetPasswordMutation = trpc.approver.resetPassword.useMutation({
     onSuccess: (data) => {
-      toast.success(data.message || "密码重置成功");
+      toast.success(data.message || "密碼重置成功");
       setResetSuccess(true);
       setTimeout(() => setLocation("/login"), 3000);
     },
     onError: (error) => {
-      toast.error(error.message || "重置失败，请重试");
+      toast.error(error.message || "重置失敗，請重試");
     },
   });
 
   const handleSubmit = () => {
     if (!newPassword || newPassword.length < 6) {
-      toast.error("密码长度至少为6位");
+      toast.error("密碼長度至少為6位");
       return;
     }
     if (newPassword !== confirmPassword) {
-      toast.error("两次输入的密码不一致");
+      toast.error("兩次輸入的密碼不一致");
       return;
     }
     resetPasswordMutation.mutate({ token, newPassword });
@@ -55,28 +55,28 @@ export default function ResetPassword() {
       <div className="flex-1 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-2">
-            <CardTitle className="text-2xl font-bold">重置密码</CardTitle>
-            <CardDescription>请输入您的新密码</CardDescription>
+            <CardTitle className="text-2xl font-bold">重置密碼</CardTitle>
+            <CardDescription>請輸入您的新密碼</CardDescription>
           </CardHeader>
           <CardContent>
             {!resetSuccess ? (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="new-password">新密码</Label>
+                  <Label htmlFor="new-password">新密碼</Label>
                   <Input
                     id="new-password"
                     type="password"
-                    placeholder="请输入新密码（至少6位）"
+                    placeholder="請輸入新密碼（至少6位）"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="confirm-password">确认密码</Label>
+                  <Label htmlFor="confirm-password">確認密碼</Label>
                   <Input
                     id="confirm-password"
                     type="password"
-                    placeholder="请再次输入新密码"
+                    placeholder="請再次輸入新密碼"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     onKeyDown={(e) => {
@@ -89,22 +89,22 @@ export default function ResetPassword() {
                   disabled={resetPasswordMutation.isPending || !newPassword || !confirmPassword}
                   className="w-full"
                 >
-                  {resetPasswordMutation.isPending ? "重置中..." : "重置密码"}
+                  {resetPasswordMutation.isPending ? "重置中..." : "重置密碼"}
                 </Button>
                 <div className="text-sm text-center text-slate-500">
-                  <a href="/login" className="text-blue-600 hover:underline">返回登录</a>
+                  <a href="/login" className="text-blue-600 hover:underline">返回登入</a>
                 </div>
               </div>
             ) : (
               <div className="space-y-4">
                 <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-green-800 font-medium mb-2">密码重置成功！</p>
+                  <p className="text-green-800 font-medium mb-2">密碼重置成功！</p>
                   <p className="text-sm text-green-700">
-                    您的密码已成功重置。页面将在3秒后自动跳转到登录页面。
+                    您的密碼已成功重置。頁面將在3秒後自動跳轉到登入頁面。
                   </p>
                 </div>
                 <Button onClick={() => setLocation("/login")} className="w-full">
-                  立即前往登录
+                  立即前往登入
                 </Button>
               </div>
             )}

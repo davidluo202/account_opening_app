@@ -71,14 +71,14 @@ export function registerOAuthRoutes(app: Express) {
       if (user.password) {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-          return res.status(401).json({ error: "邮箱或密码错误" });
+          return res.status(401).json({ error: "電郵地址或密碼錯誤" });
         }
       } else {
         // Allow legacy auto-created test users to login with any password temporarily,
         // but it's better to force them to reset. Given the prompt "my password is correct but system says no",
         // maybe David has a password but there was an issue, or he didn't have one and login failed?
         // Actually, let's enforce password check. If they don't have a password, they MUST reset it or re-register.
-        return res.status(401).json({ error: "该账号为验证码注册，尚未设置密码，请点击下方「忘记密码」设置新密码。" });
+        return res.status(401).json({ error: "該賬號為驗證碼註冊，尚未設置密碼，請點擊下方「忘記密碼」設置新密碼。" });
       }
 
       const sessionToken = await sdk.createSessionToken(user.openId, {
@@ -107,7 +107,7 @@ export function registerOAuthRoutes(app: Express) {
       const user = await db.getUserByEmail(email);
       if (!user) {
         // do not reveal whether user exists
-        return res.json({ success: true, message: "如果该邮箱存在，您将收到密码重置邮件" });
+        return res.json({ success: true, message: "如果該電郵地址已註冊，您將收到密碼重置郵件" });
       }
 
       const { generateResetToken, generateResetLink } = await import("../password");
@@ -124,10 +124,10 @@ export function registerOAuthRoutes(app: Express) {
 
       const sent = await sendPasswordResetEmail(email, resetLink);
       if (!sent) {
-        return res.status(500).json({ success: false, error: "邮件发送失败，请稍后重试" });
+        return res.status(500).json({ success: false, error: "郵件發送失敗，請稍後重試" });
       }
 
-      return res.json({ success: true, message: "密码重置邮件已发送" });
+      return res.json({ success: true, message: "密碼重置郵件已發送" });
     } catch (error: any) {
       console.error("[Auth] request-password-reset failed", error);
       return res.status(500).json({ success: false, error: error?.message || "Server error" });

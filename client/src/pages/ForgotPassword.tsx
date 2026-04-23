@@ -38,12 +38,12 @@ export default function ForgotPassword() {
       }
 
       if (!resp.ok || !data?.success) {
-        throw new Error(data?.error || "发送失败，请稍后重试");
+        throw new Error(data?.error || "發送失敗，請稍後重試");
       }
 
       setSent(true);
     } catch (err: any) {
-      toast.error(err?.message || "发送失败，请稍后重试");
+      toast.error(err?.message || "發送失敗，請稍後重試");
     } finally {
       setIsSending(false);
     }
@@ -59,29 +59,29 @@ export default function ForgotPassword() {
               <div className="flex justify-center mb-2">
                 <CheckCircle className="h-12 w-12 text-green-500" />
               </div>
-              <CardTitle className="text-2xl font-bold">邮件已发送</CardTitle>
+              <CardTitle className="text-2xl font-bold">郵件已發送</CardTitle>
               <CardDescription>
-                如果该邮箱已注册，您将收到密码重置邮件。请检查您的收件箱（含垃圾邮件）。
+                如果該電郵地址已註冊，您將收到密碼重置郵件。請檢查您的收件箱（含垃圾郵件）。
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Button className="w-full" onClick={() => setLocation("/login")}>
-                返回登录
+                返回登入
               </Button>
             </CardContent>
           </Card>
         ) : (
           <Card className="w-full max-w-md">
             <CardHeader className="space-y-2">
-              <CardTitle className="text-2xl font-bold">忘记密码</CardTitle>
+              <CardTitle className="text-2xl font-bold">忘記密碼</CardTitle>
               <CardDescription>
-                输入您的注册邮箱，我们将发送密码重置链接。
+                輸入您的註冊電郵地址，我們將發送密碼重置連結。
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">注册邮箱</Label>
+                  <Label htmlFor="email">註冊電郵地址</Label>
                   <Input
                     id="email"
                     type="text"
@@ -94,11 +94,11 @@ export default function ForgotPassword() {
                 </div>
                 <Button type="submit" className="w-full" disabled={isSending}>
                   <Mail className="h-4 w-4 mr-2" />
-                  {isSending ? "发送中..." : "发送重置链接"}
+                  {isSending ? "發送中..." : "發送重置連結"}
                 </Button>
                 <div className="text-sm text-center text-slate-500">
-                  想起密码了？{" "}
-                  <a href="/login" className="text-blue-600 hover:underline">返回登录</a>
+                  想起密碼了？{" "}
+                  <a href="/login" className="text-blue-600 hover:underline">返回登入</a>
                 </div>
               </form>
             </CardContent>
