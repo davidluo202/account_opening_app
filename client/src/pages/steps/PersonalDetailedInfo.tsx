@@ -293,18 +293,16 @@ export default function PersonalDetailedInfo() {
     
     // 邮箱校验
     if (!formData.email.trim()) {
-      newErrors.email = "請輸入電子郵箱";
+      newErrors.email = "請輸入電郵地址";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "請輸入有效的電子郵箱地址";
-    } else if (!emailVerified) {
-      newErrors.email = "請點擊右側的【驗證】按鈕，完成郵箱驗證後方可繼續";
+      newErrors.email = "請輸入有效的電郵地址";
     }
 
-    // 手机号码必填
-    if (!formData.mobileNumber.trim()) newErrors.mobileNumber = "请输入手机号码";
-    // 住宅电话可选，不需要验证
-    
-    if (!formData.residentialAddress.trim()) newErrors.residentialAddress = "请输入居住地址";
+    // 手機號碼必填
+    if (!formData.mobileNumber.trim()) newErrors.mobileNumber = "請輸入手機號碼";
+    // 住宅電話可選，不需要驗證
+
+    if (!formData.residentialAddress.trim()) newErrors.residentialAddress = "請輸入居住地址";
     
     // 账单通讯地址验证
     if (formData.billingAddressType === "other" && !formData.billingAddressOther.trim()) {
