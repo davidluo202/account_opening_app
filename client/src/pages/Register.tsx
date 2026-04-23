@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { TopHeader } from "@/components/TopHeader";
 import { trpc } from "@/lib/trpc";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle2, Loader2, Mail } from "lucide-react";
+import { CheckCircle2, Circle, Loader2, Mail } from "lucide-react";
 
 export default function Register() {
   const [, setLocation] = useLocation();
@@ -84,6 +84,11 @@ export default function Register() {
 
     if (verificationStep !== "verified") {
       toast.error("請先完成電郵驗證");
+      return;
+    }
+
+    if (password.length < 8 || password.length > 20 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
+      toast.error("密碼須為8-20位，包含大小寫字母及數字");
       return;
     }
 
@@ -236,12 +241,32 @@ export default function Register() {
                 <Input
                   id="password"
                   type="password"
-                  placeholder="請輸入密碼（至少6位）"
+                  placeholder="請輸入密碼"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  minLength={6}
+                  minLength={8}
+                  maxLength={20}
                 />
+                <div className="space-y-1 text-xs">
+                  {[
+                    { test: password.length >= 8 && password.length <= 20, label: "8-20 位字元" },
+                    { test: /[A-Z]/.test(password), label: "包含大寫字母" },
+                    { test: /[a-z]/.test(password), label: "包含小寫字母" },
+                    { test: /[0-9]/.test(password), label: "包含數字" },
+                  ].map((rule) => (
+                    <div key={rule.label} className="flex items-center gap-1.5">
+                      {rule.test ? (
+                        <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
+                      ) : (
+                        <Circle className="h-3.5 w-3.5 text-gray-300" />
+                      )}
+                      <span className={rule.test ? "text-green-600" : "text-gray-400"}>
+                        {rule.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
