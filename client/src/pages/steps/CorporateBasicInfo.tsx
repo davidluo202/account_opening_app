@@ -10,7 +10,7 @@ import { Loader2, CheckCircle } from "lucide-react";
 import { convertToTraditional } from "@/lib/converter";
 import { industryOptions } from "@/lib/industryOptions";
 import { useReturnToPreview } from "@/hooks/useReturnToPreview";
-import EmailVerification from "@/components/EmailVerification";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 const countries = [
   "中国", "香港", "澳门", "台湾", "美国", "加拿大", "英国", "澳大利亚", "新加坡", "日本", "韩国", "other"
@@ -43,6 +43,7 @@ export default function CorporateBasicInfo() {
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
   const showReturnToPreview = useReturnToPreview();
+  const { user } = useAuth();
 
   const [formData, setFormData] = useState({
     companyEnglishName: "",
@@ -125,8 +126,12 @@ export default function CorporateBasicInfo() {
       contactCountryCode: contact.code || (existingData as any).contactCountryCode || "+852",
       contactPhone: contact.number || "",
     });
-    setIsEmailVerified(!!(existingData as any)?.contactEmailVerified);
-  }, [existingData]);
+    // 自動套用註冊電郵
+    if (!(existingData as any)?.contactEmail && user?.email) {
+      setFormData(prev => ({ ...prev, contactEmail: user.email }));
+    }
+    setIsEmailVerified(true); // 註冊時已驗證
+  }, [existingData, user]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -229,9 +234,7 @@ export default function CorporateBasicInfo() {
       newErrors.contactEmail = "電郵格式不正確";
     }
 
-    if (formData.contactEmail.trim() && !isEmailVerified) {
-      newErrors.contactEmail = "請先完成電郵驗證";
-    }
+    // 電郵自動套用註冊電郵，無需再次驗證
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -550,16 +553,16 @@ export default function CorporateBasicInfo() {
             </div>
 
             <div className="space-y-2">
-              <Label>電郵地址 / E-mail <span className="text-destructive">*</span></Label>
-              <EmailVerification
-                email={formData.contactEmail}
-                onEmailChange={(email) => {
-                  setFormData({ ...formData, contactEmail: email });
-                  setIsEmailVerified(false);
-                }}
-                onVerified={() => setIsEmailVerified(true)}
-                disabled={false}
+              <Label>電郵地址 / E-mail <span className="text-destructive">*</span>
+                <span className="text-sm text-green-600 ml-2">（已於註冊時驗證）</span>
+              </Label>
+              <Input
+                value={formData.contactEmail}
+                placeholder="your.email@example.com"
+                className="bg-green-50 border-green-300"
+                disabled
               />
+              <p className="text-xs text-muted-foreground">此電郵地址自動套用您註冊時驗證的電郵</p>
               {errors.contactEmail && <p className="text-sm text-destructive">{errors.contactEmail}</p>}
             </div>
 
