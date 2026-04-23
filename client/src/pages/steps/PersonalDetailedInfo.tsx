@@ -549,95 +549,28 @@ export default function PersonalDetailedInfo() {
           </div>
         </div>
 
-        {/* 電子郵箱 */}
+        {/* 電郵地址 */}
         <div className="space-y-2">
             <Label htmlFor="email">
-              電子郵箱 / Email <span className="text-destructive">*</span>
-              {!emailVerified && <span className="text-sm text-muted-foreground ml-2">（需驗證）</span>}
+              電郵地址 / Email <span className="text-destructive">*</span>
+              <span className="text-sm text-green-600 ml-2">（已於註冊時驗證）</span>
             </Label>
-          <div className="flex gap-2">
             <Input
               id="email"
               type="email"
               value={formData.email}
-              onChange={(e) => {
-                setFormData({ ...formData, email: e.target.value });
-                if (errors.email) setErrors({ ...errors, email: "" });
-                setEmailVerified(false);
-              }}
               placeholder="example@email.com"
-              className={errors.email ? "border-destructive" : ""}
-              disabled={emailVerified}
+              className="bg-green-50 border-green-300"
+              disabled
             />
-            {!emailVerified && (
-              <button
-                type="button"
-                onClick={handleSendVerificationCode}
-                disabled={isSendingCode || countdown > 0}
-                className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-              >
-                {isSendingCode ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : countdown > 0 ? (
-                  `${Math.floor(countdown / 60)}:${String(countdown % 60).padStart(2, '0')}`
-                ) : showVerificationInput ? (
-                  "重發"
-                ) : (
-                  "驗證"
-                )}
-              </button>
-            )}
-            {emailVerified && (
-              <span className="flex items-center text-green-600 whitespace-nowrap">
-                ✓ 已驗證
-              </span>
-            )}
-          </div>
+            <p className="text-xs text-muted-foreground">此電郵地址自動套用您註冊時驗證的電郵</p>
           {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
-          
-          {/* 验证码输入 */}
-          {showVerificationInput && !emailVerified && (
-            <div className="space-y-2 mt-2">
-              <Label htmlFor="verificationCode">
-                驗證碼 <span className="text-destructive">*</span>
-              </Label>
-              <div className="flex gap-2">
-                <Input
-                  id="verificationCode"
-                  type="text"
-                  maxLength={6}
-                  value={verificationCode}
-                  onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ''))}
-                  placeholder="請輸入6位數字驗證碼"
-                  className="border-2 border-primary focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                  autoFocus
-                />
-                <button
-                  type="button"
-                  onClick={handleVerifyCode}
-                  disabled={verifyCodeMutation.isPending}
-                  className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-                >
-                  {verifyCodeMutation.isPending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    "確認"
-                  )}
-                </button>
-              </div>
-              {countdown > 0 && (
-                <p className="text-sm text-muted-foreground">
-                  驗證碼將在 {Math.floor(countdown / 60)}:{String(countdown % 60).padStart(2, '0')} 後過期
-                </p>
-              )}
-            </div>
-          )}
         </div>
 
         {/* 住宅电话 */}
         <div className="space-y-2">
           <Label htmlFor="phoneNumber">
-            住宅电话 / Residential Phone (可选)
+            住宅電話 / Residential Phone (可選)
           </Label>
           <div className="flex gap-2">
             <Select 

@@ -99,7 +99,7 @@ export default function Applications() {
         {/* 筛选和排序控件 */}
         <div className="flex gap-4 mb-6">
           <div className="flex-1">
-            <label className="text-sm font-medium mb-2 block">申請状态</label>
+            <label className="text-sm font-medium mb-2 block">申請狀態</label>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger>
                 <SelectValue />
@@ -108,8 +108,8 @@ export default function Applications() {
                 <SelectItem value="all">全部</SelectItem>
                 <SelectItem value="draft">草稿</SelectItem>
                 <SelectItem value="submitted">已提交</SelectItem>
-                <SelectItem value="approved">已审批</SelectItem>
-                <SelectItem value="rejected">拒绝申請</SelectItem>
+                <SelectItem value="approved">已審批</SelectItem>
+                <SelectItem value="rejected">拒絕申請</SelectItem>
                 <SelectItem value="returned">退回修改</SelectItem>
               </SelectContent>
             </Select>
@@ -121,8 +121,8 @@ export default function Applications() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="createdAt">创建时间</SelectItem>
-                <SelectItem value="submittedAt">提交时间</SelectItem>
+                <SelectItem value="createdAt">創建時間</SelectItem>
+                <SelectItem value="submittedAt">提交時間</SelectItem>
               </SelectContent>
             </Select>
           </div>
