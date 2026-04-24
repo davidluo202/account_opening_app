@@ -175,8 +175,8 @@ export default function ClientDeclaration() {
         {/* Q1 */}
         <Card className="p-6 space-y-4">
           <div>
-            <p className="font-medium">Is the company a licensed corporation registered with the Securities and Futures Commission or registered institution under the Banking Ordinance?</p>
-            <p className="text-sm text-muted-foreground mt-1">貴公司是否為證券投資及期貨事務監察委員會之持牌法團或註冊機構？</p>
+            <p className="font-medium">貴公司是否為證券投資及期貨事務監察委員會之持牌法團或註冊機構？</p>
+            <p className="text-sm text-muted-foreground mt-1">Is the company a licensed corporation registered with the Securities and Futures Commission or registered institution under the Banking Ordinance?</p>
           </div>
           <RadioGroup value={q1} onChange={(v) => { setQ1(v); if (errors.q1) setErrors({...errors, q1: ""}); }} name="q1" error={errors.q1} />
           {q1 === "yes" && (
@@ -191,8 +191,8 @@ export default function ClientDeclaration() {
         {/* Q2 */}
         <Card className="p-6 space-y-4">
           <div>
-            <p className="font-medium">Are the company acting as an intermediary for the account? If yes, details of the ultimate beneficial owner(s), including a beneficiary holding an interest through a nominee or trust, is/are</p>
-            <p className="text-sm text-muted-foreground mt-1">貴公司是否以中介人身份操作賬戶？如是，戶口的最終權益擁有人（包括通過代理人或信託人而持有利益之受益人）</p>
+            <p className="font-medium">貴公司是否以中介人身份操作賬戶？如是，戶口的最終權益擁有人（包括通過代理人或信託人而持有利益之受益人）</p>
+            <p className="text-sm text-muted-foreground mt-1">Are the company acting as an intermediary for the account? If yes, details of the ultimate beneficial owner(s), including a beneficiary holding an interest through a nominee or trust, is/are</p>
           </div>
           <RadioGroup value={q2} onChange={(v) => { setQ2(v); if (errors.q2) setErrors({...errors, q2: ""}); }} name="q2" error={errors.q2} />
           {q2 === "yes" && (
@@ -216,8 +216,8 @@ export default function ClientDeclaration() {
         {/* Q3 */}
         <Card className="p-6 space-y-4">
           <div>
-            <p className="font-medium">Is any directors, shareholders or authorized persons of the company client of CANTON MUTUAL FINANCIAL LIMITED?</p>
-            <p className="text-sm text-muted-foreground mt-1">貴公司之任何董事、股東或授權人士是否為誠港金融股份有限公司的客戶？</p>
+            <p className="font-medium">貴公司之任何董事、股東或授權人士是否為誠港金融股份有限公司的客戶？</p>
+            <p className="text-sm text-muted-foreground mt-1">Is any directors, shareholders or authorized persons of the company client of CANTON MUTUAL FINANCIAL LIMITED?</p>
           </div>
           <RadioGroup value={q3} onChange={(v) => { setQ3(v); if (errors.q3) setErrors({...errors, q3: ""}); }} name="q3" error={errors.q3} />
           {q3 === "yes" && (
@@ -232,8 +232,8 @@ export default function ClientDeclaration() {
         {/* Q4 */}
         <Card className="p-6 space-y-4">
           <div>
-            <p className="font-medium">Does any directors, shareholders or authorized persons of the company is a staff of CANTON MUTUAL FINANCIAL LIMITED?</p>
-            <p className="text-sm text-muted-foreground mt-1">貴公司之任何董事、股東或授權人士是否誠港金融股份有限公司的職員？</p>
+            <p className="font-medium">貴公司之任何董事、股東或授權人士是否誠港金融股份有限公司的職員？</p>
+            <p className="text-sm text-muted-foreground mt-1">Does any directors, shareholders or authorized persons of the company is a staff of CANTON MUTUAL FINANCIAL LIMITED?</p>
           </div>
           <RadioGroup value={q4} onChange={(v) => { setQ4(v); if (errors.q4) setErrors({...errors, q4: ""}); }} name="q4" error={errors.q4} />
           {q4 === "yes" && (
@@ -248,8 +248,8 @@ export default function ClientDeclaration() {
         {/* Q5 */}
         <Card className="p-6 space-y-4">
           <div>
-            <p className="font-medium">Does any directors, shareholders or authorized persons of the company have any relationship with the staff of CANTON MUTUAL FINANCIAL LIMITED?</p>
-            <p className="text-sm text-muted-foreground mt-1">貴公司之任何董事、股東或授權人士與誠港金融股份有限公司員工是否有親戚關係？</p>
+            <p className="font-medium">貴公司之任何董事、股東或授權人士與誠港金融股份有限公司員工是否有親戚關係？</p>
+            <p className="text-sm text-muted-foreground mt-1">Does any directors, shareholders or authorized persons of the company have any relationship with the staff of CANTON MUTUAL FINANCIAL LIMITED?</p>
           </div>
           <RadioGroup value={q5} onChange={(v) => { setQ5(v); if (errors.q5) setErrors({...errors, q5: ""}); }} name="q5" error={errors.q5} />
           {q5 === "yes" && (
@@ -264,8 +264,8 @@ export default function ClientDeclaration() {
         {/* Q6 */}
         <Card className="p-6 space-y-4">
           <div>
-            <p className="font-medium">Are the company acting as an intermediary for the account? Is any directors, or authorized persons of the company an employee of any participant of the Stock Exchange of Hong Kong, a licensed corporate under the Securities and Futures Ordinance, or registered institution Banking Ordinance (whether he/she is currently a SFC licensed/HKMA registered person or not)?</p>
-            <p className="text-sm text-muted-foreground mt-1">貴公司之任何董事、股東或授權人士是否為香港聯合交易所參與者或任何根據證券投資及期貨條例註冊持牌法或銀行條例之註冊機構職員（不管閣下現時是否為監管機構持牌代表/金管局註冊人士）？</p>
+            <p className="font-medium">貴公司之任何董事、股東或授權人士是否為香港聯合交易所參與者或任何根據證券投資及期貨條例註冊持牌法或銀行條例之註冊機構職員（不管閣下現時是否為監管機構持牌代表/金管局註冊人士）？</p>
+            <p className="text-sm text-muted-foreground mt-1">Are the company acting as an intermediary for the account? Is any directors, or authorized persons of the company an employee of any participant of the Stock Exchange of Hong Kong, a licensed corporate under the Securities and Futures Ordinance, or registered institution Banking Ordinance (whether he/she is currently a SFC licensed/HKMA registered person or not)?</p>
           </div>
           <RadioGroup value={q6} onChange={(v) => { setQ6(v); if (errors.q6) setErrors({...errors, q6: ""}); }} name="q6" error={errors.q6} />
           {q6 === "yes" && (
