@@ -106,28 +106,29 @@ export default function CorporateBasicInfo() {
   });
 
   useEffect(() => {
-    if (!existingData) return;
+    if (existingData) {
+      const parseMergedPhone = (value?: string) => {
+        if (!value) return { code: undefined as string | undefined, number: value };
+        const m = value.trim().match(/^(\+\d+)\s*(\d+)$/);
+        if (!m) return { code: undefined as string | undefined, number: value };
+        return { code: m[1], number: m[2] };
+      };
 
-    const parseMergedPhone = (value?: string) => {
-      if (!value) return { code: undefined as string | undefined, number: value };
-      const m = value.trim().match(/^(\+\d+)\s*(\d+)$/);
-      if (!m) return { code: undefined as string | undefined, number: value };
-      return { code: m[1], number: m[2] };
-    };
+      const office = parseMergedPhone((existingData as any).officeNo);
+      const contact = parseMergedPhone((existingData as any).contactPhone);
 
-    const office = parseMergedPhone((existingData as any).officeNo);
-    const contact = parseMergedPhone((existingData as any).contactPhone);
-
-    setFormData({
-      ...(existingData as any),
-      // Split merged phones so UI shows country code in select, number in input
-      officeCountryCode: office.code || (existingData as any).officeCountryCode || "+852",
-      officeNo: office.number || "",
-      contactCountryCode: contact.code || (existingData as any).contactCountryCode || "+852",
-      contactPhone: contact.number || "",
-    });
-    // 自動套用註冊電郵
-    if (!(existingData as any)?.contactEmail && user?.email) {
+      setFormData({
+        ...(existingData as any),
+        // Split merged phones so UI shows country code in select, number in input
+        officeCountryCode: office.code || (existingData as any).officeCountryCode || "+852",
+        officeNo: office.number || "",
+        contactCountryCode: contact.code || (existingData as any).contactCountryCode || "+852",
+        contactPhone: contact.number || "",
+        // 自動套用註冊電郵（如果表格中沒有已保存的電郵）
+        contactEmail: (existingData as any)?.contactEmail || user?.email || "",
+      });
+    } else if (user?.email) {
+      // 首次進入，用註冊電郵預填
       setFormData(prev => ({ ...prev, contactEmail: user.email }));
     }
     setIsEmailVerified(true); // 註冊時已驗證
