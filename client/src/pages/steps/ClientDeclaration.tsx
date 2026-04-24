@@ -181,7 +181,7 @@ export default function ClientDeclaration() {
           <RadioGroup value={q1} onChange={(v) => { setQ1(v); if (errors.q1) setErrors({...errors, q1: ""}); }} name="q1" error={errors.q1} />
           {q1 === "yes" && (
             <div className="space-y-2 ml-6">
-              <Label>CE No 中央編號 <span className="text-destructive">*</span></Label>
+              <Label>中央編號 / CE No <span className="text-destructive">*</span></Label>
               <Input value={q1CeNo} onChange={(e) => setQ1CeNo(e.target.value)} placeholder="請輸入中央編號" className={errors.q1CeNo ? "border-destructive" : ""} />
               {errors.q1CeNo && <p className="text-sm text-destructive">{errors.q1CeNo}</p>}
             </div>
@@ -198,15 +198,15 @@ export default function ClientDeclaration() {
           {q2 === "yes" && (
             <div className="space-y-3 ml-6">
               <div className="space-y-2">
-                <Label>Name 名稱</Label>
+                <Label>名稱 / Name</Label>
                 <Input value={q2Name} onChange={(e) => setQ2Name(e.target.value)} placeholder="請輸入名稱" />
               </div>
               <div className="space-y-2">
-                <Label>ID/Passport No. 身份證/護照號碼</Label>
+                <Label>身份證/護照號碼 / ID/Passport No.</Label>
                 <Input value={q2IdPassport} onChange={(e) => setQ2IdPassport(e.target.value)} placeholder="請輸入身份證/護照號碼" />
               </div>
               <div className="space-y-2">
-                <Label>Address 地址</Label>
+                <Label>地址 / Address</Label>
                 <Textarea value={q2Address} onChange={(e) => setQ2Address(e.target.value)} placeholder="請輸入地址" />
               </div>
             </div>
@@ -222,7 +222,7 @@ export default function ClientDeclaration() {
           <RadioGroup value={q3} onChange={(v) => { setQ3(v); if (errors.q3) setErrors({...errors, q3: ""}); }} name="q3" error={errors.q3} />
           {q3 === "yes" && (
             <div className="space-y-2 ml-6">
-              <Label>If yes, Staff Name & Position is 如是，職員名稱及職位為 <span className="text-destructive">*</span></Label>
+              <Label>如是，職員名稱及職位為 / If yes, Staff Name & Position is <span className="text-destructive">*</span></Label>
               <Input value={q3Details} onChange={(e) => setQ3Details(e.target.value)} placeholder="請填寫姓名及職位" className={errors.q3Details ? "border-destructive" : ""} />
               {errors.q3Details && <p className="text-sm text-destructive">{errors.q3Details}</p>}
             </div>
@@ -238,7 +238,7 @@ export default function ClientDeclaration() {
           <RadioGroup value={q4} onChange={(v) => { setQ4(v); if (errors.q4) setErrors({...errors, q4: ""}); }} name="q4" error={errors.q4} />
           {q4 === "yes" && (
             <div className="space-y-2 ml-6">
-              <Label>If yes, Staff Name & Position is 如是，職員名稱及職位為 <span className="text-destructive">*</span></Label>
+              <Label>如是，職員名稱及職位為 / If yes, Staff Name & Position is <span className="text-destructive">*</span></Label>
               <Input value={q4Details} onChange={(e) => setQ4Details(e.target.value)} placeholder="請填寫姓名及職位" className={errors.q4Details ? "border-destructive" : ""} />
               {errors.q4Details && <p className="text-sm text-destructive">{errors.q4Details}</p>}
             </div>
@@ -254,7 +254,7 @@ export default function ClientDeclaration() {
           <RadioGroup value={q5} onChange={(v) => { setQ5(v); if (errors.q5) setErrors({...errors, q5: ""}); }} name="q5" error={errors.q5} />
           {q5 === "yes" && (
             <div className="space-y-2 ml-6">
-              <Label>If yes, Staff Name & Position is 如是，職員名稱及職位為 <span className="text-destructive">*</span></Label>
+              <Label>如是，職員名稱及職位為 / If yes, Staff Name & Position is <span className="text-destructive">*</span></Label>
               <Input value={q5Details} onChange={(e) => setQ5Details(e.target.value)} placeholder="請填寫姓名及職位" className={errors.q5Details ? "border-destructive" : ""} />
               {errors.q5Details && <p className="text-sm text-destructive">{errors.q5Details}</p>}
             </div>
@@ -271,19 +271,19 @@ export default function ClientDeclaration() {
           {q6 === "yes" && (
             <div className="space-y-3 ml-6">
               <div className="space-y-2">
-                <Label>If yes, Name of director/shareholder or authorized person 如是，董事、股東或授權人士之姓名</Label>
+                <Label>如是，董事、股東或授權人士之姓名 / If yes, Name of director/shareholder or authorized person</Label>
                 <Input value={q6DirectorName} onChange={(e) => setQ6DirectorName(e.target.value)} placeholder="請輸入姓名" />
               </div>
               <div className="space-y-2">
-                <Label>If yes, Name of Licensed Corporate / Registered Institution 如是，持牌法團/註冊機構之註冊機構名</Label>
+                <Label>如是，持牌法團/註冊機構之註冊機構名 / If yes, Name of Licensed Corporate / Registered Institution</Label>
                 <Input value={q6InstitutionName} onChange={(e) => setQ6InstitutionName(e.target.value)} placeholder="請輸入機構名稱" />
               </div>
               <div className="space-y-2">
-                <Label>If yes, Participate / CE / Registered No. 如是，持牌法團/註冊機構之註冊號碼</Label>
+                <Label>如是，持牌法團/註冊機構之註冊號碼 / If yes, Participate / CE / Registered No.</Label>
                 <Input value={q6ParticipateNo} onChange={(e) => setQ6ParticipateNo(e.target.value)} placeholder="請輸入註冊號碼" />
               </div>
               <div className="space-y-2">
-                <Label>If yes, Staff Name & Position is 如是，職員名稱及職位為</Label>
+                <Label>如是，職員名稱及職位為 / If yes, Staff Name & Position is</Label>
                 <Input value={q6StaffNamePosition} onChange={(e) => setQ6StaffNamePosition(e.target.value)} placeholder="請填寫姓名及職位" />
               </div>
               <p className="text-sm text-muted-foreground italic">(Consent Letter from licensed corporation or registered institution must be provided) (必須提供由所屬持牌法團或註冊機構發出之授權信)</p>
