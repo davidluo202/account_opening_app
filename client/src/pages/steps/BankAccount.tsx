@@ -656,20 +656,23 @@ const handleNext = () => {
                 id="accountHolderName"
                 value={formData.accountHolderName}
                 onChange={(e) => {
-                  setFormData({ ...formData, accountHolderName: e.target.value });
-                  if (errors.accountHolderName) setErrors({ ...errors, accountHolderName: "" });
+                  const val = e.target.value;
+                  if (val === "" || /^[A-Za-z\s''\-,.]+$/.test(val)) {
+                    setFormData({ ...formData, accountHolderName: val });
+                    if (errors.accountHolderName) setErrors({ ...errors, accountHolderName: "" });
+                  }
                 }}
                 onBlur={() => {
                   const val = formData.accountHolderName;
-                  if (/^[A-Za-z\s]+$/.test(val)) {
+                  if (val && /^[A-Za-z\s''\-,.]+$/.test(val)) {
                     setFormData({ ...formData, accountHolderName: val.toUpperCase() });
                   }
                 }}
-                placeholder="請輸入賬戶持有人姓名"
+                placeholder="Please enter account holder name in English"
                 className={errors.accountHolderName ? "border-destructive" : ""}
               />
               {errors.accountHolderName && <p className="text-sm text-destructive">{errors.accountHolderName}</p>}
-              <p className="text-sm text-muted-foreground">默認為英文名稱</p>
+              <p className="text-sm text-muted-foreground">只接受英文字母 / English characters only</p>
             </div>
 
             {/* 持有人地址 */}
