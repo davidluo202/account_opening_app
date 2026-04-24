@@ -39,9 +39,9 @@ const riskVolatilityOptions = [
 const investmentExperienceOptions = [
   { value: "nil", label: "沒有 / Nil" },
   { value: "<1y", label: "少於1年 / Less than a year" },
-  { value: "1-5y", label: "1-5 years" },
-  { value: "6-10y", label: "6-10 years" },
-  { value: ">10y", label: "More than 10 years" },
+  { value: "1-5y", label: "1-5年 / 1-5 years" },
+  { value: "6-10y", label: "6-10年 / 6-10 years" },
+  { value: ">10y", label: "10年以上 / More than 10 years" },
 ];
 
 const derivativesKnowledgeOptions = [
