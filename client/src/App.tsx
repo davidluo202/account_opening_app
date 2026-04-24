@@ -23,6 +23,7 @@ import TaxInfo from "./pages/steps/TaxInfo";
 import DocumentUpload from "./pages/steps/DocumentUpload";
 import FaceVerification from "./pages/steps/FaceVerification";
 import RegulatoryDeclaration from "./pages/steps/RegulatoryDeclaration";
+import ClientDeclaration from "./pages/steps/ClientDeclaration";
 import RiskQuestionnaire from "./pages/steps/RiskQuestionnaire";
 import ApplicationPreview from "./pages/ApplicationPreview";
 import ApproverRegister from "./pages/ApproverRegister";
@@ -79,7 +80,8 @@ function StepRouter() {
       case 7: return <BankAccount />;
       case 8: return <TaxInfo />;
       case 9: return <DocumentUpload />;
-      case 10: return <RegulatoryDeclaration />;
+      case 10: return <ClientDeclaration />;
+      case 11: return <RegulatoryDeclaration />;
       default: return <NotFound />;
     }
   } else {

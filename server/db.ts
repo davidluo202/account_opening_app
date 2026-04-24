@@ -17,6 +17,7 @@ import {
   uploadedDocuments,
   faceVerification,
   regulatoryDeclarations,
+  clientDeclarations,
   emailVerificationCodes,
   approvers,
   approvalRecords
@@ -646,6 +647,24 @@ export async function getRegulatoryDeclarations(applicationId: number) {
   const db = await getDb();
   if (!db) return null;
   const result = await db.select().from(regulatoryDeclarations).where(eq(regulatoryDeclarations.applicationId, applicationId)).limit(1);
+  return result.length > 0 ? result[0] : null;
+}
+
+// ==================== 客戶聲明 ====================
+export async function saveClientDeclaration(applicationId: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.insert(clientDeclarations).values({
+    applicationId,
+    ...data
+  }).onDuplicateKeyUpdate({ set: data });
+}
+
+export async function getClientDeclaration(applicationId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(clientDeclarations).where(eq(clientDeclarations.applicationId, applicationId)).limit(1);
   return result.length > 0 ? result[0] : null;
 }
 

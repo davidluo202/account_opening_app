@@ -1247,6 +1247,50 @@ export const appRouter = router({
       }),
   }),
   
+  // 客戶聲明 (公司開戶)
+  clientDeclaration: router({
+    save: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+        q1Licensed: z.string(),
+        q1CeNo: z.string().optional().default(""),
+        q2Intermediary: z.string(),
+        q2Name: z.string().optional().default(""),
+        q2IdPassport: z.string().optional().default(""),
+        q2Address: z.string().optional().default(""),
+        q3ClientOfCmf: z.string(),
+        q3Details: z.string().optional().default(""),
+        q4StaffOfCmf: z.string(),
+        q4Details: z.string().optional().default(""),
+        q5RelationshipWithStaff: z.string(),
+        q5Details: z.string().optional().default(""),
+        q6ExchangeParticipant: z.string(),
+        q6DirectorName: z.string().optional().default(""),
+        q6InstitutionName: z.string().optional().default(""),
+        q6ParticipateNo: z.string().optional().default(""),
+        q6StaffNamePosition: z.string().optional().default(""),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { applicationId, ...data } = input;
+        const application = await db.getApplicationById(applicationId);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
+        }
+        await db.saveClientDeclaration(applicationId, data);
+        return { success: true };
+      }),
+
+    get: protectedProcedure
+      .input(z.object({ applicationId: z.number() }))
+      .query(async ({ input, ctx }) => {
+        const application = await db.getApplicationById(input.applicationId);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
+        }
+        return await db.getClientDeclaration(input.applicationId);
+      }),
+  }),
+
   // Case 12: 监管声明
   regulatory: router({
     save: protectedProcedure

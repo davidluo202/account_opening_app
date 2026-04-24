@@ -301,6 +301,35 @@ export const regulatoryDeclarations = mysqlTable("regulatory_declarations", {
 });
 
 /**
+ * 客戶聲明表 (公司開戶)
+ */
+export const clientDeclarations = mysqlTable("client_declarations", {
+  id: int("id").autoincrement().primaryKey(),
+  applicationId: int("applicationId").notNull().unique(),
+  q1Licensed: varchar("q1Licensed", { length: 10 }).default("").notNull(),
+  q1CeNo: varchar("q1CeNo", { length: 100 }).default("").notNull(),
+  q2Intermediary: varchar("q2Intermediary", { length: 10 }).default("").notNull(),
+  q2Name: varchar("q2Name", { length: 200 }).default("").notNull(),
+  q2IdPassport: varchar("q2IdPassport", { length: 100 }).default("").notNull(),
+  q2Address: text("q2Address"),
+  q3ClientOfCmf: varchar("q3ClientOfCmf", { length: 10 }).default("").notNull(),
+  q3Details: text("q3Details"),
+  q4StaffOfCmf: varchar("q4StaffOfCmf", { length: 10 }).default("").notNull(),
+  q4Details: text("q4Details"),
+  q5RelationshipWithStaff: varchar("q5RelationshipWithStaff", { length: 10 }).default("").notNull(),
+  q5Details: text("q5Details"),
+  q6ExchangeParticipant: varchar("q6ExchangeParticipant", { length: 10 }).default("").notNull(),
+  q6DirectorName: varchar("q6DirectorName", { length: 200 }).default("").notNull(),
+  q6InstitutionName: varchar("q6InstitutionName", { length: 200 }).default("").notNull(),
+  q6ParticipateNo: varchar("q6ParticipateNo", { length: 100 }).default("").notNull(),
+  q6StaffNamePosition: varchar("q6StaffNamePosition", { length: 200 }).default("").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ClientDeclaration = typeof clientDeclarations.$inferSelect;
+
+/**
  * 审批人员表
  */
 export const approvers = mysqlTable("approvers", {
