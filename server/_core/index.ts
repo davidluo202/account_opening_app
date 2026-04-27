@@ -95,9 +95,18 @@ async function startServer() {
             \`updatedAt\` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         `);
-        results.push("client_declarations: OK");
+        results.push("client_declarations: CREATE OK");
       } catch (e: any) {
-        results.push(`client_declarations ERROR: ${e?.message || e}`);
+        results.push(`client_declarations CREATE ERROR: ${e?.message || e}`);
+      }
+
+      // Show actual columns of client_declarations
+      try {
+        const [cdCols]: any = await db.execute(sql`SHOW COLUMNS FROM \`client_declarations\``);
+        const cdColNames = Array.isArray(cdCols) ? cdCols.map((c: any) => c.Field || c.field) : [];
+        results.push(`client_declarations columns: ${JSON.stringify(cdColNames)}`);
+      } catch (e: any) {
+        results.push(`client_declarations SHOW COLUMNS ERROR: ${e?.message || e}`);
       }
 
       res.json({ ok: true, results });
