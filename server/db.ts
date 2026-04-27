@@ -95,6 +95,32 @@ export async function syncMissingTables() {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
 
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS \`client_declarations\` (
+        \`id\` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        \`applicationId\` int NOT NULL UNIQUE,
+        \`q1Licensed\` varchar(10) NOT NULL DEFAULT '',
+        \`q1CeNo\` varchar(100) NOT NULL DEFAULT '',
+        \`q2Intermediary\` varchar(10) NOT NULL DEFAULT '',
+        \`q2Name\` varchar(200) NOT NULL DEFAULT '',
+        \`q2IdPassport\` varchar(100) NOT NULL DEFAULT '',
+        \`q2Address\` text DEFAULT NULL,
+        \`q3ClientOfCmf\` varchar(10) NOT NULL DEFAULT '',
+        \`q3Details\` text DEFAULT NULL,
+        \`q4StaffOfCmf\` varchar(10) NOT NULL DEFAULT '',
+        \`q4Details\` text DEFAULT NULL,
+        \`q5RelationshipWithStaff\` varchar(10) NOT NULL DEFAULT '',
+        \`q5Details\` text DEFAULT NULL,
+        \`q6ExchangeParticipant\` varchar(10) NOT NULL DEFAULT '',
+        \`q6DirectorName\` varchar(200) NOT NULL DEFAULT '',
+        \`q6InstitutionName\` varchar(200) NOT NULL DEFAULT '',
+        \`q6ParticipateNo\` varchar(100) NOT NULL DEFAULT '',
+        \`q6StaffNamePosition\` varchar(200) NOT NULL DEFAULT '',
+        \`createdAt\` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        \`updatedAt\` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `);
+
     // Ensure password and reset token columns exist in users table
     try {
       await db.execute(sql`ALTER TABLE \`users\` ADD COLUMN \`password\` varchar(255) DEFAULT NULL`);
