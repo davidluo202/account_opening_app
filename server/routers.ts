@@ -1276,8 +1276,12 @@ export const appRouter = router({
         if (!application || application.userId !== ctx.user.id) {
           throw new Error("申请不存在或无权访问");
         }
-        await db.saveClientDeclaration(applicationId, data);
-        return { success: true };
+        try {
+          await db.saveClientDeclaration(applicationId, data);
+          return { success: true };
+        } catch (e: any) {
+          throw new Error(`保存失败: ${e?.sqlMessage || e?.message || String(e)}`);
+        }
       }),
 
     get: protectedProcedure
