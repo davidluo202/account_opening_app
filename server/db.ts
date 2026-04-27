@@ -709,28 +709,33 @@ export async function saveClientDeclaration(applicationId: number, data: any) {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
   `);
 
-  // Use raw SQL to avoid Drizzle's DEFAULT keyword issue with some MySQL versions
-  const d = {
-    q1Licensed: data.q1Licensed || '', q1CeNo: data.q1CeNo || '',
-    q2Intermediary: data.q2Intermediary || '', q2Name: data.q2Name || '',
-    q2IdPassport: data.q2IdPassport || '', q2Address: data.q2Address || '',
-    q3ClientOfCmf: data.q3ClientOfCmf || '', q3Details: data.q3Details || '',
-    q4StaffOfCmf: data.q4StaffOfCmf || '', q4Details: data.q4Details || '',
-    q5RelationshipWithStaff: data.q5RelationshipWithStaff || '',
-    q5Details: data.q5Details || '',
-    q6ExchangeParticipant: data.q6ExchangeParticipant || '',
-    q6DirectorName: data.q6DirectorName || '',
-    q6InstitutionName: data.q6InstitutionName || '',
-    q6ParticipateNo: data.q6ParticipateNo || '',
-    q6StaffNamePosition: data.q6StaffNamePosition || '',
-  };
+  // Use mysql2 directly to avoid Drizzle query issues
+  const mysql2 = await import("mysql2/promise");
+  const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
 
-  await db.execute(sql`
-    INSERT INTO \`client_declarations\` (\`applicationId\`, \`q1Licensed\`, \`q1CeNo\`, \`q2Intermediary\`, \`q2Name\`, \`q2IdPassport\`, \`q2Address\`, \`q3ClientOfCmf\`, \`q3Details\`, \`q4StaffOfCmf\`, \`q4Details\`, \`q5RelationshipWithStaff\`, \`q5Details\`, \`q6ExchangeParticipant\`, \`q6DirectorName\`, \`q6InstitutionName\`, \`q6ParticipateNo\`, \`q6StaffNamePosition\`)
-    VALUES (${applicationId}, ${d.q1Licensed}, ${d.q1CeNo}, ${d.q2Intermediary}, ${d.q2Name}, ${d.q2IdPassport}, ${d.q2Address}, ${d.q3ClientOfCmf}, ${d.q3Details}, ${d.q4StaffOfCmf}, ${d.q4Details}, ${d.q5RelationshipWithStaff}, ${d.q5Details}, ${d.q6ExchangeParticipant}, ${d.q6DirectorName}, ${d.q6InstitutionName}, ${d.q6ParticipateNo}, ${d.q6StaffNamePosition})
-    ON DUPLICATE KEY UPDATE
-    \`q1Licensed\` = ${d.q1Licensed}, \`q1CeNo\` = ${d.q1CeNo}, \`q2Intermediary\` = ${d.q2Intermediary}, \`q2Name\` = ${d.q2Name}, \`q2IdPassport\` = ${d.q2IdPassport}, \`q2Address\` = ${d.q2Address}, \`q3ClientOfCmf\` = ${d.q3ClientOfCmf}, \`q3Details\` = ${d.q3Details}, \`q4StaffOfCmf\` = ${d.q4StaffOfCmf}, \`q4Details\` = ${d.q4Details}, \`q5RelationshipWithStaff\` = ${d.q5RelationshipWithStaff}, \`q5Details\` = ${d.q5Details}, \`q6ExchangeParticipant\` = ${d.q6ExchangeParticipant}, \`q6DirectorName\` = ${d.q6DirectorName}, \`q6InstitutionName\` = ${d.q6InstitutionName}, \`q6ParticipateNo\` = ${d.q6ParticipateNo}, \`q6StaffNamePosition\` = ${d.q6StaffNamePosition}
-  `);
+  const vals = [
+    applicationId,
+    data.q1Licensed || '', data.q1CeNo || '',
+    data.q2Intermediary || '', data.q2Name || '',
+    data.q2IdPassport || '', data.q2Address || '',
+    data.q3ClientOfCmf || '', data.q3Details || '',
+    data.q4StaffOfCmf || '', data.q4Details || '',
+    data.q5RelationshipWithStaff || '', data.q5Details || '',
+    data.q6ExchangeParticipant || '',
+    data.q6DirectorName || '', data.q6InstitutionName || '',
+    data.q6ParticipateNo || '', data.q6StaffNamePosition || '',
+  ];
+
+  try {
+    await conn.execute(
+      `INSERT INTO client_declarations (applicationId, q1Licensed, q1CeNo, q2Intermediary, q2Name, q2IdPassport, q2Address, q3ClientOfCmf, q3Details, q4StaffOfCmf, q4Details, q5RelationshipWithStaff, q5Details, q6ExchangeParticipant, q6DirectorName, q6InstitutionName, q6ParticipateNo, q6StaffNamePosition)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE q1Licensed=VALUES(q1Licensed), q1CeNo=VALUES(q1CeNo), q2Intermediary=VALUES(q2Intermediary), q2Name=VALUES(q2Name), q2IdPassport=VALUES(q2IdPassport), q2Address=VALUES(q2Address), q3ClientOfCmf=VALUES(q3ClientOfCmf), q3Details=VALUES(q3Details), q4StaffOfCmf=VALUES(q4StaffOfCmf), q4Details=VALUES(q4Details), q5RelationshipWithStaff=VALUES(q5RelationshipWithStaff), q5Details=VALUES(q5Details), q6ExchangeParticipant=VALUES(q6ExchangeParticipant), q6DirectorName=VALUES(q6DirectorName), q6InstitutionName=VALUES(q6InstitutionName), q6ParticipateNo=VALUES(q6ParticipateNo), q6StaffNamePosition=VALUES(q6StaffNamePosition)`,
+      vals
+    );
+  } finally {
+    await conn.end();
+  }
 }
 
 export async function getClientDeclaration(applicationId: number) {
