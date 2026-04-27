@@ -709,10 +709,28 @@ export async function saveClientDeclaration(applicationId: number, data: any) {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
   `);
 
-  await db.insert(clientDeclarations).values({
-    applicationId,
-    ...data
-  }).onDuplicateKeyUpdate({ set: data });
+  // Use raw SQL to avoid Drizzle's DEFAULT keyword issue with some MySQL versions
+  const d = {
+    q1Licensed: data.q1Licensed || '', q1CeNo: data.q1CeNo || '',
+    q2Intermediary: data.q2Intermediary || '', q2Name: data.q2Name || '',
+    q2IdPassport: data.q2IdPassport || '', q2Address: data.q2Address || '',
+    q3ClientOfCmf: data.q3ClientOfCmf || '', q3Details: data.q3Details || '',
+    q4StaffOfCmf: data.q4StaffOfCmf || '', q4Details: data.q4Details || '',
+    q5RelationshipWithStaff: data.q5RelationshipWithStaff || '',
+    q5Details: data.q5Details || '',
+    q6ExchangeParticipant: data.q6ExchangeParticipant || '',
+    q6DirectorName: data.q6DirectorName || '',
+    q6InstitutionName: data.q6InstitutionName || '',
+    q6ParticipateNo: data.q6ParticipateNo || '',
+    q6StaffNamePosition: data.q6StaffNamePosition || '',
+  };
+
+  await db.execute(sql`
+    INSERT INTO \`client_declarations\` (\`applicationId\`, \`q1Licensed\`, \`q1CeNo\`, \`q2Intermediary\`, \`q2Name\`, \`q2IdPassport\`, \`q2Address\`, \`q3ClientOfCmf\`, \`q3Details\`, \`q4StaffOfCmf\`, \`q4Details\`, \`q5RelationshipWithStaff\`, \`q5Details\`, \`q6ExchangeParticipant\`, \`q6DirectorName\`, \`q6InstitutionName\`, \`q6ParticipateNo\`, \`q6StaffNamePosition\`)
+    VALUES (${applicationId}, ${d.q1Licensed}, ${d.q1CeNo}, ${d.q2Intermediary}, ${d.q2Name}, ${d.q2IdPassport}, ${d.q2Address}, ${d.q3ClientOfCmf}, ${d.q3Details}, ${d.q4StaffOfCmf}, ${d.q4Details}, ${d.q5RelationshipWithStaff}, ${d.q5Details}, ${d.q6ExchangeParticipant}, ${d.q6DirectorName}, ${d.q6InstitutionName}, ${d.q6ParticipateNo}, ${d.q6StaffNamePosition})
+    ON DUPLICATE KEY UPDATE
+    \`q1Licensed\` = ${d.q1Licensed}, \`q1CeNo\` = ${d.q1CeNo}, \`q2Intermediary\` = ${d.q2Intermediary}, \`q2Name\` = ${d.q2Name}, \`q2IdPassport\` = ${d.q2IdPassport}, \`q2Address\` = ${d.q2Address}, \`q3ClientOfCmf\` = ${d.q3ClientOfCmf}, \`q3Details\` = ${d.q3Details}, \`q4StaffOfCmf\` = ${d.q4StaffOfCmf}, \`q4Details\` = ${d.q4Details}, \`q5RelationshipWithStaff\` = ${d.q5RelationshipWithStaff}, \`q5Details\` = ${d.q5Details}, \`q6ExchangeParticipant\` = ${d.q6ExchangeParticipant}, \`q6DirectorName\` = ${d.q6DirectorName}, \`q6InstitutionName\` = ${d.q6InstitutionName}, \`q6ParticipateNo\` = ${d.q6ParticipateNo}, \`q6StaffNamePosition\` = ${d.q6StaffNamePosition}
+  `);
 }
 
 export async function getClientDeclaration(applicationId: number) {
