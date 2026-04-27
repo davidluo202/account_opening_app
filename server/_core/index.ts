@@ -100,6 +100,44 @@ async function startServer() {
         results.push(`client_declarations CREATE ERROR: ${e?.message || e}`);
       }
 
+      // Check if table has old schema and needs rebuild
+      try {
+        const [cdCheck]: any = await db.execute(sql`SHOW COLUMNS FROM \`client_declarations\``);
+        const cols = Array.isArray(cdCheck) ? cdCheck.map((c: any) => c.Field || c.field) : [];
+        if (cols.includes('q3Relative') && !cols.includes('q3ClientOfCmf')) {
+          // Old schema detected — drop and recreate
+          await db.execute(sql`DROP TABLE \`client_declarations\``);
+          await db.execute(sql`
+            CREATE TABLE \`client_declarations\` (
+              \`id\` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+              \`applicationId\` int NOT NULL UNIQUE,
+              \`q1Licensed\` varchar(10) NOT NULL DEFAULT '',
+              \`q1CeNo\` varchar(100) NOT NULL DEFAULT '',
+              \`q2Intermediary\` varchar(10) NOT NULL DEFAULT '',
+              \`q2Name\` varchar(200) NOT NULL DEFAULT '',
+              \`q2IdPassport\` varchar(100) NOT NULL DEFAULT '',
+              \`q2Address\` text DEFAULT NULL,
+              \`q3ClientOfCmf\` varchar(10) NOT NULL DEFAULT '',
+              \`q3Details\` text DEFAULT NULL,
+              \`q4StaffOfCmf\` varchar(10) NOT NULL DEFAULT '',
+              \`q4Details\` text DEFAULT NULL,
+              \`q5RelationshipWithStaff\` varchar(10) NOT NULL DEFAULT '',
+              \`q5Details\` text DEFAULT NULL,
+              \`q6ExchangeParticipant\` varchar(10) NOT NULL DEFAULT '',
+              \`q6DirectorName\` varchar(200) NOT NULL DEFAULT '',
+              \`q6InstitutionName\` varchar(200) NOT NULL DEFAULT '',
+              \`q6ParticipateNo\` varchar(100) NOT NULL DEFAULT '',
+              \`q6StaffNamePosition\` varchar(200) NOT NULL DEFAULT '',
+              \`createdAt\` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+              \`updatedAt\` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+          `);
+          results.push("client_declarations: REBUILT with new schema");
+        }
+      } catch (e: any) {
+        results.push(`client_declarations rebuild error: ${e?.message || e}`);
+      }
+
       // Show actual columns of client_declarations
       try {
         const [cdCols]: any = await db.execute(sql`SHOW COLUMNS FROM \`client_declarations\``);
