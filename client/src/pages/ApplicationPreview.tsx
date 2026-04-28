@@ -1522,7 +1522,6 @@ export default function ApplicationPreview() {
                 placeholder="Please enter your English name"
                 className="w-full px-3 py-2 border rounded-md"
               />
-              <p className="text-xs text-gray-500 mt-1">只接受英文字母 / English characters only</p>
             </div>
             
             <div className="bg-blue-50 p-3 rounded-lg text-sm text-blue-800">

@@ -672,7 +672,6 @@ const handleNext = () => {
                 className={errors.accountHolderName ? "border-destructive" : ""}
               />
               {errors.accountHolderName && <p className="text-sm text-destructive">{errors.accountHolderName}</p>}
-              <p className="text-sm text-muted-foreground">只接受英文字母 / English characters only</p>
             </div>
 
             {/* 持有人地址 */}

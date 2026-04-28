@@ -340,7 +340,6 @@ const handleNext = () => {
               placeholder="Please enter your English name"
               className={errors.signature ? "border-destructive" : ""}
             />
-            <p className="text-xs text-muted-foreground">只接受英文字母 / English characters only</p>
             {errors.signature && <p className="text-sm text-destructive">{errors.signature}</p>}
             <p className="text-sm text-muted-foreground">
               獲授權人士的英文姓名電子簽署。（必須與Step 5 填寫的英文名字一致）
