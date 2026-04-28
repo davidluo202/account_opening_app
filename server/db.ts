@@ -523,7 +523,12 @@ export async function savePersonalDetailedInfo(applicationId: number, data: any)
   const mysql2 = await import("mysql2/promise");
   const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
 
-  const fields = ['idType','idNumber','idIssuingCountry','idIssuingPlace','idIssuingPlaceOther',
+  // Match actual DB columns (no idIssuingCountry or idIssuingPlaceOther)
+  // Map idIssuingCountry → idIssuingPlace for backward compatibility
+  if (data.idIssuingCountry && !data.idIssuingPlace) {
+    data.idIssuingPlace = data.idIssuingCountry;
+  }
+  const fields = ['idType','idNumber','idIssuingPlace',
     'idExpiryDate','idIsPermanent','maritalStatus','educationLevel','email',
     'phoneCountryCode','phoneNumber','mobileCountryCode','mobileNumber',
     'faxNo','emailVerified','residentialAddress','billingAddressType','billingAddressOther',
