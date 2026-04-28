@@ -271,7 +271,7 @@ export default function PersonalDetailedInfo() {
         }
       }
     }
-    if (!formData.idIssuingPlace.trim()) newErrors.idIssuingPlace = "請輸入證件簽發地";
+    if (!formData.idIssuingCountry) newErrors.idIssuingCountry = "請選擇證件簽發國家/地區";
     if (formData.idIssuingCountry === "OTHER" && !formData.idIssuingPlaceOther?.trim()) {
       newErrors.idIssuingPlaceOther = "請輸入證件簽發國家/地區";
     }
