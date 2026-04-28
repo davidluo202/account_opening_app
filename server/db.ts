@@ -552,8 +552,25 @@ export async function savePersonalDetailedInfo(applicationId: number, data: any)
 export async function getPersonalDetailedInfo(applicationId: number) {
   const db = await getDb();
   if (!db) return null;
-  const result = await db.select().from(personalDetailedInfo).where(eq(personalDetailedInfo.applicationId, applicationId)).limit(1);
-  return result.length > 0 ? result[0] : null;
+  // Use raw SQL to avoid Drizzle schema mismatch with actual DB columns
+  const mysql2 = await import("mysql2/promise");
+  const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+  try {
+    const [rows]: any = await conn.execute(
+      'SELECT * FROM personal_detailed_info WHERE applicationId = ? LIMIT 1',
+      [applicationId]
+    );
+    if (rows && rows.length > 0) {
+      const row = rows[0];
+      // Map DB column idIssuingPlace → idIssuingCountry for frontend compatibility
+      row.idIssuingCountry = row.idIssuingPlace || '';
+      row.idIssuingPlaceOther = '';
+      return row;
+    }
+    return null;
+  } finally {
+    await conn.end();
+  }
 }
 
 export async function saveOccupationInfo(applicationId: number, data: any) {
