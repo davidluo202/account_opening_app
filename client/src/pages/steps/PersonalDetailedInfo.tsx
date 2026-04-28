@@ -302,7 +302,7 @@ export default function PersonalDetailedInfo() {
     if (!formData.mobileNumber.trim()) newErrors.mobileNumber = "請輸入手機號碼";
     // 住宅電話可選，不需要驗證
 
-    if (!formData.residentialAddress.trim()) newErrors.residentialAddress = "請輸入居住地址";
+    if (!formData.residentialAddress.trim()) newErrors.residentialAddress = "請輸入住宅地址";
     
     // 賬單通訊地址驗證
     if (formData.billingAddressType === "other" && !formData.billingAddressOther.trim()) {
@@ -648,10 +648,10 @@ export default function PersonalDetailedInfo() {
           />
         </div>
 
-        {/* 居住地址 */}
+        {/* 住宅地址 */}
         <div className="space-y-2">
           <Label htmlFor="residentialAddress">
-            居住地址 / Residential Address <span className="text-destructive">*</span>
+            住宅地址 / Residential Address <span className="text-destructive">*</span>
           </Label>
             <Textarea
               id="residentialAddress"
@@ -667,7 +667,7 @@ export default function PersonalDetailedInfo() {
                   setFormData({ ...formData, residentialAddress: converted });
                 }
               }}
-              placeholder="請輸入完整居住地址"
+              placeholder="請輸入完整住宅地址"
               rows={3}
               className={errors.residentialAddress ? "border-destructive" : ""}
             />

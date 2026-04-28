@@ -424,12 +424,12 @@ export default function ApprovalDetail() {
                     <p>{personalDetailedInfo.mobileCountryCode ? `+${personalDetailedInfo.mobileCountryCode} ${personalDetailedInfo.mobileNumber}` : personalDetailedInfo.mobileNumber || "-"}</p>
                   </div>
                   <div className="col-span-2">
-                    <Label>居住地址</Label>
+                    <Label>住宅地址</Label>
                     <p>{personalDetailedInfo.residentialAddress || "-"}</p>
                   </div>
                   <div className="col-span-2">
                     <Label>通訊地址 Billing Address</Label>
-                    <p>{personalDetailedInfo.billingAddressType === 'residential' ? '與居住地址相同 Same as Residential Address' : personalDetailedInfo.billingAddressType === 'office' ? '辦公地址 Office Address' : personalDetailedInfo.billingAddressOther || "-"}</p>
+                    <p>{personalDetailedInfo.billingAddressType === 'residential' ? '與住宅地址相同 Same as Residential Address' : personalDetailedInfo.billingAddressType === 'office' ? '辦公地址 Office Address' : personalDetailedInfo.billingAddressOther || "-"}</p>
                   </div>
                   <div>
                     <Label>賬單語言 Preferred Language</Label>
