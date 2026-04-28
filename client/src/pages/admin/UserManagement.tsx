@@ -52,10 +52,10 @@ export default function UserManagement() {
 
   const resetPasswordMutation = trpc.approver.requestPasswordReset.useMutation({
     onSuccess: (data) => {
-      toast.success(data.message || "密码重置邮件已发送");
+      toast.success(data.message || "密碼重置郵件已發送");
     },
     onError: (error) => {
-      toast.error(error.message || "发送失败");
+      toast.error(error.message || "發送失敗");
     },
   });
 
@@ -280,7 +280,7 @@ export default function UserManagement() {
                     <p className="font-medium">{approverInfo.employeeName}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">CE号码</p>
+                    <p className="text-sm text-gray-600">CE號碼</p>
                     <p className="font-medium">{approverInfo.ceNumber}</p>
                   </div>
                   <div>

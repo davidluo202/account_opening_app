@@ -24,7 +24,7 @@ export default function TaxInfo() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // 获取个人/机构基本信息以自动填充税务居住地和证件号码
+  // 獲取個人/機構基本信息以自動填充稅務居住地和證件號碼
   const { data: basicInfo } = trpc.personalBasic.get.useQuery(
     { applicationId },
     { enabled: !!applicationId }

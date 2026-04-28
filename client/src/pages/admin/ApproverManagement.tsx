@@ -272,16 +272,16 @@ export default function ApproverManagement() {
                 type="number"
                 value={formData.userId}
                 onChange={(e) => setFormData({ ...formData, userId: e.target.value })}
-                placeholder="输入用户ID"
+                placeholder="輸入用戶ID"
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="employeeName">员工姓名 *</Label>
+              <Label htmlFor="employeeName">員工姓名 *</Label>
               <Input
                 id="employeeName"
                 value={formData.employeeName}
                 onChange={(e) => setFormData({ ...formData, employeeName: e.target.value })}
-                placeholder="输入员工姓名"
+                placeholder="輸入員工姓名"
               />
             </div>
             <div className="grid gap-2">
@@ -290,7 +290,7 @@ export default function ApproverManagement() {
                 id="ceNumber"
                 value={formData.ceNumber}
                 onChange={(e) => setFormData({ ...formData, ceNumber: e.target.value })}
-                placeholder="输入CE编号"
+                placeholder="輸入CE編號"
               />
             </div>
             <div className="grid gap-2">
@@ -305,8 +305,8 @@ export default function ApproverManagement() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="approver">审批员</SelectItem>
-                  <SelectItem value="manager">经理</SelectItem>
+                  <SelectItem value="approver">審批員</SelectItem>
+                  <SelectItem value="manager">經理</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -360,8 +360,8 @@ export default function ApproverManagement() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="approver">审批员</SelectItem>
-                  <SelectItem value="manager">经理</SelectItem>
+                  <SelectItem value="approver">審批員</SelectItem>
+                  <SelectItem value="manager">經理</SelectItem>
                 </SelectContent>
               </Select>
             </div>

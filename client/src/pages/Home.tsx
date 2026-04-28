@@ -31,7 +31,7 @@ export default function Home() {
       {/* Header */}
       <TopHeader>
         <Button variant="outline" size="sm" asChild>
-          <a href="/admin">审批系统</a>
+          <a href="/admin">審批系統</a>
         </Button>
         <Button variant="ghost" size="sm">English</Button>
         <Button asChild={agreedToPrivacy} disabled={!agreedToPrivacy}>

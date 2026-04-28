@@ -45,7 +45,7 @@ export default function EmploymentDetails() {
   const [formData, setFormData] = useState({
     incomeSource: "",
     annualIncome: "",
-    liquidAsset: "", // 流动资产（必填）
+    liquidAsset: "", // 流動資產（必填）
     netWorth: "",
   });
 
@@ -83,7 +83,7 @@ export default function EmploymentDetails() {
     if (existingData) {
       setFormData({
         ...existingData,
-        liquidAsset: existingData.liquidAsset || "", // 处理可能为null的字段
+        liquidAsset: existingData.liquidAsset || "", // 處理可能為null的字段
       });
     }
   }, [existingData]);
@@ -91,10 +91,10 @@ export default function EmploymentDetails() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.incomeSource) newErrors.incomeSource = "请选择收入来源";
-    if (!formData.annualIncome) newErrors.annualIncome = "请选择年收入范围";
-    if (!formData.liquidAsset) newErrors.liquidAsset = "请选择流动资产范围";
-    if (!formData.netWorth) newErrors.netWorth = "请选择净资产范围";
+    if (!formData.incomeSource) newErrors.incomeSource = "請選擇收入來源";
+    if (!formData.annualIncome) newErrors.annualIncome = "請選擇年收入範圍";
+    if (!formData.liquidAsset) newErrors.liquidAsset = "請選擇流動資產範圍";
+    if (!formData.netWorth) newErrors.netWorth = "請選擇淨資產範圍";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -205,20 +205,20 @@ const handleSave = () => {
           {errors.annualIncome && <p className="text-sm text-destructive">{errors.annualIncome}</p>}
         </div>
 
-        {/* 流动资产范围 */}
+        {/* 流動資產範圍 */}
         <div className="space-y-2">
           <Label htmlFor="liquidAsset">
-            流动资产范围 / Liquid Asset Range (HK$) <span className="text-destructive">*</span>
+            流動資產範圍 / Liquid Asset Range (HK$) <span className="text-destructive">*</span>
           </Label>
-          <Select 
-            value={formData.liquidAsset} 
+          <Select
+            value={formData.liquidAsset}
             onValueChange={(v) => {
               setFormData({ ...formData, liquidAsset: v });
               if (errors.liquidAsset) setErrors({ ...errors, liquidAsset: "" });
             }}
           >
             <SelectTrigger className={errors.liquidAsset ? "border-destructive" : ""}>
-              <SelectValue placeholder="请选择流动资产范围" />
+              <SelectValue placeholder="請選擇流動資產範圍" />
             </SelectTrigger>
             <SelectContent>
               {netWorthRanges.map((range) => (
@@ -231,10 +231,10 @@ const handleSave = () => {
           {errors.liquidAsset && <p className="text-sm text-destructive">{errors.liquidAsset}</p>}
         </div>
 
-        {/* 净资产范围 */}
+        {/* 淨資產範圍 */}
         <div className="space-y-2">
           <Label htmlFor="netWorth">
-            净资产范围 / Net Worth Range <span className="text-destructive">*</span>
+            淨資產範圍 / Net Worth Range <span className="text-destructive">*</span>
           </Label>
           <Select 
             value={formData.netWorth} 

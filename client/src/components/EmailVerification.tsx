@@ -33,12 +33,12 @@ export default function EmailVerification({
   const [isVerified, setIsVerified] = useState(false);
   const [showCodeInput, setShowCodeInput] = useState(false);
   
-  // 发送验证码
+  // 發送驗證碼
   const sendCodeMutation = trpc.auth.sendVerificationCode.useMutation({
     onSuccess: () => {
       toast.success("驗證碼已發送至您的電郵");
       setShowCodeInput(true);
-      setCountdown(90); // 90秒倒计时
+      setCountdown(90); // 90秒倒計時
       setCanResend(false);
     },
     onError: (error) => {
@@ -46,7 +46,7 @@ export default function EmailVerification({
     },
   });
   
-  // 验证验证码
+  // 驗證驗證碼
   const verifyCodeMutation = trpc.auth.verifyCode.useMutation({
     onSuccess: () => {
       toast.success("電郵驗證成功！");
@@ -59,7 +59,7 @@ export default function EmailVerification({
     },
   });
   
-  // 倒计时逻辑
+  // 倒計時邏輯
   useEffect(() => {
     if (countdown > 0) {
       const timer = setTimeout(() => {
@@ -71,7 +71,7 @@ export default function EmailVerification({
     }
   }, [countdown, showCodeInput]);
   
-  // 获取完整邮箱地址（如果启用自动补全）
+  // 獲取完整郵箱地址（如果啟用自動補全）
   const getFullEmail = (inputEmail: string): string => {
     if (autoCompleteDomain && requiredDomain && !inputEmail.includes('@')) {
       return inputEmail + requiredDomain;
@@ -79,7 +79,7 @@ export default function EmailVerification({
     return inputEmail;
   };
   
-  // 验证邮箱格式
+  // 驗證郵箱格式
   const validateEmail = (inputEmail: string): boolean => {
     const fullEmail = getFullEmail(inputEmail);
     
@@ -95,7 +95,7 @@ export default function EmailVerification({
     }
     
     if (requiredDomain && !fullEmail.endsWith(requiredDomain)) {
-      setEmailError(`邮箱必须使用${requiredDomain}域名`);
+      setEmailError(`郵箱必須使用${requiredDomain}域名`);
       return false;
     }
     
@@ -103,12 +103,12 @@ export default function EmailVerification({
     return true;
   };
   
-  // 发送验证码
+  // 發送驗證碼
   const handleSendCode = () => {
     const fullEmail = getFullEmail(email);
     if (!validateEmail(email)) return;
     
-    // 如果启用自动补全，更新email状态为完整邮箱
+    // 如果啟用自動補全，更新email狀態為完整郵箱
     if (autoCompleteDomain && !email.includes('@')) {
       onEmailChange(fullEmail);
     }
@@ -119,13 +119,13 @@ export default function EmailVerification({
     });
   };
   
-  // 重发验证码
+  // 重發驗證碼
   const handleResendCode = () => {
     setVerificationCode("");
     handleSendCode();
   };
   
-  // 验证验证码
+  // 驗證驗證碼
   const handleVerifyCode = () => {
     if (verificationCode.length !== 6) {
       toast.error("請輸入6位驗證碼");
@@ -139,7 +139,7 @@ export default function EmailVerification({
     });
   };
   
-  // 格式化倒计时
+  // 格式化倒計時
   const formatCountdown = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -159,7 +159,7 @@ export default function EmailVerification({
             <Input
               id="email"
               type={autoCompleteDomain ? "text" : "email"}
-              placeholder={autoCompleteDomain ? "输入邮箱前缀（系统自动补全" + requiredDomain + "）" : (requiredDomain ? `your.name${requiredDomain}` : "your.email@example.com")}
+              placeholder={autoCompleteDomain ? "輸入郵箱前綴（系統自動補全" + requiredDomain + "）" : (requiredDomain ? `your.name${requiredDomain}` : "your.email@example.com")}
               value={email}
               onChange={(e) => {
                 onEmailChange(e.target.value);
@@ -197,7 +197,7 @@ export default function EmailVerification({
               <br />
               {countdown > 0 ? (
                 <span className="text-sm text-muted-foreground">
-                  剩余时间: {formatCountdown(countdown)}
+                  剩餘時間: {formatCountdown(countdown)}
                 </span>
               ) : (
                 <span className="text-sm text-destructive">

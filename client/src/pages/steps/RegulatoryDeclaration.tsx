@@ -41,7 +41,7 @@ export default function RegulatoryDeclaration() {
   );
   const isCorporate = accountSelection?.customerType === 'corporate';
 
-  // 获取个人基本信息以验证签名
+  // 獲取個人基本信息以驗證簽名
   const { data: basicInfo } = trpc.personalBasic.get.useQuery(
     { applicationId },
     { enabled: !!applicationId }
@@ -218,7 +218,7 @@ const handleNext = () => {
                 </div>
                 <div className="mt-6 p-4 bg-muted rounded-lg">
                   <p className="text-sm font-semibold text-center">
-                    请仔细阅读以上协议内容。关闭此对话框后，请勾选下方的同意选项。
+                    請仔細閱讀以上協議內容。關閉此對話框後，請勾選下方的同意選項。
                   </p>
                   <p className="text-xs text-center text-muted-foreground mt-2">
                     Please read the above agreement carefully. After closing this dialog, please check the agreement box below.
@@ -312,7 +312,7 @@ const handleNext = () => {
                 }}
               />
               <Label htmlFor="acceptsRiskAssessment" className="cursor-pointer font-normal">
-                我已阅读并理解上述风险评估问卷。我确认我完全理解并接受：(i) 上述风险评估过程是为了帮助我在选择金融/投资产品前评估我对风险的态度和投资目标；(ii) 上述风险评估过程并非旨在列出所有我在投资时应考虑的因素和/或问题；(iii) 我不能仅以此风险评估作为我的投资偏好，我的决定可能会随时间而改变，特别是在投资时；(iv) 我必须充分阅读并理解各种文件中所披露的信息（包括但不限于金融或投资产品的招股书/解释备忘录/小册子/指南/发售文件），这些文件涉及金融或投资产品的特点、风险、优点、费用和其他细节，然后再做出任何投资决定；(v) 我必须自己确信我有能力承受与不同投资产品相关的风险水平。 <span className="text-destructive">*</span>
+                我已閱讀並理解上述風險評估問卷。我確認我完全理解並接受：(i) 上述風險評估過程是為了幫助我在選擇金融/投資產品前評估我對風險的態度和投資目標；(ii) 上述風險評估過程並非旨在列出所有我在投資時應考慮的因素和/或問題；(iii) 我不能僅以此風險評估作為我的投資偏好，我的決定可能會隨時間而改變，特別是在投資時；(iv) 我必須充分閱讀並理解各種文件中所披露的信息（包括但不限於金融或投資產品的招股書/解釋備忘錄/小冊子/指南/發售文件），這些文件涉及金融或投資產品的特點、風險、優點、費用和其他細節，然後再做出任何投資決定；(v) 我必須自己確信我有能力承受與不同投資產品相關的風險水平。 <span className="text-destructive">*</span>
               </Label>
             </div>
             {errors.acceptsRiskAssessment && (

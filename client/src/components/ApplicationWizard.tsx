@@ -77,7 +77,7 @@ export default function ApplicationWizard({
 }: ApplicationWizardProps) {
   const [, setLocation] = useLocation();
 
-  // 获取账户选择信息以判断客户类型
+  // 獲取賬戶選擇信息以判斷客戶類型
   const { data: accountSelection, error: accountSelectionError } = trpc.accountSelection.get.useQuery(
     { applicationId },
     { 
@@ -91,7 +91,7 @@ export default function ApplicationWizard({
     console.error("Error fetching account selection:", accountSelectionError);
   }
 
-  // 根据客户类型选择步骤列表
+  // 根據客戶類型選擇步驟列表
   const customerType = customerTypeOverride || accountSelection?.customerType || 'individual';
   const steps = customerType === 'corporate' ? corporateSteps : individualSteps;
   const progress = (currentStep / steps.length) * 100;

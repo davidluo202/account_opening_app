@@ -159,7 +159,7 @@ export default function CorporateRelatedParties() {
       } catch {
         // ignore
       }
-      // 解析可能包含区号的电话号码
+      // 解析可能包含區號的電話號碼
       let contactPhone = corporateBasicInfo.contactPhone || "";
       let countryCode = "+852";
       const m = contactPhone.trim().match(/^(\+\d+)\s*(\d+)$/);

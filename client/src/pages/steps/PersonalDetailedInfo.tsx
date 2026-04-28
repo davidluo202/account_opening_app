@@ -68,7 +68,7 @@ export default function PersonalDetailedInfo() {
   const showReturnToPreview = useReturnToPreview();
   const { user } = useAuth();
 
-  // 获取用户基本信息（用于匹配身份证信息）
+  // 獲取用戶基本信息（用於匹配身份證信息）
   const { data: basicInfo, error: basicInfoError } = trpc.personalBasic.get.useQuery(
     { applicationId },
     { 
@@ -93,18 +93,18 @@ export default function PersonalDetailedInfo() {
     maritalStatus: "",
     educationLevel: "",
     email: "",
-    // 住宅电话（可选）
+    // 住宅電話（可選）
     phoneCountryCode: "+852",
     phoneNumber: "",
-    // 手机号码（必填）
+    // 手機號碼（必填）
     mobileCountryCode: "+852",
     mobileNumber: "",
-    faxNo: "", // 传真号码（可选）
+    faxNo: "", // 傳真號碼（可選）
     residentialAddress: "",
-    // 账单通讯地址
+    // 賬單通訊地址
     billingAddressType: "residential" as "residential" | "office" | "other",
     billingAddressOther: "",
-    // 账单首选语言
+    // 賬單首選語言
     preferredLanguage: "chinese" as "chinese" | "english",
   });
 
@@ -165,7 +165,7 @@ export default function PersonalDetailedInfo() {
         // 如果表格中尚無電郵，自動填入註冊時驗證過的電郵
         email: existingData.email || (user?.email ?? ""),
       });
-      // 从数据库读取邮箱验证状态
+      // 從數據庫讀取郵箱驗證狀態
       if (existingData.emailVerified) {
         setEmailVerified(true);
       } else if (!existingData.email && user?.email) {
@@ -179,7 +179,7 @@ export default function PersonalDetailedInfo() {
     }
   }, [existingData, user]);
 
-  // 倒计时器
+  // 倒計時器
   useEffect(() => {
     if (countdown > 0) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
@@ -189,43 +189,43 @@ export default function PersonalDetailedInfo() {
 
   const sendVerificationCodeMutation = trpc.auth.sendVerificationCode.useMutation({
     onSuccess: () => {
-      toast.success("验证码已发送至您的邮箱，请查收！", {
-        duration: 5000, // 显示5秒
-        description: "请在下方输入框中输入6位数字验证码"
+      toast.success("驗證碼已發送至您的郵箱，請查收！", {
+        duration: 5000, // 顯示5秒
+        description: "請在下方輸入框中輸入6位數字驗證碼"
       });
       setShowVerificationInput(true);
-      setCountdown(90); // 90秒倒计时
+      setCountdown(90); // 90秒倒計時
       setIsSendingCode(false);
-      // 自动聚焦到验证码输入框
+      // 自動聚焦到驗證碼輸入框
       setTimeout(() => {
         document.getElementById('verificationCode')?.focus();
       }, 100);
     },
     onError: (error) => {
-      toast.error(`发送失败: ${error.message}`);
+      toast.error(`發送失敗: ${error.message}`);
       setIsSendingCode(false);
     },
   });
 
   const verifyCodeMutation = trpc.auth.verifyCode.useMutation({
     onSuccess: () => {
-      toast.success("邮箱验证成功");
+      toast.success("郵箱驗證成功");
       setEmailVerified(true);
       setShowVerificationInput(false);
       setCountdown(0);
     },
     onError: (error) => {
-      toast.error(`验证失败: ${error.message}`);
+      toast.error(`驗證失敗: ${error.message}`);
     },
   });
 
   const handleSendVerificationCode = () => {
     if (!formData.email.trim()) {
-      toast.error("请先输入邮箱地址");
+      toast.error("請先輸入郵箱地址");
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      toast.error("请输入有效的邮箱地址");
+      toast.error("請輸入有效的郵箱地址");
       return;
     }
     setIsSendingCode(true);
@@ -234,11 +234,11 @@ export default function PersonalDetailedInfo() {
 
   const handleVerifyCode = () => {
     if (!verificationCode.trim()) {
-      toast.error("请输入验证码");
+      toast.error("請輸入驗證碼");
       return;
     }
     if (verificationCode.length !== 6) {
-      toast.error("验证码必须为6位数字");
+      toast.error("驗證碼必須為6位數字");
       return;
     }
     verifyCodeMutation.mutate({ email: formData.email, code: verificationCode });
@@ -291,7 +291,7 @@ export default function PersonalDetailedInfo() {
     if (!formData.maritalStatus) newErrors.maritalStatus = "請選擇婚姻狀況";
     if (!formData.educationLevel) newErrors.educationLevel = "請選擇學歷";
     
-    // 邮箱校验
+    // 郵箱校驗
     if (!formData.email.trim()) {
       newErrors.email = "請輸入電郵地址";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -304,9 +304,9 @@ export default function PersonalDetailedInfo() {
 
     if (!formData.residentialAddress.trim()) newErrors.residentialAddress = "請輸入居住地址";
     
-    // 账单通讯地址验证
+    // 賬單通訊地址驗證
     if (formData.billingAddressType === "other" && !formData.billingAddressOther.trim()) {
-      newErrors.billingAddressOther = "请输入账单通讯地址";
+      newErrors.billingAddressOther = "請輸入賬單通訊地址";
     }
 
     setErrors(newErrors);
@@ -323,7 +323,7 @@ export default function PersonalDetailedInfo() {
       applicationId,
       ...formData,
       idExpiryDate: formData.idIsPermanent ? undefined : formData.idExpiryDate,
-      emailVerified, // 保存邮箱验证状态
+      emailVerified, // 保存郵箱驗證狀態
     });
   };
 
@@ -337,7 +337,7 @@ export default function PersonalDetailedInfo() {
       applicationId,
       ...formData,
       idExpiryDate: formData.idIsPermanent ? undefined : formData.idExpiryDate,
-      emailVerified, // 保存邮箱验证状态
+      emailVerified, // 保存郵箱驗證狀態
     });
   };
 
@@ -565,14 +565,14 @@ export default function PersonalDetailedInfo() {
           {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
         </div>
 
-        {/* 住宅电话 */}
+        {/* 住宅電話 */}
         <div className="space-y-2">
           <Label htmlFor="phoneNumber">
             住宅電話 / Residential Phone (可選)
           </Label>
           <div className="flex gap-2">
-            <Select 
-              value={formData.phoneCountryCode} 
+            <Select
+              value={formData.phoneCountryCode}
               onValueChange={(v) => setFormData({ ...formData, phoneCountryCode: v })}
             >
               <SelectTrigger className="w-[180px]">
@@ -593,17 +593,17 @@ export default function PersonalDetailedInfo() {
                 setFormData({ ...formData, phoneNumber: e.target.value });
                 if (errors.phoneNumber) setErrors({ ...errors, phoneNumber: "" });
               }}
-              placeholder="请输入住宅电话"
+              placeholder="請輸入住宅電話"
               className={`flex-1 ${errors.phoneNumber ? "border-destructive" : ""}`}
             />
           </div>
           {errors.phoneNumber && <p className="text-sm text-destructive">{errors.phoneNumber}</p>}
         </div>
 
-        {/* 手机号码 */}
+        {/* 手機號碼 */}
         <div className="space-y-2">
           <Label htmlFor="mobileNumber">
-            手机号码 / Mobile Number <span className="text-destructive">*</span>
+            手機號碼 / Mobile Number <span className="text-destructive">*</span>
           </Label>
           <div className="flex gap-2">
             <Select 
@@ -628,23 +628,23 @@ export default function PersonalDetailedInfo() {
                 setFormData({ ...formData, mobileNumber: e.target.value });
                 if (errors.mobileNumber) setErrors({ ...errors, mobileNumber: "" });
               }}
-              placeholder="请输入手机号码"
+              placeholder="請輸入手機號碼"
               className={`flex-1 ${errors.mobileNumber ? "border-destructive" : ""}`}
             />
           </div>
           {errors.mobileNumber && <p className="text-sm text-destructive">{errors.mobileNumber}</p>}
         </div>
 
-        {/* 传真号码 */}
+        {/* 傳真號碼 */}
         <div className="space-y-2">
           <Label htmlFor="faxNo">
-            传真号码 / Fax Number (可选)
+            傳真號碼 / Fax Number (可選)
           </Label>
           <Input
             id="faxNo"
             value={formData.faxNo}
             onChange={(e) => setFormData({ ...formData, faxNo: e.target.value })}
-            placeholder="请输入传真号码（可选）"
+            placeholder="請輸入傳真號碼（可選）"
           />
         </div>
 
@@ -661,7 +661,7 @@ export default function PersonalDetailedInfo() {
                 if (errors.residentialAddress) setErrors({ ...errors, residentialAddress: "" });
               }}
               onBlur={() => {
-                // 失焦时自动转换简体为繁体
+                // 失焦時自動轉換簡體為繁體
                 const converted = convertToTraditional(formData.residentialAddress);
                 if (converted !== formData.residentialAddress) {
                   setFormData({ ...formData, residentialAddress: converted });
@@ -674,10 +674,10 @@ export default function PersonalDetailedInfo() {
           {errors.residentialAddress && <p className="text-sm text-destructive">{errors.residentialAddress}</p>}
         </div>
 
-        {/* 账单通讯地址 */}
+        {/* 賬單通訊地址 */}
         <div className="space-y-2">
           <Label>
-            账单通讯地址 / Billing Address <span className="text-destructive">*</span>
+            賬單通訊地址 / Billing Address <span className="text-destructive">*</span>
           </Label>
           <div className="space-y-3">
             <div className="flex flex-col gap-2">
@@ -701,7 +701,7 @@ export default function PersonalDetailedInfo() {
                   onChange={(e) => setFormData({ ...formData, billingAddressType: e.target.value as "residential" | "office" | "other" })}
                   className="w-4 h-4"
                 />
-                <span>办公地址 / Office Address</span>
+                <span>辦公地址 / Office Address</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -728,7 +728,7 @@ export default function PersonalDetailedInfo() {
                     setFormData({ ...formData, billingAddressOther: converted });
                   }
                 }}
-                placeholder="请输入完整账单通讯地址"
+                placeholder="請輸入完整賬單通訊地址"
                 rows={3}
                 className={errors.billingAddressOther ? "border-destructive" : ""}
               />
@@ -737,10 +737,10 @@ export default function PersonalDetailedInfo() {
           </div>
         </div>
 
-        {/* 账单首选语言 */}
+        {/* 賬單首選語言 */}
         <div className="space-y-2">
           <Label>
-            账单首选语言 / Preferred Language for Statements <span className="text-destructive">*</span>
+            賬單首選語言 / Preferred Language for Statements <span className="text-destructive">*</span>
           </Label>
           <div className="flex gap-4">
             <label className="flex items-center gap-2 cursor-pointer">

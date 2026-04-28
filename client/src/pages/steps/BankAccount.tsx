@@ -297,7 +297,7 @@ export default function BankAccount() {
 
     if (!formData.bankName.trim()) newErrors.bankName = "請輸入銀行名稱";
     
-    // 验证账号
+    // 驗證賬號
     if (!formData.accountNumber.trim()) {
       newErrors.accountNumber = "請輸入賬戶號碼";
     } else {
@@ -484,7 +484,7 @@ const handleNext = () => {
                 onValueChange={(v) => {
                   setFormData({ ...formData, bankLocation: v, bankName: "", bankCode: "" });
                   setBankSearchQuery("");
-                  // 清除账号验证错误，因为所在地改变了
+                  // 清除賬號驗證錯誤，因為所在地改變了
                   if (errors.accountNumber) setErrors({ ...errors, accountNumber: "" });
                   if (errors.bankName) setErrors({ ...errors, bankName: "" });
                 }}
@@ -507,14 +507,14 @@ const handleNext = () => {
               </Label>
               {formData.bankLocation === "HK" ? (
                 <>
-                  {/* 搜索输入框 */}
+                  {/* 搜索輸入框 */}
                   <Input
                     placeholder="輸入銀行名稱或代碼搜索..."
                     value={bankSearchQuery}
                     onChange={(e) => setBankSearchQuery(e.target.value)}
                     className="mb-2"
                   />
-                  {/* 银行下拉选择 */}
+                  {/* 銀行下拉選擇 */}
                   <Select 
                     value={formData.bankCode}
                     onValueChange={(code) => {

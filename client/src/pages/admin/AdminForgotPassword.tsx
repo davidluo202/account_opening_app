@@ -15,11 +15,11 @@ export default function AdminForgotPassword() {
 
   const requestResetMutation = trpc.approver.requestPasswordReset.useMutation({
     onSuccess: (data) => {
-      toast.success(data.message || "密码重置邮件已发送");
+      toast.success(data.message || "密碼重置郵件已發送");
       setEmailSent(true);
     },
     onError: (error) => {
-      toast.error(error.message || "发送失败，请稍后重试");
+      toast.error(error.message || "發送失敗，請稍後重試");
     },
   });
 
@@ -31,7 +31,7 @@ export default function AdminForgotPassword() {
     }
 
     if (!fullEmail || !fullEmail.endsWith("@cmfinancial.com")) {
-      toast.error("请输入有效的@cmfinancial.com邮箱地址");
+      toast.error("請輸入有效的@cmfinancial.com郵箱地址");
       return;
     }
 
@@ -50,20 +50,20 @@ export default function AdminForgotPassword() {
               className="w-fit mb-2"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              返回审批登录
+              返回審批登錄
             </Button>
-            <CardTitle className="text-2xl font-bold">审批人员忘记密码</CardTitle>
-            <CardDescription>输入审批人员邮箱，我们将发送密码重置链接到邮箱</CardDescription>
+            <CardTitle className="text-2xl font-bold">審批人員忘記密碼</CardTitle>
+            <CardDescription>輸入審批人員郵箱，我們將發送密碼重置鏈接到郵箱</CardDescription>
           </CardHeader>
           <CardContent>
             {!emailSent ? (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">邮箱地址</Label>
+                  <Label htmlFor="email">郵箱地址</Label>
                   <Input
                     id="email"
                     type="text"
-                    placeholder="输入邮箱前缀（系统自动补全@cmfinancial.com）"
+                    placeholder="輸入郵箱前綴（系統自動補全@cmfinancial.com）"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     onKeyDown={(e) => {
@@ -80,20 +80,20 @@ export default function AdminForgotPassword() {
                   className="w-full"
                   size="lg"
                 >
-                  {requestResetMutation.isPending ? "发送中..." : "发送重置邮件"}
+                  {requestResetMutation.isPending ? "發送中..." : "發送重置郵件"}
                 </Button>
               </div>
             ) : (
               <div className="space-y-4">
                 <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-green-800 font-medium mb-2">邮件已发送！</p>
+                  <p className="text-green-800 font-medium mb-2">郵件已發送！</p>
                   <p className="text-sm text-green-700">
-                    我们已向 <strong>{email}</strong> 发送了密码重置邮件。
+                    我們已向 <strong>{email}</strong> 發送了密碼重置郵件。
                   </p>
                 </div>
 
                 <Button variant="ghost" onClick={() => setLocation("/admin")} className="w-full">
-                  返回审批登录
+                  返回審批登錄
                 </Button>
               </div>
             )}

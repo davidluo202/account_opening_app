@@ -741,9 +741,9 @@ export default function ApplicationPreview() {
             <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">證件类型 ID Type</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">證件類型 ID Type</td>
                   <td className="p-3 w-1/4 border-r">{translateIdType(personalDetailed?.idType)}</td>
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">證件号码 ID Number</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">證件號碼 ID Number</td>
                   <td className="p-3 w-1/4">{personalDetailed?.idNumber || "-"}</td>
                 </tr>
                 <tr className="border-b">
@@ -765,7 +765,7 @@ export default function ApplicationPreview() {
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">婚姻狀況 Marital Status</td>
                   <td className="p-3 border-r">{translateMaritalStatus(personalDetailed?.maritalStatus)}</td>
-                  <td className="p-3 bg-gray-50 font-semibold border-r">学历 Education</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">學歷 Education</td>
                   <td className="p-3">{translateEducationLevel(personalDetailed?.educationLevel)}</td>
                 </tr>
                 <tr className="border-b">
@@ -785,7 +785,7 @@ export default function ApplicationPreview() {
                       ? `${personalDetailed.mobileCountryCode} ${personalDetailed.mobileNumber}`
                       : "-"}
                   </td>
-                  <td className="p-3 bg-gray-50 font-semibold border-r">传真 Fax</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">傳真 Fax</td>
                   <td className="p-3">{personalDetailed?.faxNo || "-"}</td>
                 </tr>
                 <tr className="border-b">
@@ -826,7 +826,7 @@ export default function ApplicationPreview() {
             <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">就业状况 Employment Status</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">就業狀況 Employment Status</td>
                   <td className="p-3" colSpan={3}>{translateEmploymentStatus(occupation?.employmentStatus)}</td>
                 </tr>
                 {occupation?.employmentStatus === "employed" || occupation?.employmentStatus === "self_employed" ? (
@@ -834,7 +834,7 @@ export default function ApplicationPreview() {
                     <tr className="border-b">
                       <td className="p-3 bg-gray-50 font-semibold border-r">公司名稱 Company Name</td>
                       <td className="p-3 border-r">{occupation?.companyName || "-"}</td>
-                      <td className="p-3 bg-gray-50 font-semibold border-r">职位 Position</td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">職位 Position</td>
                       <td className="p-3">{occupation?.position || "-"}</td>
                     </tr>
                     <tr className="border-b">
@@ -848,9 +848,9 @@ export default function ApplicationPreview() {
                       <td className="p-3" colSpan={3}>{occupation?.companyAddress || "-"}</td>
                     </tr>
                     <tr className="border-b">
-                      <td className="p-3 bg-gray-50 font-semibold border-r">办公電話 Office Phone</td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">辦公電話 Office Phone</td>
                       <td className="p-3 border-r">{occupation?.officePhone || "-"}</td>
-                      <td className="p-3 bg-gray-50 font-semibold border-r">办公传真 Office Fax</td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">辦公傳真 Office Fax</td>
                       <td className="p-3">{occupation?.officeFaxNo || "-"}</td>
                     </tr>
                   </>
@@ -859,11 +859,11 @@ export default function ApplicationPreview() {
             </table>
           </div>
 
-          {/* 财务状况 */}
+          {/* 財務狀況 */}
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>4. 财务状况 Financial Status</span>
+                <span>4. 財務狀況 Financial Status</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(6)}>
                   編輯
                 </Button>
@@ -872,15 +872,15 @@ export default function ApplicationPreview() {
             <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">收入来源 Income Source</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">收入來源 Income Source</td>
                   <td className="p-3 w-1/4 border-r">{translate(employment?.incomeSource) || "-"}</td>
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">年收入 Annual Income</td>
                   <td className="p-3 w-1/4">{formatAmountRange(employment?.annualIncome)}</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold border-r">流动资产 Liquid Asset</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">流動資產 Liquid Asset</td>
                   <td className="p-3 border-r">{formatAmountRange(employment?.liquidAsset)}</td>
-                  <td className="p-3 bg-gray-50 font-semibold border-r">净资产 Net Worth</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r">淨資產 Net Worth</td>
                   <td className="p-3">{formatAmountRange(employment?.netWorth)}</td>
                 </tr>
               </tbody>
@@ -905,7 +905,7 @@ export default function ApplicationPreview() {
                     <td className="p-3" colSpan={3}>{formatInvestmentObjectives(financial?.investmentObjectives) || "-"}</td>
                   </tr>
                   <tr className="border-b">
-                    <td className="p-3 bg-gray-50 font-semibold border-r">投資经验 Investment Experience</td>
+                    <td className="p-3 bg-gray-50 font-semibold border-r">投資經驗 Investment Experience</td>
                     <td className="p-3" colSpan={3}>{formatInvestmentExperience(financial?.investmentExperience)}</td>
                   </tr>
                 </tbody>
@@ -1201,7 +1201,7 @@ export default function ApplicationPreview() {
             <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">验证状态 Verification Status</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">驗證狀態 Verification Status</td>
                   <td className="p-3" colSpan={3}>
                     {faceVerification?.verified ? (
                       <span className="text-green-600 flex items-center">
@@ -1315,34 +1315,34 @@ export default function ApplicationPreview() {
           </div>
         </Card>
 
-        {/* 审批记录 Approval Records */}
+        {/* 審批記錄 Approval Records */}
         {(application?.firstApprovalStatus === 'approved' || application?.secondApprovalStatus === 'approved') && (
           <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">审批记录 Approval Records</h2>
-            
-            {/* 初审记录 */}
+            <h2 className="text-xl font-semibold mb-4">審批記錄 Approval Records</h2>
+
+            {/* 初審記錄 */}
             {application?.firstApprovalStatus === 'approved' && (
               <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
-                <h3 className="text-lg font-semibold mb-3 text-blue-800">初审记录 First Approval</h3>
+                <h3 className="text-lg font-semibold mb-3 text-blue-800">初審記錄 First Approval</h3>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-gray-600">审批人员 Approver：</span>
+                    <span className="text-gray-600">審批人員 Approver：</span>
                     <span className="font-medium ml-2">{application.firstApprovalByName || 'N/A'}</span>
                   </div>
                   <div>
-                    <span className="text-gray-600">CE号码 CE Number：</span>
+                    <span className="text-gray-600">CE號碼 CE Number：</span>
                     <span className="font-medium ml-2">{application.firstApprovalByCeNo || 'N/A'}</span>
                   </div>
                   <div>
-                    <span className="text-gray-600">专业投資者认定 Professional Investor：</span>
+                    <span className="text-gray-600">專業投資者認定 Professional Investor：</span>
                     <span className="font-medium ml-2">{application.isProfessionalInvestor ? '是 Yes' : '否 No'}</span>
                   </div>
                   <div>
-                    <span className="text-gray-600">風險评级 Risk Profile：</span>
+                    <span className="text-gray-600">風險評級 Risk Profile：</span>
                     <span className="font-medium ml-2">{application.approvedRiskProfile ? getRiskToleranceDescription(application.approvedRiskProfile) : 'N/A'}</span>
                   </div>
                   <div className="col-span-2">
-                    <span className="text-gray-600">审批时间 Approval Time：</span>
+                    <span className="text-gray-600">審批時間 Approval Time：</span>
                     <span className="font-medium ml-2">
                       {application.firstApprovalAt ? new Date(application.firstApprovalAt).toLocaleString('zh-CN', {
                         year: 'numeric',
@@ -1357,7 +1357,7 @@ export default function ApplicationPreview() {
                   </div>
                   {application.firstApprovalComments && (
                     <div className="col-span-2 pt-2 border-t border-blue-200">
-                      <span className="text-gray-600">审批意见 Comments：</span>
+                      <span className="text-gray-600">審批意見 Comments：</span>
                       <p className="mt-1 text-blue-700">{application.firstApprovalComments}</p>
                     </div>
                   )}
@@ -1365,31 +1365,31 @@ export default function ApplicationPreview() {
               </div>
             )}
             
-            {/* 终审记录 */}
+            {/* 終審記錄 */}
             {application?.secondApprovalStatus === 'approved' && (
               <div className="p-4 bg-green-50 border border-green-200 rounded-md">
-                <h3 className="text-lg font-semibold mb-3 text-green-800">终审记录 Final Approval</h3>
+                <h3 className="text-lg font-semibold mb-3 text-green-800">終審記錄 Final Approval</h3>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-gray-600">审批人员 Approver：</span>
+                    <span className="text-gray-600">審批人員 Approver：</span>
                     <span className="font-medium ml-2">{application.secondApprovalByName || 'N/A'}</span>
                   </div>
                   {application.secondApprovalByCeNo && (
                     <div>
-                      <span className="text-gray-600">CE号码 CE Number：</span>
+                      <span className="text-gray-600">CE號碼 CE Number：</span>
                       <span className="font-medium ml-2">{application.secondApprovalByCeNo}</span>
                     </div>
                   )}
                   <div>
-                    <span className="text-gray-600">专业投資者认定 Professional Investor：</span>
+                    <span className="text-gray-600">專業投資者認定 Professional Investor：</span>
                     <span className="font-medium ml-2">{application.isProfessionalInvestor ? '是 Yes' : '否 No'}</span>
                   </div>
                   <div>
-                    <span className="text-gray-600">風險评级 Risk Profile：</span>
+                    <span className="text-gray-600">風險評級 Risk Profile：</span>
                     <span className="font-medium ml-2">{application.approvedRiskProfile ? getRiskToleranceDescription(application.approvedRiskProfile) : 'N/A'}</span>
                   </div>
                   <div className="col-span-2">
-                    <span className="text-gray-600">审批时间 Approval Time：</span>
+                    <span className="text-gray-600">審批時間 Approval Time：</span>
                     <span className="font-medium ml-2">
                       {application.secondApprovalAt ? new Date(application.secondApprovalAt).toLocaleString('zh-CN', {
                         year: 'numeric',
@@ -1404,7 +1404,7 @@ export default function ApplicationPreview() {
                   </div>
                   {application.secondApprovalComments && (
                     <div className="col-span-2 pt-2 border-t border-green-200">
-                      <span className="text-gray-600">审批意见 Comments：</span>
+                      <span className="text-gray-600">審批意見 Comments：</span>
                       <p className="mt-1 text-green-700">{application.secondApprovalComments}</p>
                     </div>
                   )}
@@ -1414,7 +1414,7 @@ export default function ApplicationPreview() {
           </Card>
         )}
 
-        {/* 操作按钮 */}
+        {/* 操作按鈕 */}
         <div className="flex justify-between items-center gap-4">
           <Button
             variant="outline"
@@ -1493,7 +1493,7 @@ export default function ApplicationPreview() {
                     onChange={(e) => setSignatureMethod(e.target.value as "typed")}
                     className="w-4 h-4"
                   />
-                  <span className="text-sm">输入姓名 Typed Name</span>
+                  <span className="text-sm">輸入姓名 Typed Name</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -1509,7 +1509,7 @@ export default function ApplicationPreview() {
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium">签名姓名 Signatory Name *</label>
+              <label className="text-sm font-medium">簽名姓名 Signatory Name *</label>
               <input
                 type="text"
                 value={signatureName}
@@ -1525,11 +1525,11 @@ export default function ApplicationPreview() {
             </div>
             
             <div className="bg-blue-50 p-3 rounded-lg text-sm text-blue-800">
-              <p className="font-semibold mb-1">电子签署声明：</p>
+              <p className="font-semibold mb-1">電子簽署聲明：</p>
               <ul className="list-disc list-inside space-y-1 text-xs">
-                <li>本人同意使用电子签署方式签署本申請表</li>
-                <li>此电子签署具有与手写签名同等的法律效力</li>
-                <li>签署时间将自动记录并包含在申請表中</li>
+                <li>本人同意使用電子簽署方式簽署本申請表</li>
+                <li>此電子簽署具有與手寫簽名同等的法律效力</li>
+                <li>簽署時間將自動記錄並包含在申請表中</li>
               </ul>
             </div>
           </div>
@@ -1560,43 +1560,43 @@ export default function ApplicationPreview() {
               申請已成功提交！
             </DialogTitle>
             <DialogDescription className="text-base">
-              感谢您的申請，我们已收到您的开户申請。
+              感謝您的申請，我們已收到您的開戶申請。
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
             <div className="bg-blue-50 p-4 rounded-lg">
-              <h4 className="font-semibold mb-2">申請编号：{application?.applicationNumber}</h4>
+              <h4 className="font-semibold mb-2">申請編號：{application?.applicationNumber}</h4>
               <p className="text-sm text-gray-600">
-                我们已将确认邮件发送至您的邮箱：<strong>{personalDetailed?.email}</strong>
+                我們已將確認郵件發送至您的郵箱：<strong>{personalDetailed?.email}</strong>
               </p>
               <p className="text-sm text-gray-600 mt-2">
-                邮件中包含您的申請表PDF文件，请注意查收。
+                郵件中包含您的申請表PDF文件，請注意查收。
               </p>
             </div>
             
             {pdfUrl && (
               <div className="bg-gray-50 p-4 rounded-lg">
-                <h4 className="font-semibold mb-2">下载申請表PDF</h4>
+                <h4 className="font-semibold mb-2">下載申請表PDF</h4>
                 <p className="text-sm text-gray-600 mb-3">
-                  您也可以直接下载申請表PDF文件供存档使用。
+                  您也可以直接下載申請表PDF文件供存檔使用。
                 </p>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => window.open(pdfUrl, '_blank')}
                   className="w-full"
                 >
-                  下载申請表PDF
+                  下載申請表PDF
                 </Button>
               </div>
             )}
             
             <div className="text-sm text-gray-600">
-              <p className="mb-2">后续流程：</p>
+              <p className="mb-2">後續流程：</p>
               <ol className="list-decimal list-inside space-y-1 ml-2">
-                <li>我们的客戶服务团队将在<strong>1-2个工作日</strong>内审核您的申請</li>
-                <li>审核通过后，我们将通过邮件通知您</li>
-                <li>如需补充資料，我们会及时与您聯繫</li>
+                <li>我們的客戶服務團隊將在<strong>1-2個工作日</strong>內審核您的申請</li>
+                <li>審核通過後，我們將通過郵件通知您</li>
+                <li>如需補充資料，我們會及時與您聯繫</li>
               </ol>
             </div>
           </div>

@@ -12,18 +12,18 @@ export default function AdminHome() {
   const [, setLocation] = useLocation();
   const [loginMethod, setLoginMethod] = useState<"password" | "code">("password");
   
-  // 密码登录状态
+  // 密碼登錄狀態
   const [passwordEmail, setPasswordEmail] = useState("");
   const [password, setPassword] = useState("");
   
-  // 验证码登录状态
+  // 驗證碼登錄狀態
   const [codeEmail, setCodeEmail] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [codeSent, setCodeSent] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [isVerifying, setIsVerifying] = useState(false);
 
-  // 密码登录mutation
+  // 密碼登錄mutation
   const passwordLoginMutation = trpc.approver.loginWithPassword.useMutation({
     onSuccess: () => {
       toast.success("登录成功");
@@ -37,9 +37,9 @@ export default function AdminHome() {
   // 验证码登录mutations
   const sendCodeMutation = trpc.auth.sendVerificationCode.useMutation({
     onSuccess: () => {
-      toast.success("验证码已发送到您的邮箱");
+      toast.success("驗證碼已發送到您的郵箱");
       setCodeSent(true);
-      setCountdown(90); // 90秒倒计时
+      setCountdown(90); // 90秒倒計時
       const timer = setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 1) {
@@ -51,53 +51,53 @@ export default function AdminHome() {
       }, 1000);
     },
     onError: (error) => {
-      toast.error(error.message || "发送验证码失败");
+      toast.error(error.message || "發送驗證碼失敗");
     },
   });
 
   const verifyCodeMutation = trpc.auth.verifyCode.useMutation({
     onSuccess: () => {
-      toast.success("验证成功");
+      toast.success("驗證成功");
       setLocation("/admin/approvals");
     },
     onError: (error) => {
-      toast.error(error.message || "验证失败");
+      toast.error(error.message || "驗證失敗");
     },
   });
 
-  // 密码登录处理
+  // 密碼登錄處理
   const handlePasswordLogin = () => {
-    // 自动补全邮箱域名
+    // 自動補全郵箱域名
     let fullEmail = passwordEmail;
     if (!passwordEmail.includes('@')) {
       fullEmail = passwordEmail + '@cmfinancial.com';
       setPasswordEmail(fullEmail);
     }
-    
+
     if (!fullEmail || !fullEmail.endsWith("@cmfinancial.com")) {
-      toast.error("请输入有效的@cmfinancial.com邮箱地址");
+      toast.error("請輸入有效的@cmfinancial.com郵箱地址");
       return;
     }
-    
+
     if (!password) {
-      toast.error("请输入密码");
+      toast.error("請輸入密碼");
       return;
     }
     
     passwordLoginMutation.mutate({ email: fullEmail, password });
   };
 
-  // 验证码登录处理
+  // 驗證碼登錄處理
   const handleSendCode = () => {
-    // 自动补全邮箱域名
+    // 自動補全郵箱域名
     let fullEmail = codeEmail;
     if (!codeEmail.includes('@')) {
       fullEmail = codeEmail + '@cmfinancial.com';
       setCodeEmail(fullEmail);
     }
-    
+
     if (!fullEmail || !fullEmail.endsWith("@cmfinancial.com")) {
-      toast.error("请输入有效的@cmfinancial.com邮箱地址");
+      toast.error("請輸入有效的@cmfinancial.com郵箱地址");
       return;
     }
     sendCodeMutation.mutate({ email: fullEmail, isApprover: true });
@@ -105,7 +105,7 @@ export default function AdminHome() {
 
   const handleVerify = () => {
     if (!verificationCode) {
-      toast.error("请输入验证码");
+      toast.error("請輸入驗證碼");
       return;
     }
     setIsVerifying(true);
@@ -145,27 +145,27 @@ export default function AdminHome() {
               </svg>
             </div>
             <CardTitle className="text-3xl font-bold text-gray-900">
-              客户开户审批系统
+              客戶開戶審批系統
             </CardTitle>
             <CardDescription className="text-base">
-              诚港金融 - 合规审批平台
+              誠港金融 - 合規審批平台
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs value={loginMethod} onValueChange={(v) => setLoginMethod(v as "password" | "code")} className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="password">密码登录</TabsTrigger>
-                <TabsTrigger value="code">验证码登录</TabsTrigger>
+                <TabsTrigger value="password">密碼登錄</TabsTrigger>
+                <TabsTrigger value="code">驗證碼登錄</TabsTrigger>
               </TabsList>
 
-              {/* 密码登录 */}
+              {/* 密碼登錄 */}
               <TabsContent value="password" className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="password-email">审批人员邮箱</Label>
+                  <Label htmlFor="password-email">審批人員郵箱</Label>
                   <Input
                     id="password-email"
                     type="text"
-                    placeholder="输入邮箱前缀（系统自动补全@cmfinancial.com）"
+                    placeholder="輸入郵箱前綴（系統自動補全@cmfinancial.com）"
                     value={passwordEmail}
                     onChange={(e) => setPasswordEmail(e.target.value)}
                     onKeyDown={(e) => {
@@ -175,16 +175,16 @@ export default function AdminHome() {
                     }}
                   />
                   <p className="text-xs text-muted-foreground">
-                    例如：输入 "xluo" 即可，系统会自动补全为 xluo@cmfinancial.com
+                    例如：輸入 "xluo" 即可，系統會自動補全為 xluo@cmfinancial.com
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password-input">密码</Label>
+                  <Label htmlFor="password-input">密碼</Label>
                   <Input
                     id="password-input"
                     type="password"
-                    placeholder="请输入密码"
+                    placeholder="請輸入密碼"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     onKeyDown={(e) => {
@@ -215,14 +215,14 @@ export default function AdminHome() {
                 </div>
               </TabsContent>
 
-              {/* 验证码登录 */}
+              {/* 驗證碼登錄 */}
               <TabsContent value="code" className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="code-email">审批人员邮箱</Label>
+                  <Label htmlFor="code-email">審批人員郵箱</Label>
                   <Input
                     id="code-email"
                     type="text"
-                    placeholder="输入邮箱前缀（系统自动补全@cmfinancial.com）"
+                    placeholder="輸入郵箱前綴（系統自動補全@cmfinancial.com）"
                     value={codeEmail}
                     onChange={(e) => setCodeEmail(e.target.value)}
                     onKeyDown={(e) => {
@@ -233,7 +233,7 @@ export default function AdminHome() {
                     disabled={codeSent}
                   />
                   <p className="text-xs text-muted-foreground">
-                    例如：输入 "xluo" 即可，系统会自动补全为 xluo@cmfinancial.com
+                    例如：輸入 "xluo" 即可，系統會自動補全為 xluo@cmfinancial.com
                   </p>
                 </div>
 
@@ -244,16 +244,16 @@ export default function AdminHome() {
                     className="w-full"
                     size="lg"
                   >
-                    {sendCodeMutation.isPending ? "发送中..." : "发送验证码"}
+                    {sendCodeMutation.isPending ? "發送中..." : "發送驗證碼"}
                   </Button>
                 ) : (
                   <>
                     <div className="space-y-2">
-                      <Label htmlFor="code">验证码</Label>
+                      <Label htmlFor="code">驗證碼</Label>
                       <Input
                         id="code"
                         type="text"
-                        placeholder="请输入6位验证码"
+                        placeholder="請輸入6位驗證碼"
                         value={verificationCode}
                         onChange={(e) => setVerificationCode(e.target.value)}
                         onKeyDown={(e) => {
@@ -264,7 +264,7 @@ export default function AdminHome() {
                         maxLength={6}
                       />
                       <p className="text-sm text-gray-500">
-                        验证码已发送到您的邮箱
+                        驗證碼已發送到您的郵箱
                         {countdown > 0 && ` (${Math.floor(countdown / 60)}:${String(countdown % 60).padStart(2, "0")})`}
                       </p>
                     </div>
@@ -276,7 +276,7 @@ export default function AdminHome() {
                         className="flex-1"
                         size="lg"
                       >
-                        {isVerifying ? "验证中..." : "确认验证"}
+                        {isVerifying ? "驗證中..." : "確認驗證"}
                       </Button>
                       {countdown === 0 && (
                         <Button
@@ -285,7 +285,7 @@ export default function AdminHome() {
                           variant="outline"
                           size="lg"
                         >
-                          重新发送
+                          重新發送
                         </Button>
                       )}
                     </div>
@@ -295,7 +295,7 @@ export default function AdminHome() {
             </Tabs>
 
             <div className="pt-4 mt-4 border-t text-center text-sm text-gray-500">
-              <p>仅限@cmfinancial.com域名邮箱访问</p>
+              <p>僅限@cmfinancial.com域名郵箱訪問</p>
             </div>
           </CardContent>
         </Card>
