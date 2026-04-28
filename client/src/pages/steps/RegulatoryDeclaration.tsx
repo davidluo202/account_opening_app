@@ -343,7 +343,7 @@ const handleNext = () => {
             <p className="text-xs text-muted-foreground">只接受英文字母 / English characters only</p>
             {errors.signature && <p className="text-sm text-destructive">{errors.signature}</p>}
             <p className="text-sm text-muted-foreground">
-              請輸入您的英文姓名（必須與Case 3中填寫的英文姓名一致）
+              獲授權人士的英文姓名電子簽署。（必須與Step 5 填寫的英文名字一致）
             </p>
           </div>
 
