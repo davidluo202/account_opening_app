@@ -518,11 +518,30 @@ export async function getCorporateBasicInfo(applicationId: number) {
 export async function savePersonalDetailedInfo(applicationId: number, data: any) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
-  await db.insert(personalDetailedInfo).values({
-    applicationId,
-    ...data
-  }).onDuplicateKeyUpdate({ set: data });
+
+  // Use mysql2 directly to avoid Drizzle DEFAULT keyword issue
+  const mysql2 = await import("mysql2/promise");
+  const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+
+  const fields = ['idType','idNumber','idIssuingCountry','idIssuingPlace','idIssuingPlaceOther',
+    'idExpiryDate','idIsPermanent','maritalStatus','educationLevel','email',
+    'phoneCountryCode','phoneNumber','mobileCountryCode','mobileNumber',
+    'faxNo','emailVerified','residentialAddress','billingAddressType','billingAddressOther',
+    'preferredLanguage'];
+
+  const vals = [applicationId, ...fields.map(f => data[f] ?? '')];
+  const placeholders = fields.map(() => '?').join(', ');
+  const colNames = fields.map(f => '`' + f + '`').join(', ');
+  const updateClauses = fields.map(f => '`' + f + '`=VALUES(`' + f + '`)').join(', ');
+
+  try {
+    await conn.execute(
+      `INSERT INTO personal_detailed_info (\`applicationId\`, ${colNames}) VALUES (?, ${placeholders}) ON DUPLICATE KEY UPDATE ${updateClauses}`,
+      vals
+    );
+  } finally {
+    await conn.end();
+  }
 }
 
 export async function getPersonalDetailedInfo(applicationId: number) {
