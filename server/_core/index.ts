@@ -147,6 +147,15 @@ async function startServer() {
         results.push(`client_declarations SHOW COLUMNS ERROR: ${e?.message || e}`);
       }
 
+      // Show personal_detailed_info columns
+      try {
+        const [pdiCols]: any = await db.execute(sql`SHOW COLUMNS FROM \`personal_detailed_info\``);
+        const pdiColNames = Array.isArray(pdiCols) ? pdiCols.map((c: any) => c.Field || c.field) : [];
+        results.push(`personal_detailed_info columns: ${JSON.stringify(pdiColNames)}`);
+      } catch (e: any) {
+        results.push(`personal_detailed_info ERROR: ${e?.message || e}`);
+      }
+
       res.json({ ok: true, results });
     } catch (e: any) {
       res.json({ error: e?.message || String(e) });
