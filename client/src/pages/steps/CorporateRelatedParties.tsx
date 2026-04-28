@@ -110,6 +110,7 @@ export default function CorporateRelatedParties() {
   // Current form party being edited
   const [currentParty, setCurrentParty] = useState<RelatedParty>(defaultParty());
   const [errors, setErrors] = useState<Record<string, Record<string, string>>>({});
+  const [missingTypes, setMissingTypes] = useState<string[]>([]);
 
   const { data: existingData, isLoading: isLoadingData } = trpc.corporateRelatedParties.get.useQuery(
     { applicationId },
@@ -282,6 +283,21 @@ export default function CorporateRelatedParties() {
     return Object.keys(errs).length === 0;
   };
 
+  const requiredTypes: { key: RelatedParty["relationshipType"]; label: string }[] = [
+    { key: "director", label: "董事 / Director" },
+    { key: "shareholder", label: "股東 / Shareholder" },
+    { key: "beneficial_owner", label: "最終受益人 / Ultimate Beneficial Owner" },
+    { key: "authorized_signatory", label: "授權簽署人 / Authorized Signatory" },
+  ];
+
+  const validateRequiredTypes = (parties: RelatedParty[]): boolean => {
+    const missing = requiredTypes
+      .filter(t => !parties.some(p => p.relationshipType === t.key))
+      .map(t => t.label);
+    setMissingTypes(missing);
+    return missing.length === 0;
+  };
+
   // Add current party to the list
   const handleAddParty = () => {
     // Convert name to Traditional Chinese
@@ -310,6 +326,7 @@ export default function CorporateRelatedParties() {
       try { localStorage.removeItem(draftStorageKey); } catch {}
       setCurrentParty(defaultParty());
       setErrors({});
+      setMissingTypes([]);
     }
   };
 
@@ -336,9 +353,18 @@ export default function CorporateRelatedParties() {
         address: convertToTraditional(currentParty.address),
       };
       if (validateParty(convertedParty)) {
-        saveMutation.mutate({ applicationId, relatedParties: [convertedParty] });
+        const prospectiveList = [convertedParty];
+        if (!validateRequiredTypes(prospectiveList)) {
+          toast.error("請確保每種必填關係類型至少有一位關聯方");
+          return;
+        }
+        saveMutation.mutate({ applicationId, relatedParties: prospectiveList });
       }
     } else {
+      if (!validateRequiredTypes(savedParties)) {
+        toast.error("請確保每種必填關係類型至少有一位關聯方");
+        return;
+      }
       saveMutation.mutate({ applicationId, relatedParties: savedParties });
     }
   };
@@ -351,11 +377,20 @@ export default function CorporateRelatedParties() {
         address: convertToTraditional(currentParty.address),
       };
       if (validateParty(convertedParty)) {
-        saveMutation.mutate({ applicationId, relatedParties: [convertedParty] });
+        const prospectiveList = [convertedParty];
+        if (!validateRequiredTypes(prospectiveList)) {
+          toast.error("請確保每種必填關係類型至少有一位關聯方");
+          return;
+        }
+        saveMutation.mutate({ applicationId, relatedParties: prospectiveList });
       } else {
         toast.error("請填寫完整信息後再繼續");
       }
     } else {
+      if (!validateRequiredTypes(savedParties)) {
+        toast.error("請確保每種必填關係類型至少有一位關聯方");
+        return;
+      }
       saveMutation.mutate({ applicationId, relatedParties: savedParties });
     }
   };
@@ -633,6 +668,17 @@ export default function CorporateRelatedParties() {
             添加此關聯方到列表
           </Button>
         </div>
+
+        {missingTypes.length > 0 && (
+          <div className="p-4 border border-destructive rounded-lg bg-red-50">
+            <p className="text-sm font-semibold text-destructive mb-2">以下必填關係類型尚未添加 / The following required relationship types are missing:</p>
+            <ul className="list-disc list-inside space-y-1">
+              {missingTypes.map(t => (
+                <li key={t} className="text-sm text-destructive">{t}</li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {savedParties.length === 0 && (
           <p className="text-center text-slate-500 text-sm">請填寫上方表格並點擊"添加此關聯方到列表"，然後點擊下一步</p>
