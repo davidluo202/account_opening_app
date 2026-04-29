@@ -26,6 +26,28 @@ import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
+/**
+ * Generic helper: raw mysql2 INSERT ... ON DUPLICATE KEY UPDATE
+ * Avoids Drizzle's DEFAULT keyword issue with auto-increment / timestamp columns.
+ */
+async function safeInsert(tableName: string, data: Record<string, any>, applicationId: number) {
+  const mysql2 = await import("mysql2/promise");
+  const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+  try {
+    const fields = Object.keys(data).filter(k => data[k] !== undefined);
+    const vals: any[] = [applicationId, ...fields.map(f => data[f] ?? '')];
+    const cols = fields.map(f => '`' + f + '`').join(', ');
+    const placeholders = fields.map(() => '?').join(', ');
+    const updates = fields.map(f => '`' + f + '`=VALUES(`' + f + '`)').join(', ');
+    await conn.execute(
+      `INSERT INTO \`${tableName}\` (\`applicationId\`, ${cols}) VALUES (?, ${placeholders}) ON DUPLICATE KEY UPDATE ${updates}`,
+      vals
+    );
+  } finally {
+    await conn.end();
+  }
+}
+
 export async function syncMissingTables() {
   const db = await getDb();
   if (!db) return;
@@ -465,13 +487,7 @@ export async function submitApplication(
 
 // ==================== Case数据查询和保存 ====================
 export async function saveAccountSelection(applicationId: number, data: any) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  await db.insert(accountSelections).values({
-    applicationId,
-    ...data
-  }).onDuplicateKeyUpdate({ set: data });
+  await safeInsert('account_selections', data, applicationId);
 }
 
 export async function getAccountSelection(applicationId: number) {
@@ -482,13 +498,7 @@ export async function getAccountSelection(applicationId: number) {
 }
 
 export async function savePersonalBasicInfo(applicationId: number, data: any) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  await db.insert(personalBasicInfo).values({
-    applicationId,
-    ...data
-  }).onDuplicateKeyUpdate({ set: data });
+  await safeInsert('personal_basic_info', data, applicationId);
 }
 
 export async function getPersonalBasicInfo(applicationId: number) {
@@ -499,13 +509,7 @@ export async function getPersonalBasicInfo(applicationId: number) {
 }
 
 export async function saveCorporateBasicInfo(applicationId: number, data: any) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  await db.insert(corporateBasicInfo).values({
-    applicationId,
-    ...data
-  }).onDuplicateKeyUpdate({ set: data });
+  await safeInsert('corporate_basic_info', data, applicationId);
 }
 
 export async function getCorporateBasicInfo(applicationId: number) {
@@ -574,13 +578,7 @@ export async function getPersonalDetailedInfo(applicationId: number) {
 }
 
 export async function saveOccupationInfo(applicationId: number, data: any) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  await db.insert(occupationInfo).values({
-    applicationId,
-    ...data
-  }).onDuplicateKeyUpdate({ set: data });
+  await safeInsert('occupation_info', data, applicationId);
 }
 
 export async function getOccupationInfo(applicationId: number) {
@@ -591,13 +589,7 @@ export async function getOccupationInfo(applicationId: number) {
 }
 
 export async function saveEmploymentDetails(applicationId: number, data: any) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  await db.insert(employmentDetails).values({
-    applicationId,
-    ...data
-  }).onDuplicateKeyUpdate({ set: data });
+  await safeInsert('employment_details', data, applicationId);
 }
 
 export async function getEmploymentDetails(applicationId: number) {
@@ -608,13 +600,7 @@ export async function getEmploymentDetails(applicationId: number) {
 }
 
 export async function saveFinancialAndInvestment(applicationId: number, data: any) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  await db.insert(financialAndInvestment).values({
-    applicationId,
-    ...data
-  }).onDuplicateKeyUpdate({ set: data });
+  await safeInsert('financial_and_investment', data, applicationId);
 }
 
 export async function getFinancialAndInvestment(applicationId: number) {
@@ -649,13 +635,7 @@ export async function deleteBankAccount(id: number) {
 }
 
 export async function saveTaxInfo(applicationId: number, data: any) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  await db.insert(taxInfo).values({
-    applicationId,
-    ...data
-  }).onDuplicateKeyUpdate({ set: data });
+  await safeInsert('tax_info', data, applicationId);
 }
 
 export async function getTaxInfo(applicationId: number) {
@@ -684,13 +664,7 @@ export async function getUploadedDocuments(applicationId: number) {
 }
 
 export async function saveFaceVerification(applicationId: number, data: any) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  await db.insert(faceVerification).values({
-    applicationId,
-    ...data
-  }).onDuplicateKeyUpdate({ set: data });
+  await safeInsert('face_verification', data, applicationId);
 }
 
 export async function getFaceVerification(applicationId: number) {
@@ -701,13 +675,7 @@ export async function getFaceVerification(applicationId: number) {
 }
 
 export async function saveRegulatoryDeclarations(applicationId: number, data: any) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  await db.insert(regulatoryDeclarations).values({
-    applicationId,
-    ...data
-  }).onDuplicateKeyUpdate({ set: data });
+  await safeInsert('regulatory_declarations', data, applicationId);
 }
 
 export async function getRegulatoryDeclarations(applicationId: number) {
@@ -1499,13 +1467,7 @@ export async function getCorporateInvestmentInfo(applicationId: number) {
 }
 
 export async function saveCorporateRelatedParties(applicationId: number, data: any) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  await db.insert(require("../drizzle/schema").corporateRelatedParties).values({
-    applicationId,
-    relatedParties: JSON.stringify(data.relatedParties)
-  }).onDuplicateKeyUpdate({ set: { relatedParties: JSON.stringify(data.relatedParties) } });
+  await safeInsert('corporate_related_parties', { relatedParties: JSON.stringify(data.relatedParties) }, applicationId);
 }
 
 export async function getCorporateRelatedParties(applicationId: number) {
