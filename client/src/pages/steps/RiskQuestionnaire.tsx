@@ -198,7 +198,7 @@ export default function RiskQuestionnaire() {
     // Q10: 流動資金需求（A=50, B=30, C=10, D=10）
     if (formData.q10_liquidity_needs === "no_sell") score += 50;
     else if (formData.q10_liquidity_needs === "sell_less_30") score += 30;
-    else if (formData.q10_liquidity_needs === "sell_30_50") score += 10;
+    else if (formData.q10_liquidity_needs === "sell_30_50") score += 20;
     else if (formData.q10_liquidity_needs === "sell_more_50") score += 10;
 
     // 判定風險等級（根據總分直接對應風險水平）
