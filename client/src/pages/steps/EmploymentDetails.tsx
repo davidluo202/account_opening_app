@@ -14,9 +14,6 @@ const incomeSources = [
   { value: "salary", label: "薪金 / Salary" },
   { value: "business", label: "業務收入 / Business Income" },
   { value: "investment", label: "投資收益 / Investment Income" },
-  { value: "rental", label: "租金收入 / Rental Income" },
-  { value: "pension", label: "退休金 / Pension" },
-  { value: "family", label: "家庭支持 / Family Support" },
   { value: "other", label: "其他 / Other" },
 ];
 
