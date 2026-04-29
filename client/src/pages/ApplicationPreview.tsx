@@ -411,6 +411,19 @@ export default function ApplicationPreview() {
     return map[val] || val;
   };
 
+  // 格式化多選收入來源（逗號分隔，支持 other:... 格式）
+  const formatIncomeSource = (val: string | null | undefined) => {
+    if (!val) return "-";
+    return val.split(",").map((part) => {
+      const trimmed = part.trim();
+      if (trimmed.startsWith("other:")) {
+        const detail = trimmed.slice(6).trim();
+        return detail ? `其他 (${detail})` : "其他";
+      }
+      return translate(trimmed) || trimmed;
+    }).join("、");
+  };
+
   // 使用統一的翻譯函數
   const translateCustomerType = translate;
   const translateAccountType = translate;
@@ -873,7 +886,7 @@ export default function ApplicationPreview() {
               <tbody>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">收入來源 Income Source</td>
-                  <td className="p-3 w-1/4 border-r">{translate(employment?.incomeSource) || "-"}</td>
+                  <td className="p-3 w-1/4 border-r">{formatIncomeSource(employment?.incomeSource)}</td>
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">年收入 Annual Income</td>
                   <td className="p-3 w-1/4">{formatAmountRange(employment?.annualIncome)}</td>
                 </tr>

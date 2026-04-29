@@ -702,7 +702,16 @@ export default function ApprovalDetail() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label>收入來源</Label>
-                    <p>{employmentDetails.incomeSource || "-"}</p>
+                    <p>{employmentDetails.incomeSource
+                      ? employmentDetails.incomeSource.split(",").map((part: string) => {
+                          const trimmed = part.trim();
+                          if (trimmed.startsWith("other:")) {
+                            const detail = trimmed.slice(6).trim();
+                            return detail ? `其他 (${detail})` : "其他";
+                          }
+                          return translate(trimmed) || trimmed;
+                        }).join("、")
+                      : "-"}</p>
                   </div>
                   <div>
                     <Label>年收入範圍</Label>
