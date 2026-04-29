@@ -342,7 +342,7 @@ const handleNext = () => {
             />
             {errors.signature && <p className="text-sm text-destructive">{errors.signature}</p>}
             <p className="text-sm text-muted-foreground">
-              獲授權人士的英文姓名電子簽署。（必須與Step 5 填寫的英文名字一致）
+              申請人簽名（必須與Step 2 填寫的英文名字一致）
             </p>
           </div>
 
