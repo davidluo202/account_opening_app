@@ -84,7 +84,6 @@ export const translations: Record<string, string> = {
   rental_income: '租金收入',
   pension: '退休金',
   family: '家庭支持',
-  other: '其他',
   inheritance: '繼承財產',
   gift: '贈與',
   savings: '儲蓄',
