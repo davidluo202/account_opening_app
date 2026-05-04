@@ -1090,20 +1090,20 @@ export default function ApplicationPreview() {
                         <tr className="border-b">
                           <td className="p-3 bg-gray-50 font-semibold border-r">Q7. 您屬於以下哪個年齡組別？</td>
                           <td className="p-3">
-                            {riskQuestionnaire.q7_age_group === "age_18_25" && "A. 介乎18至25歲"}
-                            {riskQuestionnaire.q7_age_group === "age_26_35" && "B. 介乎26至35歲"}
-                            {riskQuestionnaire.q7_age_group === "age_36_50" && "C. 介乎36至50歲"}
-                            {riskQuestionnaire.q7_age_group === "age_51_64" && "D. 介乎51至64歲"}
-                            {riskQuestionnaire.q7_age_group === "age_65_plus" && "E. 65歲或以上"}
+                            {riskQuestionnaire.q7_age_group === "age_18_25" && "介乎18至25歲"}
+                            {riskQuestionnaire.q7_age_group === "age_26_35" && "介乎26至35歲"}
+                            {riskQuestionnaire.q7_age_group === "age_36_50" && "介乎36至50歲"}
+                            {riskQuestionnaire.q7_age_group === "age_51_64" && "介乎51至64歲"}
+                            {riskQuestionnaire.q7_age_group === "age_65_plus" && "65歲或以上"}
                             {!riskQuestionnaire.q7_age_group && "-"}
                           </td>
                         </tr>
                         <tr className="border-b">
                           <td className="p-3 bg-gray-50 font-semibold border-r">Q8. 您的教育程度是？</td>
                           <td className="p-3">
-                            {riskQuestionnaire.q8_education_level === "primary_or_below" && "A. 小學或以下"}
-                            {riskQuestionnaire.q8_education_level === "secondary" && "B. 中學"}
-                            {riskQuestionnaire.q8_education_level === "post_secondary" && "C. 大專或以上"}
+                            {riskQuestionnaire.q8_education_level === "primary_or_below" && "小學或以下"}
+                            {riskQuestionnaire.q8_education_level === "secondary" && "中學"}
+                            {riskQuestionnaire.q8_education_level === "post_secondary" && "大專或以上"}
                             {!riskQuestionnaire.q8_education_level && "-"}
                           </td>
                         </tr>
@@ -1132,10 +1132,10 @@ export default function ApplicationPreview() {
                         <tr className="border-b">
                           <td className="p-3 bg-gray-50 font-semibold border-r">Q10. 您需要將多少投資兌現，以滿足突發事件的流動資金需求？</td>
                           <td className="p-3">
-                            {riskQuestionnaire.q10_liquidity_needs === "no_sell" && "A. 不需要出售任何投資"}
-                            {riskQuestionnaire.q10_liquidity_needs === "sell_less_30" && "B. 我會出售不超過30%的投資"}
-                            {riskQuestionnaire.q10_liquidity_needs === "sell_30_50" && "C. 我會出售超過30%但不到50%的投資"}
-                            {riskQuestionnaire.q10_liquidity_needs === "sell_more_50" && "D. 我會出售超過50%的投資"}
+                            {riskQuestionnaire.q10_liquidity_needs === "no_sell" && "不需要出售任何投資"}
+                            {riskQuestionnaire.q10_liquidity_needs === "sell_less_30" && "我會出售不超過30%的投資"}
+                            {riskQuestionnaire.q10_liquidity_needs === "sell_30_50" && "我會出售超過30%但不到50%的投資"}
+                            {riskQuestionnaire.q10_liquidity_needs === "sell_more_50" && "我會出售超過50%的投資"}
                             {!riskQuestionnaire.q10_liquidity_needs && "-"}
                           </td>
                         </tr>
