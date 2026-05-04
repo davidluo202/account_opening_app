@@ -42,11 +42,12 @@ export const translations: Record<string, string> = {
   secondary: '中學學歷',
   
   // 就業狀態
-  employed: '受僱',
-  self_employed: '自僱',
-  unemployed: '無業',
-  retired: '退休',
-  student: '學生',
+  employed: '受僱 / Employed',
+  self_employed: '自僱 / Self-Employed',
+  retired: '退休人士 / Retired',
+  student: '學生 / Student',
+  housewife: '家庭主婦 / Housewife',
+  others: '其他 / Others',
   
   // 銀行賬戶類型
   saving: '儲蓄賬戶',

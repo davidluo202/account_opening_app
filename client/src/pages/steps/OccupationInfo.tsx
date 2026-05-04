@@ -16,8 +16,10 @@ import { industryOptions } from "@/lib/industryOptions";
 const employmentStatuses = [
   { value: "employed", label: "受僱 / Employed" },
   { value: "self_employed", label: "自僱 / Self-Employed" },
+  { value: "retired", label: "退休人士 / Retired" },
   { value: "student", label: "學生 / Student" },
-  { value: "unemployed", label: "無業 / Unemployed" },
+  { value: "housewife", label: "家庭主婦 / Housewife" },
+  { value: "others", label: "其他 / Others" },
 ];
 
 const industries = industryOptions;
@@ -30,7 +32,7 @@ export default function OccupationInfo() {
   const showReturnToPreview = useReturnToPreview();
 
   const [formData, setFormData] = useState({
-    employmentStatus: "" as "employed" | "self_employed" | "student" | "unemployed" | "",
+    employmentStatus: "" as "employed" | "self_employed" | "retired" | "student" | "housewife" | "others" | "",
     companyName: "",
     position: "",
     yearsOfService: "",
@@ -92,7 +94,7 @@ export default function OccupationInfo() {
     }
   }, [existingData]);
 
-  const needsEmploymentDetails = formData.employmentStatus === "employed" || formData.employmentStatus === "self_employed";
+  const needsEmploymentDetails = formData.employmentStatus === "employed" || formData.employmentStatus === "self_employed" || formData.employmentStatus === "others";
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -132,12 +134,10 @@ export default function OccupationInfo() {
       }
     }
 
-    // 學生/無業：至少填一項聯繫方式
-    if (formData.employmentStatus === "student" || formData.employmentStatus === "unemployed") {
-      const hasContact = formData.companyAddress?.trim() || formData.officePhone?.trim();
-      if (!hasContact) {
-        newErrors.companyAddress = "學生/無業人士請至少填寫地址或電話";
-        newErrors.officePhone = " ";
+    // 其他：需要填寫說明
+    if (formData.employmentStatus === "others") {
+      if (!formData.companyName?.trim()) {
+        newErrors.companyName = "請註明就業情況";
       }
     }
 
@@ -153,7 +153,7 @@ const handleSave = () => {
 
     saveOnlyMutation.mutate({
       applicationId,
-      employmentStatus: formData.employmentStatus as "employed" | "self_employed" | "student" | "unemployed",
+      employmentStatus: formData.employmentStatus as "employed" | "self_employed" | "retired" | "student" | "housewife" | "others",
       companyName: formData.companyName,
       position: formData.position,
       yearsOfService: formData.yearsOfService ? parseInt(formData.yearsOfService) : undefined,
@@ -412,9 +412,34 @@ const handleSave = () => {
           </div>
         )}
 
-        {(formData.employmentStatus === "student" || formData.employmentStatus === "unemployed") && (
+        {(formData.employmentStatus === "student" || formData.employmentStatus === "retired" || formData.employmentStatus === "housewife") && (
           <div className="p-6 bg-muted/50 rounded-lg text-center text-muted-foreground">
             無需填寫額外信息
+          </div>
+        )}
+
+        {formData.employmentStatus === "others" && (
+          <div className="space-y-2">
+            <Label htmlFor="otherEmploymentDetail">
+              請註明 / Please Specify <span className="text-destructive">*</span>
+            </Label>
+            <Input
+              id="otherEmploymentDetail"
+              value={formData.companyName}
+              onChange={(e) => {
+                setFormData({ ...formData, companyName: e.target.value });
+                if (errors.companyName) setErrors({ ...errors, companyName: "" });
+              }}
+              onBlur={(e) => {
+                const converted = convertToTraditional(e.target.value);
+                if (converted !== e.target.value) {
+                  setFormData({ ...formData, companyName: converted });
+                }
+              }}
+              placeholder="請註明就業情況"
+              className={errors.companyName ? "border-destructive" : ""}
+            />
+            {errors.companyName && <p className="text-sm text-destructive">{errors.companyName}</p>}
           </div>
         )}
       </div>
