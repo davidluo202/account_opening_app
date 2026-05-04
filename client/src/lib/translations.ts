@@ -33,11 +33,11 @@ export const translations: Record<string, string> = {
   widowed: '喪偶',
   
   // 教育程度
-  high_school: '高中學歷',
-  associate: '專科學歷',
-  bachelor: '本科學歷',
-  master: '碩士學歷',
-  doctorate: '博士學歷',
+  high_school: '中學 / High School',
+  associate: '副學士 / Associate Degree',
+  bachelor: '學士 / Bachelor',
+  master: '碩士 / Master',
+  doctorate: '博士 / Doctorate',
   primary: '小學學歷',
   secondary: '中學學歷',
   
