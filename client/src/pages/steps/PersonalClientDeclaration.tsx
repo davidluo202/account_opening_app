@@ -88,7 +88,7 @@ export default function PersonalClientDeclaration() {
     if (!isCmfEmployee) newErrors.isCmfEmployee = "請選擇";
     if (!isCmfRelative) newErrors.isCmfRelative = "請選擇";
     if (isCmfRelative === "yes") {
-      if (!cmfRelativeEmployeeName.trim()) newErrors.cmfRelativeEmployeeName = "請輸入員工姓名";
+      if (!cmfRelativeEmployeeName.trim()) newErrors.cmfRelativeEmployeeName = "請輸入雇員姓名";
       if (!cmfRelativeRelationship.trim()) newErrors.cmfRelativeRelationship = "請輸入關係";
     }
     setErrors(newErrors);
@@ -254,18 +254,18 @@ export default function PersonalClientDeclaration() {
           {isCmfRelative === "yes" && (
             <div className="space-y-3 ml-6">
               <div className="space-y-2">
-                <Label>員工姓名 / Employee Name <span className="text-destructive">*</span></Label>
+                <Label>雇員姓名 / Name of Employee <span className="text-destructive">*</span></Label>
                 <Input
                   value={cmfRelativeEmployeeName}
                   onChange={(e) => setCmfRelativeEmployeeName(e.target.value)}
                   onBlur={() => setCmfRelativeEmployeeName(convertToTraditional(cmfRelativeEmployeeName))}
-                  placeholder="請輸入員工姓名"
+                  placeholder="請輸入雇員姓名"
                   className={errors.cmfRelativeEmployeeName ? "border-destructive" : ""}
                 />
                 {errors.cmfRelativeEmployeeName && <p className="text-sm text-destructive">{errors.cmfRelativeEmployeeName}</p>}
               </div>
               <div className="space-y-2">
-                <Label>關係 / Relationship <span className="text-destructive">*</span></Label>
+                <Label>關係 / Relationship</Label>
                 <Input
                   value={cmfRelativeRelationship}
                   onChange={(e) => setCmfRelativeRelationship(e.target.value)}
