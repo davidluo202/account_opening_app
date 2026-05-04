@@ -2017,6 +2017,48 @@ export const appRouter = router({
         return await db.getRiskQuestionnaire(input.applicationId);
       }),
   }),
+  // 個人客戶聲明 (在人臉識別之後)
+  personalClientDeclaration: router({
+    save: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+        qAUltimateBeneficialOwner: z.string(),
+        qAOwnerName: z.string().optional(),
+        qAIdPassportNo: z.string().optional(),
+        qACountryOfIssue: z.string().optional(),
+        qAAddress: z.string().optional(),
+        qBSfcRegistration: z.string(),
+        qBInstitutionName: z.string().optional(),
+        nationality: z.string(),
+        birthCountry: z.string(),
+        taxCountry: z.string(),
+        qDPEP: z.string(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { applicationId, ...data } = input;
+        const application = await db.getApplicationById(applicationId);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
+        }
+        try {
+          await db.savePersonalClientDeclaration(applicationId, data);
+          return { success: true };
+        } catch (e: any) {
+          throw new Error(`保存失败: ${e?.sqlMessage || e?.message || String(e)}`);
+        }
+      }),
+
+    get: protectedProcedure
+      .input(z.object({ applicationId: z.number() }))
+      .query(async ({ input, ctx }) => {
+        const application = await db.getApplicationById(input.applicationId);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
+        }
+        return await db.getPersonalClientDeclaration(input.applicationId);
+      }),
+  }),
+
 });
 
 export type AppRouter = typeof appRouter;

@@ -497,3 +497,26 @@ export type CorporateInvestmentInfo = typeof corporateInvestmentInfo.$inferSelec
 export type InsertCorporateInvestmentInfo = typeof corporateInvestmentInfo.$inferInsert;
 export type CorporateRelatedParties = typeof corporateRelatedParties.$inferSelect;
 export type InsertCorporateRelatedParties = typeof corporateRelatedParties.$inferInsert;
+
+/**
+ * 個人客戶聲明表 (在人臉識別後)
+ */
+export const personalClientDeclarations = mysqlTable("personal_client_declarations", {
+  id: int("id").autoincrement().primaryKey(),
+  applicationId: int("applicationId").notNull().unique(),
+  qAUltimateBeneficialOwner: varchar("qAUltimateBeneficialOwner", { length: 10 }).default("").notNull(),
+  qAOwnerName: varchar("qAOwnerName", { length: 200 }).default(""),
+  qAIdPassportNo: varchar("qAIdPassportNo", { length: 100 }).default(""),
+  qACountryOfIssue: varchar("qACountryOfIssue", { length: 100 }).default(""),
+  qAAddress: text("qAAddress"),
+  qBSfcRegistration: varchar("qBSfcRegistration", { length: 10 }).default("").notNull(),
+  qBInstitutionName: varchar("qBInstitutionName", { length: 200 }).default(""),
+  nationality: varchar("nationality", { length: 100 }).default("").notNull(),
+  birthCountry: varchar("birthCountry", { length: 100 }).default("").notNull(),
+  taxCountry: varchar("taxCountry", { length: 100 }).default("").notNull(),
+  qDPEP: varchar("qDPEP", { length: 10 }).default("").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PersonalClientDeclaration = typeof personalClientDeclarations.$inferSelect;
