@@ -859,7 +859,8 @@ export default function ApplicationPreview() {
                       <td className="p-3">{occupation?.officeFaxNo || "-"}</td>
                     </tr>
                   </>
-                {occupation?.employmentStatus === "retired" || occupation?.employmentStatus === "student" || occupation?.employmentStatus === "housewife" || occupation?.employmentStatus === "others" ? (
+                ) : null}
+                {(occupation?.employmentStatus === 'retired' || occupation?.employmentStatus === 'student' || occupation?.employmentStatus === 'housewife' || occupation?.employmentStatus === 'others') && (
                   <>
                     <tr className="border-b">
                       <td className="p-3 bg-gray-50 font-semibold border-r">手提電話 Mobile Phone</td>
@@ -868,7 +869,12 @@ export default function ApplicationPreview() {
                       <td className="p-3">{occupation?.correspondenceAddress || "-"}</td>
                     </tr>
                   </>
-                ) : null}
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* 財務狀況 */}
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
@@ -1051,40 +1057,40 @@ export default function ApplicationPreview() {
                         <tr className="border-b">
                           <td className="p-3 bg-gray-50 font-semibold border-r">Q7. 貴公司預留多少資金用在投資期內的投資?</td>
                           <td className="p-3">
-                            {riskQuestionnaire.q7_age_group === "less_than_1m" && "少於港幣$1,000,000"}
-                            {riskQuestionnaire.q7_age_group === "1m_to_5m" && "介乎港幣$1,000,001至$5,000,000"}
-                            {riskQuestionnaire.q7_age_group === "5m_to_10m" && "介乎港幣$5,000,001至$10,000,000"}
-                            {riskQuestionnaire.q7_age_group === "over_10m" && "多於港幣$10,000,000"}
+                            {riskQuestionnaire.q7_age_group === "less_than_1m" && "A. 少於港幣$1,000,000"}
+                            {riskQuestionnaire.q7_age_group === "1m_to_5m" && "B. 介乎港幣$1,000,001至$5,000,000"}
+                            {riskQuestionnaire.q7_age_group === "5m_to_10m" && "C. 介乎港幣$5,000,001至$10,000,000"}
+                            {riskQuestionnaire.q7_age_group === "over_10m" && "D. 多於港幣$10,000,000"}
                             {!riskQuestionnaire.q7_age_group && "-"}
                           </td>
                         </tr>
                         <tr className="border-b">
                           <td className="p-3 bg-gray-50 font-semibold border-r">Q8. 貴公司會把多少比例的資產投資於較高風險的投資項目？</td>
                           <td className="p-3">
-                            {riskQuestionnaire.q8_education_level === "less_than_25" && "少於25%"}
-                            {riskQuestionnaire.q8_education_level === "25_to_50" && "介乎25%至50%"}
-                            {riskQuestionnaire.q8_education_level === "51_to_75" && "介乎51%至75%"}
-                            {riskQuestionnaire.q8_education_level === "over_75" && "多於75%"}
+                            {riskQuestionnaire.q8_education_level === "less_than_25" && "A. 少於25%"}
+                            {riskQuestionnaire.q8_education_level === "25_to_50" && "B. 介乎25%至50%"}
+                            {riskQuestionnaire.q8_education_level === "51_to_75" && "C. 介乎51%至75%"}
+                            {riskQuestionnaire.q8_education_level === "over_75" && "D. 多於75%"}
                             {!riskQuestionnaire.q8_education_level && "-"}
                           </td>
                         </tr>
                         <tr className="border-b">
                           <td className="p-3 bg-gray-50 font-semibold border-r">Q9. 貴公司是否聘用專業人員負責作出投資決定?</td>
                           <td className="p-3">
-                            {riskQuestionnaire.q9_investment_knowledge_sources === "no_no_knowledge" && "否，本公司對投資決定沒有相關知識"}
-                            {riskQuestionnaire.q9_investment_knowledge_sources === "no_adequate_knowledge" && "否，但本公司對投資決定有足夠相關知識"}
-                            {riskQuestionnaire.q9_investment_knowledge_sources === "yes_little_knowledge" && "是，但本公司對投資決定只有一些或少許相關知識"}
-                            {riskQuestionnaire.q9_investment_knowledge_sources === "yes_adequate_knowledge" && "是，本公司有足夠相關知識的管理層作出投資決定"}
+                            {riskQuestionnaire.q9_investment_knowledge_sources === "no_no_knowledge" && "A. 否，本公司對投資決定沒有相關知識。"}
+                            {riskQuestionnaire.q9_investment_knowledge_sources === "no_adequate_knowledge" && "B. 否, 但本公司對投資決定有足夠相關知識。"}
+                            {riskQuestionnaire.q9_investment_knowledge_sources === "yes_little_knowledge" && "C. 是，但本公司對投資決定只有一些或少許相關知識。"}
+                            {riskQuestionnaire.q9_investment_knowledge_sources === "yes_adequate_knowledge" && "D. 是，本公司有足夠相關知識的管理層作出投資決定。"}
                             {!riskQuestionnaire.q9_investment_knowledge_sources && "-"}
                           </td>
                         </tr>
                         <tr className="border-b">
                           <td className="p-3 bg-gray-50 font-semibold border-r">Q10. 貴公司會預留多少流動資金作為每月營運開支儲備?</td>
                           <td className="p-3">
-                            {riskQuestionnaire.q10_liquidity_needs === "less_than_3m" && "少於3個月的營運開支儲備"}
-                            {riskQuestionnaire.q10_liquidity_needs === "3m_to_6m" && "3個月至6個月的營運開支儲備"}
-                            {riskQuestionnaire.q10_liquidity_needs === "6m_to_12m" && "6個月至12個月的營運開支儲備"}
-                            {riskQuestionnaire.q10_liquidity_needs === "12m_plus" && "12個月以上的營運開支儲備"}
+                            {riskQuestionnaire.q10_liquidity_needs === "less_than_3m" && "A. 少於3個月的營運開支儲備"}
+                            {riskQuestionnaire.q10_liquidity_needs === "3m_to_6m" && "B. 3個月至6個月的營運開支儲備"}
+                            {riskQuestionnaire.q10_liquidity_needs === "6m_to_12m" && "C. 6個月至12個月的營運開支儲備"}
+                            {riskQuestionnaire.q10_liquidity_needs === "12m_plus" && "D. 12個月以上的營運開支儲備"}
                             {!riskQuestionnaire.q10_liquidity_needs && "-"}
                           </td>
                         </tr>
