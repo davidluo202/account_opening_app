@@ -263,10 +263,10 @@ const handleNext = () => {
             <p className="text-sm text-destructive">{errors.hasReadAgreement}</p>
           )}
 
-          <p className="text-xs text-muted-foreground leading-[2.5]" style={{marginBottom: '1px'}}>
+          <p className="text-sm text-muted-foreground leading-none" style={{marginBottom: '2px'}}>
             我確認（i）已收到、閱讀及明白本公司附上之現金賬戶協定；（ii）同意接受該現金賬戶協定所約束；及（iii）同意如客戶資料表內之詞彙表達與該現金賬戶協定有任何抵觸，該現金賬戶協定將凌駕於客戶資料表。
           </p>
-          <p className="text-xs text-muted-foreground leading-[2.5]" style={{marginTop: '1px'}}>
+          <p className="text-sm text-muted-foreground leading-none" style={{marginTop: '2px'}}>
             I confirm that (i) you have received, read and understood the provisions of the Cash Account Agreement; (ii) agree to be bound by the Cash Account Agreement; and (iii) agree that words and expressions which are defined in the Cash Account Agreement shall have the same meanings when used in this Customer Information Form unless otherwise stated or the context otherwise requires and that in the event of any inconsistency, the provisions of the Cash Account Agreement shall override this Customer Information Form.
           </p>
         </Card>
@@ -350,7 +350,7 @@ const handleNext = () => {
                   </DialogTitle>
                 </DialogHeader>
                 <ScrollArea className="h-[60vh] pr-4">
-                  <div className="space-y-6 text-sm leading-[2.5]">
+                  <div className="space-y-6 text-sm leading-relaxed">
                     <div>
                       <p className="font-semibold mb-2">(A)</p>
                       <p>You represent that the information on the Customer Information Form is true, complete and correct and that the representation in the attached agreement is accurate. Canton Mutual Financial Limited is entitled to reply fully on such information and representations for all purposes, unless Canton Mutual Financial Limited receives notice in writing of any change. Canton Mutual Financial Limited is authorised at any time to contact anyone, including your banks, brokers or any credit agency for purposes of verifying the information provided on this Customer Information Form. Please refer to our Personal Information Collection Statement which is attached as schedule Ι of the Cash Account Agreement for further information.</p>
