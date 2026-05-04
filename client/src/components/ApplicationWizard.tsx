@@ -26,6 +26,7 @@ const individualSteps: Step[] = [
   { id: 10, title: "文件上傳", description: "上傳證明文件" },
   { id: 11, title: "人臉識別", description: "進行人臉驗證" },
   { id: 12, title: "客戶聲明", description: "填寫客戶聲明" },
+  { id: 12, title: "客戶聲明", description: "填寫客戶聲明" },
   { id: 13, title: "監管聲明", description: "簽署協議" },
 ];
 
