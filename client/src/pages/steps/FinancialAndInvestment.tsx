@@ -41,7 +41,7 @@ export default function FinancialAndInvestment() {
   const params = useParams<{ id: string; step?: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
-  const stepNum = parseInt(params.step || "7");
+  const stepNum = parseInt(params.step || "6");
   const showReturnToPreview = useReturnToPreview();
 
   const [investmentObjectives, setInvestmentObjectives] = useState<string[]>([]);

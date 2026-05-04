@@ -784,22 +784,18 @@ export default function ApplicationPreview() {
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">電子郵箱 Email</td>
                   <td className="p-3 border-r">{personalDetailed?.email || "-"}</td>
-                  <td className="p-3 bg-gray-50 font-semibold border-r">電話 Phone</td>
-                  <td className="p-3">
-                    {personalDetailed?.phoneCountryCode && personalDetailed?.phoneNumber
-                      ? `${personalDetailed.phoneCountryCode} ${personalDetailed.phoneNumber}`
-                      : "-"}
-                  </td>
-                </tr>
-                <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">手機號碼 Mobile</td>
-                  <td className="p-3 border-r">
+                  <td className="p-3">
                     {personalDetailed?.mobileCountryCode && personalDetailed?.mobileNumber
                       ? `${personalDetailed.mobileCountryCode} ${personalDetailed.mobileNumber}`
                       : "-"}
                   </td>
+                </tr>
+                <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">傳真 Fax</td>
-                  <td className="p-3">{personalDetailed?.faxNo || "-"}</td>
+                  <td className="p-3 border-r">{personalDetailed?.faxNo || "-"}</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-r"></td>
+                  <td className="p-3"></td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">住宅地址 Residential Address</td>
