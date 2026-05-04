@@ -202,10 +202,10 @@ const handleNext = () => {
         {/* 直接促銷聲明 */}
         <Card className="p-6 space-y-4">
           <h4 className="font-semibold text-lg">直接促銷聲明 / Direct Marketing Statement</h4>
-          <p className="text-sm leading-relaxed text-muted-foreground">
+          <p className="text-sm leading-[2.5] text-muted-foreground">
             我們擬使用你的姓名、電話號碼、電郵及地址以促銷證券相關產品/服務，但我們在未得到你的同意之前不能如此使用你的個人資料。請在本文最後簽署表示你同意使用你的個人資料。如你不同意，請在以下空格加上「✓」號，然後簽署。
           </p>
-          <p className="text-sm leading-relaxed">
+          <p className="text-sm leading-[2.5]">
             We intend to use your name, telephone number, email and address for direct marketing securities related products/services but we cannot so use your personal data without your consent. Please sign at the end of this statement to indicate your agreement to such use. Should you find such use of your personal data not acceptable, please indicate your objection before signing by ticking the box below.
           </p>
           <div className="flex items-start space-x-2">
@@ -243,7 +243,7 @@ const handleNext = () => {
                 </p>
               </DialogHeader>
               <ScrollArea className="h-[60vh] pr-4">
-                <div className="whitespace-pre-wrap text-xs font-mono leading-relaxed">
+                <div className="whitespace-pre-wrap text-xs font-mono leading-[2.5]">
                   {CMF001_AGREEMENT_SECTIONS.fullText}
                 </div>
                 <div className="mt-6 p-4 bg-muted rounded-lg">
@@ -355,6 +355,28 @@ const handleNext = () => {
             {errors.acceptsRiskAssessment && (
               <p className="text-sm text-destructive">{errors.acceptsRiskAssessment}</p>
             )}
+
+            {/* 直接促銷聲明 */}
+            <div className="pt-3 border-t">
+              <p className="text-sm leading-[2.5] text-muted-foreground">
+                我們擬使用你的姓名、電話號碼、電郵及地址以促銷證券相關產品/服務，但我們在未得到你的同意之前不能如此使用你的個人資料。請在本文最後簽署表示你同意使用你的個人資料。如你不同意，請在以下空格加上「✓」號，然後簽署。
+              </p>
+              <p className="text-sm leading-[2.5] mt-1">
+                We intend to use your name, telephone number, email and address for direct marketing securities related products/services but we cannot so use your personal data without your consent. Please sign at the end of this statement to indicate your agreement to such use. Should you find such use of your personal data not acceptable, please indicate your objection before signing by ticking the box below.
+              </p>
+              <div className="flex items-start space-x-2 mt-2">
+                <Checkbox
+                  id="objectsDirectMarketing"
+                  checked={formData.objectsDirectMarketing}
+                  onCheckedChange={(checked) => {
+                    setFormData({ ...formData, objectsDirectMarketing: checked as boolean });
+                  }}
+                />
+                <Label htmlFor="objectsDirectMarketing" className="cursor-pointer font-normal">
+                  本人（姓名如下）反對使用個人資料於擬作出的直接促銷 / The customer named objects to the proposed use of his/her personal data in direct marketing.
+                </Label>
+              </div>
+            </div>
           </div>
 
           {/* 确认书 */}
@@ -373,7 +395,7 @@ const handleNext = () => {
                   </DialogTitle>
                 </DialogHeader>
                 <ScrollArea className="h-[60vh] pr-4">
-                  <div className="space-y-6 text-sm leading-relaxed">
+                  <div className="space-y-6 text-sm leading-[2.5]">
                     <div>
                       <p className="font-semibold mb-2">(A)</p>
                       <p>You represent that the information on the Customer Information Form is true, complete and correct and that the representation in the attached agreement is accurate. Canton Mutual Financial Limited is entitled to reply fully on such information and representations for all purposes, unless Canton Mutual Financial Limited receives notice in writing of any change. Canton Mutual Financial Limited is authorised at any time to contact anyone, including your banks, brokers or any credit agency for purposes of verifying the information provided on this Customer Information Form. Please refer to our Personal Information Collection Statement which is attached as schedule Ι of the Cash Account Agreement for further information.</p>
@@ -460,6 +482,28 @@ const handleNext = () => {
             <p className="text-sm text-muted-foreground">
               申請人簽名（必須與Step 2 填寫的英文名字一致）
             </p>
+          </div>
+
+          {/* 直接促銷聲明 */}
+          <div className="space-y-3 p-4 bg-muted/50 rounded-lg">
+            <p className="text-sm leading-[2.5] text-muted-foreground">
+              我們擬使用你的姓名、電話號碼、電郵及地址以促銷證券相關產品/服務，但我們在未得到你的同意之前不能如此使用你的個人資料。請在本文最後簽署表示你同意使用你的個人資料。如你不同意，請在以下空格加上「✓」號，然後簽署。
+            </p>
+            <p className="text-sm leading-[2.5]">
+              We intend to use your name, telephone number, email and address for direct marketing securities related products/services but we cannot so use your personal data without your consent. Please sign at the end of this statement to indicate your agreement to such use. Should you find such use of your personal data not acceptable, please indicate your objection before signing by ticking the box below.
+            </p>
+            <div className="flex items-start space-x-2">
+              <Checkbox
+                id="objectsDirectMarketing"
+                checked={formData.objectsDirectMarketing}
+                onCheckedChange={(checked) => {
+                  setFormData({ ...formData, objectsDirectMarketing: checked as boolean });
+                }}
+              />
+              <Label htmlFor="objectsDirectMarketing" className="cursor-pointer font-normal">
+                本人（姓名如下）反對使用個人資料於擬作出的直接促銷 / The customer named objects to the proposed use of his/her personal data in direct marketing.
+              </Label>
+            </div>
           </div>
 
           <div className="p-4 bg-muted rounded-lg text-sm">
