@@ -755,6 +755,54 @@ export async function getClientDeclaration(applicationId: number) {
   return result.length > 0 ? result[0] : null;
 }
 
+// ==================== 個人客戶聲明 ====================
+export async function savePersonalClientDeclaration(applicationId: number, data: any) {
+  const { customerDeclarations } = await import("../drizzle/schema");
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const existing = await db.select().from(customerDeclarations).where(eq(customerDeclarations.applicationId, applicationId)).limit(1);
+
+  if (existing.length > 0) {
+    await db.update(customerDeclarations).set({
+      declaration_a_is_beneficial_owner: data.declaration_a_is_beneficial_owner,
+      declaration_a_owner_name: data.declaration_a_owner_name || null,
+      declaration_a_owner_id: data.declaration_a_owner_id || null,
+      declaration_a_owner_country: data.declaration_a_owner_country || null,
+      declaration_a_owner_address: data.declaration_a_owner_address || null,
+      declaration_b_is_employee: data.declaration_b_is_employee,
+      declaration_b_institution_name: data.declaration_b_institution_name || null,
+      declaration_c_is_cmf_employee: data.declaration_c_is_cmf_employee,
+      declaration_d_is_relative: data.declaration_d_is_relative,
+      declaration_d_employee_name: data.declaration_d_employee_name || null,
+      declaration_d_relationship: data.declaration_d_relationship || null,
+    }).where(eq(customerDeclarations.applicationId, applicationId));
+  } else {
+    await db.insert(customerDeclarations).values({
+      applicationId,
+      declaration_a_is_beneficial_owner: data.declaration_a_is_beneficial_owner,
+      declaration_a_owner_name: data.declaration_a_owner_name || null,
+      declaration_a_owner_id: data.declaration_a_owner_id || null,
+      declaration_a_owner_country: data.declaration_a_owner_country || null,
+      declaration_a_owner_address: data.declaration_a_owner_address || null,
+      declaration_b_is_employee: data.declaration_b_is_employee,
+      declaration_b_institution_name: data.declaration_b_institution_name || null,
+      declaration_c_is_cmf_employee: data.declaration_c_is_cmf_employee,
+      declaration_d_is_relative: data.declaration_d_is_relative,
+      declaration_d_employee_name: data.declaration_d_employee_name || null,
+      declaration_d_relationship: data.declaration_d_relationship || null,
+    });
+  }
+}
+
+export async function getPersonalClientDeclaration(applicationId: number) {
+  const { customerDeclarations } = await import("../drizzle/schema");
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(customerDeclarations).where(eq(customerDeclarations.applicationId, applicationId)).limit(1);
+  return result.length > 0 ? result[0] : null;
+}
+
 // ==================== 获取完整申请数据 ====================
 export async function getCompleteApplicationData(applicationId: number) {
   const db = await getDb();
@@ -780,7 +828,8 @@ export async function getCompleteApplicationData(applicationId: number) {
     documents,
     face,
     regulatory,
-    relatedPartiesData
+    relatedPartiesData,
+    personalClientDeclarationData
   ] = await Promise.all([
     getApplicationById(applicationId),
     safe(() => getAccountSelection(applicationId)),
@@ -798,7 +847,8 @@ export async function getCompleteApplicationData(applicationId: number) {
     safe(() => getUploadedDocuments(applicationId)),
     safe(() => getFaceVerification(applicationId)),
     safe(() => getRegulatoryDeclarations(applicationId)),
-    safe(() => getCorporateRelatedParties(applicationId))
+    safe(() => getCorporateRelatedParties(applicationId)),
+    safe(() => getPersonalClientDeclaration(applicationId))
   ]);
 
   return {
@@ -818,7 +868,8 @@ export async function getCompleteApplicationData(applicationId: number) {
     uploadedDocuments: documents,
     face,
     regulatory,
-    relatedParties: relatedPartiesData
+    relatedParties: relatedPartiesData,
+    personalClientDeclaration: personalClientDeclarationData
   };
 }
 

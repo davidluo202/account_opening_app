@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { convertToTraditional } from "@/lib/converter";
 
 type YesNo = "yes" | "no" | "";
 
@@ -16,27 +17,27 @@ export default function PersonalClientDeclaration() {
   const params = useParams<{ id: string; step?: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
-  const stepNum = parseInt(params.step || "11-12"); // Step 11.5 - between Face and Regulatory
+  const stepNum = parseInt(params.step || "12");
   const showReturnToPreview = useReturnToPreview();
 
-  // A: Ultimate Beneficial Owner
-  const [qA, setQA] = useState<YesNo>("");
-  const [qAName, setQAName] = useState("");
-  const [qAIdPassport, setQAIdPassport] = useState("");
-  const [qACountry, setQACountry] = useState("");
-  const [qAAddress, setQAAddress] = useState("");
+  // (A) Ultimate Beneficial Owner
+  const [isUBO, setIsUBO] = useState<YesNo>("");
+  const [uboName, setUboName] = useState("");
+  const [uboIdPassport, setUboIdPassport] = useState("");
+  const [uboCountry, setUboCountry] = useState("");
+  const [uboAddress, setUboAddress] = useState("");
 
-  // B: SFC Registered Institution Employee/Director
-  const [qB, setQB] = useState<YesNo>("");
-  const [qBInstitutionName, setQBInstitutionName] = useState("");
+  // (B) SFC Licensed Corporation / Registered Institution employee or director
+  const [isSfcEmployee, setIsSfcEmployee] = useState<YesNo>("");
+  const [sfcInstitutionName, setSfcInstitutionName] = useState("");
 
-  // C: Nationality / Birth Country / Tax Country
-  const [nationality, setNationality] = useState("");
-  const [birthCountry, setBirthCountry] = useState("");
-  const [taxCountry, setTaxCountry] = useState("");
+  // (C) CMF employee
+  const [isCmfEmployee, setIsCmfEmployee] = useState<YesNo>("");
 
-  // D: PEP (Politically Exposed Person)
-  const [qD, setQD] = useState<YesNo>("");
+  // (D) Relative of CMF employee or director
+  const [isCmfRelative, setIsCmfRelative] = useState<YesNo>("");
+  const [cmfRelativeEmployeeName, setCmfRelativeEmployeeName] = useState("");
+  const [cmfRelativeRelationship, setCmfRelativeRelationship] = useState("");
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -49,7 +50,7 @@ export default function PersonalClientDeclaration() {
     onSuccess: (result) => {
       if (result.success) {
         toast.success("保存成功");
-        setLocation(`/application/${applicationId}/step/12`);
+        setLocation(`/application/${applicationId}/step/${stepNum + 1}`);
       }
     },
     onError: (error) => {
@@ -59,46 +60,37 @@ export default function PersonalClientDeclaration() {
 
   useEffect(() => {
     if (existingData) {
-      setQA(existingData.qAUltimateBeneficialOwner || "");
-      setQAName(existingData.qAOwnerName || "");
-      setQAIdPassport(existingData.qAIdPassportNo || "");
-      setQACountry(existingData.qACountryOfIssue || "");
-      setQAAddress(existingData.qAAddress || "");
-      setQB(existingData.qBSfcRegistration || "");
-      setQBInstitutionName(existingData.qBInstitutionName || "");
-      setNationality(existingData.nationality || "");
-      setBirthCountry(existingData.birthCountry || "");
-      setTaxCountry(existingData.taxCountry || "");
-      setQD(existingData.qDPEP || "");
+      setIsUBO(existingData.declaration_a_is_beneficial_owner ? "yes" : "no");
+      setUboName(existingData.declaration_a_owner_name || "");
+      setUboIdPassport(existingData.declaration_a_owner_id || "");
+      setUboCountry(existingData.declaration_a_owner_country || "");
+      setUboAddress(existingData.declaration_a_owner_address || "");
+      setIsSfcEmployee(existingData.declaration_b_is_employee ? "yes" : "no");
+      setSfcInstitutionName(existingData.declaration_b_institution_name || "");
+      setIsCmfEmployee(existingData.declaration_c_is_cmf_employee ? "yes" : "no");
+      setIsCmfRelative(existingData.declaration_d_is_relative ? "yes" : "no");
+      setCmfRelativeEmployeeName(existingData.declaration_d_employee_name || "");
+      setCmfRelativeRelationship(existingData.declaration_d_relationship || "");
     }
   }, [existingData]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
-    // A: Ultimate Beneficial Owner
-    if (!qA) newErrors.qA = "請選擇";
-    if (qA === "no") {
-      if (!qAName.trim()) newErrors.qAName = "請輸入姓名";
-      if (!qAIdPassport.trim()) newErrors.qAIdPassport = "請輸入身份證/護照號碼";
-      if (!qACountry.trim()) newErrors.qACountry = "請輸入簽發國家";
-      if (!qAAddress.trim()) newErrors.qAAddress = "請輸入地址";
+    if (!isUBO) newErrors.isUBO = "請選擇";
+    if (isUBO === "no") {
+      if (!uboName.trim()) newErrors.uboName = "請輸入最終受益擁有人姓名";
+      if (!uboIdPassport.trim()) newErrors.uboIdPassport = "請輸入身份證/護照號碼";
+      if (!uboCountry.trim()) newErrors.uboCountry = "請輸入簽發國家";
+      if (!uboAddress.trim()) newErrors.uboAddress = "請輸入地址";
     }
-    
-    // B: SFC Registration
-    if (!qB) newErrors.qB = "請選擇";
-    if (qB === "yes" && !qBInstitutionName.trim()) {
-      newErrors.qBInstitutionName = "請輸入機構名稱";
+    if (!isSfcEmployee) newErrors.isSfcEmployee = "請選擇";
+    if (isSfcEmployee === "yes" && !sfcInstitutionName.trim()) newErrors.sfcInstitutionName = "請輸入機構名稱";
+    if (!isCmfEmployee) newErrors.isCmfEmployee = "請選擇";
+    if (!isCmfRelative) newErrors.isCmfRelative = "請選擇";
+    if (isCmfRelative === "yes") {
+      if (!cmfRelativeEmployeeName.trim()) newErrors.cmfRelativeEmployeeName = "請輸入員工姓名";
+      if (!cmfRelativeRelationship.trim()) newErrors.cmfRelativeRelationship = "請輸入關係";
     }
-    
-    // C: Nationality info
-    if (!nationality.trim()) newErrors.nationality = "請輸入國籍";
-    if (!birthCountry.trim()) newErrors.birthCountry = "請輸入出生國家";
-    if (!taxCountry.trim()) newErrors.taxCountry = "請輸入納稅國家";
-    
-    // D: PEP
-    if (!qD) newErrors.qD = "請選擇";
-    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -108,20 +100,19 @@ export default function PersonalClientDeclaration() {
       toast.error("請檢查表單中的錯誤");
       return;
     }
-    
     saveMutation.mutate({
       applicationId,
-      qAUltimateBeneficialOwner: qA,
-      qAOwnerName: qA === "no" ? qAName : undefined,
-      qAIdPassportNo: qA === "no" ? qAIdPassport : undefined,
-      qACountryOfIssue: qA === "no" ? qACountry : undefined,
-      qAAddress: qA === "no" ? qAAddress : undefined,
-      qBSfcRegistration: qB,
-      qBInstitutionName: qB === "yes" ? qBInstitutionName : undefined,
-      nationality,
-      birthCountry,
-      taxCountry,
-      qDPEP: qD,
+      declaration_a_is_beneficial_owner: isUBO === "yes",
+      declaration_a_owner_name: isUBO === "no" ? uboName : "",
+      declaration_a_owner_id: isUBO === "no" ? uboIdPassport : "",
+      declaration_a_owner_country: isUBO === "no" ? uboCountry : "",
+      declaration_a_owner_address: isUBO === "no" ? uboAddress : "",
+      declaration_b_is_employee: isSfcEmployee === "yes",
+      declaration_b_institution_name: isSfcEmployee === "yes" ? sfcInstitutionName : "",
+      declaration_c_is_cmf_employee: isCmfEmployee === "yes",
+      declaration_d_is_relative: isCmfRelative === "yes",
+      declaration_d_employee_name: isCmfRelative === "yes" ? cmfRelativeEmployeeName : "",
+      declaration_d_relationship: isCmfRelative === "yes" ? cmfRelativeRelationship : "",
     });
   };
 
@@ -130,11 +121,11 @@ export default function PersonalClientDeclaration() {
       <div className="flex gap-6 mt-2">
         <label className="flex items-center gap-2 cursor-pointer">
           <input type="radio" name={name} checked={value === "yes"} onChange={() => onChange("yes")} className="w-4 h-4" />
-          <span>是 / Yes</span>
+          <span>Yes 是</span>
         </label>
         <label className="flex items-center gap-2 cursor-pointer">
           <input type="radio" name={name} checked={value === "no"} onChange={() => onChange("no")} className="w-4 h-4" />
-          <span>否 / No</span>
+          <span>No 否</span>
         </label>
       </div>
       {error && <p className="text-sm text-destructive mt-1">{error}</p>}
@@ -165,92 +156,127 @@ export default function PersonalClientDeclaration() {
           <p className="text-sm text-muted-foreground mt-1">請如實填寫以下聲明內容</p>
         </div>
 
-        {/* A: Ultimate Beneficial Owner */}
+        {/* (A) Ultimate Beneficial Owner */}
         <Card className="p-6 space-y-4">
           <div>
-            <p className="font-medium">(A) 是否為賬戶的最終受益人？</p>
+            <p className="font-medium">(A) 閣下是否本賬戶之最終受益擁有人？</p>
             <p className="text-sm text-muted-foreground mt-1">Are you the ultimate beneficial owner of the account?</p>
           </div>
-          <RadioGroup value={qA} onChange={(v) => { setQA(v); if (errors.qA) setErrors({...errors, qA: ""}); }} name="qA" error={errors.qA} />
-          {qA === "no" && (
+          <RadioGroup value={isUBO} onChange={(v) => { setIsUBO(v); if (errors.isUBO) setErrors({...errors, isUBO: ""}); }} name="isUBO" error={errors.isUBO} />
+          {isUBO === "no" && (
             <div className="space-y-3 ml-6">
+              <p className="text-sm text-muted-foreground">如否，請提供最終受益擁有人之資料 / If no, please provide the details of the ultimate beneficial owner:</p>
               <div className="space-y-2">
                 <Label>姓名 / Name <span className="text-destructive">*</span></Label>
-                <Input value={qAName} onChange={(e) => setQAName(e.target.value)} placeholder="請輸入姓名" className={errors.qAName ? "border-destructive" : ""} />
-                {errors.qAName && <p className="text-sm text-destructive">{errors.qAName}</p>}
+                <Input
+                  value={uboName}
+                  onChange={(e) => setUboName(e.target.value)}
+                  onBlur={() => setUboName(convertToTraditional(uboName))}
+                  placeholder="請輸入最終受益擁有人姓名"
+                  className={errors.uboName ? "border-destructive" : ""}
+                />
+                {errors.uboName && <p className="text-sm text-destructive">{errors.uboName}</p>}
               </div>
               <div className="space-y-2">
                 <Label>身份證/護照號碼 / ID/Passport No. <span className="text-destructive">*</span></Label>
-                <Input value={qAIdPassport} onChange={(e) => setQAIdPassport(e.target.value)} placeholder="請輸入身份證/護照號碼" className={errors.qAIdPassport ? "border-destructive" : ""} />
-                {errors.qAIdPassport && <p className="text-sm text-destructive">{errors.qAIdPassport}</p>}
+                <Input
+                  value={uboIdPassport}
+                  onChange={(e) => setUboIdPassport(e.target.value)}
+                  placeholder="請輸入身份證/護照號碼"
+                  className={errors.uboIdPassport ? "border-destructive" : ""}
+                />
+                {errors.uboIdPassport && <p className="text-sm text-destructive">{errors.uboIdPassport}</p>}
               </div>
               <div className="space-y-2">
                 <Label>簽發國家 / Country of Issue <span className="text-destructive">*</span></Label>
-                <Input value={qACountry} onChange={(e) => setQACountry(e.target.value)} placeholder="請輸入簽發國家" className={errors.qACountry ? "border-destructive" : ""} />
-                {errors.qACountry && <p className="text-sm text-destructive">{errors.qACountry}</p>}
+                <Input
+                  value={uboCountry}
+                  onChange={(e) => setUboCountry(e.target.value)}
+                  onBlur={() => setUboCountry(convertToTraditional(uboCountry))}
+                  placeholder="請輸入簽發國家"
+                  className={errors.uboCountry ? "border-destructive" : ""}
+                />
+                {errors.uboCountry && <p className="text-sm text-destructive">{errors.uboCountry}</p>}
               </div>
               <div className="space-y-2">
                 <Label>地址 / Address <span className="text-destructive">*</span></Label>
-                <Textarea value={qAAddress} onChange={(e) => setQAAddress(e.target.value)} placeholder="請輸入地址" className={errors.qAAddress ? "border-destructive" : ""} />
-                {errors.qAAddress && <p className="text-sm text-destructive">{errors.qAAddress}</p>}
+                <Textarea
+                  value={uboAddress}
+                  onChange={(e) => setUboAddress(e.target.value)}
+                  onBlur={() => setUboAddress(convertToTraditional(uboAddress))}
+                  placeholder="請輸入最終受益擁有人地址"
+                  className={errors.uboAddress ? "border-destructive" : ""}
+                />
+                {errors.uboAddress && <p className="text-sm text-destructive">{errors.uboAddress}</p>}
               </div>
             </div>
           )}
         </Card>
 
-        {/* B: SFC Registration */}
+        {/* (B) SFC Licensed Corporation / Registered Institution */}
         <Card className="p-6 space-y-4">
           <div>
-            <p className="font-medium">(B) 是否為證券投資及期貨事務監察委員會之持牌法團或註冊機構之僱員/董事？</p>
-            <p className="text-sm text-muted-foreground mt-1">Are you an employee/director of an SFC-licensed corporation or registered institution?</p>
+            <p className="font-medium">(B) 閣下是否證券及期貨事務監察委員會之持牌法團或註冊機構之僱員或董事？</p>
+            <p className="text-sm text-muted-foreground mt-1">Are you an employee or director of a Licensed Corporation or Registered Institution registered with the Securities and Futures Commission?</p>
           </div>
-          <RadioGroup value={qB} onChange={(v) => { setQB(v); if (errors.qB) setErrors({...errors, qB: ""}); }} name="qB" error={errors.qB} />
-          {qB === "yes" && (
+          <RadioGroup value={isSfcEmployee} onChange={(v) => { setIsSfcEmployee(v); if (errors.isSfcEmployee) setErrors({...errors, isSfcEmployee: ""}); }} name="isSfcEmployee" error={errors.isSfcEmployee} />
+          {isSfcEmployee === "yes" && (
             <div className="space-y-2 ml-6">
-              <Label>持牌法團/註冊機構名稱 / Institution Name <span className="text-destructive">*</span></Label>
-              <Input value={qBInstitutionName} onChange={(e) => setQBInstitutionName(e.target.value)} placeholder="請輸入機構名稱" className={errors.qBInstitutionName ? "border-destructive" : ""} />
-              {errors.qBInstitutionName && <p className="text-sm text-destructive">{errors.qBInstitutionName}</p>}
+              <Label>機構名稱 / Name of Institution <span className="text-destructive">*</span></Label>
+              <Input
+                value={sfcInstitutionName}
+                onChange={(e) => setSfcInstitutionName(e.target.value)}
+                onBlur={() => setSfcInstitutionName(convertToTraditional(sfcInstitutionName))}
+                placeholder="請輸入機構名稱"
+                className={errors.sfcInstitutionName ? "border-destructive" : ""}
+              />
+              {errors.sfcInstitutionName && <p className="text-sm text-destructive">{errors.sfcInstitutionName}</p>}
             </div>
           )}
         </Card>
 
-        {/* C: Nationality / Birth Country / Tax Country */}
+        {/* (C) CMF Employee */}
         <Card className="p-6 space-y-4">
           <div>
-            <p className="font-medium">(C) 國籍/出生國家/納稅國家</p>
-            <p className="text-sm text-muted-foreground mt-1">Nationality / Birth Country / Tax Country</p>
+            <p className="font-medium">(C) 閣下是否誠港金融股份有限公司之僱員？</p>
+            <p className="text-sm text-muted-foreground mt-1">Are you an employee of Canton Mutual Financial Limited?</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label>國籍 / Nationality <span className="text-destructive">*</span></Label>
-              <Input value={nationality} onChange={(e) => setNationality(e.target.value)} placeholder="請輸入國籍" className={errors.nationality ? "border-destructive" : ""} />
-              {errors.nationality && <p className="text-sm text-destructive">{errors.nationality}</p>}
-            </div>
-            <div className="space-y-2">
-              <Label>出生國家 / Birth Country <span className="text-destructive">*</span></Label>
-              <Input value={birthCountry} onChange={(e) => setBirthCountry(e.target.value)} placeholder="請輸入出生國家" className={errors.birthCountry ? "border-destructive" : ""} />
-              {errors.birthCountry && <p className="text-sm text-destructive">{errors.birthCountry}</p>}
-            </div>
-            <div className="space-y-2">
-              <Label>納稅國家 / Tax Country <span className="text-destructive">*</span></Label>
-              <Input value={taxCountry} onChange={(e) => setTaxCountry(e.target.value)} placeholder="請輸入納稅國家" className={errors.taxCountry ? "border-destructive" : ""} />
-              {errors.taxCountry && <p className="text-sm text-destructive">{errors.taxCountry}</p>}
-            </div>
-          </div>
+          <RadioGroup value={isCmfEmployee} onChange={(v) => { setIsCmfEmployee(v); if (errors.isCmfEmployee) setErrors({...errors, isCmfEmployee: ""}); }} name="isCmfEmployee" error={errors.isCmfEmployee} />
         </Card>
 
-        {/* D: PEP */}
+        {/* (D) Relative of CMF Employee or Director */}
         <Card className="p-6 space-y-4">
           <div>
-            <p className="font-medium">(D) 政治公眾人物 (PEP)</p>
-            <p className="text-sm text-muted-foreground mt-1">Politically Exposed Person</p>
+            <p className="font-medium">(D) 閣下是否誠港金融股份有限公司僱員或董事之親屬？</p>
+            <p className="text-sm text-muted-foreground mt-1">Are you the relative of an employee or director of Canton Mutual Financial Limited?</p>
           </div>
-          <div>
-            <p className="text-sm text-muted-foreground mb-2">
-              政治公眾人物（PEP）是指在政府、軍隊、司法機構或國有企業中擔任重要職務的人士，包括其家庭成員和密切關聯人士。
-            </p>
-            <RadioGroup value={qD} onChange={(v) => { setQD(v); if (errors.qD) setErrors({...errors, qD: ""}); }} name="qD" error={errors.qD} />
-          </div>
+          <RadioGroup value={isCmfRelative} onChange={(v) => { setIsCmfRelative(v); if (errors.isCmfRelative) setErrors({...errors, isCmfRelative: ""}); }} name="isCmfRelative" error={errors.isCmfRelative} />
+          {isCmfRelative === "yes" && (
+            <div className="space-y-3 ml-6">
+              <div className="space-y-2">
+                <Label>員工姓名 / Employee Name <span className="text-destructive">*</span></Label>
+                <Input
+                  value={cmfRelativeEmployeeName}
+                  onChange={(e) => setCmfRelativeEmployeeName(e.target.value)}
+                  onBlur={() => setCmfRelativeEmployeeName(convertToTraditional(cmfRelativeEmployeeName))}
+                  placeholder="請輸入員工姓名"
+                  className={errors.cmfRelativeEmployeeName ? "border-destructive" : ""}
+                />
+                {errors.cmfRelativeEmployeeName && <p className="text-sm text-destructive">{errors.cmfRelativeEmployeeName}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label>關係 / Relationship <span className="text-destructive">*</span></Label>
+                <Input
+                  value={cmfRelativeRelationship}
+                  onChange={(e) => setCmfRelativeRelationship(e.target.value)}
+                  onBlur={() => setCmfRelativeRelationship(convertToTraditional(cmfRelativeRelationship))}
+                  placeholder="請輸入與該員工的關係"
+                  className={errors.cmfRelativeRelationship ? "border-destructive" : ""}
+                />
+                {errors.cmfRelativeRelationship && <p className="text-sm text-destructive">{errors.cmfRelativeRelationship}</p>}
+              </div>
+            </div>
+          )}
         </Card>
       </div>
     </ApplicationWizard>

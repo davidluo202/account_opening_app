@@ -1297,6 +1297,49 @@ export const appRouter = router({
       }),
   }),
 
+  // 個人客戶聲明 (Personal Client Declaration)
+  personalDeclaration: router({
+    save: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+        declaration_a_is_beneficial_owner: z.boolean(),
+        declaration_a_owner_name: z.string().optional().default(""),
+        declaration_a_owner_id: z.string().optional().default(""),
+        declaration_a_owner_country: z.string().optional().default(""),
+        declaration_a_owner_address: z.string().optional().default(""),
+        declaration_b_is_employee: z.boolean(),
+        declaration_b_institution_name: z.string().optional().default(""),
+        declaration_c_is_cmf_employee: z.boolean(),
+        declaration_d_is_relative: z.boolean(),
+        declaration_d_employee_name: z.string().optional().default(""),
+        declaration_d_relationship: z.string().optional().default(""),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { applicationId, ...data } = input;
+        const application = await db.getApplicationById(applicationId);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
+        }
+        try {
+          await db.savePersonalClientDeclaration(applicationId, data);
+          await db.updateApplicationStep(applicationId, 12);
+          return { success: true };
+        } catch (e: any) {
+          throw new Error(`保存失败: ${e?.sqlMessage || e?.message || String(e)}`);
+        }
+      }),
+
+    get: protectedProcedure
+      .input(z.object({ applicationId: z.number() }))
+      .query(async ({ input, ctx }) => {
+        const application = await db.getApplicationById(input.applicationId);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
+        }
+        return await db.getPersonalClientDeclaration(input.applicationId);
+      }),
+  }),
+
   // Case 12: 监管声明
   regulatory: router({
     save: protectedProcedure
@@ -1324,7 +1367,7 @@ export const appRouter = router({
         };
         
         await db.saveRegulatoryDeclarations(applicationId, saveData);
-        await db.updateApplicationStep(applicationId, 12);
+        await db.updateApplicationStep(applicationId, 13);
         
         return { success: true };
       }),

@@ -24,6 +24,7 @@ import DocumentUpload from "./pages/steps/DocumentUpload";
 import FaceVerification from "./pages/steps/FaceVerification";
 import PersonalClientDeclaration from "./pages/steps/PersonalClientDeclaration";
 import RegulatoryDeclaration from "./pages/steps/RegulatoryDeclaration";
+import PersonalClientDeclaration from "./pages/steps/PersonalClientDeclaration";
 import ClientDeclaration from "./pages/steps/ClientDeclaration";
 import RiskQuestionnaire from "./pages/steps/RiskQuestionnaire";
 import ApplicationPreview from "./pages/ApplicationPreview";
@@ -86,7 +87,7 @@ function StepRouter() {
       default: return <NotFound />;
     }
   } else {
-    // 个人开户流程 (12步)
+    // 个人开户流程 (13步)
     switch (stepNum) {
       case 2: return <PersonalBasicInfo />;
       case 3: return <PersonalDetailedInfo />;
