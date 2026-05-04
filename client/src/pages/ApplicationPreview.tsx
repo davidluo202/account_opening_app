@@ -772,10 +772,6 @@ export default function ApplicationPreview() {
                   </td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold border-r">簽發地 Issuing Place</td>
-                  <td className="p-3 border-r">{personalDetailed?.idIssuingPlace || "-"}</td>
-                </tr>
-                <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">婚姻狀況 Marital Status</td>
                   <td className="p-3 border-r">{translateMaritalStatus(personalDetailed?.maritalStatus)}</td>
                   <td className="p-3 bg-gray-50 font-semibold border-r">學歷 Education</td>
