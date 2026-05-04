@@ -2065,17 +2065,17 @@ export const appRouter = router({
     save: protectedProcedure
       .input(z.object({
         applicationId: z.number(),
-        qAUltimateBeneficialOwner: z.string(),
-        qAOwnerName: z.string().optional(),
-        qAIdPassportNo: z.string().optional(),
-        qACountryOfIssue: z.string().optional(),
-        qAAddress: z.string().optional(),
-        qBSfcRegistration: z.string(),
-        qBInstitutionName: z.string().optional(),
-        nationality: z.string(),
-        birthCountry: z.string(),
-        taxCountry: z.string(),
-        qDPEP: z.string(),
+        declaration_a_is_beneficial_owner: z.boolean(),
+        declaration_a_owner_name: z.string().optional(),
+        declaration_a_owner_id: z.string().optional(),
+        declaration_a_owner_country: z.string().optional(),
+        declaration_a_owner_address: z.string().optional(),
+        declaration_b_is_employee: z.boolean(),
+        declaration_b_institution_name: z.string().optional(),
+        declaration_c_is_cmf_employee: z.boolean(),
+        declaration_d_is_relative: z.boolean(),
+        declaration_d_employee_name: z.string().optional(),
+        declaration_d_relationship: z.string().optional(),
       }))
       .mutation(async ({ input, ctx }) => {
         const { applicationId, ...data } = input;
