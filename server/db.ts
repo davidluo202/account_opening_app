@@ -533,6 +533,10 @@ export async function savePersonalDetailedInfo(applicationId: number, data: any)
   if (data.idIssuingCountry && !data.idIssuingPlace) {
     data.idIssuingPlace = data.idIssuingCountry;
   }
+  // Convert boolean to 0/1 for MySQL
+  if (typeof data.idIsPermanent === 'boolean') {
+    data.idIsPermanent = data.idIsPermanent ? 1 : 0;
+  }
   const fields = ['idType','idNumber','idIssuingPlace',
     'idExpiryDate','idIsPermanent','maritalStatus','educationLevel','email',
     'phoneCountryCode','phoneNumber','mobileCountryCode','mobileNumber',
@@ -570,6 +574,8 @@ export async function getPersonalDetailedInfo(applicationId: number) {
       // Map DB column idIssuingPlace → idIssuingCountry for frontend compatibility
       row.idIssuingCountry = row.idIssuingPlace || '';
       row.idIssuingPlaceOther = '';
+      // Convert 0/1 to boolean
+      row.idIsPermanent = row.idIsPermanent === 1;
       return row;
     }
     return null;

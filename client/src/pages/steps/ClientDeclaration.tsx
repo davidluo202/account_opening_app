@@ -168,8 +168,7 @@ export default function ClientDeclaration() {
     >
       <div className="space-y-6">
         <div>
-          <h2 className="text-xl font-bold">客戶聲明 / Client Declaration</h2>
-          <p className="text-sm text-muted-foreground mt-1">請如實填寫以下聲明內容</p>
+          <p className="text-sm text-muted-foreground">請如實填寫以下聲明內容</p>
         </div>
 
         {/* Q1 */}
