@@ -239,7 +239,7 @@ export default function ApplicationPreview() {
     );
   }
 
-  const { application, accountSelection, basicInfo: personalBasic, corporateBasic, detailedInfo: personalDetailed, occupation, employment, financial, corporateFinancial, corporateInvestment, bankAccounts, taxInfo, riskQuestionnaire, uploadedDocuments: documents, face: faceVerification, regulatory, relatedParties } = completeData;
+  const { application, accountSelection, basicInfo: personalBasic, corporateBasic, detailedInfo: personalDetailed, occupation, employment, financial, corporateFinancial, corporateInvestment, bankAccounts, taxInfo, riskQuestionnaire, uploadedDocuments: documents, face: faceVerification, regulatory, relatedParties, personalClientDeclaration } = completeData;
 
   // 判断是否为機構客戶
   const isCorporate = accountSelection?.customerType === 'corporate';
@@ -1224,7 +1224,7 @@ export default function ApplicationPreview() {
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>{isCorporate ? '7. 文件上傳 Document Upload' : '9. 文件上传 Document Upload'}</span>
+                <span>{isCorporate ? '7. 文件上傳 Document Upload' : '10. 文件上傳 Document Upload'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(10)}>
                   編輯
                 </Button>
@@ -1263,7 +1263,7 @@ export default function ApplicationPreview() {
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>{isCorporate ? '' : '10. '}人脸识别 Face Verification</span>
+                <span>{isCorporate ? '' : '11. '}人臉識別 Face Verification</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(11)}>
                   編輯
                 </Button>
@@ -1289,12 +1289,57 @@ export default function ApplicationPreview() {
           </div>
           )}
 
-          {/* 监管声明（個人第12步；機構第9步） */}
+          {/* 客戶聲明（個人第12步） */}
+          {!isCorporate && (
           <div>
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>{isCorporate ? '8. 監管聲明 Regulatory Declaration' : '11. 监管声明 Regulatory Declaration'}</span>
-                <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 9 : 12)}>
+                <span>12. 客戶聲明 Client Declaration</span>
+                <Button variant="ghost" size="sm" onClick={() => handleEdit(12)}>
+                  編輯
+                </Button>
+              </h3>
+            </div>
+            <table className="w-full min-w-[800px]">
+              <tbody>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">最終權益擁有人 Ultimate Beneficial Owner</td>
+                  <td className="p-3 w-3/4">{personalClientDeclaration?.declaration_a_is_beneficial_owner ? "是 Yes" : "否 No"}</td>
+                </tr>
+                {!personalClientDeclaration?.declaration_a_is_beneficial_owner && personalClientDeclaration?.declaration_a_owner_name && (
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold border-r">受益人資料 Beneficial Owner Details</td>
+                  <td className="p-3">
+                    姓名: {personalClientDeclaration.declaration_a_owner_name} |
+                    證件: {personalClientDeclaration.declaration_a_owner_id} |
+                    國家: {personalClientDeclaration.declaration_a_owner_country} |
+                    地址: {personalClientDeclaration.declaration_a_owner_address}
+                  </td>
+                </tr>
+                )}
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold border-r">SFC持牌機構雇員/董事</td>
+                  <td className="p-3">{personalClientDeclaration?.declaration_b_is_employee ? `是 - ${personalClientDeclaration.declaration_b_institution_name}` : "否 No"}</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold border-r">誠港金融雇員 CMF Employee</td>
+                  <td className="p-3">{personalClientDeclaration?.declaration_c_is_cmf_employee ? "是 Yes" : "否 No"}</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold border-r">誠港金融雇員/董事親屬 CMF Relative</td>
+                  <td className="p-3">{personalClientDeclaration?.declaration_d_is_relative ? `是 - ${personalClientDeclaration.declaration_d_employee_name} (${personalClientDeclaration.declaration_d_relationship})` : "否 No"}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          )}
+
+          {/* 监管声明（個人第13步；機構第9步） */}
+          <div>
+            <div className="bg-blue-50 p-3 border-b">
+              <h3 className="font-bold flex items-center justify-between">
+                <span>{isCorporate ? '8. 監管聲明 Regulatory Declaration' : '13. 監管聲明 Regulatory Declaration'}</span>
+                <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 9 : 13)}>
                   編輯
                 </Button>
               </h3>
