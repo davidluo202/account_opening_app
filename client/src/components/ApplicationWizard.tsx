@@ -21,7 +21,7 @@ const individualSteps: Step[] = [
   { id: 5, title: "就業詳情", description: "填寫收入資產" },
   { id: 6, title: "財務與投資", description: "填寫投資信息" },
   { id: 7, title: "風險評估問卷", description: "完成風險評估" },
-  { id: 8, title: "銀行賬戶", description: "添加銀行賬戶" },
+  { id: 8, title: "銀行賬戶", description: "銀行賬戶紀錄（只作存款用途）" },
   { id: 9, title: "稅務信息", description: "填寫稅務資料" },
   { id: 10, title: "文件上傳", description: "上傳證明文件" },
   { id: 11, title: "人臉識別", description: "進行人臉驗證" },
@@ -127,7 +127,7 @@ export default function ApplicationWizard({
               <div className="hidden sm:block border-l pl-3 ml-1">
                 <h1 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                   誠港金融開戶系統
-                  <span className="text-xs font-mono bg-blue-100 text-blue-800 px-2 py-0.5 rounded border border-blue-200">v1.0.260427.022</span>
+                  <span className="text-xs font-mono bg-blue-100 text-blue-800 px-2 py-0.5 rounded border border-blue-200">v1.0.260504.001</span>
                 </h1>
               </div>
             </div>
@@ -142,7 +142,7 @@ export default function ApplicationWizard({
           <div className="sm:hidden mb-3">
             <h1 className="text-base font-semibold text-gray-800 flex items-center justify-between">
               <span>誠港金融開戶系統</span>
-              <span className="text-xs font-mono bg-blue-100 text-blue-800 px-2 py-0.5 rounded border border-blue-200">v1.0.260427.022</span>
+              <span className="text-xs font-mono bg-blue-100 text-blue-800 px-2 py-0.5 rounded border border-blue-200">v1.0.260504.001</span>
             </h1>
           </div>
           <div className="space-y-2">

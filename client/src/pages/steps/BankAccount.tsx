@@ -588,7 +588,7 @@ const handleNext = () => {
             {/* 账户类型 */}
             <div className="space-y-2">
               <Label htmlFor="accountType">
-                賬戶類型 / Account Type (可選)
+                賬戶類型 / Account Type <span className="text-destructive">*</span>
               </Label>
               <Select 
                 value={formData.accountType} 
