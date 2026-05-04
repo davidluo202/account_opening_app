@@ -548,7 +548,7 @@ export default function RiskQuestionnaire() {
             {/* Q7 */}
             <div className="space-y-3">
               <Label className="text-base font-medium">
-                Q7. What age group do you belong to? / 您屬於以下哪個年齡組別？*
+                Q7. 您屬於以下哪個年齡組別？*
               </Label>
               <RadioGroup
                 value={formData.q7_age_group}
@@ -557,23 +557,23 @@ export default function RiskQuestionnaire() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="age_18_25" id="q7-age-18-25" />
-                  <Label htmlFor="q7-age-18-25">A. Age 18-25 (介乎18至25歲)</Label>
+                  <Label htmlFor="q7-age-18-25">A. 介乎18至25歲</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="age_26_35" id="q7-age-26-35" />
-                  <Label htmlFor="q7-age-26-35">B. Age 26-35 (介乎26至35歲)</Label>
+                  <Label htmlFor="q7-age-26-35">B. 介乎26至35歲</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="age_36_50" id="q7-age-36-50" />
-                  <Label htmlFor="q7-age-36-50">C. Age 36-50 (介乎36至50歲)</Label>
+                  <Label htmlFor="q7-age-36-50">C. 介乎36至50歲</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="age_51_64" id="q7-age-51-64" />
-                  <Label htmlFor="q7-age-51-64">D. Age 51-64 (介乎51至64歲)</Label>
+                  <Label htmlFor="q7-age-51-64">D. 介乎51至64歲</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="age_65_plus" id="q7-age-65-plus" />
-                  <Label htmlFor="q7-age-65-plus">E. Age 65+ (65歲或以上)</Label>
+                  <Label htmlFor="q7-age-65-plus">E. 65歲或以上</Label>
                 </div>
               </RadioGroup>
               {errors.q7 && <p className="text-sm text-destructive">{errors.q7}</p>}
@@ -582,7 +582,7 @@ export default function RiskQuestionnaire() {
             {/* Q8 */}
             <div className="space-y-3">
               <Label className="text-base font-medium">
-                Q8. What is your highest education level? / 您的教育程度是？*
+                Q8. 您的教育程度是？*
               </Label>
               <RadioGroup
                 value={formData.q8_education_level}
@@ -591,15 +591,15 @@ export default function RiskQuestionnaire() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="primary_or_below" id="q8-primary" />
-                  <Label htmlFor="q8-primary">A. Primary or below (小學或以下)</Label>
+                  <Label htmlFor="q8-primary">A. 小學或以下</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="secondary" id="q8-secondary" />
-                  <Label htmlFor="q8-secondary">B. Secondary (中學)</Label>
+                  <Label htmlFor="q8-secondary">B. 中學</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="post_secondary" id="q8-post-secondary" />
-                  <Label htmlFor="q8-post-secondary">C. Post-secondary or above (大專或以上)</Label>
+                  <Label htmlFor="q8-post-secondary">C. 大專或以上</Label>
                 </div>
               </RadioGroup>
               {errors.q8 && <p className="text-sm text-destructive">{errors.q8}</p>}
@@ -608,7 +608,7 @@ export default function RiskQuestionnaire() {
             {/* Q9 */}
             <div className="space-y-3">
               <Label className="text-base font-medium">
-                Q9. Which channels are your investment knowledge acquired? / 您曾經或現時從以下哪些途徑獲取投資知識(您可選擇多於一項)？*
+                Q9. 您曾經或現時從以下哪些途徑獲取投資知識（您可選擇多於一項）？*
               </Label>
               <div className="space-y-2 pl-4">
                 <div className="flex items-center space-x-2">
@@ -624,7 +624,7 @@ export default function RiskQuestionnaire() {
                     }}
                   />
                   <label htmlFor="q9-never" className="text-sm">
-                    A. Never attempted (從未獲取及/或沒有與趣獲取任何投資知識)
+                    A. 從未獲取及/或沒有興趣獲取任何投資知識
                   </label>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -640,7 +640,7 @@ export default function RiskQuestionnaire() {
                     }}
                   />
                   <label htmlFor="q9-relatives" className="text-sm">
-                    B. From relatives/colleagues (與親友及/或同事討論投資或理財話題)
+                    B. 與親友及/或同事討論投資或理財話題
                   </label>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -656,7 +656,7 @@ export default function RiskQuestionnaire() {
                     }}
                   />
                   <label htmlFor="q9-media" className="text-sm">
-                    C. From media (閱讀及/或收聽有關投資或財經新聞)
+                    C. 閱讀及/或收聽有關投資或財經新聞
                   </label>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -672,7 +672,7 @@ export default function RiskQuestionnaire() {
                     }}
                   />
                   <label htmlFor="q9-courses" className="text-sm">
-                    D. From courses/self-study (研究投資或財務相關事宜，或參加投資或財務相關課程、論壇、簡報會、研討會或工作坊)
+                    D. 研究投資或財務相關事宜，或參加投資或財務相關課程、論壇、簡報會、研討會或工作坊
                   </label>
                 </div>
               </div>
@@ -682,7 +682,7 @@ export default function RiskQuestionnaire() {
             {/* Q10 */}
             <div className="space-y-3">
               <Label className="text-base font-medium">
-                Q10. How much investments would you liquidate for unforeseen events? / 您需要將多少投資兌現，以滿足突發事件的流動資金需求？*
+                Q10. 您需要將多少投資兌現，以滿足突發事件的流動資金需求？*
               </Label>
               <RadioGroup
                 value={formData.q10_liquidity_needs}
@@ -691,19 +691,19 @@ export default function RiskQuestionnaire() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="no_sell" id="q10-no-sell" />
-                  <Label htmlFor="q10-no-sell">A. Need not sell any (不需要出售任何投資)</Label>
+                  <Label htmlFor="q10-no-sell">A. 不需要出售任何投資</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="sell_less_30" id="q10-sell-less-30" />
-                  <Label htmlFor="q10-sell-less-30">B. Sell no more than 30% (我會出售不超過30%的投資)</Label>
+                  <Label htmlFor="q10-sell-less-30">B. 我會出售不超過30%的投資</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="sell_30_50" id="q10-sell-30-50" />
-                  <Label htmlFor="q10-sell-30-50">C. Sell 30-50% (我會出售超過30%但不到50%的投資)</Label>
+                  <Label htmlFor="q10-sell-30-50">C. 我會出售超過30%但不到50%的投資</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="sell_more_50" id="q10-sell-more-50" />
-                  <Label htmlFor="q10-sell-more-50">D. Sell more than 50% (我會出售超過50%的投資)</Label>
+                  <Label htmlFor="q10-sell-more-50">D. 我會出售超過50%的投資</Label>
                 </div>
               </RadioGroup>
               {errors.q10 && <p className="text-sm text-destructive">{errors.q10}</p>}
