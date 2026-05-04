@@ -28,11 +28,13 @@ export default function RegulatoryDeclaration() {
     acceptsETO: false,
     acceptsAML: false,
     acceptsRiskAssessment: false,
+    hasReadConfirmation: false,
     signature: "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [agreementOpen, setAgreementOpen] = useState(false);
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
 
   // 獲取客戶類型
   const { data: accountSelection } = trpc.accountSelection.get.useQuery(
@@ -83,6 +85,10 @@ export default function RegulatoryDeclaration() {
 
     if (!formData.hasReadAgreement) {
       newErrors.hasReadAgreement = "請先閱讀開戶協議";
+    }
+
+    if (!formData.hasReadConfirmation) {
+      newErrors.hasReadConfirmation = "請先閱讀確認書";
     }
 
     if (!formData.acceptsETO) {
@@ -324,6 +330,85 @@ const handleNext = () => {
             </div>
             {errors.acceptsRiskAssessment && (
               <p className="text-sm text-destructive">{errors.acceptsRiskAssessment}</p>
+            )}
+          </div>
+
+          {/* 确认书 */}
+          <div className="space-y-3">
+            <Dialog open={confirmationOpen} onOpenChange={setConfirmationOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="w-full">
+                  <FileText className="h-4 w-4 mr-2" />
+                  點擊閱讀確認書 / Confirmation Statement
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[80vh]">
+                <DialogHeader>
+                  <DialogTitle className="text-center">
+                    確認書 / Confirmation Statement
+                  </DialogTitle>
+                </DialogHeader>
+                <ScrollArea className="h-[60vh] pr-4">
+                  <div className="space-y-6 text-sm leading-relaxed">
+                    <div>
+                      <p className="font-semibold mb-2">(A)</p>
+                      <p>You represent that the information on the Customer Information Form is true, complete and correct and that the representation in the attached agreement is accurate. Canton Mutual Financial Limited is entitled to reply fully on such information and representations for all purposes, unless Canton Mutual Financial Limited receives notice in writing of any change. Canton Mutual Financial Limited is authorised at any time to contact anyone, including your banks, brokers or any credit agency for purposes of verifying the information provided on this Customer Information Form. Please refer to our Personal Information Collection Statement which is attached as schedule Ι of the Cash Account Agreement for further information.</p>
+                      <p className="mt-2 text-muted-foreground">你確認聲明在客戶數據表格內的數據屬真實、完整及正確，而附上的協定一切內容準確。除非誠港金融股份有限公司接到更改有關聲明內容的書面通知，誠港金融股份有限公司有權在任何用途上完全依賴這些資料及聲明。誠港金融股份有限公司有權隨時聯絡任何人，包括本人/吾等之銀行、經紀或任何信貸調查機構，以查證此客戶資料表格內所載之內容。詳情請參閱現金賬戶協定附表Ι的個人資料收集聲明。</p>
+                    </div>
+                    <div>
+                      <p className="font-semibold mb-2">(B)</p>
+                      <p>You declare and acknowledge that the Risk Disclosure Statements are provided in a language chosen by you (English or Chinese) and you have invited to read the Risk Disclosure Statements, to ask questions and advice to take independent advice if you wish.</p>
+                      <p className="mt-2 text-muted-foreground">你謹此聲明及確認，已獲提供所選擇的語言（英文或中文）的風險披露聲明。並已獲邀請閱讀該風險披露聲明，提出問題及徵求獨立意見（如有此意願）。</p>
+                    </div>
+                    <div>
+                      <p className="font-semibold mb-2">(C)</p>
+                      <p>You confirm that you have received our Company's Securities Fee Schedule.</p>
+                      <p className="mt-2 text-muted-foreground">你確認收妥本公司之股票服務收費表。</p>
+                    </div>
+                    <div>
+                      <p className="font-semibold mb-2">(D)</p>
+                      <p>You are aware that you shall not settle any trading transaction with third-party's cheques.</p>
+                      <p className="mt-2 text-muted-foreground">你確認不能以第三者支票作交收。</p>
+                    </div>
+                  </div>
+                  <div className="mt-6 p-4 bg-muted rounded-lg">
+                    <p className="text-sm font-semibold text-center">
+                      請仔細閱讀以上確認書內容。關閉此對話框後，請勾選下方的同意選項。
+                    </p>
+                    <p className="text-xs text-center text-muted-foreground mt-2">
+                      Please read the above confirmation carefully. After closing this dialog, please check the confirmation box below.
+                    </p>
+                  </div>
+                </ScrollArea>
+                <Button onClick={() => {
+                  setConfirmationOpen(false);
+                  setFormData({ ...formData, hasReadConfirmation: true });
+                  if (errors.hasReadConfirmation) {
+                    setErrors({ ...errors, hasReadConfirmation: "" });
+                  }
+                }}>
+                  我已閱讀並理解
+                </Button>
+              </DialogContent>
+            </Dialog>
+
+            <div className="flex items-start space-x-2">
+              <Checkbox
+                id="hasReadConfirmation"
+                checked={formData.hasReadConfirmation}
+                onCheckedChange={(checked) => {
+                  setFormData({ ...formData, hasReadConfirmation: checked as boolean });
+                  if (errors.hasReadConfirmation) {
+                    setErrors({ ...errors, hasReadConfirmation: "" });
+                  }
+                }}
+              />
+              <Label htmlFor="hasReadConfirmation" className="cursor-pointer font-normal">
+                我已閱讀並同意確認書的所有內容 <span className="text-destructive">*</span>
+              </Label>
+            </div>
+            {errors.hasReadConfirmation && (
+              <p className="text-sm text-destructive">{errors.hasReadConfirmation}</p>
             )}
           </div>
 
