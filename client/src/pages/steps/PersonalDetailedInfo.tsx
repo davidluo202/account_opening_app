@@ -155,6 +155,7 @@ export default function PersonalDetailedInfo() {
     if (existingData) {
       setFormData({
         ...existingData,
+        idIsPermanent: !!existingData.idIsPermanent,
         idExpiryDate: existingData.idExpiryDate || "",
         faxNo: existingData.faxNo || "",
         phoneCountryCode: existingData.phoneCountryCode || "+852",
@@ -322,6 +323,7 @@ export default function PersonalDetailedInfo() {
     saveOnlyMutation.mutate({
       applicationId,
       ...formData,
+      idIsPermanent: !!formData.idIsPermanent,
       idExpiryDate: formData.idIsPermanent ? undefined : formData.idExpiryDate,
       emailVerified, // 保存郵箱驗證狀態
     });
@@ -336,6 +338,7 @@ export default function PersonalDetailedInfo() {
     saveMutation.mutate({
       applicationId,
       ...formData,
+      idIsPermanent: !!formData.idIsPermanent,
       idExpiryDate: formData.idIsPermanent ? undefined : formData.idExpiryDate,
       emailVerified, // 保存郵箱驗證狀態
     });
