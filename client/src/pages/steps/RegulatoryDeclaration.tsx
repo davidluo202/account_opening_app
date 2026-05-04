@@ -461,9 +461,9 @@ const handleNext = () => {
             </p>
           </div>
 
-          <div className="p-4 bg-muted rounded-lg text-sm">
-            <p className="font-medium mb-2">聲明條款：</p>
-            <p>
+          <div className="p-4 bg-muted rounded-lg">
+            <p className="text-xs text-muted-foreground leading-[2.5]" style={{marginBottom: '1px'}}>聲明條款：</p>
+            <p className="text-xs text-muted-foreground leading-[2.5]" style={{marginTop: '1px'}}>
               本人確認已詳細閱讀、清楚了解並同意《開戶協議》的所有內容，願意接受協議條款的約束。
               本人的電子簽名具有與手寫簽名同等的法律效力。
             </p>
