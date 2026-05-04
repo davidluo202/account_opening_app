@@ -461,28 +461,6 @@ const handleNext = () => {
             </p>
           </div>
 
-          {/* 直接促銷聲明 */}
-          <div className="space-y-3 p-4 bg-muted/50 rounded-lg">
-            <p className="text-sm leading-[2.5] text-muted-foreground">
-              我們擬使用你的姓名、電話號碼、電郵及地址以促銷證券相關產品/服務，但我們在未得到你的同意之前不能如此使用你的個人資料。請在本文最後簽署表示你同意使用你的個人資料。如你不同意，請在以下空格加上「✓」號，然後簽署。
-            </p>
-            <p className="text-sm leading-[2.5]">
-              We intend to use your name, telephone number, email and address for direct marketing securities related products/services but we cannot so use your personal data without your consent. Please sign at the end of this statement to indicate your agreement to such use. Should you find such use of your personal data not acceptable, please indicate your objection before signing by ticking the box below.
-            </p>
-            <div className="flex items-start space-x-2">
-              <Checkbox
-                id="objectsDirectMarketing"
-                checked={formData.objectsDirectMarketing}
-                onCheckedChange={(checked) => {
-                  setFormData({ ...formData, objectsDirectMarketing: checked as boolean });
-                }}
-              />
-              <Label htmlFor="objectsDirectMarketing" className="cursor-pointer font-normal">
-                本人（姓名如下）反對使用個人資料於擬作出的直接促銷 / The customer named objects to the proposed use of his/her personal data in direct marketing.
-              </Label>
-            </div>
-          </div>
-
           <div className="p-4 bg-muted rounded-lg text-sm">
             <p className="font-medium mb-2">聲明條款：</p>
             <p>
