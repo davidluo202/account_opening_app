@@ -1533,19 +1533,3 @@ export async function getCorporateRelatedParties(applicationId: number) {
   return JSON.parse(data.relatedParties || '[]');
 }
 
-export async function savePersonalClientDeclaration(applicationId: number, data: any) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  await db.insert(personalClientDeclarations).values({
-    applicationId,
-    ...data
-  }).onDuplicateKeyUpdate({ set: data });
-}
-
-export async function getPersonalClientDeclaration(applicationId: number) {
-  const db = await getDb();
-  if (!db) return null;
-  const result = await db.select().from(personalClientDeclarations).where(eq(personalClientDeclarations.applicationId, applicationId)).limit(1);
-  return result.length > 0 ? result[0] : null;
-}

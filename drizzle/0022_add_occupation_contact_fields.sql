@@ -1,0 +1,1 @@
+ALTER TABLE `occupation_info` ADD COLUMN `mobilePhone` VARCHAR(50) DEFAULT NULL, ADD COLUMN `correspondenceAddress` TEXT DEFAULT NULL;
