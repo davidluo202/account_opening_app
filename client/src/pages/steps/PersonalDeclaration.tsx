@@ -66,14 +66,13 @@ export default function PersonalDeclaration() {
 
   useEffect(() => {
     if (existingData) {
-      setQ1(existingData.q1BeneficialOwner as YesNo || "");
-      setQ2(existingData.q2SfcLicensed as YesNo || "");
-      setQ2Name(existingData.q2Name || "");
-      setQ2CeNo(existingData.q2CeNo || "");
-      setQ3(existingData.q3CmfEmployee as YesNo || "");
-      setQ4(existingData.q4Relative as YesNo || "");
-      setQ4Name(existingData.q4Name || "");
-      setQ4Relationship(existingData.q4Relationship || "");
+      setQ1(existingData.declaration_a_is_beneficial_owner ? "yes" : "no");
+      setQ2(existingData.declaration_b_is_employee ? "yes" : "no");
+      setQ2Name(existingData.declaration_b_institution_name || "");
+      setQ3(existingData.declaration_c_is_cmf_employee ? "yes" : "no");
+      setQ4(existingData.declaration_d_is_relative ? "yes" : "no");
+      setQ4Name(existingData.declaration_d_employee_name || "");
+      setQ4Relationship(existingData.declaration_d_relationship || "");
     }
   }, [existingData]);
 
@@ -101,14 +100,17 @@ export default function PersonalDeclaration() {
 
     saveOnlyMutation.mutate({
       applicationId,
-      q1BeneficialOwner: q1,
-      q2SfcLicensed: q2,
-      q2Name: q2Name,
-      q2CeNo: q2CeNo,
-      q3CmfEmployee: q3,
-      q4Relative: q4,
-      q4Name: q4Name,
-      q4Relationship: q4Relationship,
+      declaration_a_is_beneficial_owner: q1 === "yes",
+      declaration_a_owner_name: q1 === "yes" ? "" : undefined,
+      declaration_a_owner_id: undefined,
+      declaration_a_owner_country: undefined,
+      declaration_a_owner_address: undefined,
+      declaration_b_is_employee: q2 === "yes",
+      declaration_b_institution_name: q2 === "yes" ? q2Name : undefined,
+      declaration_c_is_cmf_employee: q3 === "yes",
+      declaration_d_is_relative: q4 === "yes",
+      declaration_d_employee_name: q4 === "yes" ? q4Name : undefined,
+      declaration_d_relationship: q4 === "yes" ? q4Relationship : undefined,
     });
   };
 
@@ -120,14 +122,17 @@ export default function PersonalDeclaration() {
 
     saveMutation.mutate({
       applicationId,
-      q1BeneficialOwner: q1,
-      q2SfcLicensed: q2,
-      q2Name: q2Name,
-      q2CeNo: q2CeNo,
-      q3CmfEmployee: q3,
-      q4Relative: q4,
-      q4Name: q4Name,
-      q4Relationship: q4Relationship,
+      declaration_a_is_beneficial_owner: q1 === "yes",
+      declaration_a_owner_name: q1 === "yes" ? "" : undefined,
+      declaration_a_owner_id: undefined,
+      declaration_a_owner_country: undefined,
+      declaration_a_owner_address: undefined,
+      declaration_b_is_employee: q2 === "yes",
+      declaration_b_institution_name: q2 === "yes" ? q2Name : undefined,
+      declaration_c_is_cmf_employee: q3 === "yes",
+      declaration_d_is_relative: q4 === "yes",
+      declaration_d_employee_name: q4 === "yes" ? q4Name : undefined,
+      declaration_d_relationship: q4 === "yes" ? q4Relationship : undefined,
     });
   };
 

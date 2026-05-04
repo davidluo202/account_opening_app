@@ -121,11 +121,11 @@ export default function PersonalClientDeclaration() {
       <div className="flex gap-6 mt-2">
         <label className="flex items-center gap-2 cursor-pointer">
           <input type="radio" name={name} checked={value === "yes"} onChange={() => onChange("yes")} className="w-4 h-4" />
-          <span>Yes 是</span>
+          <span>Yes 是。</span>
         </label>
         <label className="flex items-center gap-2 cursor-pointer">
           <input type="radio" name={name} checked={value === "no"} onChange={() => onChange("no")} className="w-4 h-4" />
-          <span>No 否</span>
+          <span>No 不是。</span>
         </label>
       </div>
       {error && <p className="text-sm text-destructive mt-1">{error}</p>}
@@ -159,13 +159,13 @@ export default function PersonalClientDeclaration() {
         {/* (A) Ultimate Beneficial Owner */}
         <Card className="p-6 space-y-4">
           <div>
-            <p className="font-medium">(A) 閣下是否本賬戶之最終受益擁有人？</p>
-            <p className="text-sm text-muted-foreground mt-1">Are you the ultimate beneficial owner of the account?</p>
+            <p className="font-medium">(A) 閣下是否此戶口之最終權益擁有人？（即閣下是否為本人而非第三者運作此賬戶？）</p>
+            <p className="text-sm text-muted-foreground mt-1">Are you the ultimate beneficial owner(s) in relation to the Account? (i.e. are you acting for your own and not for a third party?)</p>
           </div>
           <RadioGroup value={isUBO} onChange={(v) => { setIsUBO(v); if (errors.isUBO) setErrors({...errors, isUBO: ""}); }} name="isUBO" error={errors.isUBO} />
           {isUBO === "no" && (
             <div className="space-y-3 ml-6">
-              <p className="text-sm text-muted-foreground">如否，請提供最終受益擁有人之資料 / If no, please provide the details of the ultimate beneficial owner:</p>
+              <p className="text-sm text-muted-foreground">不是，賬戶之最終權益擁有人是：/ No, details of the ultimate beneficial owner(s) is/are:</p>
               <div className="space-y-2">
                 <Label>姓名 / Name <span className="text-destructive">*</span></Label>
                 <Input
@@ -216,13 +216,13 @@ export default function PersonalClientDeclaration() {
         {/* (B) SFC Licensed Corporation / Registered Institution */}
         <Card className="p-6 space-y-4">
           <div>
-            <p className="font-medium">(B) 閣下是否證券及期貨事務監察委員會之持牌法團或註冊機構之僱員或董事？</p>
+            <p className="font-medium">(B) 閣下是否證監會註冊持牌法團或註冊機構之雇員或董事？</p>
             <p className="text-sm text-muted-foreground mt-1">Are you an employee or director of a Licensed Corporation or Registered Institution registered with the Securities and Futures Commission?</p>
           </div>
           <RadioGroup value={isSfcEmployee} onChange={(v) => { setIsSfcEmployee(v); if (errors.isSfcEmployee) setErrors({...errors, isSfcEmployee: ""}); }} name="isSfcEmployee" error={errors.isSfcEmployee} />
           {isSfcEmployee === "yes" && (
             <div className="space-y-2 ml-6">
-              <Label>機構名稱 / Name of Institution <span className="text-destructive">*</span></Label>
+              <Label>請提供有關持牌法團或註冊機構名稱 / Please provide the name of the Licensed Corporation or Registered Institution <span className="text-destructive">*</span></Label>
               <Input
                 value={sfcInstitutionName}
                 onChange={(e) => setSfcInstitutionName(e.target.value)}
@@ -238,7 +238,7 @@ export default function PersonalClientDeclaration() {
         {/* (C) CMF Employee */}
         <Card className="p-6 space-y-4">
           <div>
-            <p className="font-medium">(C) 閣下是否誠港金融股份有限公司之僱員？</p>
+            <p className="font-medium">(C) 閣下是否誠港金融股份有限公司之雇員？</p>
             <p className="text-sm text-muted-foreground mt-1">Are you an employee of Canton Mutual Financial Limited?</p>
           </div>
           <RadioGroup value={isCmfEmployee} onChange={(v) => { setIsCmfEmployee(v); if (errors.isCmfEmployee) setErrors({...errors, isCmfEmployee: ""}); }} name="isCmfEmployee" error={errors.isCmfEmployee} />
@@ -247,7 +247,7 @@ export default function PersonalClientDeclaration() {
         {/* (D) Relative of CMF Employee or Director */}
         <Card className="p-6 space-y-4">
           <div>
-            <p className="font-medium">(D) 閣下是否誠港金融股份有限公司僱員或董事之親屬？</p>
+            <p className="font-medium">(D) 閣下是否誠港金融股份有限公司雇員或董事之親屬？</p>
             <p className="text-sm text-muted-foreground mt-1">Are you the relative of an employee or director of Canton Mutual Financial Limited?</p>
           </div>
           <RadioGroup value={isCmfRelative} onChange={(v) => { setIsCmfRelative(v); if (errors.isCmfRelative) setErrors({...errors, isCmfRelative: ""}); }} name="isCmfRelative" error={errors.isCmfRelative} />
