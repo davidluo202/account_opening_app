@@ -40,6 +40,8 @@ export default function OccupationInfo() {
     companyAddress: "",
     officePhone: "",
     officeFaxNo: "", // 辦公傳真（可選）
+    mobilePhone: "",
+    correspondenceAddress: "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -89,12 +91,15 @@ export default function OccupationInfo() {
         industry: existingData.industry || "",
         companyAddress: existingData.companyAddress || "",
         officePhone: existingData.officePhone || "",
-        officeFaxNo: existingData.officeFaxNo || "", // 处理可选字段
+        officeFaxNo: existingData.officeFaxNo || "",
+        mobilePhone: existingData.mobilePhone || "",
+        correspondenceAddress: existingData.correspondenceAddress || "",
       });
     }
   }, [existingData]);
 
   const needsEmploymentDetails = formData.employmentStatus === "employed" || formData.employmentStatus === "self_employed" || formData.employmentStatus === "others";
+  const needsContactInfo = formData.employmentStatus === "retired" || formData.employmentStatus === "student" || formData.employmentStatus === "housewife" || formData.employmentStatus === "others";
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -134,6 +139,18 @@ export default function OccupationInfo() {
       }
     }
 
+    // 退休/學生/家庭婦女/其他：需要聯繫方式
+    if (needsContactInfo) {
+      if (!formData.mobilePhone?.trim()) {
+        newErrors.mobilePhone = "請輸入手提電話";
+      } else if (!/^\d+$/.test(formData.mobilePhone.trim())) {
+        newErrors.mobilePhone = "手提電話只能使用阿拉伯數字";
+      }
+      if (!formData.correspondenceAddress?.trim()) {
+        newErrors.correspondenceAddress = "請輸入通訊地址";
+      }
+    }
+
     // 其他：需要填寫說明
     if (formData.employmentStatus === "others") {
       if (!formData.companyName?.trim()) {
@@ -161,6 +178,8 @@ const handleSave = () => {
       companyAddress: formData.companyAddress,
       officePhone: formData.officePhone,
       officeFaxNo: formData.officeFaxNo,
+      mobilePhone: needsContactInfo ? formData.mobilePhone : undefined,
+      correspondenceAddress: needsContactInfo ? formData.correspondenceAddress : undefined,
     });
   };
 
@@ -179,7 +198,9 @@ const handleSave = () => {
       industry: needsEmploymentDetails ? formData.industry : undefined,
       companyAddress: needsEmploymentDetails ? formData.companyAddress : undefined,
       officePhone: needsEmploymentDetails ? formData.officePhone : undefined,
-      officeFaxNo: needsEmploymentDetails ? formData.officeFaxNo : undefined, // 添加辦公傳真字段
+      officeFaxNo: needsEmploymentDetails ? formData.officeFaxNo : undefined,
+      mobilePhone: needsContactInfo ? formData.mobilePhone : undefined,
+      correspondenceAddress: needsContactInfo ? formData.correspondenceAddress : undefined,
     });
   };
 
@@ -412,34 +433,54 @@ const handleSave = () => {
           </div>
         )}
 
-        {(formData.employmentStatus === "student" || formData.employmentStatus === "retired" || formData.employmentStatus === "housewife") && (
-          <div className="p-6 bg-muted/50 rounded-lg text-center text-muted-foreground">
-            無需填寫額外信息
-          </div>
-        )}
+        {(formData.employmentStatus === "student" || formData.employmentStatus === "retired" || formData.employmentStatus === "housewife" || formData.employmentStatus === "others") && (
+          <div className="space-y-6 p-6 bg-muted/50 rounded-lg">
+            <h4 className="font-semibold text-lg">聯繫方式 / Contact Information</h4>
 
-        {formData.employmentStatus === "others" && (
-          <div className="space-y-2">
-            <Label htmlFor="otherEmploymentDetail">
-              請註明 / Please Specify <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              id="otherEmploymentDetail"
-              value={formData.companyName}
-              onChange={(e) => {
-                setFormData({ ...formData, companyName: e.target.value });
-                if (errors.companyName) setErrors({ ...errors, companyName: "" });
-              }}
-              onBlur={(e) => {
-                const converted = convertToTraditional(e.target.value);
-                if (converted !== e.target.value) {
-                  setFormData({ ...formData, companyName: converted });
-                }
-              }}
-              placeholder="請註明就業情況"
-              className={errors.companyName ? "border-destructive" : ""}
-            />
-            {errors.companyName && <p className="text-sm text-destructive">{errors.companyName}</p>}
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* 手提電話 */}
+              <div className="space-y-2">
+                <Label htmlFor="mobilePhone">
+                  手提電話 / Mobile Phone No. <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="mobilePhone"
+                  value={formData.mobilePhone}
+                  onChange={(e) => {
+                    setFormData({ ...formData, mobilePhone: e.target.value.replace(/\D/g, "") });
+                    if (errors.mobilePhone) setErrors({ ...errors, mobilePhone: "" });
+                  }}
+                  placeholder="請輸入手提電話"
+                  className={errors.mobilePhone ? "border-destructive" : ""}
+                />
+                {errors.mobilePhone && <p className="text-sm text-destructive">{errors.mobilePhone}</p>}
+              </div>
+            </div>
+
+            {/* 通訊地址 */}
+            <div className="space-y-2">
+              <Label htmlFor="correspondenceAddress">
+                通訊地址 / Correspondence Address <span className="text-destructive">*</span>
+              </Label>
+              <Textarea
+                id="correspondenceAddress"
+                value={formData.correspondenceAddress}
+                onChange={(e) => {
+                  setFormData({ ...formData, correspondenceAddress: e.target.value });
+                  if (errors.correspondenceAddress) setErrors({ ...errors, correspondenceAddress: "" });
+                }}
+                onBlur={(e) => {
+                  const converted = convertToTraditional(e.target.value);
+                  if (converted !== e.target.value) {
+                    setFormData({ ...formData, correspondenceAddress: converted });
+                  }
+                }}
+                placeholder="請輸入通訊地址"
+                rows={3}
+                className={errors.correspondenceAddress ? "border-destructive" : ""}
+              />
+              {errors.correspondenceAddress && <p className="text-sm text-destructive">{errors.correspondenceAddress}</p>}
+            </div>
           </div>
         )}
       </div>

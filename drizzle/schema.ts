@@ -183,7 +183,7 @@ export const personalDetailedInfo = mysqlTable("personal_detailed_info", {
 export const occupationInfo = mysqlTable("occupation_info", {
   id: int("id").autoincrement().primaryKey(),
   applicationId: int("applicationId").notNull().unique(),
-  employmentStatus: mysqlEnum("employmentStatus", ["employed", "self_employed", "student", "unemployed"]).notNull(),
+  employmentStatus: mysqlEnum("employmentStatus", ["employed", "self_employed", "retired", "student", "housewife", "others"]).notNull(),
   // 以下字段仅当 employed 或 self_employed 时填写
   companyName: varchar("companyName", { length: 200 }),
   position: varchar("position", { length: 100 }),
@@ -191,7 +191,10 @@ export const occupationInfo = mysqlTable("occupation_info", {
   industry: varchar("industry", { length: 100 }),
   companyAddress: text("companyAddress"),
   officePhone: varchar("officePhone", { length: 50 }),
-  officeFaxNo: varchar("officeFaxNo", { length: 50 }), // 办公传真
+  officeFaxNo: varchar("officeFaxNo", { length: 50 }),
+  // 以下字段仅当 retired/student/housewife/others 时填写
+  mobilePhone: varchar("mobilePhone", { length: 50 }),
+  correspondenceAddress: text("correspondenceAddress"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

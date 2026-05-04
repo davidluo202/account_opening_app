@@ -751,7 +751,7 @@ export const appRouter = router({
     save: protectedProcedure
       .input(z.object({
         applicationId: z.number(),
-        employmentStatus: z.enum(["employed", "self_employed", "student", "unemployed"]),
+        employmentStatus: z.enum(["employed", "self_employed", "retired", "student", "housewife", "others"]),
         companyName: z.string().optional(),
         position: z.string().optional(),
         yearsOfService: z.number().optional(),
@@ -759,6 +759,8 @@ export const appRouter = router({
         companyAddress: z.string().optional(),
         officePhone: z.string().optional(),
         officeFaxNo: z.string().optional(), // 办公传真（可选）
+        mobilePhone: z.string().optional(),
+        correspondenceAddress: z.string().optional(),
       }))
       .mutation(async ({ input, ctx }) => {
         const { applicationId, ...data } = input;
