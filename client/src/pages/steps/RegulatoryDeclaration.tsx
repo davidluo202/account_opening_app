@@ -255,6 +255,13 @@ const handleNext = () => {
           {errors.hasReadAgreement && (
             <p className="text-sm text-destructive">{errors.hasReadAgreement}</p>
           )}
+
+          <p className="text-sm text-muted-foreground mt-3 leading-relaxed">
+            我確認（i）已收到、閱讀及明白本公司附上之現金賬戶協定；（ii）同意接受該現金賬戶協定所約束；及（iii）同意如客戶資料表內之詞彙表達與該現金賬戶協定有任何抵觸，該現金賬戶協定將凌駕於客戶資料表。
+          </p>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            I confirm that (i) I have received, read and understood the Cash Account Agreement attached hereto by the Company; (ii) I agree to be bound by the Cash Account Agreement; and (iii) I agree that in the event of any inconsistency between the terms in the Client Information Form and the Cash Account Agreement, the Cash Account Agreement shall prevail.
+          </p>
         </Card>
 
         {/* 电子签署和监管确认 */}
