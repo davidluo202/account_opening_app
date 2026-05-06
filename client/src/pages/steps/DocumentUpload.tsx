@@ -20,7 +20,7 @@ const documentTypes = [
 const corporateDocumentTypes = [
   { value: "ci_doc", label: "公司註冊證書 / Certificate of Incorporation", required: true },
   { value: "name_change_doc", label: "更名證明（如適用）/ Certified of Change of Name (if applied)", required: false },
-  { value: "br_doc", label: "商業登記證（如適用）/ Business Registration Certificate (if applied)", required: false },
+  { value: "br_doc", label: "商業登記證（適用於香港註冊公司）/ Business Registration Certificate (For Hong Kong Registration Company only)", required: false },
   { value: "license_cert", label: "牌照認證/交易所上市證明（如CIMA、SFC等，如適用）/ License Certification/Exchange Listed (if applied)", required: false },
   { value: "memo_articles", label: "公司章程/組織大綱 / Memorandum/Articles of Association", required: true },
   { value: "board_resolution", label: "董事局議程 / Certified Extract Board of Resolution", required: true },
