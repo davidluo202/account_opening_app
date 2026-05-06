@@ -414,10 +414,10 @@ const handleNext = () => {
 
             {/* 直接促銷聲明 */}
             <div className="mt-6">
-              <p className="text-xs text-muted-foreground leading-[2.5]" style={{margin: 0}}>
+              <p className="text-xs text-muted-foreground leading-tight" style={{margin: 0, padding: 0}}>
                 我們擬使用你的姓名、電話號碼、電郵及地址以促銷證券相關產品/服務，但我們在未得到你的同意之前不能如此使用你的個人資料。請在本文最後簽署表示你同意使用你的個人資料。如你不同意，請在以下空格加上「✓」號，然後簽署。
               </p>
-              <p className="text-xs text-muted-foreground leading-[2.5]" style={{margin: 0}}>
+              <p className="text-xs text-muted-foreground leading-tight" style={{margin: 0, padding: 0}}>
                 We intend to use your name, telephone number, email and address for direct marketing securities related products/services but we cannot so use your personal data without your consent. Please sign at the end of this statement to indicate your agreement to such use. Should you find such use of your personal data not acceptable, please indicate your objection before signing by ticking the box below.
               </p>
               <div className="flex items-start space-x-2 mt-2">
