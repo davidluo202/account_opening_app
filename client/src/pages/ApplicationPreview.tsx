@@ -1404,9 +1404,32 @@ export default function ApplicationPreview() {
                     )}
                   </td>
                 </tr>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold border-r">客戶確認 Client Confirmation</td>
+                  <td className="p-3" colSpan={3}>
+                    {regulatory?.confirmationRead ? (
+                      <span className="text-green-600 flex items-center">
+                        <Check className="h-4 w-4 mr-2" />
+                        已閱讀並同意
+                      </span>
+                    ) : (
+                      <span className="text-gray-500">未確認</span>
+                    )}
+                  </td>
+                </tr>
+                <tr className="border-b">
+                  <td className="p-3 bg-gray-50 font-semibold border-r">直接促銷 Direct Marketing</td>
+                  <td className="p-3" colSpan={3}>
+                    {regulatory?.objectsDirectMarketing ? (
+                      <span className="text-red-500">反對使用個人資料於直接促銷</span>
+                    ) : (
+                      <span className="text-green-600">同意</span>
+                    )}
+                  </td>
+                </tr>
                 {regulatory?.signatureName && (
                   <tr className="border-b">
-                    <td className="p-3 bg-gray-50 font-semibold border-r">签名 Signature</td>
+                    <td className="p-3 bg-gray-50 font-semibold border-r">電子簽名 Signature</td>
                     <td className="p-3" colSpan={3}>
                       <div className="flex flex-col">
                         <span className="font-semibold">{regulatory.signatureName}</span>

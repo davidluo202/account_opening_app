@@ -89,7 +89,7 @@ export default function RegulatoryDeclaration() {
     }
 
     if (!formData.hasReadConfirmation) {
-      newErrors.hasReadConfirmation = "請先閱讀確認書";
+      newErrors.hasReadConfirmation = "請先閱讀客戶確認";
     }
 
     if (!formData.acceptsETO) {
@@ -340,13 +340,13 @@ const handleNext = () => {
               <DialogTrigger asChild>
                 <Button variant="outline" className="w-full">
                   <FileText className="h-4 w-4 mr-2" />
-                  點擊閱讀確認書 / Confirmation Statement
+                  點擊閱讀客戶確認 / Client Confirmation
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-4xl max-h-[80vh]">
                 <DialogHeader>
                   <DialogTitle className="text-center">
-                    確認書 / Confirmation Statement
+                    客戶確認 / Client Confirmation
                   </DialogTitle>
                 </DialogHeader>
                 <ScrollArea className="h-[60vh] pr-4">
@@ -374,7 +374,7 @@ const handleNext = () => {
                   </div>
                   <div className="mt-6 p-4 bg-muted rounded-lg">
                     <p className="text-sm font-semibold text-center">
-                      請仔細閱讀以上確認書內容。關閉此對話框後，請勾選下方的同意選項。
+                      請仔細閱讀以上客戶確認內容。關閉此對話框後，請勾選下方的同意選項。
                     </p>
                     <p className="text-xs text-center text-muted-foreground mt-2">
                       Please read the above confirmation carefully. After closing this dialog, please check the confirmation box below.
@@ -405,7 +405,7 @@ const handleNext = () => {
                 }}
               />
               <Label htmlFor="hasReadConfirmation" className="cursor-pointer font-normal">
-                我已閱讀並同意確認書的所有內容 <span className="text-destructive">*</span>
+                我已閱讀並同意客戶確認的所有內容 <span className="text-destructive">*</span>
               </Label>
             </div>
             {errors.hasReadConfirmation && (
