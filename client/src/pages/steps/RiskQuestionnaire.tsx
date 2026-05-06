@@ -470,7 +470,7 @@ export default function RiskQuestionnaire() {
     <div>
       <h3 className="text-xl font-semibold mb-2">風險評估問卷 / Risk Profile Questionnaire</h3>
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-        <p className="text-sm text-blue-800">機構客戶風險評估問卷 / Corporate Client Risk Assessment Questionnaire</p>
+        <p className="text-sm text-blue-800">公司客戶風險評估問卷 / Corporate Client Risk Assessment Questionnaire</p>
       </div>
       <p className="text-sm text-muted-foreground mb-6">
         請根據貴公司的實際情況填寫以下問卷，以評估風險承受能力
@@ -766,7 +766,7 @@ export default function RiskQuestionnaire() {
 
         {/* PART 2: Q7-Q10 Corporate specific */}
         <div className="space-y-6">
-          <h3 className="text-lg font-semibold border-b pb-2">PART 2: 適用於機構客戶</h3>
+          <h3 className="text-lg font-semibold border-b pb-2">PART 2: 適用於公司客戶</h3>
 
           {/* CQ7 */}
           <div className="space-y-3">
