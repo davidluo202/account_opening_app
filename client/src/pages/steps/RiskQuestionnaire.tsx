@@ -557,23 +557,23 @@ export default function RiskQuestionnaire() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="age_18_25" id="q7-age-18-25" />
-                  <Label htmlFor="q7-age-18-25">A. 介乎18至25歲</Label>
+                  <Label htmlFor="q7-age-18-25">介乎18至25歲 / Between 18 and 25</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="age_26_35" id="q7-age-26-35" />
-                  <Label htmlFor="q7-age-26-35">B. 介乎26至35歲</Label>
+                  <Label htmlFor="q7-age-26-35">介乎26至35歲 / Between 26 and 35</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="age_36_50" id="q7-age-36-50" />
-                  <Label htmlFor="q7-age-36-50">C. 介乎36至50歲</Label>
+                  <Label htmlFor="q7-age-36-50">介乎36至50歲 / Between 36 and 50</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="age_51_64" id="q7-age-51-64" />
-                  <Label htmlFor="q7-age-51-64">D. 介乎51至64歲</Label>
+                  <Label htmlFor="q7-age-51-64">介乎51至64歲 / Between 51 and 64</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="age_65_plus" id="q7-age-65-plus" />
-                  <Label htmlFor="q7-age-65-plus">E. 65歲或以上</Label>
+                  <Label htmlFor="q7-age-65-plus">65歲或以上 / 65 or above</Label>
                 </div>
               </RadioGroup>
               {errors.q7 && <p className="text-sm text-destructive">{errors.q7}</p>}
@@ -591,15 +591,15 @@ export default function RiskQuestionnaire() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="primary_or_below" id="q8-primary" />
-                  <Label htmlFor="q8-primary">A. 小學或以下</Label>
+                  <Label htmlFor="q8-primary">小學或以下 / Primary school or below</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="secondary" id="q8-secondary" />
-                  <Label htmlFor="q8-secondary">B. 中學</Label>
+                  <Label htmlFor="q8-secondary">中學 / Secondary school</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="post_secondary" id="q8-post-secondary" />
-                  <Label htmlFor="q8-post-secondary">C. 大專或以上</Label>
+                  <Label htmlFor="q8-post-secondary">大專或以上 / Post-secondary or above</Label>
                 </div>
               </RadioGroup>
               {errors.q8 && <p className="text-sm text-destructive">{errors.q8}</p>}
@@ -608,7 +608,7 @@ export default function RiskQuestionnaire() {
             {/* Q9 */}
             <div className="space-y-3">
               <Label className="text-base font-medium">
-                Q9. 您曾經或現時從以下哪些途徑獲取投資知識（您可選擇多於一項）？*
+                Q9. 您曾經或現時從以下哪些途徑獲取投資知識？*
               </Label>
               <div className="space-y-2 pl-4">
                 <div className="flex items-center space-x-2">
@@ -624,7 +624,7 @@ export default function RiskQuestionnaire() {
                     }}
                   />
                   <label htmlFor="q9-never" className="text-sm">
-                    A. 從未獲取及/或沒有興趣獲取任何投資知識
+                    從未獲取及/或沒有興趣獲取任何投資知識 / Never acquired and/or not interested in acquiring any investment knowledge
                   </label>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -640,7 +640,7 @@ export default function RiskQuestionnaire() {
                     }}
                   />
                   <label htmlFor="q9-relatives" className="text-sm">
-                    B. 與親友及/或同事討論投資或理財話題
+                    與親友及/或同事討論投資或理財話題 / Discussed investment or financial topics with relatives and/or colleagues
                   </label>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -656,7 +656,7 @@ export default function RiskQuestionnaire() {
                     }}
                   />
                   <label htmlFor="q9-media" className="text-sm">
-                    C. 閱讀及/或收聽有關投資或財經新聞
+                    閱讀及/或收聽有關投資或財經新聞 / Read and/or listened to investment or financial news
                   </label>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -672,7 +672,7 @@ export default function RiskQuestionnaire() {
                     }}
                   />
                   <label htmlFor="q9-courses" className="text-sm">
-                    D. 研究投資或財務相關事宜，或參加投資或財務相關課程、論壇、簡報會、研討會或工作坊
+                    研究投資或財務相關事宜，或參加投資或財務相關課程、論壇、簡報會、研討會或工作坊 / Researched investment or financial matters, or attended related courses, forums, briefings, seminars or workshops
                   </label>
                 </div>
               </div>
@@ -691,19 +691,19 @@ export default function RiskQuestionnaire() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="no_sell" id="q10-no-sell" />
-                  <Label htmlFor="q10-no-sell">A. 不需要出售任何投資</Label>
+                  <Label htmlFor="q10-no-sell">不需要出售任何投資 / No need to sell any investment</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="sell_less_30" id="q10-sell-less-30" />
-                  <Label htmlFor="q10-sell-less-30">B. 我會出售不超過30%的投資</Label>
+                  <Label htmlFor="q10-sell-less-30">我會出售不超過30%的投資 / I would sell no more than 30% of my investments</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="sell_30_50" id="q10-sell-30-50" />
-                  <Label htmlFor="q10-sell-30-50">C. 我會出售超過30%但不到50%的投資</Label>
+                  <Label htmlFor="q10-sell-30-50">我會出售超過30%但不到50%的投資 / I would sell more than 30% but less than 50%</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="sell_more_50" id="q10-sell-more-50" />
-                  <Label htmlFor="q10-sell-more-50">D. 我會出售超過50%的投資</Label>
+                  <Label htmlFor="q10-sell-more-50">我會出售超過50%的投資 / I would sell more than 50% of my investments</Label>
                 </div>
               </RadioGroup>
               {errors.q10 && <p className="text-sm text-destructive">{errors.q10}</p>}
