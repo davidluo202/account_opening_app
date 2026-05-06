@@ -898,13 +898,16 @@ export default function RiskQuestionnaire() {
       <CardContent className="space-y-8">
         {/* PART 1: 適用於全部客戶 */}
         <div className="space-y-6">
-          <h3 className="text-lg font-semibold border-b pb-2">PART 1: 適用於全部客戶</h3>
+          <h3 className="text-lg font-semibold border-b pb-2">PART 1</h3>
 
           {/* Q1 */}
           <div className="space-y-3">
-            <Label className="text-base font-medium">
-              Q1. 現在是否持有以下任何投資產品？*
+            <Label className="text-base font-medium block">
+              Q1. 您/貴公司現在是否持有以下任何投資產品？(您/貴公司可選擇多於一項)*
             </Label>
+            <p className="text-sm text-muted-foreground">
+              Are you / your company currently holding any of the below investment products? (You may select more than one option)
+            </p>
             <div className="space-y-2 pl-4">
               <div className="flex items-center space-x-2">
                 <Checkbox
@@ -913,7 +916,7 @@ export default function RiskQuestionnaire() {
                   onCheckedChange={(checked) => handleCheckboxChange("q1_current_investments", "savings", checked as boolean)}
                 />
                 <label htmlFor="q1-savings" className="text-sm">
-                  儲蓄/定期儲蓄/存款證/保本產品
+                  儲蓄/定期儲蓄/存款證/保本產品 / Savings/Fixed Deposits/Certificate of Deposits/Capital Protected Products
                 </label>
               </div>
               <div className="flex items-center space-x-2">
@@ -923,7 +926,7 @@ export default function RiskQuestionnaire() {
                   onCheckedChange={(checked) => handleCheckboxChange("q1_current_investments", "bonds", checked as boolean)}
                 />
                 <label htmlFor="q1-bonds" className="text-sm">
-                  債券/證券/單位信託基金/投資相連保險計劃
+                  債券/證券/單位信託基金/投資相連保險計劃 / Bonds/Stocks/Unit Trusts/Investment-Linked Insurance Plans
                 </label>
               </div>
               <div className="flex items-center space-x-2">
@@ -933,7 +936,7 @@ export default function RiskQuestionnaire() {
                   onCheckedChange={(checked) => handleCheckboxChange("q1_current_investments", "derivatives", checked as boolean)}
                 />
                 <label htmlFor="q1-derivatives" className="text-sm">
-                  期貨/期權/衍生產品/結構性投資產品/掛鈎存款/槓桿式外匯投資
+                  期貨/期權/衍生產品/結構性投資產品/掛鈎存款/槓桿式外匯投資 / Futures/Options/Derivatives/Structured investment products/Linked Deposits/Leveraged FX Trading
                 </label>
               </div>
             </div>
@@ -942,7 +945,12 @@ export default function RiskQuestionnaire() {
 
           {/* Q2 */}
           <div className="space-y-3">
-            <Label className="text-base font-medium">Q2. 預期投資年期是多少？*</Label>
+            <Label className="text-base font-medium block">
+              Q2. 當投資於投資產品時，預期投資年期是多少？*
+            </Label>
+            <p className="text-sm text-muted-foreground">
+              How long is the expected Investment horizon when investing in investment products?
+            </p>
             <RadioGroup
               value={formData.q2_investment_period}
               onValueChange={(value) => setFormData(prev => ({ ...prev, q2_investment_period: value }))}
@@ -950,15 +958,15 @@ export default function RiskQuestionnaire() {
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="less_than_1" id="q2-less-than-1" />
-                <Label htmlFor="q2-less-than-1">沒有或少於1年</Label>
+                <Label htmlFor="q2-less-than-1">沒有或少於1年 / None or less than 1 year</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="1_to_3" id="q2-1-to-3" />
-                <Label htmlFor="q2-1-to-3">1-3年</Label>
+                <Label htmlFor="q2-1-to-3">1-3年 / 1-3 years</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="more_than_3" id="q2-more-than-3" />
-                <Label htmlFor="q2-more-than-3">多於3年</Label>
+                <Label htmlFor="q2-more-than-3">多於3年 / Over 3 years</Label>
               </div>
             </RadioGroup>
             {errors.q2 && <p className="text-sm text-destructive">{errors.q2}</p>}
@@ -966,7 +974,12 @@ export default function RiskQuestionnaire() {
 
           {/* Q3 */}
           <div className="space-y-3">
-            <Label className="text-base font-medium">Q3. 可以接受以下哪個年度價格波幅？*</Label>
+            <Label className="text-base font-medium block">
+              Q3. 一般而言，預期愈高回報，亦會涉及較高的價格波幅。您/貴公司可以接受以下哪個年度價格波幅？*
+            </Label>
+            <p className="text-sm text-muted-foreground">
+              Generally, the higher the expected return the higher price fluctuation may be involved. What level of annualized price fluctuation would you generally be comfortable with?
+            </p>
             <RadioGroup
               value={formData.q3_price_volatility}
               onValueChange={(value) => setFormData(prev => ({ ...prev, q3_price_volatility: value }))}
@@ -974,15 +987,15 @@ export default function RiskQuestionnaire() {
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="10_percent" id="q3-10-percent" />
-                <Label htmlFor="q3-10-percent">價格波幅介乎-10%至+10%</Label>
+                <Label htmlFor="q3-10-percent">價格波幅介乎-10%至+10% / Price fluctuates between -10% and +10%</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="20_percent" id="q3-20-percent" />
-                <Label htmlFor="q3-20-percent">價格波幅介乎-20%至+20%</Label>
+                <Label htmlFor="q3-20-percent">價格波幅介乎-20%至+20% / Price fluctuates between -20% and +20%</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="30_percent" id="q3-30-percent" />
-                <Label htmlFor="q3-30-percent">價格波幅多於-30%至多於+30%</Label>
+                <Label htmlFor="q3-30-percent">價格波幅多於-30%至多於+30% / Price fluctuates under -30% and over +30%</Label>
               </div>
             </RadioGroup>
             {errors.q3 && <p className="text-sm text-destructive">{errors.q3}</p>}
@@ -990,9 +1003,12 @@ export default function RiskQuestionnaire() {
 
           {/* Q4 */}
           <div className="space-y-3">
-            <Label className="text-base font-medium">
-              Q4. 在現時資產淫值中(撤除自住物業價值)，有多少個百分比可作投資用途？*
+            <Label className="text-base font-medium block">
+              Q4. 在現時資產淨值中(撇除自住物業價值)，有多少個百分比可作投資用途？*
             </Label>
+            <p className="text-sm text-muted-foreground">
+              What is the percentage of current net-worth (excluding the value of your self-occupied property) that can be allowed for investment purpose?
+            </p>
             <RadioGroup
               value={formData.q4_investment_percentage}
               onValueChange={(value) => setFormData(prev => ({ ...prev, q4_investment_percentage: value }))}
@@ -1000,23 +1016,23 @@ export default function RiskQuestionnaire() {
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="less_than_10" id="q4-less-than-10" />
-                <Label htmlFor="q4-less-than-10">少於10%</Label>
+                <Label htmlFor="q4-less-than-10">少於10% / Less than 10%</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="10_to_20" id="q4-10-to-20" />
-                <Label htmlFor="q4-10-to-20">介乎10%至20%</Label>
+                <Label htmlFor="q4-10-to-20">介乎10%至20% / Between 10% to 20%</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="21_to_30" id="q4-21-to-30" />
-                <Label htmlFor="q4-21-to-30">介乎21%至30%</Label>
+                <Label htmlFor="q4-21-to-30">介乎21%至30% / Between 21% to 30%</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="31_to_50" id="q4-31-to-50" />
-                <Label htmlFor="q4-31-to-50">介乎31%至50%</Label>
+                <Label htmlFor="q4-31-to-50">介乎31%至50% / Between 31% to 50%</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="more_than_50" id="q4-more-than-50" />
-                <Label htmlFor="q4-more-than-50">多於50%</Label>
+                <Label htmlFor="q4-more-than-50">多於50% / More than 50%</Label>
               </div>
             </RadioGroup>
             {errors.q4 && <p className="text-sm text-destructive">{errors.q4}</p>}
@@ -1024,9 +1040,12 @@ export default function RiskQuestionnaire() {
 
           {/* Q5 */}
           <div className="space-y-3">
-            <Label className="text-base font-medium">
-              Q5. 以下哪一句子最能貼切描述您對金融投資的一般態度？*
+            <Label className="text-base font-medium block">
+              Q5. 以下哪一句子最能貼切描述您/貴公司對金融投資的一般態度？*
             </Label>
+            <p className="text-sm text-muted-foreground">
+              Which statement can best describe the general attitude of you or your company towards financial investment?
+            </p>
             <RadioGroup
               value={formData.q5_investment_attitude}
               onValueChange={(value) => setFormData(prev => ({ ...prev, q5_investment_attitude: value }))}
@@ -1034,23 +1053,33 @@ export default function RiskQuestionnaire() {
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="no_volatility" id="q5-no-volatility" />
-                <Label htmlFor="q5-no-volatility">不能接受任何價格波動，並且對賭取投資回報不感興趣</Label>
+                <Label htmlFor="q5-no-volatility" className="text-sm leading-relaxed">
+                  本人/本公司不能接受任何價格波動，並且對賺取投資回報不感興趣。/ We cannot put up with any price fluctuation and have no interest on earnings.
+                </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="small_volatility" id="q5-small-volatility" />
-                <Label htmlFor="q5-small-volatility">只能接受較小幅度的價格波動，並且僅希望賭取稍高於銀行存款利率的回報</Label>
+                <Label htmlFor="q5-small-volatility" className="text-sm leading-relaxed">
+                  本人/本公司只能接受較小幅度的價格波動，並且僅希望賺取稍高於銀行存款利率的回報。/ We can only put up with little price fluctuation and wish to have earnings slightly higher than bank deposit rates.
+                </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="some_volatility" id="q5-some-volatility" />
-                <Label htmlFor="q5-some-volatility">可接受若干價格波幅，並希望賭取高於銀行存款利率的回報</Label>
+                <Label htmlFor="q5-some-volatility" className="text-sm leading-relaxed">
+                  本人/本公司可接受若干價格波幅，並希望賺取高於銀行存款利率的回報。/ We can put up with some price fluctuation and wish to have earnings much better than bank deposit rates.
+                </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="large_volatility" id="q5-large-volatility" />
-                <Label htmlFor="q5-large-volatility">可接受大幅度的價格波動，並希望賭取與股市指數表現相若的回報</Label>
+                <Label htmlFor="q5-large-volatility" className="text-sm leading-relaxed">
+                  本人/本公司可接受大幅度的價格波動，並希望賺取與股市指數表現相若的回報。/ We can put up with high degree of price fluctuation and wish to have earnings comparable to stock market indexes.
+                </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="any_volatility" id="q5-any-volatility" />
-                <Label htmlFor="q5-any-volatility">可接受任何幅度的價格波動，並希望回報能跑贏股市指數</Label>
+                <Label htmlFor="q5-any-volatility" className="text-sm leading-relaxed">
+                  本人/本公司可接受任何幅度的價格波動，並希望回報能超越股市指數。/ We can put up with any price fluctuation and wish to have earnings remarkably higher than stock market indexes.
+                </Label>
               </div>
             </RadioGroup>
             {errors.q5 && <p className="text-sm text-destructive">{errors.q5}</p>}
@@ -1058,7 +1087,12 @@ export default function RiskQuestionnaire() {
 
           {/* Q6 */}
           <div className="space-y-3">
-            <Label className="text-base font-medium">Q6. 對衍生工具產品的認識*</Label>
+            <Label className="text-base font-medium block">
+              Q6. 您/貴公司對衍生工具產品的認識。(您/貴公司可選擇多於一項)*
+            </Label>
+            <p className="text-sm text-muted-foreground">
+              The knowledge on derivative products of clients. (You may select more than one option)
+            </p>
             <div className="space-y-2 pl-4">
               <div className="flex items-center space-x-2">
                 <Checkbox
@@ -1067,7 +1101,7 @@ export default function RiskQuestionnaire() {
                   onCheckedChange={(checked) => handleCheckboxChange("q6_derivatives_knowledge", "training", checked as boolean)}
                 />
                 <label htmlFor="q6-training" className="text-sm">
-                  曾接受有關衍生產品的培訓或修讀相關課程
+                  客戶曾接受有關衍生產品的培訓或修讀相關課程。/ The Client underwent training or attended courses on derivative products.
                 </label>
               </div>
               <div className="flex items-center space-x-2">
@@ -1077,7 +1111,7 @@ export default function RiskQuestionnaire() {
                   onCheckedChange={(checked) => handleCheckboxChange("q6_derivatives_knowledge", "experience", checked as boolean)}
                 />
                 <label htmlFor="q6-experience" className="text-sm">
-                  現時或過去擁有與衍生產品有關的工作經驗
+                  客戶現時或過去擁有與衍生產品有關的工作經驗。/ The Client has current or previous work experience related to derivative products.
                 </label>
               </div>
               <div className="flex items-center space-x-2">
@@ -1087,7 +1121,7 @@ export default function RiskQuestionnaire() {
                   onCheckedChange={(checked) => handleCheckboxChange("q6_derivatives_knowledge", "transactions", checked as boolean)}
                 />
                 <label htmlFor="q6-transactions" className="text-sm">
-                  於過往3年曾執行5次或以上有關衍生產品的交易
+                  客戶於過往3年曾執行5次或以上有關衍生產品的交易，例如：衍生權證、牛熊證、股票、期貨及期權、商品、結構性產品、債券及易所買賣基金等。/ The Client has executed five or more transactions within the past three years in derivative products, e.g. Derivative Warrants, Callable Bull/Bear Contracts, Stock Options, Futures and Options, Commodities, Structured Products, Bonds, and Exchange Traded Funds, etc.
                 </label>
               </div>
               <div className="flex items-center space-x-2">
@@ -1097,7 +1131,7 @@ export default function RiskQuestionnaire() {
                   onCheckedChange={(checked) => handleCheckboxChange("q6_derivatives_knowledge", "no_knowledge", checked as boolean)}
                 />
                 <label htmlFor="q6-no-knowledge" className="text-sm">
-                  沒有衍生工具之認識
+                  客戶沒有衍生工具之認識。/ The Client has NOT acquired knowledge of derivative products.
                 </label>
               </div>
             </div>
