@@ -76,6 +76,8 @@ export default function RegulatoryDeclaration() {
         acceptsETO: existingData.electronicSignatureConsent,
         acceptsAML: existingData.amlComplianceConsent,
         acceptsRiskAssessment: existingData.riskAssessmentConsent || false,
+        hasReadConfirmation: !!existingData.confirmationRead,
+        objectsDirectMarketing: !!existingData.objectsDirectMarketing,
         signature: existingData.signatureName,
       });
     }
@@ -130,6 +132,8 @@ const handleNext = () => {
       electronicSignatureConsent: formData.acceptsETO,
       amlComplianceConsent: formData.acceptsAML,
       riskAssessmentConsent: formData.acceptsRiskAssessment,
+      confirmationRead: formData.hasReadConfirmation,
+      objectsDirectMarketing: formData.objectsDirectMarketing,
     });
   };
 

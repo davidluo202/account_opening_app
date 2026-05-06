@@ -1353,6 +1353,8 @@ export const appRouter = router({
         electronicSignatureConsent: z.boolean(),
         amlComplianceConsent: z.boolean(),
         riskAssessmentConsent: z.boolean(),
+        confirmationRead: z.boolean().optional(),
+        objectsDirectMarketing: z.boolean().optional(),
       }))
       .mutation(async ({ input, ctx }) => {
         const { applicationId, ...data } = input;

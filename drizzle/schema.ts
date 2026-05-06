@@ -298,6 +298,8 @@ export const regulatoryDeclarations = mysqlTable("regulatory_declarations", {
   electronicSignatureConsent: boolean("electronicSignatureConsent").default(false).notNull(),
   amlComplianceConsent: boolean("amlComplianceConsent").default(false).notNull(),
   riskAssessmentConsent: boolean("riskAssessmentConsent").default(false).notNull(),
+  confirmationRead: boolean("confirmationRead").default(false),
+  objectsDirectMarketing: boolean("objectsDirectMarketing").default(false),
   signedAt: timestamp("signedAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

@@ -1407,7 +1407,7 @@ export default function ApplicationPreview() {
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">客戶確認 Client Confirmation</td>
                   <td className="p-3" colSpan={3}>
-                    {regulatory?.signatureName ? (
+                    {regulatory?.confirmationRead ? (
                       <span className="text-green-600 flex items-center">
                         <Check className="h-4 w-4 mr-2" />
                         已閱讀並同意
@@ -1558,8 +1558,8 @@ export default function ApplicationPreview() {
           <Button
             variant="outline"
             onClick={() => {
-              // Corporate: 上一步應回到「監管聲明」(step 9)；Individual: step 12
-              const prevStep = isCorporate ? 9 : 12;
+              // Corporate: 上一步應回到「監管聲明」(step 9)；Individual: step 13
+              const prevStep = isCorporate ? 9 : 13;
               setLocation(`/application/${applicationId}/step/${prevStep}`);
             }}
           >
