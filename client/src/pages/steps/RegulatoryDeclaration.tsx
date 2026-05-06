@@ -437,7 +437,7 @@ const handleNext = () => {
 
           {/* 电子签名 */}
           <div className="space-y-2">
-            <Label htmlFor="signature">
+            <Label htmlFor="signature" style={{fontSize: '16px', fontWeight: 700}}>
               電子簽名 / Electronic Signature <span className="text-destructive">*</span>
             </Label>
             <Input
@@ -462,8 +462,8 @@ const handleNext = () => {
           </div>
 
           <div className="p-4 bg-muted rounded-lg">
-            <p className="text-xs font-semibold text-black" style={{margin: 0, fontSize: '12px'}}>聲明條款：</p>
-            <p className="text-black" style={{margin: 0, fontSize: '12px', lineHeight: '1.6'}}>
+            <p className="font-bold text-black" style={{margin: 0, fontSize: '16px'}}>聲明條款：</p>
+            <p className="text-black" style={{margin: 0, fontSize: '16px', lineHeight: '1.6'}}>
               本人確認已詳細閱讀、清楚了解並同意《開戶協議》的所有內容，願意接受協議條款的約束。
               本人的電子簽名具有與手寫簽名同等的法律效力。
             </p>
