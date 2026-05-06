@@ -39,6 +39,9 @@ export default function AccountSelection() {
     if (existingData) {
       setCustomerType(existingData.customerType);
       setAccountType(existingData.accountType);
+      if (existingData.corporateSubType) {
+        setCorporateSubType(existingData.corporateSubType);
+      }
     }
   }, [existingData]);
 

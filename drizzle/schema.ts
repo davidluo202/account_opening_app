@@ -92,6 +92,7 @@ export const accountSelections = mysqlTable("account_selections", {
   applicationId: int("applicationId").notNull().unique(),
   customerType: mysqlEnum("customerType", ["individual", "joint", "corporate"]).notNull(), // 个人/联名/机构
   accountType: mysqlEnum("accountType", ["cash", "margin", "derivatives"]).notNull(), // 现金/保证金/衍生品
+  corporateSubType: varchar("corporateSubType", { length: 50 }), // corporate_pi / institutional_pi
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
