@@ -1407,7 +1407,7 @@ export default function ApplicationPreview() {
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">客戶確認 Client Confirmation</td>
                   <td className="p-3" colSpan={3}>
-                    {regulatory?.confirmationRead ? (
+                    {regulatory?.signatureName ? (
                       <span className="text-green-600 flex items-center">
                         <Check className="h-4 w-4 mr-2" />
                         已閱讀並同意
