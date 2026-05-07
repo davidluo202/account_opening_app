@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useParams, useLocation, useSearch } from "wouter";
+import { useParams, useLocation } from "wouter";
 import { useReturnToPreview } from "@/hooks/useReturnToPreview";
 import ApplicationWizard from "@/components/ApplicationWizard";
 import { Label } from "@/components/ui/label";
@@ -50,7 +50,30 @@ export default function DocumentUpload() {
     { enabled: !!applicationId }
   );
   const isCorporate = accountSelection?.customerType === 'corporate';
-  const currentDocTypes = isCorporate ? corporateDocumentTypes : documentTypes;
+
+  // 獲取公司基本信息以判斷註冊國家（用於商業登記證必填邏輯）
+  const { data: corpBasicInfo } = trpc.corporateBasic.get.useQuery(
+    { applicationId },
+    { enabled: !!applicationId && isCorporate }
+  );
+  
+  // 根據註冊國家判斷商業登記證是否必填
+  const isHongKong = corpBasicInfo?.countryOfIncorporation === "香港";
+  
+  // 動態計算當前需要的文檔類型
+  const getCurrentDocTypes = () => {
+    if (!isCorporate) return documentTypes;
+    
+    return corporateDocumentTypes.map(doc => {
+      // 商業登記證：如果註冊國家是香港則必填，否則選填
+      if (doc.value === "br_doc") {
+        return { ...doc, required: isHongKong };
+      }
+      return doc;
+    });
+  };
+  
+  const currentDocTypes = getCurrentDocTypes();
 
   const { data: documents, isLoading: isLoadingData, refetch } = trpc.document.list.useQuery(
     { applicationId },
