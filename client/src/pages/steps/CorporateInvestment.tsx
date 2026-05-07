@@ -181,7 +181,10 @@ export default function CorporateInvestment({ applicationId, stepNum }: Props) {
       <div className="space-y-8">
         {/* 投資目標 */}
         <div className="space-y-4">
-          <Label className="text-base font-semibold text-slate-800">投資目標 / Investment Objective <span className="text-destructive">*</span></Label>
+          <div>
+            <Label className="text-base font-semibold text-slate-800">投資目標 <span className="text-destructive">*</span></Label>
+            <Label className="text-base font-semibold text-slate-800">Investment Objectives <span className="text-destructive">*</span></Label>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border-2 border-slate-200">
             {investmentObjectivesList.map(item => (
               <div key={item.value} className="flex items-center space-x-3">
@@ -212,7 +215,10 @@ export default function CorporateInvestment({ applicationId, stepNum }: Props) {
 
         {/* 預計投資金額 */}
         <div className="space-y-4">
-          <Label className="text-base font-semibold text-slate-800">預計投資金額 / Estimated Investment Amount <span className="text-destructive">*</span></Label>
+          <div>
+            <Label className="text-base font-semibold text-slate-800">預計投資金額 <span className="text-destructive">*</span></Label>
+            <Label className="text-base font-semibold text-slate-800">Estimated Investment Amount <span className="text-destructive">*</span></Label>
+          </div>
           <Select value={estimatedInvestmentAmount} onValueChange={setEstimatedInvestmentAmount}>
             <SelectTrigger className="bg-white border-2 border-slate-300 focus:border-blue-500"><SelectValue placeholder="選擇範圍" /></SelectTrigger>
             <SelectContent>{estimatedAmountOptions.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}</SelectContent>
@@ -222,7 +228,10 @@ export default function CorporateInvestment({ applicationId, stepNum }: Props) {
 
         {/* 可承受波幅 */}
         <div className="space-y-4">
-          <Label className="text-base font-semibold text-slate-800">可承受波幅 / Risk Volatility <span className="text-destructive">*</span></Label>
+          <div>
+            <Label className="text-base font-semibold text-slate-800">可承受波幅 <span className="text-destructive">*</span></Label>
+            <Label className="text-base font-semibold text-slate-800">Risk Volatility <span className="text-destructive">*</span></Label>
+          </div>
           <RadioGroup value={riskVolatility} onValueChange={setRiskVolatility} className="flex gap-6">
             {riskVolatilityOptions.map(opt => (
               <div key={opt.value} className="flex items-center space-x-2">
@@ -236,7 +245,10 @@ export default function CorporateInvestment({ applicationId, stepNum }: Props) {
 
         {/* 投資經驗 */}
         <div className="space-y-4">
-          <Label className="text-base font-semibold text-slate-800">投資經驗 / Investment Experience <span className="text-destructive">*</span></Label>
+          <div>
+            <Label className="text-base font-semibold text-slate-800">投資經驗 <span className="text-destructive">*</span></Label>
+            <Label className="text-base font-semibold text-slate-800">Investment Experience <span className="text-destructive">*</span></Label>
+          </div>
           <Select value={investmentExperience} onValueChange={setInvestmentExperience}>
             <SelectTrigger className="bg-white border-2 border-slate-300 focus:border-blue-500"><SelectValue placeholder="選擇投資經驗" /></SelectTrigger>
             <SelectContent>{investmentExperienceOptions.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}</SelectContent>
@@ -246,7 +258,10 @@ export default function CorporateInvestment({ applicationId, stepNum }: Props) {
 
         {/* 衍生產品認識 */}
         <div className="space-y-4">
-          <Label className="text-base font-semibold text-slate-800">對衍生產品認識 / Knowledge of Derivatives <span className="text-destructive">*</span></Label>
+          <div>
+            <Label className="text-base font-semibold text-slate-800">對衍生產品認識 <span className="text-destructive">*</span></Label>
+            <Label className="text-base font-semibold text-slate-800">Knowledge of Derivatives <span className="text-destructive">*</span></Label>
+          </div>
           <RadioGroup value={knowledgeOfDerivatives} onValueChange={setKnowledgeOfDerivatives} className="space-y-3 bg-slate-50 p-4 rounded-lg border-2 border-slate-200">
             {derivativesKnowledgeOptions.map(opt => (
               <div key={opt.value} className="flex items-start space-x-3">
@@ -260,7 +275,10 @@ export default function CorporateInvestment({ applicationId, stepNum }: Props) {
 
         {/* 曾投資產品 */}
         <div className="space-y-4">
-          <Label className="text-base font-semibold text-slate-800">曾投資產品 / Experienced Products <span className="text-destructive">*</span></Label>
+          <div>
+            <Label className="text-base font-semibold text-slate-800">曾投資產品 <span className="text-destructive">*</span></Label>
+            <Label className="text-base font-semibold text-slate-800">Experienced Products <span className="text-destructive">*</span></Label>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border-2 border-slate-200">
             {experiencedProductsList.map(item => (
               <div key={item.value} className="flex items-center space-x-3">
@@ -291,7 +309,10 @@ export default function CorporateInvestment({ applicationId, stepNum }: Props) {
 
         {/* 資產項目 */}
         <div className="space-y-4">
-          <Label className="text-base font-semibold text-slate-800">資產項目 / Asset Items <span className="text-destructive">*</span></Label>
+          <div>
+            <Label className="text-base font-semibold text-slate-800">資產項目 <span className="text-destructive">*</span></Label>
+            <Label className="text-base font-semibold text-slate-800">Asset Items <span className="text-destructive">*</span></Label>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border-2 border-slate-200">
             {assetItemsList.map(item => (
               <div key={item.value} className="flex items-center space-x-3">
