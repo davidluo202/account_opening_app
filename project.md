@@ -1093,7 +1093,117 @@ HTIFS_TARGET_COMP_ID=HTIFS
 - [ ] 多語言切換正常
 - [ ] 深色/淺色主題正常
 
+## 十五、多数据库架构设计
+
+### 15.1 数据库清单及关联
+
+公司系统需建立以下独立数据库，各库通过唯一标识关联：
+
+| 数据库 | 用途 | 主键前缀 | 关联库 |
+|--------|------|----------|--------|
+| 客户数据库 | 开户申请、客户账户信息 | CA- | 交易数据库、员工数据库 |
+| 交易数据库 | 订单、持仓、成交记录 | ORD-/HL-/TX- | 客户数据库、同业数据库 |
+| 同业/开户银行数据库 | 交易对手、资金往来 | CB- | 交易数据库、会计数据库 |
+| 员工数据库 | 员工信息、权限、CE No | EMP- | 客户数据库 |
+| 会计数据库 | 总账(GL)、日记账、科目表 | GL-/JE- | 交易数据库 |
+
+### 15.2 客户持仓数据库
+
+客户买/卖金融资产后，需记录具体持仓产品（不仅是价值）：
+
+```sql
+-- 持仓产品表（区分资产类型）
+CREATE TABLE holdings (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  clientAccountId INT NOT NULL,                    -- 关联 client_accounts
+  assetType ENUM('equity', 'bond', 'derivative', 'fund', 'crypto', 'rwa') NOT NULL,
+  assetId VARCHAR(50) NOT NULL,               -- 产品唯一标识（如股票代码/合约ID）
+  assetName VARCHAR(200) NOT NULL,             -- 产品名称
+  quantity DECIMAL(18,8) NOT NULL,            -- 持有数量
+  averageCost DECIMAL(18,8) NOT NULL,          -- 平均成本
+  currentPrice DECIMAL(18,8),               -- 当前价格
+  marketValue DECIMAL(18,2),                  -- 当前市值
+  unrealizedPnL DECIMAL(18,2),                -- 未实现盈亏
+  lastUpdated TIMESTAMP,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_client_asset (clientAccountId, assetType, assetId)
+);
+```
+
+**资产类型扩展**：
+- `equity`: 股票/ETF
+- `bond`: 债券
+- `derivative`: 衍生品（期货/期权）
+- `fund`: 基金
+- `crypto`: 加密货币（未来扩展）
+- `rwa`: 代币化资产（未来扩展）
+
+### 15.3 数字货币/RWA前瞻设计
+
+为未来支持数字货币和资产代币化(RWA)，数据库设计预留扩展：
+
+
+```sql
+-- 数字资产钱包表（未来扩展）
+CREATE TABLE crypto_wallets (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  clientAccountId INT NOT NULL,
+  walletType ENUM('bitcoin', 'ethereum', 'stablecoin', 'rwa') NOT NULL,
+  walletAddress VARCHAR(200) NOT NULL,
+  blockchainNetwork VARCHAR(50) NOT NULL,
+  balance DECIMAL(38,18) NOT NULL DEFAULT 0,
+  status ENUM('active', 'inactive', 'frozen') DEFAULT 'active',
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 代币化资产 holdings.assetType = 'rwa'
+CREATE TABLE rwa_assets (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  assetCode VARCHAR(50) NOT NULL UNIQUE,
+  assetName VARCHAR(200) NOT NULL,
+  assetType VARCHAR(50),                   -- 房地产/艺术品/债权等
+  tokenizationStandard VARCHAR(50),           -- ERC-721/ERC-1155 等
+  totalSupply DECIMAL(38,18),
+  metadataUrl VARCHAR(500),                  -- off-chain metadata link
+  issuanceDate DATE,
+  status ENUM('pending', 'active', 'delisted') DEFAULT 'active',
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+
+### 15.4 数据库关联图
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│ 客户数据库  │────▶│ 交易数据库  │────▶│ 同业数据库  │
+│            │     │            │     │            │
+│ client_    │     │ orders/    │     │ counter_  │
+│ accounts  │     │ holdings  │     │ parties  │
+└─────────────┘     └─────────────┘     └─────────────┘
+       │                   │                   │
+       ▼                   ▼                   ▼
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│ 员工数据库  │     │会计数据库  │     │ 客户数据库  │
+│            │     │            │     │            │
+│ employees │◀────│ GL/JE    │◀────│ fund_    │
+│            │     │            │     │ transactions│
+└─────────────┘     └─────────────┘     └─────────────┘
+```
+
+
+### 15.5 数据一致性机制
+
+- **跨库事务**：通过唯一事务ID追踪，异步同步
+- **每日对账**：各库间余额/数量核对
+- **审计日志**：关键操作记录操作人、时间、原因
+
 ---
+
+> **重要**：待收到公司客户账户编号规则和会计科目规则后，补充详细的数据映射表。
+
+---
+
 
 > **本文檔為全體 Agent 共享參考。每個 Phase 開始前，負責 Agent 需基於本方案編寫詳細的技術設計文檔（TDD），經 David 確認後方可開工。**
 >
