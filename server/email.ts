@@ -1,8 +1,8 @@
 import { Resend } from 'resend';
 
 // 初始化Resend
-const apiKey = process.env.RESEND_API_KEY || process.env.SENDGRID_API_KEY;
-const senderEmail = process.env.RESEND_SENDER_EMAIL || process.env.SENDGRID_SENDER_EMAIL || 'quote@cmf-otc.com';
+const apiKey = process.env.RESEND_API_KEY;
+const senderEmail = process.env.RESEND_SENDER_EMAIL || 'quote@cmf-otc.com';
 
 const resend = apiKey ? new Resend(apiKey) : null;
 
@@ -109,7 +109,7 @@ export async function sendCustomerConfirmationEmail(
   pdfUrl?: string
 ): Promise<boolean> {
   if (!apiKey) {
-    throw new Error('SendGrid API密钥未配置');
+    throw new Error('Resend API密钥未配置');
   }
 
   try {
@@ -208,14 +208,11 @@ export async function sendCustomerConfirmationEmail(
     console.log(`[Customer Email] PDF URL: ${pdfUrl || 'Not provided'}`);
     
     try {
-      await sendViaResend(to, subject, html);
+      await sendViaResend(msg.to, msg.subject, msg.html);
       console.log(`Customer confirmation email sent to ${to} with PDF download link`);
       return true;
     } catch (error: any) {
-      console.error('SendGrid error:', error);
-      if (error.response) {
-        console.error('SendGrid response:', error.response.body);
-      }
+      console.error('Resend error:', error);
       return false;
     }
   } catch (error: any) {
@@ -239,7 +236,7 @@ export async function sendInternalNotificationEmail(
   pdfUrl?: string
 ): Promise<boolean> {
   if (!apiKey) {
-    throw new Error('SendGrid API密钥未配置');
+    throw new Error('Resend API密钥未配置');
   }
 
   try {
@@ -303,14 +300,11 @@ export async function sendInternalNotificationEmail(
     console.log(`[Internal Email] Preparing to send email to onboarding@cmfinancial.com`);
     console.log(`[Internal Email] PDF URL: ${pdfUrl || 'Not provided'}`);
     
-    await sendViaResend(to, subject, html);
+    await sendViaResend(msg.to, msg.subject, msg.html);
     console.log(`Internal notification email sent to onboarding@cmfinancial.com with PDF download link`);
     return true;
   } catch (error: any) {
-    console.error('SendGrid error:', error);
-    if (error.response) {
-      console.error('SendGrid response:', error.response.body);
-    }
+    console.error('Resend error:', error);
     return false;
   }
 }
@@ -334,7 +328,7 @@ export async function sendApprovalNotificationEmail(
   approvedRiskProfile: string
 ): Promise<boolean> {
   if (!apiKey) {
-    throw new Error('SendGrid API密钥未配置');
+    throw new Error('Resend API密钥未配置');
   }
 
   const complianceEmail = 'compliance@cmfinancial.com';
@@ -394,13 +388,13 @@ export async function sendApprovalNotificationEmail(
       `,
     };
 
-    await sendViaResend(to, subject, html);
+    await sendViaResend(msg.to, msg.subject, msg.html);
     console.log(`Approval notification sent to ${operationEmail} for application ${applicationNumber}`);
     return true;
   } catch (error: any) {
-    console.error('SendGrid error:', error);
+    console.error('Resend error:', error);
     if (error.response) {
-      console.error('SendGrid response:', error.response.body);
+      console.error('Resend error detail:', error.response?.body);
     }
     return false;
   }
@@ -423,7 +417,7 @@ export async function sendRejectionNotificationEmail(
   rejectReason: string
 ): Promise<boolean> {
   if (!apiKey) {
-    throw new Error('SendGrid API密钥未配置');
+    throw new Error('Resend API密钥未配置');
   }
 
   const complianceEmail = 'compliance@cmfinancial.com';
@@ -477,13 +471,13 @@ export async function sendRejectionNotificationEmail(
       `,
     };
 
-    await sendViaResend(to, subject, html);
+    await sendViaResend(msg.to as string, msg.subject, msg.html);
     console.log(`Rejection notification sent to ${customerServiceEmail} for application ${applicationNumber}`);
     return true;
   } catch (error: any) {
-    console.error('SendGrid error:', error);
+    console.error('Resend error:', error);
     if (error.response) {
-      console.error('SendGrid response:', error.response.body);
+      console.error('Resend error detail:', error.response?.body);
     }
     return false;
   }
@@ -506,7 +500,7 @@ export async function sendReturnNotificationEmail(
   returnReason: string
 ): Promise<boolean> {
   if (!apiKey) {
-    throw new Error('SendGrid API密钥未配置');
+    throw new Error('Resend API密钥未配置');
   }
 
   const complianceEmail = 'compliance@cmfinancial.com';
@@ -564,9 +558,9 @@ export async function sendReturnNotificationEmail(
     console.log(`Return notification sent to ${customerServiceEmail} for application ${applicationNumber}`);
     return true;
   } catch (error: any) {
-    console.error('SendGrid error:', error);
+    console.error('Resend error:', error);
     if (error.response) {
-      console.error('SendGrid response:', error.response.body);
+      console.error('Resend error detail:', error.response?.body);
     }
     return false;
   }
@@ -580,7 +574,7 @@ export async function sendReturnNotificationEmail(
  */
 export async function sendPasswordResetEmail(to: string, resetLink: string): Promise<boolean> {
   if (!apiKey) {
-    throw new Error('SendGrid API密钥未配置');
+    throw new Error('Resend API密钥未配置');
   }
 
   try {
@@ -624,9 +618,9 @@ ${resetLink}
     console.log(`Password reset email sent to ${to}`);
     return true;
   } catch (error: any) {
-    console.error('SendGrid error:', error);
+    console.error('Resend error:', error);
     if (error.response) {
-      console.error('SendGrid response:', error.response.body);
+      console.error('Resend error detail:', error.response?.body);
     }
     return false;
   }
@@ -651,7 +645,7 @@ export async function sendFirstApprovalNotificationEmail(
   approvedRiskProfile: string
 ): Promise<boolean> {
   if (!apiKey) {
-    throw new Error('SendGrid API密鑰未配置');
+    throw new Error('Resend API密鑰未配置');
   }
 
   const complianceEmail = 'compliance@cmfinancial.com';
@@ -714,13 +708,13 @@ export async function sendFirstApprovalNotificationEmail(
       `,
     };
 
-    await sendViaResend(to, subject, html);
+    await sendViaResend(msg.to, msg.subject, msg.html);
     console.log(`First approval notification sent to ${complianceEmail}`);
     return true;
   } catch (error: any) {
     console.error('Failed to send first approval notification email:', error);
     if (error.response) {
-      console.error('SendGrid error response:', error.response.body);
+      console.error('Resend error detail:', error.response?.body);
     }
     return false;
   }
@@ -750,7 +744,7 @@ export async function sendFinalApprovalNotificationEmail(
   finalPdfUrl?: string
 ): Promise<boolean> {
   if (!apiKey) {
-    throw new Error('SendGrid API密鑰未配置');
+    throw new Error('Resend API密鑰未配置');
   }
 
   const operationEmail = 'operation@cmfinancial.com';
@@ -832,13 +826,13 @@ export async function sendFinalApprovalNotificationEmail(
       `,
     };
 
-    await sendViaResend(to, subject, html);
+    await sendViaResend(msg.to, msg.subject, msg.html);
     console.log(`Final approval notification sent to ${operationEmail}`);
     return true;
   } catch (error: any) {
     console.error('Failed to send final approval notification email:', error);
     if (error.response) {
-      console.error('SendGrid error response:', error.response.body);
+      console.error('Resend error detail:', error.response?.body);
     }
     return false;
   }
