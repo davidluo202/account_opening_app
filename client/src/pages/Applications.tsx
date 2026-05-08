@@ -70,23 +70,19 @@ export default function Applications() {
     logoutMutation.mutate();
   };
 
-  const hasApprovedApp = applications?.some((app) => app.status === "approved");
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       <TopHeader>
         <span className="text-sm text-muted-foreground">歡迎, {user?.name || user?.email}</span>
-        {hasApprovedApp && (
-          <Button
-            variant="default"
-            size="sm"
-            onClick={() => setLocation("/portal")}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            <LayoutDashboard className="h-4 w-4 mr-2" />
-            进入客户端 / Enter Portal
-          </Button>
-        )}
+        <Button
+          variant="default"
+          size="sm"
+          onClick={() => setLocation("/portal")}
+          className="bg-blue-600 hover:bg-blue-700 text-white"
+        >
+          <LayoutDashboard className="h-4 w-4 mr-2" />
+          进入客户端 / Enter Portal
+        </Button>
         <Button variant="ghost" size="sm" onClick={handleLogout}>
           <LogOut className="h-4 w-4 mr-2" />
           登出
