@@ -33,6 +33,9 @@ export default function Home() {
         <Button variant="outline" size="sm" asChild>
           <a href="/admin">審批系統</a>
         </Button>
+        <Button variant="outline" size="sm" asChild>
+          <a href="https://otc-client-portal.vercel.app" target="_blank" rel="noopener noreferrer">客戶門戶</a>
+        </Button>
         <Button variant="ghost" size="sm">English</Button>
         <Button asChild={agreedToPrivacy} disabled={!agreedToPrivacy}>
           {agreedToPrivacy ? <a href={getLoginUrl()}>登入</a> : <span>登入</span>}
