@@ -24,7 +24,6 @@ import DocumentUpload from "./pages/steps/DocumentUpload";
 import FaceVerification from "./pages/steps/FaceVerification";
 import PersonalClientDeclaration from "./pages/steps/PersonalClientDeclaration";
 import RegulatoryDeclaration from "./pages/steps/RegulatoryDeclaration";
-import PersonalClientDeclaration from "./pages/steps/PersonalClientDeclaration";
 import ClientDeclaration from "./pages/steps/ClientDeclaration";
 import RiskQuestionnaire from "./pages/steps/RiskQuestionnaire";
 import ApplicationPreview from "./pages/ApplicationPreview";
@@ -40,6 +39,16 @@ import ResetPassword from "./pages/ResetPassword";
 import { trpc } from "@/lib/trpc";
 import { Loader2 } from "lucide-react";
 
+// Portal pages
+import PortalDashboard from "./pages/portal/PortalDashboard";
+import PortalFunds from "./pages/portal/PortalFunds";
+import PortalPortfolio from "./pages/portal/PortalPortfolio";
+import PortalMarket from "./pages/portal/PortalMarket";
+import PortalTrading from "./pages/portal/PortalTrading";
+import PortalOrders from "./pages/portal/PortalOrders";
+import PortalReports from "./pages/portal/PortalReports";
+import PortalSettings from "./pages/portal/PortalSettings";
+
 // 动态路由组件，根据客户类型分发步骤
 function StepRouter() {
   const { id, step } = useParams<{ id: string; step: string }>();
@@ -48,7 +57,7 @@ function StepRouter() {
 
   const { data: accountSelection, isLoading, error: accountSelectionError } = trpc.accountSelection.get.useQuery(
     { applicationId },
-    { 
+    {
       enabled: !!applicationId,
       retry: 1,
     }
@@ -113,7 +122,17 @@ function Router() {
       <Route path={"/login"} component={Login} />
       <Route path={"/register"} component={Register} />
       <Route path={"/applications"} component={Applications} />
-      
+
+      {/* 客户端交易门户路由 */}
+      <Route path={"/portal"} component={PortalDashboard} />
+      <Route path={"/portal/funds"} component={PortalFunds} />
+      <Route path={"/portal/portfolio"} component={PortalPortfolio} />
+      <Route path={"/portal/market"} component={PortalMarket} />
+      <Route path={"/portal/trading"} component={PortalTrading} />
+      <Route path={"/portal/orders"} component={PortalOrders} />
+      <Route path={"/portal/reports"} component={PortalReports} />
+      <Route path={"/portal/settings"} component={PortalSettings} />
+
       {/* 统一的步骤路由 */}
       <Route path={"/application/:id/step/:step"}>
         <StepRouter />
