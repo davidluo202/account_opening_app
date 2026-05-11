@@ -89,13 +89,30 @@ export const translations: Record<string, string> = {
   gift: '贈與',
   savings: '儲蓄',
   
-  // 文件類型
+  // 文件類型 - 個人
   id_card: '身份證件',
+  id_front: '身份證件正面 / ID Front',
+  id_back: '身份證件反面 / ID Back',
   bank_statement: '銀行月結單',
   address_proof: '住址證明',
   income_proof: '收入證明',
   business_license: '營業執照',
   other_document: '其他文件',
+  // 文件類型 - 公司
+  ci_doc: '公司註冊證書 / Certificate of Incorporation',
+  name_change_doc: '更名證明 / Certificate of Change of Name',
+  br_doc: '商業登記證 / Business Registration Certificate',
+  license_cert: '牌照認證 / License Certification',
+  memo_articles: '公司章程/組織大綱 / Memorandum/Articles of Association',
+  board_resolution: '董事局議程 / Board Resolution',
+  ownership_chart: '股權結構圖 / Ownership Chart',
+  authorized_signatures: '授權簽名人名單 / Authorized Signature List',
+  directors_id: '全體董事身份證件 / Directors ID',
+  directors_address: '全體董事地址證明 / Directors Address Proof',
+  signers_id: '全體授權簽名人身份證件 / Signers ID',
+  signers_address: '全體授權簽名人地址證明 / Signers Address Proof',
+  asset_cert: '資產證明文件 / Asset Certification',
+  w8imy_w8ben: '美國稅務申報表 / W8IMY/W8BEN-E',
   
   // 風險等級
   R1: 'R1 - 低風險',

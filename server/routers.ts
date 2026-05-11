@@ -500,6 +500,8 @@ export const appRouter = router({
           uploadedDocuments: completeData.uploadedDocuments?.map((doc: any) => ({
             documentType: doc.documentType,
             fileUrl: doc.fileUrl,
+            fileKey: doc.fileKey,
+            fileName: doc.fileName,
           })) || [],
           // 添加簽名信息（如果已提交）
           signatureName: application.signatureName,
@@ -1136,6 +1138,17 @@ export const appRouter = router({
           throw new Error("申请不存在或无权访问");
         }
         return await db.getUploadedDocuments(input.applicationId);
+      }),
+    getViewUrl: protectedProcedure
+      .input(z.object({ applicationId: z.number(), fileKey: z.string() }))
+      .query(async ({ input, ctx }) => {
+        const application = await db.getApplicationById(input.applicationId);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
+        }
+        const { storagePresignGet } = await import('./storage');
+        const url = await storagePresignGet(input.fileKey, 600); // 10 minutes
+        return { url };
       }),
   }),
   

@@ -209,6 +209,24 @@ export default function ApplicationPreview() {
     downloadPDFMutation.mutate({ applicationId: Number(applicationId) });
   };
 
+  const utils = trpc.useUtils();
+
+  const handleViewDocument = async (doc: any) => {
+    try {
+      if (doc.fileKey) {
+        const result = await utils.document.getViewUrl.fetch({
+          applicationId,
+          fileKey: doc.fileKey,
+        });
+        window.open(result.url, '_blank');
+      } else {
+        window.open(doc.fileUrl, '_blank');
+      }
+    } catch {
+      window.open(doc.fileUrl, '_blank');
+    }
+  };
+
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
       setLocation("/");
@@ -1253,7 +1271,7 @@ export default function ApplicationPreview() {
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
                 <span>{isCorporate ? '7. 文件上傳 Document Upload' : '10. 文件上傳 Document Upload'}</span>
-                <Button variant="ghost" size="sm" onClick={() => handleEdit(10)}>
+                <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 9 : 10)}>
                   編輯
                 </Button>
               </h3>
@@ -1273,9 +1291,12 @@ export default function ApplicationPreview() {
                       <td className="p-3 border-r">{translate(doc.documentType)}</td>
                       <td className="p-3 border-r">{doc.fileName}</td>
                       <td className="p-3">
-                        <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                        <button
+                          className="text-primary hover:underline"
+                          onClick={() => handleViewDocument(doc)}
+                        >
                           查看
-                        </a>
+                        </button>
                       </td>
                     </tr>
                   ))}
