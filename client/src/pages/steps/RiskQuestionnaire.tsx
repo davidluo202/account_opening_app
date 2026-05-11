@@ -295,7 +295,29 @@ export default function RiskQuestionnaire() {
     if (corpFormData.cq6_derivatives_knowledge.includes("experience")) score += 40;
     if (corpFormData.cq6_derivatives_knowledge.includes("transactions")) score += 40;
 
-    // CQ7-CQ10 are informational (no scoring as per spec - no points listed)
+    // CQ7: 預留投資資金（A=10, B=30, C=40, D=50）
+    if (corpFormData.cq7_investment_amount === "less_than_1m") score += 10;
+    else if (corpFormData.cq7_investment_amount === "1m_to_5m") score += 30;
+    else if (corpFormData.cq7_investment_amount === "5m_to_10m") score += 40;
+    else if (corpFormData.cq7_investment_amount === "more_than_10m") score += 50;
+
+    // CQ8: 高風險投資比例（A=10, B=30, C=40, D=50）
+    if (corpFormData.cq8_high_risk_percentage === "less_than_25") score += 10;
+    else if (corpFormData.cq8_high_risk_percentage === "25_to_50") score += 30;
+    else if (corpFormData.cq8_high_risk_percentage === "51_to_75") score += 40;
+    else if (corpFormData.cq8_high_risk_percentage === "more_than_75") score += 50;
+
+    // CQ9: 是否聘用專業人員（A=10, B=30, C=40, D=50）
+    if (corpFormData.cq9_dedicated_professionals === "no_no_knowledge") score += 10;
+    else if (corpFormData.cq9_dedicated_professionals === "no_adequate_knowledge") score += 30;
+    else if (corpFormData.cq9_dedicated_professionals === "yes_some_knowledge") score += 40;
+    else if (corpFormData.cq9_dedicated_professionals === "yes_adequate_management") score += 50;
+
+    // CQ10: 流動資金儲備（A=10, B=30, C=40, D=50）
+    if (corpFormData.cq10_liquid_reserves === "less_than_3_months") score += 10;
+    else if (corpFormData.cq10_liquid_reserves === "3_to_6_months") score += 30;
+    else if (corpFormData.cq10_liquid_reserves === "6_to_12_months") score += 40;
+    else if (corpFormData.cq10_liquid_reserves === "more_than_12_months") score += 50;
 
     return getRiskLevel(score);
   };
