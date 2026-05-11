@@ -1001,7 +1001,7 @@ export default function ApplicationPreview() {
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>{isCorporate ? '4. 風險評估問卷 Risk Assessment Questionnaire' : '6. 風險評估問卷 Risk Assessment Questionnaire'}</span>
+                <span>{isCorporate ? '5. 風險評估問卷 Risk Assessment Questionnaire' : '6. 風險評估問卷 Risk Assessment Questionnaire'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 5 : 8)}>
                   編輯
                 </Button>
@@ -1210,7 +1210,7 @@ export default function ApplicationPreview() {
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>{isCorporate ? '5. 結算銀行賬戶 Settlement Bank Account' : '7. 銀行賬戶 Bank Account'}</span>
+                <span>{isCorporate ? '6. 結算銀行賬戶 Settlement Bank Account' : '7. 銀行賬戶 Bank Account'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(8)}>
                   編輯
                 </Button>
@@ -1248,7 +1248,7 @@ export default function ApplicationPreview() {
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>{isCorporate ? '6. 稅務信息 Tax Information' : '8. 稅務信息 Tax Information'}</span>
+                <span>{isCorporate ? '7. 稅務信息 Tax Information' : '8. 稅務信息 Tax Information'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(9)}>
                   編輯
                 </Button>
@@ -1270,7 +1270,7 @@ export default function ApplicationPreview() {
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>{isCorporate ? '7. 文件上傳 Document Upload' : '10. 文件上傳 Document Upload'}</span>
+                <span>{isCorporate ? '8. 文件上傳 Document Upload' : '10. 文件上傳 Document Upload'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 9 : 10)}>
                   編輯
                 </Button>
@@ -1338,13 +1338,12 @@ export default function ApplicationPreview() {
           </div>
           )}
 
-          {/* 客戶聲明（個人第12步） */}
-          {!isCorporate && (
+          {/* 客戶聲明（個人第12步；機構第10步） */}
           <div>
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>12. 客戶聲明 Client Declaration</span>
-                <Button variant="ghost" size="sm" onClick={() => handleEdit(12)}>
+                <span>{isCorporate ? '9. 客戶聲明 Client Declaration' : '12. 客戶聲明 Client Declaration'}</span>
+                <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 10 : 12)}>
                   編輯
                 </Button>
               </h3>
@@ -1381,13 +1380,12 @@ export default function ApplicationPreview() {
               </tbody>
             </table>
           </div>
-          )}
 
-          {/* 监管声明（個人第13步；機構第9步） */}
+          {/* 监管声明（個人第13步；機構第11步） */}
           <div>
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
-                <span>{isCorporate ? '8. 監管聲明 Regulatory Declaration' : '13. 監管聲明 Regulatory Declaration'}</span>
+                <span>{isCorporate ? '10. 監管聲明 Regulatory Declaration' : '13. 監管聲明 Regulatory Declaration'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 11 : 13)}>
                   編輯
                 </Button>
