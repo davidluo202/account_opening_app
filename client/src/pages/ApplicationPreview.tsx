@@ -671,29 +671,47 @@ export default function ApplicationPreview() {
                 <tbody>
                   <tr className="border-b">
                     <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">投資目標<br/>Investment Objective</td>
-                    <td className="p-3" colSpan={3}>{corporateInvestment?.investmentObjectives ? JSON.parse(corporateInvestment.investmentObjectives).join(", ") : "-"}</td>
+                    <td className="p-3" colSpan={3}>{corporateInvestment?.investmentObjectives ? (() => {
+                      const map: Record<string, string> = { short_term: "短線 / Short Term", medium_term: "中線 / Medium Term", long_term: "长線 / Long Term", capital_appreciation: "資本增值 / Capital Appreciation", dividend_yield: "股息回報 / Dividend Yield", hedging: "對沖 / Hedging", speculation: "投機 / Speculation", other: "其他 / Other" };
+                      return JSON.parse(corporateInvestment.investmentObjectives).map((v: string) => map[v] || v).join(", ");
+                    })() : "-"}</td>
                   </tr>
                   <tr className="border-b">
                     <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">預計投資金額<br/>Estimated Investment Amount</td>
-                    <td className="p-3 w-1/4 border-r">{corporateInvestment?.estimatedInvestmentAmount || "-"}</td>
+                    <td className="p-3 w-1/4 border-r">{(() => {
+                      const map: Record<string, string> = { "<1m": "<HK$1,000,000", "1m-5m": "HK$1,000,000 - HK$5,000,000", "5m-10m": "HK$5,000,001 - HK$10,000,000", ">10m": ">HK$10,000,000" };
+                      return map[corporateInvestment?.estimatedInvestmentAmount || ""] || corporateInvestment?.estimatedInvestmentAmount || "-";
+                    })()}</td>
                     <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">可承受波幅<br/>Risk Volatility</td>
                     <td className="p-3">{corporateInvestment?.riskVolatility ? `±${corporateInvestment.riskVolatility}%` : "-"}</td>
                   </tr>
                   <tr className="border-b">
                     <td className="p-3 bg-gray-50 font-semibold border-r">投資經驗<br/>Investment Experience</td>
-                    <td className="p-3" colSpan={3}>{corporateInvestment?.investmentExperience || "-"}</td>
+                    <td className="p-3" colSpan={3}>{(() => {
+                      const map: Record<string, string> = { nil: "沒有 / Nil", "<1y": "少於1年 / Less than a year", "1-5y": "1-5年 / 1-5 years", "6-10y": "6-10年 / 6-10 years", ">10y": "10年以上 / More than 10 years" };
+                      return map[corporateInvestment?.investmentExperience || ""] || corporateInvestment?.investmentExperience || "-";
+                    })()}</td>
                   </tr>
                   <tr className="border-b">
                     <td className="p-3 bg-gray-50 font-semibold border-r">對衍生產品認識<br/>Knowledge of Derivatives</td>
-                    <td className="p-3" colSpan={3}>{corporateInvestment?.knowledgeOfDerivatives || "-"}</td>
+                    <td className="p-3" colSpan={3}>{(() => {
+                      const map: Record<string, string> = { a: "代表本公司作出投資決定的人，曾接受有關衍生產品的培訓或修讀相關課程", b: "代表本公司作出投資決定的人，於過往3年曾執行5次或以上有關衍生產品的交易", c: "代表本公司作出投資決定的人，現時或過去從事衍生產品有關的工作經驗", d: "本公司對衍生產品沒有任何認識" };
+                      return map[corporateInvestment?.knowledgeOfDerivatives || ""] || corporateInvestment?.knowledgeOfDerivatives || "-";
+                    })()}</td>
                   </tr>
                   <tr className="border-b">
                     <td className="p-3 bg-gray-50 font-semibold border-r">曾投資產品<br/>Experienced Products</td>
-                    <td className="p-3" colSpan={3}>{corporateInvestment?.experiencedProducts ? JSON.parse(corporateInvestment.experiencedProducts).join(", ") : "-"}</td>
+                    <td className="p-3" colSpan={3}>{corporateInvestment?.experiencedProducts ? (() => {
+                      const map: Record<string, string> = { stocks: "股票投資 / Stocks", derivative_warrants: "衍生權證 / Derivative Warrants", futures_options: "期貨/期權 / Futures/Options", forex_bullion: "外匯/黃金 / Forex/Bullion", bonds: "債券 / Bonds", funds: "基金 / Funds", other: "其他 / Other" };
+                      return JSON.parse(corporateInvestment.experiencedProducts).map((v: string) => map[v] || v).join(", ");
+                    })() : "-"}</td>
                   </tr>
                   <tr className="border-b">
                     <td className="p-3 bg-gray-50 font-semibold border-r">資產項目<br/>Asset Items</td>
-                    <td className="p-3" colSpan={3}>{corporateInvestment?.assetItems ? JSON.parse(corporateInvestment.assetItems).join(", ") : "-"}</td>
+                    <td className="p-3" colSpan={3}>{corporateInvestment?.assetItems ? (() => {
+                      const map: Record<string, string> = { property: "房地產 / Property", securities: "上市證券 / Listed Securities", deposit: "存款 / Deposit", bonds: "債券 / Bonds", funds: "基金 / Funds", other: "其他 / Other" };
+                      return JSON.parse(corporateInvestment.assetItems).map((v: string) => map[v] || v).join(", ");
+                    })() : "-"}</td>
                   </tr>
                 </tbody>
               </table>
@@ -818,7 +836,8 @@ export default function ApplicationPreview() {
           </div>
           )}
 
-          {/* 職業信息 */}
+          {/* 職業信息 - 僅個人賬戶 */}
+          {!isCorporate && (
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
@@ -873,8 +892,10 @@ export default function ApplicationPreview() {
               </tbody>
             </table>
           </div>
+          )}
 
-          {/* 財務狀況 */}
+          {/* 財務狀況 - 僅個人賬戶 */}
+          {!isCorporate && (
           <div className="border-b">
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
@@ -901,6 +922,7 @@ export default function ApplicationPreview() {
               </tbody>
             </table>
           </div>
+          )}
 
           {/* 投資信息 - 個人投資信息（機構第2節已在上面顯示公司財務狀況） */}
           {!isCorporate && (
@@ -1057,40 +1079,46 @@ export default function ApplicationPreview() {
                         <tr className="border-b">
                           <td className="p-3 bg-gray-50 font-semibold border-r">Q7. 貴公司預留多少資金用在投資期內的投資?</td>
                           <td className="p-3">
-                            {riskQuestionnaire.q7_age_group === "less_than_1m" && "A. 少於港幣$1,000,000"}
-                            {riskQuestionnaire.q7_age_group === "1m_to_5m" && "B. 介乎港幣$1,000,001至$5,000,000"}
-                            {riskQuestionnaire.q7_age_group === "5m_to_10m" && "C. 介乎港幣$5,000,001至$10,000,000"}
-                            {riskQuestionnaire.q7_age_group === "over_10m" && "D. 多於港幣$10,000,000"}
+                            {riskQuestionnaire.q7_age_group === "less_than_1m" && "少於港幣$1,000,000"}
+                            {riskQuestionnaire.q7_age_group === "1m_to_5m" && "介乎港幣$1,000,001至$5,000,000"}
+                            {riskQuestionnaire.q7_age_group === "5m_to_10m" && "介乎港幣$5,000,001至$10,000,000"}
+                            {riskQuestionnaire.q7_age_group === "more_than_10m" && "多於港幣$10,000,000"}
                             {!riskQuestionnaire.q7_age_group && "-"}
                           </td>
                         </tr>
                         <tr className="border-b">
                           <td className="p-3 bg-gray-50 font-semibold border-r">Q8. 貴公司會把多少比例的資產投資於較高風險的投資項目？</td>
                           <td className="p-3">
-                            {riskQuestionnaire.q8_education_level === "less_than_25" && "A. 少於25%"}
-                            {riskQuestionnaire.q8_education_level === "25_to_50" && "B. 介乎25%至50%"}
-                            {riskQuestionnaire.q8_education_level === "51_to_75" && "C. 介乎51%至75%"}
-                            {riskQuestionnaire.q8_education_level === "over_75" && "D. 多於75%"}
+                            {riskQuestionnaire.q8_education_level === "less_than_25" && "少於25%"}
+                            {riskQuestionnaire.q8_education_level === "25_to_50" && "介乎25%至50%"}
+                            {riskQuestionnaire.q8_education_level === "51_to_75" && "介乎51%至75%"}
+                            {riskQuestionnaire.q8_education_level === "more_than_75" && "多於75%"}
                             {!riskQuestionnaire.q8_education_level && "-"}
                           </td>
                         </tr>
                         <tr className="border-b">
                           <td className="p-3 bg-gray-50 font-semibold border-r">Q9. 貴公司是否聘用專業人員負責作出投資決定?</td>
                           <td className="p-3">
-                            {riskQuestionnaire.q9_investment_knowledge_sources === "no_no_knowledge" && "A. 否，本公司對投資決定沒有相關知識。"}
-                            {riskQuestionnaire.q9_investment_knowledge_sources === "no_adequate_knowledge" && "B. 否, 但本公司對投資決定有足夠相關知識。"}
-                            {riskQuestionnaire.q9_investment_knowledge_sources === "yes_little_knowledge" && "C. 是，但本公司對投資決定只有一些或少許相關知識。"}
-                            {riskQuestionnaire.q9_investment_knowledge_sources === "yes_adequate_knowledge" && "D. 是，本公司有足夠相關知識的管理層作出投資決定。"}
-                            {!riskQuestionnaire.q9_investment_knowledge_sources && "-"}
+                            {(() => {
+                              let val = riskQuestionnaire.q9_investment_knowledge_sources;
+                              if (val) {
+                                try { const arr = JSON.parse(val); if (Array.isArray(arr) && arr.length > 0) val = arr[0]; } catch {}
+                              }
+                              if (val === "no_no_knowledge") return "否，本公司對投資決定沒有相關知識。";
+                              if (val === "no_adequate_knowledge") return "否，但本公司對投資決定有足夠相關知識。";
+                              if (val === "yes_some_knowledge") return "是，但本公司對投資決定只有一些或少許相關知識。";
+                              if (val === "yes_adequate_management") return "是，本公司有足夠相關知識的管理層作出投資決定。";
+                              return "-";
+                            })()}
                           </td>
                         </tr>
                         <tr className="border-b">
                           <td className="p-3 bg-gray-50 font-semibold border-r">Q10. 貴公司會預留多少流動資金作為每月營運開支儲備?</td>
                           <td className="p-3">
-                            {riskQuestionnaire.q10_liquidity_needs === "less_than_3m" && "A. 少於3個月的營運開支儲備"}
-                            {riskQuestionnaire.q10_liquidity_needs === "3m_to_6m" && "B. 3個月至6個月的營運開支儲備"}
-                            {riskQuestionnaire.q10_liquidity_needs === "6m_to_12m" && "C. 6個月至12個月的營運開支儲備"}
-                            {riskQuestionnaire.q10_liquidity_needs === "12m_plus" && "D. 12個月以上的營運開支儲備"}
+                            {riskQuestionnaire.q10_liquidity_needs === "less_than_3_months" && "少於3個月的營運開支儲備"}
+                            {riskQuestionnaire.q10_liquidity_needs === "3_to_6_months" && "3個月至6個月的營運開支儲備"}
+                            {riskQuestionnaire.q10_liquidity_needs === "6_to_12_months" && "6個月至12個月的營運開支儲備"}
+                            {riskQuestionnaire.q10_liquidity_needs === "more_than_12_months" && "12個月以上的營運開支儲備"}
                             {!riskQuestionnaire.q10_liquidity_needs && "-"}
                           </td>
                         </tr>
