@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
-import { ArrowLeft, Check, Save, FileDown } from "lucide-react";
+import { ArrowLeft, Check, X, Save, FileDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation, useRoute } from "wouter";
 import { toast } from "sonner";
@@ -1388,7 +1388,7 @@ export default function ApplicationPreview() {
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
                 <span>{isCorporate ? '8. 監管聲明 Regulatory Declaration' : '13. 監管聲明 Regulatory Declaration'}</span>
-                <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 9 : 13)}>
+                <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 11 : 13)}>
                   編輯
                 </Button>
               </h3>
@@ -1470,9 +1470,15 @@ export default function ApplicationPreview() {
                   <td className="p-3 bg-gray-50 font-semibold border-r">直接促銷 Direct Marketing</td>
                   <td className="p-3" colSpan={3}>
                     {regulatory?.objectsDirectMarketing ? (
-                      <span className="text-red-500">反對使用個人資料於直接促銷</span>
+                      <span className="text-red-500 flex items-center">
+                        <X className="h-4 w-4 mr-2" />
+                        反對 — 反對使用個人資料於直接促銷
+                      </span>
                     ) : (
-                      <span className="text-green-600">同意</span>
+                      <span className="text-green-600 flex items-center">
+                        <Check className="h-4 w-4 mr-2" />
+                        同意 — 同意使用個人資料於直接促銷
+                      </span>
                     )}
                   </td>
                 </tr>
