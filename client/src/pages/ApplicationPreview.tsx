@@ -1607,8 +1607,8 @@ export default function ApplicationPreview() {
           <Button
             variant="outline"
             onClick={() => {
-              // Corporate: 上一步應回到「監管聲明」(step 9)；Individual: step 13
-              const prevStep = isCorporate ? 9 : 13;
+              // Corporate: 上一步應回到「監管聲明」(step 11)；Individual: step 13
+              const prevStep = isCorporate ? 11 : 13;
               setLocation(`/application/${applicationId}/step/${prevStep}`);
             }}
           >
