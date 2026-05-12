@@ -24,7 +24,7 @@ const corporateDocumentTypes = [
   { value: "license_cert", label: "牌照認證/交易所上市證明（如CIMA、SFC等，如適用）/ License Certification/Exchange Listed (if applied)", required: false, singleFile: true },
   { value: "memo_articles", label: "公司章程/組織大綱 / Memorandum/Articles of Association", required: true, singleFile: true },
   { value: "board_resolution", label: "董事局議程 / Certified Extract Board of Resolution", required: true, singleFile: true },
-  { value: "ownership_chart", label: "股權結構圖（若持有牌照認證可豁免）/ Ownership Chart (can waive if have License Certification)", required: false, singleFile: true },
+  { value: "ownership_chart", label: "股權結構圖（若持有牌照認證可豁免）/ Ownership Chart (can waive if have License Certification)", required: true, singleFile: true, waiveIfHas: "license_cert" },
   { value: "authorized_signatures", label: "授權簽名人名單 / Authorized Signature List", required: true, singleFile: true },
   { value: "directors_id", label: "全體董事身份證件 / HKID/Chinese ID/Passport of all directors", required: true },
   { value: "directors_address", label: "全體董事三個月內地址證明 / Valid proof of address for all directors, dated within the last 3 months", required: true },
@@ -60,13 +60,13 @@ export default function DocumentUpload() {
     corporateBasic?.countryOfIncorporation === 'Hong Kong' ||
     corporateBasic?.countryOfIncorporation === '香港';
 
-  // 動態設置商業登記證為必填（香港註冊公司）
+  // 動態設置：商業登記證（香港註冊公司必填）、股權結構圖（有牌照認證可豁免）
   const currentDocTypes = isCorporate
-    ? corporateDocumentTypes.map(doc =>
-        doc.value === 'br_doc' && isHongKongCompany
-          ? { ...doc, required: true }
-          : doc
-      )
+    ? corporateDocumentTypes.map(doc => {
+        if (doc.value === 'br_doc' && isHongKongCompany) return { ...doc, required: true };
+        if ((doc as any).waiveIfHas && getUploadedDocument((doc as any).waiveIfHas)) return { ...doc, required: false };
+        return doc;
+      })
     : documentTypes;
 
   const { data: documents, isLoading: isLoadingData, refetch } = trpc.document.list.useQuery(
