@@ -435,7 +435,8 @@ const handleNext = () => {
                   }}
                 />
                 <Label htmlFor="objectsDirectMarketing" className="cursor-pointer font-normal">
-                  本人（姓名如下）<span className="font-bold">反對使用個人資料於擬作出的直接促銷</span> / The customer named <span className="font-bold">objects to the proposed use of his/her personal data in direct marketing</span>.
+                  <div>本人（姓名如下）<span className="font-bold">反對使用個人資料於擬作出的直接促銷</span></div>
+                  <div>The customer named <span className="font-bold">objects to the proposed use of his/her personal data in direct marketing</span>.</div>
                 </Label>
               </div>
             </div>
