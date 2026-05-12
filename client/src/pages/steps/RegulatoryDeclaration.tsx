@@ -464,7 +464,7 @@ const handleNext = () => {
             />
             {errors.signature && <p className="text-sm text-destructive">{errors.signature}</p>}
             <p className="text-sm text-muted-foreground">
-              申請人簽名（必須與Step 2 填寫的英文名字一致）
+              {isCorporate ? '需由公司的授權簽署人簽名' : '申請人簽名（必須與Step 2 填寫的英文名字一致）'}
             </p>
           </div>
 
