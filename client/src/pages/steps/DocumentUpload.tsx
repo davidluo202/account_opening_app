@@ -60,15 +60,6 @@ export default function DocumentUpload() {
     corporateBasic?.countryOfIncorporation === 'Hong Kong' ||
     corporateBasic?.countryOfIncorporation === '香港';
 
-  // 動態設置：商業登記證（香港註冊公司必填）、股權結構圖（有牌照認證可豁免）
-  const currentDocTypes = isCorporate
-    ? corporateDocumentTypes.map(doc => {
-        if (doc.value === 'br_doc' && isHongKongCompany) return { ...doc, required: true };
-        if ((doc as any).waiveIfHas && getUploadedDocument((doc as any).waiveIfHas)) return { ...doc, required: false };
-        return doc;
-      })
-    : documentTypes;
-
   const { data: documents, isLoading: isLoadingData, refetch } = trpc.document.list.useQuery(
     { applicationId },
     { enabled: !!applicationId }
@@ -128,6 +119,15 @@ export default function DocumentUpload() {
   const getUploadedDocuments = (documentType: string) => {
     return documents?.filter(doc => doc.documentType === documentType) || [];
   };
+
+  // 動態設置：商業登記證（香港註冊公司必填）、股權結構圖（有牌照認證可豁免）
+  const currentDocTypes = isCorporate
+    ? corporateDocumentTypes.map(doc => {
+        if (doc.value === 'br_doc' && isHongKongCompany) return { ...doc, required: true };
+        if ((doc as any).waiveIfHas && getUploadedDocument((doc as any).waiveIfHas)) return { ...doc, required: false };
+        return doc;
+      })
+    : documentTypes;
 
   const hasRequiredDocuments = () => {
     const requiredTypes = currentDocTypes.filter(t => t.required).map(t => t.value);
