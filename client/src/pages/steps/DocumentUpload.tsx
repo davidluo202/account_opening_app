@@ -215,15 +215,12 @@ const handleNext = () => {
                       ref={(el) => { fileInputRefs.current[docType.value] = el; }}
                       type="file"
                       accept="image/jpeg,image/jpg,image/png,application/pdf"
-                      multiple={!(docType as any).singleFile}
                       className="hidden"
                       onChange={(e) => {
-                        const files = e.target.files;
+                        const file = e.target.files?.[0];
                         e.target.value = "";
-                        if (files) {
-                          for (let i = 0; i < files.length; i++) {
-                            handleFileSelect(docType.value, files[i]);
-                          }
+                        if (file) {
+                          handleFileSelect(docType.value, file);
                         }
                       }}
                     />
