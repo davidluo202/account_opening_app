@@ -125,6 +125,10 @@ export default function DocumentUpload() {
     return documents?.find(doc => doc.documentType === documentType);
   };
 
+  const getUploadedDocuments = (documentType: string) => {
+    return documents?.filter(doc => doc.documentType === documentType) || [];
+  };
+
   const hasRequiredDocuments = () => {
     const requiredTypes = currentDocTypes.filter(t => t.required).map(t => t.value);
     return requiredTypes.every(type => getUploadedDocument(type));
@@ -194,10 +198,14 @@ const handleNext = () => {
                         <p className="text-xs text-muted-foreground mt-1">以上文件來源於美國國稅局 (IRS) 官方網站</p>
                       </div>
                     )}
-                    {uploaded && (
-                      <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
-                        <CheckCircle2 className="h-4 w-4 text-green-600" />
-                        <span>{uploaded.fileName}</span>
+                    {getUploadedDocuments(docType.value).length > 0 && (
+                      <div className="mt-2 space-y-1">
+                        {getUploadedDocuments(docType.value).map((doc, idx) => (
+                          <div key={idx} className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <CheckCircle2 className="h-4 w-4 text-green-600" />
+                            <span>{doc.fileName}</span>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
@@ -230,8 +238,8 @@ const handleNext = () => {
                         </>
                       ) : uploaded ? (
                         <>
-                          <FileText className="h-4 w-4 mr-2" />
-                          重新上傳
+                          <Upload className="h-4 w-4 mr-2" />
+                          繼續上傳
                         </>
                       ) : (
                         <>
