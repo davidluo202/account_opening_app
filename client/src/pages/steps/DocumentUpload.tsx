@@ -16,16 +16,16 @@ const documentTypes = [
   { value: "address_proof", label: "住址證明 / Address Proof", required: false },
 ];
 
-// 機構文件類型
+// 機構文件類型 - singleFile: true 表示只接受一個文件
 const corporateDocumentTypes = [
-  { value: "ci_doc", label: "公司註冊證書 / Certificate of Incorporation", required: true },
-  { value: "name_change_doc", label: "更名證明（如適用）/ Certified of Change of Name (if applied)", required: false },
-  { value: "br_doc", label: "商業登記證（適用於香港註冊公司）/ Business Registration Certificate (For Hong Kong Registration Company only)", required: false },
-  { value: "license_cert", label: "牌照認證/交易所上市證明（如CIMA、SFC等，如適用）/ License Certification/Exchange Listed (if applied)", required: false },
-  { value: "memo_articles", label: "公司章程/組織大綱 / Memorandum/Articles of Association", required: true },
-  { value: "board_resolution", label: "董事局議程 / Certified Extract Board of Resolution", required: true },
-  { value: "ownership_chart", label: "股權結構圖（若持有牌照認證可豁免）/ Ownership Chart (can waive if have License Certification)", required: false },
-  { value: "authorized_signatures", label: "授權簽名人名單 / Authorized Signature List", required: true },
+  { value: "ci_doc", label: "公司註冊證書 / Certificate of Incorporation", required: true, singleFile: true },
+  { value: "name_change_doc", label: "更名證明（如適用）/ Certified of Change of Name (if applied)", required: false, singleFile: true },
+  { value: "br_doc", label: "商業登記證（適用於香港註冊公司）/ Business Registration Certificate (For Hong Kong Registration Company only)", required: false, singleFile: true },
+  { value: "license_cert", label: "牌照認證/交易所上市證明（如CIMA、SFC等，如適用）/ License Certification/Exchange Listed (if applied)", required: false, singleFile: true },
+  { value: "memo_articles", label: "公司章程/組織大綱 / Memorandum/Articles of Association", required: true, singleFile: true },
+  { value: "board_resolution", label: "董事局議程 / Certified Extract Board of Resolution", required: true, singleFile: true },
+  { value: "ownership_chart", label: "股權結構圖（若持有牌照認證可豁免）/ Ownership Chart (can waive if have License Certification)", required: false, singleFile: true },
+  { value: "authorized_signatures", label: "授權簽名人名單 / Authorized Signature List", required: true, singleFile: true },
   { value: "directors_id", label: "全體董事身份證件 / HKID/Chinese ID/Passport of all directors", required: true },
   { value: "directors_address", label: "全體董事三個月內地址證明 / Valid proof of address for all directors, dated within the last 3 months", required: true },
   { value: "signers_id", label: "全體授權簽名人身份證件 / HKID/Chinese ID/Passport of all authorized signers", required: true },
@@ -215,7 +215,7 @@ const handleNext = () => {
                       ref={(el) => { fileInputRefs.current[docType.value] = el; }}
                       type="file"
                       accept="image/jpeg,image/jpg,image/png,application/pdf"
-                      multiple
+                      multiple={!(docType as any).singleFile}
                       className="hidden"
                       onChange={(e) => {
                         const files = e.target.files;
@@ -227,6 +227,8 @@ const handleNext = () => {
                         }
                       }}
                     />
+                    {/* 單文件類型：上傳後隱藏按鈕；多文件類型：始終可上傳 */}
+                    {(!uploaded || !(docType as any).singleFile) && (
                     <Button
                       variant={uploaded ? "outline" : "default"}
                       size="sm"
@@ -241,7 +243,7 @@ const handleNext = () => {
                       ) : uploaded ? (
                         <>
                           <Upload className="h-4 w-4 mr-2" />
-                          重新上傳
+                          上傳更多
                         </>
                       ) : (
                         <>
@@ -250,6 +252,7 @@ const handleNext = () => {
                         </>
                       )}
                     </Button>
+                    )}
                   </div>
                 </div>
               </Card>
