@@ -667,10 +667,6 @@ export default function ApplicationPreview() {
                     <td className="p-3 bg-gray-50 font-semibold border-r">稅後盈利審計時間<br/>Profit Audit Date</td>
                     <td className="p-3">{corporateFinancial?.profitAuditDate || "-"}</td>
                   </tr>
-                  <tr className="border-b">
-                    <td className="p-3 bg-gray-50 font-semibold border-r">資產項目<br/>Asset Items</td>
-                    <td className="p-3" colSpan={3}>{formatAssetItems(corporateFinancial?.assetItems)}</td>
-                  </tr>
                 </tbody>
               </table>
             </div>
