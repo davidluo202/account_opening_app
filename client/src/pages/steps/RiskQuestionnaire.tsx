@@ -491,9 +491,6 @@ export default function RiskQuestionnaire() {
   const renderCorporateQuestionnaire = () => (
     <div>
       <h3 className="text-xl font-semibold mb-2">風險評估問卷 / Risk Profile Questionnaire</h3>
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-        <p className="text-sm text-blue-800">公司客戶風險評估問卷 / Corporate Client Risk Assessment Questionnaire</p>
-      </div>
       <p className="text-sm text-muted-foreground mb-6">
         請根據貴公司的實際情況填寫以下問卷，以評估風險承受能力
       </p>
