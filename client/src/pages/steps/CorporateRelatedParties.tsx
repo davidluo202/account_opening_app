@@ -109,7 +109,7 @@ export default function CorporateRelatedParties() {
   const [savedParties, setSavedParties] = useState<RelatedParty[]>([]);
   // Current form party being edited
   const [currentParty, setCurrentParty] = useState<RelatedParty>(defaultParty());
-  const [errors, setErrors] = useState<Record<string, Record<string, string>>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [missingTypes, setMissingTypes] = useState<string[]>([]);
 
   const { data: existingData, isLoading: isLoadingData } = trpc.corporateRelatedParties.get.useQuery(

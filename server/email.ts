@@ -471,7 +471,7 @@ export async function sendRejectionNotificationEmail(
       `,
     };
 
-    await sendViaResend(msg.to as string, msg.subject, msg.html);
+    await sendViaResend((msg.to as string[]).join(','), msg.subject, msg.html);
     console.log(`Rejection notification sent to ${customerServiceEmail} for application ${applicationNumber}`);
     return true;
   } catch (error: any) {
@@ -554,7 +554,7 @@ export async function sendReturnNotificationEmail(
       `,
     };
 
-    await sendViaResend(msg.to, msg.subject, msg.html);
+    await sendViaResend(msg.to.join(','), msg.subject, msg.html);
     console.log(`Return notification sent to ${customerServiceEmail} for application ${applicationNumber}`);
     return true;
   } catch (error: any) {

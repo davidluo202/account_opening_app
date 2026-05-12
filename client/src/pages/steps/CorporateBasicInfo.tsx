@@ -129,7 +129,7 @@ export default function CorporateBasicInfo() {
       });
     } else if (user?.email) {
       // 首次進入，用註冊電郵預填
-      setFormData(prev => ({ ...prev, contactEmail: user.email }));
+      setFormData(prev => ({ ...prev, contactEmail: user.email }) as any);
     }
     setIsEmailVerified(true); // 註冊時已驗證
   }, [existingData, user]);

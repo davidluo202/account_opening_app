@@ -70,22 +70,22 @@ export default function TaxInfo() {
   useEffect(() => {
     // 優先使用已保存數據，若無已保存數據則用默認值填充
     if (existingData && (existingData.taxResidency || existingData.taxIdNumber)) {
-      setFormData(existingData);
+      setFormData(existingData as any);
     } else if (corporateInfo) {
       // 機構：納稅居住國=註冊國家（若選擇"other"則用補充說明），稅務編號=商業登記證號碼
-      const taxResidency = corporateInfo.countryOfIncorporation === "other" 
-        ? corporateInfo.countryOfIncorporationOther 
+      const taxResidency = corporateInfo.countryOfIncorporation === "other"
+        ? (corporateInfo as any).countryOfIncorporationOther
         : corporateInfo.countryOfIncorporation;
       setFormData({
-        taxResidency: taxResidency,
+        taxResidency: taxResidency || "",
         taxIdNumber: corporateInfo.businessRegistrationNo,
-      });
+      } as any);
     } else if (basicInfo && detailedInfo) {
       // 個人：從基本信息獲取
       setFormData({
         taxResidency: basicInfo.nationality,
         taxIdNumber: detailedInfo.idNumber,
-      });
+      } as any);
     }
   }, [basicInfo, detailedInfo, corporateInfo, existingData]);
 

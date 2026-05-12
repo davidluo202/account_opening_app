@@ -229,10 +229,12 @@ export default function BankAccount() {
       setFormData({
         bankName: "",
         bankCode: "",
+        swiftCode: "",
         accountType: "saving",
         accountCurrency: "HKD",
         accountNumber: "",
         accountHolderName: defaultHolderName,
+        accountHolderAddress: "",
         bankLocation: "HK",
       });
       setBankSearchQuery("");
@@ -263,10 +265,12 @@ export default function BankAccount() {
     setFormData({
       bankName: account.bankName || "",
       bankCode: "", // 暫不回填 HK bankCode（僅作選擇用）
+      swiftCode: account.swiftCode || "",
       accountType: (account.accountType || "saving") as any,
       accountCurrency: account.accountCurrency || "HKD",
       accountNumber: account.accountNumber || "",
       accountHolderName: account.accountHolderName || defaultHolderName,
+      accountHolderAddress: account.accountHolderAddress || "",
       bankLocation: (account.bankLocation || "HK") as any,
     });
 

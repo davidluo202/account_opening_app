@@ -40,7 +40,7 @@ export default function AccountSelection() {
       setCustomerType(existingData.customerType);
       setAccountType(existingData.accountType);
       if (existingData.corporateSubType) {
-        setCorporateSubType(existingData.corporateSubType);
+        setCorporateSubType(existingData.corporateSubType as any);
       }
     }
   }, [existingData]);
@@ -55,7 +55,7 @@ const handleNext = () => {
       applicationId,
       customerType,
       accountType,
-      corporateSubType: customerType === 'corporate' ? corporateSubType : undefined,
+      corporateSubType: customerType === 'corporate' ? corporateSubType as any : undefined,
     });
   };
 

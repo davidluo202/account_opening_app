@@ -175,7 +175,7 @@ export default function PersonalDetailedInfo() {
       }
     } else if (user?.email) {
       // 首次進入，用註冊電郵預填
-      setFormData(prev => ({ ...prev, email: user.email }));
+      setFormData(prev => ({ ...prev, email: user.email }) as any);
       setEmailVerified(true);
     }
   }, [existingData, user]);

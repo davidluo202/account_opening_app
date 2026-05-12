@@ -69,19 +69,19 @@ export default function ClientDeclaration() {
 
   useEffect(() => {
     if (existingData) {
-      setQ1(existingData.q1Licensed || "");
+      setQ1((existingData.q1Licensed || "") as YesNo);
       setQ1CeNo(existingData.q1CeNo || "");
-      setQ2(existingData.q2Intermediary || "");
+      setQ2((existingData.q2Intermediary || "") as YesNo);
       setQ2Name(existingData.q2Name || "");
       setQ2IdPassport(existingData.q2IdPassport || "");
       setQ2Address(existingData.q2Address || "");
-      setQ3(existingData.q3ClientOfCmf || "");
+      setQ3((existingData.q3ClientOfCmf || "") as YesNo);
       setQ3Details(existingData.q3Details || "");
-      setQ4(existingData.q4StaffOfCmf || "");
+      setQ4((existingData.q4StaffOfCmf || "") as YesNo);
       setQ4Details(existingData.q4Details || "");
-      setQ5(existingData.q5RelationshipWithStaff || "");
+      setQ5((existingData.q5RelationshipWithStaff || "") as YesNo);
       setQ5Details(existingData.q5Details || "");
-      setQ6(existingData.q6ExchangeParticipant || "");
+      setQ6((existingData.q6ExchangeParticipant || "") as YesNo);
       setQ6DirectorName(existingData.q6DirectorName || "");
       setQ6InstitutionName(existingData.q6InstitutionName || "");
       setQ6ParticipateNo(existingData.q6ParticipateNo || "");

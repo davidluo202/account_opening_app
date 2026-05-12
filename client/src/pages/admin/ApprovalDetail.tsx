@@ -446,7 +446,7 @@ export default function ApprovalDetail() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label>就業狀態</Label>
-                    <p>{occupationInfo.employmentStatus === 'employed' ? '受僱' : occupationInfo.employmentStatus === 'self_employed' ? '自僱' : occupationInfo.employmentStatus === 'student' ? '學生' : occupationInfo.employmentStatus === 'unemployed' ? '失業' : occupationInfo.employmentStatus || "-"}</p>
+                    <p>{occupationInfo.employmentStatus === 'employed' ? '受僱' : occupationInfo.employmentStatus === 'self_employed' ? '自僱' : occupationInfo.employmentStatus === 'student' ? '學生' : (occupationInfo.employmentStatus as string) === 'unemployed' ? '失業' : occupationInfo.employmentStatus || "-"}</p>
                   </div>
                   <div>
                     <Label>公司/業務名稱</Label>
