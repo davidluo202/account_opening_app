@@ -434,10 +434,10 @@ const handleNext = () => {
                     setFormData({ ...formData, objectsDirectMarketing: checked as boolean });
                   }}
                 />
-                <Label htmlFor="objectsDirectMarketing" className="cursor-pointer font-normal">
-                  <div>本人（姓名如下）<span className="font-bold">反對使用個人資料於擬作出的直接促銷</span></div>
-                  <div>The customer named <span className="font-bold">objects to the proposed use of his/her personal data in direct marketing</span>.</div>
-                </Label>
+                <label htmlFor="objectsDirectMarketing" className="cursor-pointer font-normal text-sm leading-normal" style={{display: 'block'}}>
+                  <span style={{display: 'block'}}>本人（姓名如下）<span className="font-bold">反對使用個人資料於擬作出的直接促銷</span></span>
+                  <span style={{display: 'block'}}>The customer named <span className="font-bold">objects to the proposed use of his/her personal data in direct marketing</span>.</span>
+                </label>
               </div>
             </div>
           </div>
