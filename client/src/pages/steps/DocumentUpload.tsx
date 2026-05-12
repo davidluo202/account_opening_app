@@ -180,15 +180,18 @@ const handleNext = () => {
                       {docType.required && <span className="text-destructive ml-1">*</span>}
                     </Label>
                     {docType.value === 'w8imy_w8ben' && (
-                      <div className="flex gap-2 mt-2">
-                        <a href="https://www.irs.gov/pub/irs-pdf/fw8imy.pdf" target="_blank" rel="noopener noreferrer"
-                          className="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded text-xs font-medium hover:bg-blue-100">
-                          W8IMY 下載
-                        </a>
-                        <a href="https://www.irs.gov/pub/irs-pdf/fw8bene.pdf" target="_blank" rel="noopener noreferrer"
-                          className="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded text-xs font-medium hover:bg-blue-100">
-                          W8BEN-E 下載
-                        </a>
+                      <div className="mt-2">
+                        <div className="flex gap-2">
+                          <a href="https://www.irs.gov/pub/irs-pdf/fw8imy.pdf" target="_blank" rel="noopener noreferrer"
+                            className="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded text-xs font-medium hover:bg-blue-100">
+                            W8IMY 下載
+                          </a>
+                          <a href="https://www.irs.gov/pub/irs-pdf/fw8bene.pdf" target="_blank" rel="noopener noreferrer"
+                            className="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded text-xs font-medium hover:bg-blue-100">
+                            W8BEN-E 下載
+                          </a>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">以上文件來源於美國國稅局 (IRS) 官方網站 www.irs.gov</p>
                       </div>
                     )}
                     {uploaded && (
