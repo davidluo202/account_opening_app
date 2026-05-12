@@ -227,8 +227,6 @@ const handleNext = () => {
                         }
                       }}
                     />
-                    {/* 單文件類型：上傳後隱藏按鈕；多文件類型：始終可上傳 */}
-                    {(!uploaded || !(docType as any).singleFile) && (
                     <Button
                       variant={uploaded ? "outline" : "default"}
                       size="sm"
@@ -242,8 +240,8 @@ const handleNext = () => {
                         </>
                       ) : uploaded ? (
                         <>
-                          <Upload className="h-4 w-4 mr-2" />
-                          上傳更多
+                          <FileText className="h-4 w-4 mr-2" />
+                          重新上傳
                         </>
                       ) : (
                         <>
@@ -252,7 +250,6 @@ const handleNext = () => {
                         </>
                       )}
                     </Button>
-                    )}
                   </div>
                 </div>
               </Card>
