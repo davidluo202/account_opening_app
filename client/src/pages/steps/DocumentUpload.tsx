@@ -191,7 +191,7 @@ const handleNext = () => {
                             W8BEN-E 下載
                           </a>
                         </div>
-                        <p className="text-xs text-muted-foreground mt-1">以上文件來源於美國國稅局 (IRS) 官方網站 www.irs.gov</p>
+                        <p className="text-xs text-muted-foreground mt-1">以上文件來源於美國國稅局 (IRS) 官方網站</p>
                       </div>
                     )}
                     {uploaded && (
