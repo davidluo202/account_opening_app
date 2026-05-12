@@ -38,7 +38,7 @@ const corporateSteps: Step[] = [
   { id: 6, title: "風險評估問卷", description: "完成風險評估" },
   { id: 7, title: "結算銀行賬戶", description: "添加公司銀行賬戶" },
   { id: 8, title: "稅務信息", description: "填寫公司稅務資料" },
-  { id: 9, title: "文件上傳", description: "上傳機構證明文件" },
+  { id: 9, title: "文件上傳", description: "上傳公司證明文件" },
   { id: 10, title: "客戶聲明", description: "填寫客戶聲明" },
   { id: 11, title: "監管聲明", description: "公司蓋章與簽署" },
 ];
