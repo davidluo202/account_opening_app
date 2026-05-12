@@ -215,13 +215,15 @@ const handleNext = () => {
                       ref={(el) => { fileInputRefs.current[docType.value] = el; }}
                       type="file"
                       accept="image/jpeg,image/jpg,image/png,application/pdf"
+                      multiple
                       className="hidden"
                       onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        // allow re-selecting the same file after a failed upload
+                        const files = e.target.files;
                         e.target.value = "";
-                        if (file) {
-                          handleFileSelect(docType.value, file);
+                        if (files) {
+                          for (let i = 0; i < files.length; i++) {
+                            handleFileSelect(docType.value, files[i]);
+                          }
                         }
                       }}
                     />
@@ -239,7 +241,7 @@ const handleNext = () => {
                       ) : uploaded ? (
                         <>
                           <Upload className="h-4 w-4 mr-2" />
-                          繼續上傳
+                          重新上傳
                         </>
                       ) : (
                         <>
