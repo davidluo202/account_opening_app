@@ -103,12 +103,12 @@ const handleNext = () => {
               </Label>
             </div>
 
-            <div className="flex items-center space-x-2 p-4 border rounded-lg opacity-50 cursor-not-allowed">
-              <RadioGroupItem value="joint" id="joint" disabled />
-              <Label htmlFor="joint" className="flex-1">
+            <div className="flex items-center space-x-2 p-4 border rounded-lg hover:bg-slate-50 cursor-pointer">
+              <RadioGroupItem value="joint" id="joint" />
+              <Label htmlFor="joint" className="flex-1 cursor-pointer">
                 <div>
                   <div className="font-medium">聯名賬戶 / Joint Account</div>
-                  <div className="text-sm text-muted-foreground">暫不開放（即將推出）</div>
+                  <div className="text-sm text-muted-foreground">適用於聯名投資者</div>
                 </div>
               </Label>
             </div>
