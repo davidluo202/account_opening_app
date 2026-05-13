@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -1218,28 +1219,36 @@ export default function ApplicationPreview() {
             </div>
             {bankAccounts && bankAccounts.length > 0 ? (
               <table className="w-full min-w-[800px]">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="p-3 text-left border-r">銀行名稱 Bank Name</th>
-                    <th className="p-3 text-left border-r">SWIFT Code</th>
-                    <th className="p-3 text-left border-r">賬戶类型 Account Type</th>
-                    <th className="p-3 text-left border-r">币种 Currency</th>
-                    <th className="p-3 text-left border-r">账号 Account Number</th>
-                    <th className="p-3 text-left border-r">持有人 Holder Name</th>
-                    <th className="p-3 text-left">持有人地址 Holder Address</th>
-                  </tr>
-                </thead>
                 <tbody>
                   {bankAccounts.map((account, index) => (
-                    <tr key={index} className="border-b">
-                      <td className="p-3 border-r">{account.bankName}</td>
-                      <td className="p-3 border-r">{account.swiftCode || '-'}</td>
-                      <td className="p-3 border-r">{translateBankAccountType(account.accountType)}</td>
-                      <td className="p-3 border-r">{account.accountCurrency}</td>
-                      <td className="p-3 border-r">{account.accountNumber}</td>
-                      <td className="p-3 border-r">{account.accountHolderName}</td>
-                      <td className="p-3">{account.accountHolderAddress || '-'}</td>
-                    </tr>
+                    <Fragment key={index}>
+                      <tr className="border-b bg-gray-50">
+                        <td className="p-3 font-semibold border-r" style={{width: '33%'}}>銀行名稱<br/>Bank Name</td>
+                        <td className="p-3 font-semibold border-r" style={{width: '33%'}}>SWIFT Code</td>
+                        <td className="p-3 font-semibold" style={{width: '33%'}}>賬戶类型<br/>Account Type</td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="p-3 border-r">{account.bankName}</td>
+                        <td className="p-3 border-r">{account.swiftCode || '-'}</td>
+                        <td className="p-3">{translateBankAccountType(account.accountType)}</td>
+                      </tr>
+                      <tr className="border-b bg-gray-50">
+                        <td className="p-3 font-semibold border-r">币种<br/>Currency</td>
+                        <td className="p-3 font-semibold border-r">账号<br/>Account Number</td>
+                        <td className="p-3 font-semibold">持有人<br/>Holder Name</td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="p-3 border-r">{account.accountCurrency}</td>
+                        <td className="p-3 border-r">{account.accountNumber}</td>
+                        <td className="p-3">{account.accountHolderName}</td>
+                      </tr>
+                      <tr className="border-b bg-gray-50">
+                        <td className="p-3 font-semibold" colSpan={3}>持有人地址 Holder Address</td>
+                      </tr>
+                      <tr className={index < bankAccounts.length - 1 ? "border-b-2 border-gray-300" : "border-b"}>
+                        <td className="p-3" colSpan={3}>{account.accountHolderAddress || '-'}</td>
+                      </tr>
+                    </Fragment>
                   ))}
                 </tbody>
               </table>
