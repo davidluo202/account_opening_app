@@ -238,7 +238,7 @@ const handleNext = () => {
                       ) : uploaded ? (
                         <>
                           <FileText className="h-4 w-4 mr-2" />
-                          重新上傳
+                          {(docType as any).singleFile ? '重新上傳' : '上傳更多'}
                         </>
                       ) : (
                         <>

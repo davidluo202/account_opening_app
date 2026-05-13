@@ -18,6 +18,7 @@ interface RelatedParty {
   relationshipTypeOther?: string;
   isDefaultContact: boolean;
   name: string;
+  englishName: string;
   gender: "male" | "female" | "other" | "";
   dateOfBirth: string;
   idType: "hkid" | "passport" | "mainland_id" | "other" | "";
@@ -63,6 +64,7 @@ const defaultParty = (): RelatedParty => ({
   relationshipTypeOther: "",
   isDefaultContact: false,
   name: "",
+  englishName: "",
   gender: "",
   dateOfBirth: "",
   idType: "",
@@ -495,7 +497,7 @@ export default function CorporateRelatedParties() {
             </div>
 
             <div className="space-y-3">
-              <Label>姓名 / Name <span className="text-destructive">*</span></Label>
+              <Label>中文姓名 / Chinese Name <span className="text-destructive">*</span></Label>
               <Input
                 value={currentParty.name}
                 onChange={e => setCurrentParty({ ...currentParty, name: e.target.value })}
@@ -505,6 +507,15 @@ export default function CorporateRelatedParties() {
                 }}
               />
               {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
+            </div>
+
+            <div className="space-y-3">
+              <Label>英文姓名 / English Name <span className="text-destructive">*</span></Label>
+              <Input
+                value={currentParty.englishName}
+                onChange={e => setCurrentParty({ ...currentParty, englishName: e.target.value.toUpperCase() })}
+                placeholder="As shown on ID/Passport"
+              />
             </div>
 
             <div className="space-y-3">
