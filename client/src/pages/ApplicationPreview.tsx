@@ -1221,20 +1221,24 @@ export default function ApplicationPreview() {
                 <thead className="bg-gray-100">
                   <tr>
                     <th className="p-3 text-left border-r">銀行名稱 Bank Name</th>
+                    <th className="p-3 text-left border-r">SWIFT Code</th>
                     <th className="p-3 text-left border-r">賬戶类型 Account Type</th>
                     <th className="p-3 text-left border-r">币种 Currency</th>
                     <th className="p-3 text-left border-r">账号 Account Number</th>
-                    <th className="p-3 text-left">持有人 Holder Name</th>
+                    <th className="p-3 text-left border-r">持有人 Holder Name</th>
+                    <th className="p-3 text-left">持有人地址 Holder Address</th>
                   </tr>
                 </thead>
                 <tbody>
                   {bankAccounts.map((account, index) => (
                     <tr key={index} className="border-b">
                       <td className="p-3 border-r">{account.bankName}</td>
+                      <td className="p-3 border-r">{account.swiftCode || '-'}</td>
                       <td className="p-3 border-r">{translateBankAccountType(account.accountType)}</td>
                       <td className="p-3 border-r">{account.accountCurrency}</td>
                       <td className="p-3 border-r">{account.accountNumber}</td>
-                      <td className="p-3">{account.accountHolderName}</td>
+                      <td className="p-3 border-r">{account.accountHolderName}</td>
+                      <td className="p-3">{account.accountHolderAddress || '-'}</td>
                     </tr>
                   ))}
                 </tbody>
