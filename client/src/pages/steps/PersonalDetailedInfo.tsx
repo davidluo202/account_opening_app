@@ -572,7 +572,7 @@ export default function PersonalDetailedInfo() {
         {/* 住宅電話 */}
         <div className="space-y-2">
           <Label htmlFor="phoneNumber">
-            住宅電話 / Residential Phone (可選)
+            住宅電話 / Residential Phone
           </Label>
           <div className="flex gap-2">
             <Select
