@@ -518,8 +518,12 @@ export default function ApplicationPreview() {
         <Card className="p-0 mb-6 overflow-hidden overflow-x-auto">
           {/* 标题 */}
           <div className="bg-primary text-white p-4 text-center">
-            <h2 className="text-xl font-bold">{isCorporate ? '客戶開戶申請表（機構）' : '客戶開戶申請表（個人/聯名）'}</h2>
-            <p className="text-sm">{isCorporate ? 'Customer Account Opening Form (Corporate)' : 'Customer Account Opening Form (Ind/Joint)'}</p>
+            <h2 className="text-xl font-bold">{isCorporate
+              ? (accountSelection?.corporateSubType === 'institutional_pi' ? '客戶開戶申請表（機構）' : '客戶開戶申請表（公司）')
+              : '客戶開戶申請表（個人/聯名）'}</h2>
+            <p className="text-sm">{isCorporate
+              ? (accountSelection?.corporateSubType === 'institutional_pi' ? 'Customer Account Opening Form (Institutional)' : 'Customer Account Opening Form (Corporate)')
+              : 'Customer Account Opening Form (Ind/Joint)'}</p>
           </div>
 
           {/* 賬戶类型 */}
@@ -533,8 +537,8 @@ export default function ApplicationPreview() {
                       ? (accountSelection.corporateSubType === 'corporate_pi' ? '公司專業投資者 / Corporate Professional Investor' : '機構專業投資者 / Institutional Professional Investor')
                       : translateCustomerType(accountSelection?.customerType)
                   }</td>
-                  <td className="p-3 bg-gray-50 font-semibold w-1/3 border-l">賬戶类型 Account Type</td>
-                  <td className="p-3">{translateAccountType(accountSelection?.accountType)}</td>
+                  <td className="p-3 bg-gray-50 font-semibold border-l" style={{whiteSpace: 'nowrap'}}>賬戶类型 Account Type</td>
+                  <td className="p-3" style={{whiteSpace: 'nowrap'}}>{translateAccountType(accountSelection?.accountType)}</td>
                 </tr>
               </tbody>
             </table>
