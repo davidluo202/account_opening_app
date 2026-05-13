@@ -403,7 +403,8 @@ export default function PersonalDetailedInfo() {
               id="idNumber"
               value={formData.idNumber}
               onChange={(e) => {
-                setFormData({ ...formData, idNumber: e.target.value });
+                const val = e.target.value.replace(/（/g, '(').replace(/）/g, ')').toUpperCase();
+                setFormData({ ...formData, idNumber: val });
                 if (errors.idNumber) setErrors({ ...errors, idNumber: "" });
               }}
               placeholder="請輸入證件號碼"
