@@ -527,7 +527,11 @@ export default function ApplicationPreview() {
               <tbody>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold w-1/3 border-r">客戶类型 Customer Type</td>
-                  <td className="p-3">{translateCustomerType(accountSelection?.customerType)}</td>
+                  <td className="p-3">{
+                    accountSelection?.customerType === 'corporate' && accountSelection?.corporateSubType
+                      ? (accountSelection.corporateSubType === 'corporate_pi' ? '公司專業投資者 / Corporate Professional Investor' : '機構專業投資者 / Institutional Professional Investor')
+                      : translateCustomerType(accountSelection?.customerType)
+                  }</td>
                   <td className="p-3 bg-gray-50 font-semibold w-1/3 border-l">賬戶类型 Account Type</td>
                   <td className="p-3">{translateAccountType(accountSelection?.accountType)}</td>
                 </tr>
