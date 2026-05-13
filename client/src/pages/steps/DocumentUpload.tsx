@@ -14,6 +14,7 @@ const documentTypes = [
   { value: "id_back", label: "身份證件反面 / ID Back", required: false },
   { value: "bank_statement", label: "銀行月結單 / Bank Statement", required: false },
   { value: "address_proof", label: "住址證明 / Address Proof", required: false },
+  { value: "w8ben", label: "美國稅務申報表 / W8BEN", required: true, singleFile: true },
 ];
 
 // 機構文件類型 - singleFile: true 表示只接受一個文件
@@ -183,6 +184,17 @@ const handleNext = () => {
                       {docType.label}
                       {docType.required && <span className="text-destructive ml-1">*</span>}
                     </Label>
+                    {docType.value === 'w8ben' && (
+                      <div className="mt-2">
+                        <div className="flex gap-2">
+                          <a href="https://www.irs.gov/pub/irs-pdf/fw8ben.pdf" target="_blank" rel="noopener noreferrer"
+                            className="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded text-xs font-medium hover:bg-blue-100">
+                            W8BEN 下載
+                          </a>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">以上文件來源於美國國稅局 (IRS) 官方網站</p>
+                      </div>
+                    )}
                     {docType.value === 'w8imy_w8ben' && (
                       <div className="mt-2">
                         <div className="flex gap-2">
