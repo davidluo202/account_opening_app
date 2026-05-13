@@ -642,13 +642,13 @@ export default function PersonalDetailedInfo() {
         {/* 傳真號碼 */}
         <div className="space-y-2">
           <Label htmlFor="faxNo">
-            傳真號碼 / Fax Number (可選)
+            傳真號碼 / Fax Number
           </Label>
           <Input
             id="faxNo"
             value={formData.faxNo}
             onChange={(e) => setFormData({ ...formData, faxNo: e.target.value })}
-            placeholder="請輸入傳真號碼（可選）"
+            placeholder="請輸入傳真號碼"
           />
         </div>
 
