@@ -413,6 +413,9 @@ const handleNext = () => {
                   <div className="space-y-1">
                     <div className="font-medium">{account.bankName}</div>
                     <div className="text-sm text-muted-foreground">
+                      SWIFT Code: {account.swiftCode || '-'}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
                       賬戶號碼: {account.accountNumber}
                     </div>
                     <div className="text-sm text-muted-foreground">
@@ -424,6 +427,11 @@ const handleNext = () => {
                     <div className="text-sm text-muted-foreground">
                       持有人: {account.accountHolderName}
                     </div>
+                    {account.accountHolderAddress && (
+                      <div className="text-sm text-muted-foreground">
+                        持有人地址: {account.accountHolderAddress}
+                      </div>
+                    )}
                   </div>
                   <div className="flex items-center gap-1">
                     <Button
