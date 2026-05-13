@@ -10,10 +10,10 @@ import { toast } from "sonner";
 import { Loader2, Upload, FileText, CheckCircle2 } from "lucide-react";
 
 const documentTypes = [
-  { value: "id_front", label: "身份證件正面 / ID Front", required: true },
-  { value: "id_back", label: "身份證件反面 / ID Back", required: false },
-  { value: "bank_statement", label: "銀行月結單 / Bank Statement", required: false },
-  { value: "address_proof", label: "住址證明 / Address Proof", required: false },
+  { value: "id_front", label: "身份證件正面 / ID Front", required: true, singleFile: true },
+  { value: "id_back", label: "身份證件反面 / ID Back", required: true, singleFile: true },
+  { value: "bank_statement", label: "銀行月結單 / Bank Statement", required: true, singleFile: true },
+  { value: "address_proof", label: "住址證明 / Address Proof", required: true, singleFile: true },
   { value: "w8ben", label: "美國稅務申報表 / W8BEN", required: true, singleFile: true },
 ];
 
