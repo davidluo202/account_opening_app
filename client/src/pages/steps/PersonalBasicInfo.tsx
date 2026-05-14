@@ -16,11 +16,32 @@ const countries = [
   "中国", "香港", "澳门", "台湾", "美国", "加拿大", "英国", "澳大利亚", "新加坡", "日本", "韩国", "other"
 ];
 
+type HolderInfo = {
+  chineseName: string;
+  englishName: string;
+  gender: "male" | "female" | "other";
+  dateOfBirth: string;
+  placeOfBirth: string;
+  nationality: string;
+  otherNationality: string;
+};
+
+const emptyHolder: HolderInfo = {
+  chineseName: "", englishName: "", gender: "male", dateOfBirth: "", placeOfBirth: "", nationality: "", otherNationality: "",
+};
+
 export default function PersonalBasicInfo() {
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
   const showReturnToPreview = useReturnToPreview();
+
+  // Check if joint account
+  const { data: accountSelection } = trpc.accountSelection.get.useQuery(
+    { applicationId },
+    { enabled: !!applicationId }
+  );
+  const isJoint = accountSelection?.customerType === 'joint';
 
   const [formData, setFormData] = useState({
     chineseName: "",
@@ -31,6 +52,10 @@ export default function PersonalBasicInfo() {
     nationality: "",
     otherNationality: "",
   });
+
+  // Joint account: second holder and additional holders
+  const [secondHolder, setSecondHolder] = useState<HolderInfo>({ ...emptyHolder });
+  const [additionalHolders, setAdditionalHolders] = useState<HolderInfo[]>([]);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -232,6 +257,9 @@ export default function PersonalBasicInfo() {
             ) : null}
           </div>
         )}
+        {isJoint && (
+          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">賬戶主要持有人 / Primary Account Holder</h3>
+        )}
         <div className="grid md:grid-cols-2 gap-6">
           {/* 中文姓名 */}
           <div className="space-y-2">
@@ -412,6 +440,116 @@ export default function PersonalBasicInfo() {
               <p className="text-sm text-destructive">{errors.otherNationality}</p>
             )}
           </div>
+        )}
+        {/* 聯名賬戶：第二持有人 */}
+        {isJoint && (
+          <>
+            <h3 className="text-lg font-bold text-primary border-b pb-2 mt-8 mb-2">賬戶第二持有人 / Second Account Holder</h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label>中文姓名 <span className="text-destructive">*</span></Label>
+                <Input value={secondHolder.chineseName} onChange={(e) => setSecondHolder({ ...secondHolder, chineseName: e.target.value })}
+                  onBlur={() => setSecondHolder({ ...secondHolder, chineseName: convertToTraditional(secondHolder.chineseName) })}
+                  placeholder="請輸入中文姓名" />
+              </div>
+              <div className="space-y-2">
+                <Label>英文姓名 / English Name <span className="text-destructive">*</span></Label>
+                <Input value={secondHolder.englishName} onChange={(e) => setSecondHolder({ ...secondHolder, englishName: e.target.value })} placeholder="Enter English Name" />
+              </div>
+            </div>
+            <div className="grid md:grid-cols-2 gap-6 mt-4">
+              <div className="space-y-2">
+                <Label>性別 / Gender <span className="text-destructive">*</span></Label>
+                <Select value={secondHolder.gender} onValueChange={(v: any) => setSecondHolder({ ...secondHolder, gender: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="male">男 / Male</SelectItem>
+                    <SelectItem value="female">女 / Female</SelectItem>
+                    <SelectItem value="other">其他 / Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>出生日期 / Date of Birth <span className="text-destructive">*</span></Label>
+                <Input type="date" value={secondHolder.dateOfBirth} onChange={(e) => setSecondHolder({ ...secondHolder, dateOfBirth: e.target.value })} />
+              </div>
+            </div>
+            <div className="grid md:grid-cols-2 gap-6 mt-4">
+              <div className="space-y-2">
+                <Label>出生地 / Place of Birth <span className="text-destructive">*</span></Label>
+                <Input value={secondHolder.placeOfBirth} onChange={(e) => setSecondHolder({ ...secondHolder, placeOfBirth: e.target.value })}
+                  onBlur={() => setSecondHolder({ ...secondHolder, placeOfBirth: convertToTraditional(secondHolder.placeOfBirth) })}
+                  placeholder="請輸入出生地" />
+              </div>
+              <div className="space-y-2">
+                <Label>國籍 / Nationality <span className="text-destructive">*</span></Label>
+                <Select value={secondHolder.nationality} onValueChange={(v) => setSecondHolder({ ...secondHolder, nationality: v })}>
+                  <SelectTrigger><SelectValue placeholder="請選擇國籍" /></SelectTrigger>
+                  <SelectContent>
+                    {countries.map((c) => (<SelectItem key={c} value={c}>{c === "other" ? "其他 / Other" : c}</SelectItem>))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* 其他持有人 */}
+            {additionalHolders.map((holder, idx) => (
+              <div key={idx}>
+                <div className="flex items-center justify-between mt-8 mb-2 border-b pb-2">
+                  <h3 className="text-lg font-bold text-primary">其他持有人 #{idx + 1} / Additional Holder #{idx + 1}</h3>
+                  <button type="button" onClick={() => setAdditionalHolders(prev => prev.filter((_, i) => i !== idx))}
+                    className="text-sm text-destructive hover:underline">刪除</button>
+                </div>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label>中文姓名 <span className="text-destructive">*</span></Label>
+                    <Input value={holder.chineseName} onChange={(e) => { const arr = [...additionalHolders]; arr[idx] = { ...arr[idx], chineseName: e.target.value }; setAdditionalHolders(arr); }} placeholder="請輸入中文姓名" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>英文姓名 / English Name <span className="text-destructive">*</span></Label>
+                    <Input value={holder.englishName} onChange={(e) => { const arr = [...additionalHolders]; arr[idx] = { ...arr[idx], englishName: e.target.value }; setAdditionalHolders(arr); }} placeholder="Enter English Name" />
+                  </div>
+                </div>
+                <div className="grid md:grid-cols-2 gap-6 mt-4">
+                  <div className="space-y-2">
+                    <Label>性別 / Gender <span className="text-destructive">*</span></Label>
+                    <Select value={holder.gender} onValueChange={(v: any) => { const arr = [...additionalHolders]; arr[idx] = { ...arr[idx], gender: v }; setAdditionalHolders(arr); }}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="male">男 / Male</SelectItem>
+                        <SelectItem value="female">女 / Female</SelectItem>
+                        <SelectItem value="other">其他 / Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>出生日期 / Date of Birth <span className="text-destructive">*</span></Label>
+                    <Input type="date" value={holder.dateOfBirth} onChange={(e) => { const arr = [...additionalHolders]; arr[idx] = { ...arr[idx], dateOfBirth: e.target.value }; setAdditionalHolders(arr); }} />
+                  </div>
+                </div>
+                <div className="grid md:grid-cols-2 gap-6 mt-4">
+                  <div className="space-y-2">
+                    <Label>出生地 / Place of Birth <span className="text-destructive">*</span></Label>
+                    <Input value={holder.placeOfBirth} onChange={(e) => { const arr = [...additionalHolders]; arr[idx] = { ...arr[idx], placeOfBirth: e.target.value }; setAdditionalHolders(arr); }} placeholder="請輸入出生地" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>國籍 / Nationality <span className="text-destructive">*</span></Label>
+                    <Select value={holder.nationality} onValueChange={(v) => { const arr = [...additionalHolders]; arr[idx] = { ...arr[idx], nationality: v }; setAdditionalHolders(arr); }}>
+                      <SelectTrigger><SelectValue placeholder="請選擇國籍" /></SelectTrigger>
+                      <SelectContent>
+                        {countries.map((c) => (<SelectItem key={c} value={c}>{c === "other" ? "其他 / Other" : c}</SelectItem>))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            <button type="button" onClick={() => setAdditionalHolders(prev => [...prev, { ...emptyHolder }])}
+              className="mt-6 w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-primary hover:text-primary transition-colors">
+              + 新增其他持有人 / Add Additional Holder
+            </button>
+          </>
         )}
       </div>
     </ApplicationWizard>
