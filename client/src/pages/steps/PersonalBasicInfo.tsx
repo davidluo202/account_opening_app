@@ -175,6 +175,20 @@ export default function PersonalBasicInfo() {
       newErrors.otherNationality = "請輸入具體國籍";
     }
 
+    // 聯名賬戶：驗證第二持有人
+    if (isJoint) {
+      if (!secondHolder.chineseName.trim()) newErrors.secondChineseName = "請輸入第二持有人中文姓名";
+      if (!secondHolder.englishName.trim()) newErrors.secondEnglishName = "請輸入第二持有人英文姓名";
+      if (!secondHolder.dateOfBirth) {
+        newErrors.secondDateOfBirth = "請選擇第二持有人出生日期";
+      } else {
+        const ageResult = validateAge(secondHolder.dateOfBirth);
+        if (!ageResult.valid) newErrors.secondDateOfBirth = ageResult.message || '第二持有人年齡必須滿18周歲';
+      }
+      if (!secondHolder.placeOfBirth.trim()) newErrors.secondPlaceOfBirth = "請輸入第二持有人出生地";
+      if (!secondHolder.nationality) newErrors.secondNationality = "請選擇第二持有人國籍";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -450,11 +464,14 @@ export default function PersonalBasicInfo() {
                 <Label>中文姓名 <span className="text-destructive">*</span></Label>
                 <Input value={secondHolder.chineseName} onChange={(e) => setSecondHolder({ ...secondHolder, chineseName: e.target.value })}
                   onBlur={() => setSecondHolder({ ...secondHolder, chineseName: convertToTraditional(secondHolder.chineseName) })}
-                  placeholder="請輸入中文姓名" />
+                  placeholder="請輸入中文姓名" className={errors.secondChineseName ? "border-destructive" : ""} />
+                {errors.secondChineseName && <p className="text-sm text-destructive">{errors.secondChineseName}</p>}
               </div>
               <div className="space-y-2">
                 <Label>英文姓名 / English Name <span className="text-destructive">*</span></Label>
-                <Input value={secondHolder.englishName} onChange={(e) => setSecondHolder({ ...secondHolder, englishName: e.target.value })} placeholder="Enter English Name" />
+                <Input value={secondHolder.englishName} onChange={(e) => setSecondHolder({ ...secondHolder, englishName: e.target.value })}
+                  placeholder="Enter English Name" className={errors.secondEnglishName ? "border-destructive" : ""} />
+                {errors.secondEnglishName && <p className="text-sm text-destructive">{errors.secondEnglishName}</p>}
               </div>
             </div>
             <div className="grid md:grid-cols-2 gap-6 mt-4">
@@ -471,7 +488,9 @@ export default function PersonalBasicInfo() {
               </div>
               <div className="space-y-2">
                 <Label>出生日期 / Date of Birth <span className="text-destructive">*</span></Label>
-                <Input type="date" value={secondHolder.dateOfBirth} onChange={(e) => setSecondHolder({ ...secondHolder, dateOfBirth: e.target.value })} />
+                <Input type="date" value={secondHolder.dateOfBirth} onChange={(e) => setSecondHolder({ ...secondHolder, dateOfBirth: e.target.value })}
+                  className={errors.secondDateOfBirth ? "border-destructive" : ""} />
+                {errors.secondDateOfBirth && <p className="text-sm text-destructive">{errors.secondDateOfBirth}</p>}
               </div>
             </div>
             <div className="grid md:grid-cols-2 gap-6 mt-4">
@@ -479,16 +498,18 @@ export default function PersonalBasicInfo() {
                 <Label>出生地 / Place of Birth <span className="text-destructive">*</span></Label>
                 <Input value={secondHolder.placeOfBirth} onChange={(e) => setSecondHolder({ ...secondHolder, placeOfBirth: e.target.value })}
                   onBlur={() => setSecondHolder({ ...secondHolder, placeOfBirth: convertToTraditional(secondHolder.placeOfBirth) })}
-                  placeholder="請輸入出生地" />
+                  placeholder="請輸入出生地" className={errors.secondPlaceOfBirth ? "border-destructive" : ""} />
+                {errors.secondPlaceOfBirth && <p className="text-sm text-destructive">{errors.secondPlaceOfBirth}</p>}
               </div>
               <div className="space-y-2">
                 <Label>國籍 / Nationality <span className="text-destructive">*</span></Label>
                 <Select value={secondHolder.nationality} onValueChange={(v) => setSecondHolder({ ...secondHolder, nationality: v })}>
-                  <SelectTrigger><SelectValue placeholder="請選擇國籍" /></SelectTrigger>
+                  <SelectTrigger className={errors.secondNationality ? "border-destructive" : ""}><SelectValue placeholder="請選擇國籍" /></SelectTrigger>
                   <SelectContent>
                     {countries.map((c) => (<SelectItem key={c} value={c}>{c === "other" ? "其他 / Other" : c}</SelectItem>))}
                   </SelectContent>
                 </Select>
+                {errors.secondNationality && <p className="text-sm text-destructive">{errors.secondNationality}</p>}
               </div>
             </div>
 
