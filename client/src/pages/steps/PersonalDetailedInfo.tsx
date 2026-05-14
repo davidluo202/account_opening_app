@@ -403,11 +403,16 @@ export default function PersonalDetailedInfo() {
               id="idNumber"
               value={formData.idNumber}
               onChange={(e) => {
-                const val = e.target.value.replace(/（/g, '(').replace(/）/g, ')').toUpperCase();
+                let val = e.target.value.replace(/（/g, '(').replace(/）/g, ')').toUpperCase();
+                // 大陸身份證只允許數字和X，最多18位
+                if (formData.idType === 'mainland_id') {
+                  val = val.replace(/[^\dX]/g, '').slice(0, 18);
+                }
                 setFormData({ ...formData, idNumber: val });
                 if (errors.idNumber) setErrors({ ...errors, idNumber: "" });
               }}
-              placeholder="請輸入證件號碼"
+              placeholder={formData.idType === 'mainland_id' ? '請輸入18位身份證號碼' : '請輸入證件號碼'}
+              maxLength={formData.idType === 'mainland_id' ? 18 : undefined}
               className={errors.idNumber ? "border-destructive" : ""}
             />
             {errors.idNumber && <p className="text-sm text-destructive">{errors.idNumber}</p>}
