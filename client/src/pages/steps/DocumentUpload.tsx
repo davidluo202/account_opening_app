@@ -212,7 +212,10 @@ const handleNext = () => {
                     )}
                     {getUploadedDocuments(docType.value).length > 0 && (
                       <div className="mt-2 space-y-1">
-                        {getUploadedDocuments(docType.value).map((doc, idx) => (
+                        {((docType as any).singleFile
+                          ? [getUploadedDocuments(docType.value)[getUploadedDocuments(docType.value).length - 1]]
+                          : getUploadedDocuments(docType.value)
+                        ).map((doc, idx) => (
                           <div key={idx} className="flex items-center gap-2 text-sm text-muted-foreground">
                             <CheckCircle2 className="h-4 w-4 text-green-600" />
                             <span>{doc.fileName}</span>
