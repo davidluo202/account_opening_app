@@ -111,6 +111,35 @@ export default function RiskQuestionnaire() {
     }
   );
   const isCorporate = accountSelection?.customerType === 'corporate';
+  const isJoint = accountSelection?.customerType === 'joint';
+
+  // Joint account: second holder risk questionnaire
+  const [secondFormData, setSecondFormData] = useState<FormData>({
+    q1_current_investments: [],
+    q2_investment_period: "",
+    q3_price_volatility: "",
+    q4_investment_percentage: "",
+    q5_investment_attitude: "",
+    q6_derivatives_knowledge: [],
+    q7_age_group: "",
+    q8_education_level: "",
+    q9_investment_knowledge_sources: [],
+    q10_liquidity_needs: "",
+    totalScore: 0,
+    riskLevel: "",
+    riskDescription: "",
+  });
+
+  const handleSecondCheckboxChange = (field: keyof FormData, value: string, checked: boolean) => {
+    setSecondFormData(prev => {
+      const currentArray = prev[field] as string[];
+      if (checked) {
+        return { ...prev, [field]: [...currentArray, value] };
+      } else {
+        return { ...prev, [field]: currentArray.filter(item => item !== value) };
+      }
+    });
+  };
 
   useEffect(() => {
     if (savedData) {
@@ -999,6 +1028,9 @@ export default function RiskQuestionnaire() {
       <p className="text-sm text-muted-foreground mb-6">
         請根據您的實際情況填寫以下問卷，以評估您的風險承受能力
       </p>
+      {isJoint && (
+        <h3 className="text-lg font-bold text-primary border-b pb-2 mb-4">賬戶主要持有人 / Primary Account Holder</h3>
+      )}
       <CardContent className="space-y-8">
         {/* PART 1: 適用於全部客戶 */}
         <div className="space-y-6">
@@ -1518,6 +1550,310 @@ export default function RiskQuestionnaire() {
           </div>
         )}
       </CardContent>
+
+      {/* 聯名賬戶：第二持有人 */}
+      {isJoint && (
+        <>
+          <h3 className="text-lg font-bold text-primary border-b pb-2 mt-8 mb-4">賬戶第二持有人 / Second Account Holder</h3>
+          <CardContent className="space-y-8">
+            {/* PART 1 */}
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold border-b pb-2">PART 1</h3>
+
+              {/* Q1 */}
+              <div className="space-y-3">
+                <Label className="text-base font-medium block">
+                  Q1. 您/貴公司現在是否持有以下任何投資產品？(您/貴公司可選擇多於一項)*
+                </Label>
+                <div className="space-y-2 pl-4">
+                  <div className="flex items-start space-x-2">
+                    <Checkbox id="sq1-savings" checked={secondFormData.q1_current_investments.includes("savings")}
+                      onCheckedChange={(checked) => handleSecondCheckboxChange("q1_current_investments", "savings", checked as boolean)} />
+                    <label htmlFor="sq1-savings" className="text-sm">
+                      <span className="block">儲蓄/定期儲蓄/存款證/保本產品</span>
+                      <span className="block text-xs text-muted-foreground">Savings/Fixed Deposits/Certificate of Deposits/Capital Protected Products</span>
+                    </label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <Checkbox id="sq1-bonds" checked={secondFormData.q1_current_investments.includes("bonds")}
+                      onCheckedChange={(checked) => handleSecondCheckboxChange("q1_current_investments", "bonds", checked as boolean)} />
+                    <label htmlFor="sq1-bonds" className="text-sm">
+                      <span className="block">債券/證券/單位信託基金/投資相連保險計劃</span>
+                      <span className="block text-xs text-muted-foreground">Bonds/Stocks/Unit Trusts/Investment-Linked Insurance Plans</span>
+                    </label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <Checkbox id="sq1-derivatives" checked={secondFormData.q1_current_investments.includes("derivatives")}
+                      onCheckedChange={(checked) => handleSecondCheckboxChange("q1_current_investments", "derivatives", checked as boolean)} />
+                    <label htmlFor="sq1-derivatives" className="text-sm">
+                      <span className="block">期貨/期權/衍生產品/結構性投資產品/掛鈎存款/槓桿式外匯投資</span>
+                      <span className="block text-xs text-muted-foreground">Futures/Options/Derivatives/Structured investment products/Linked Deposits/Leveraged FX Trading</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Q2 */}
+              <div className="space-y-3">
+                <Label className="text-base font-medium block">Q2. 當投資於投資產品時，預期投資年期是多少？*</Label>
+                <RadioGroup value={secondFormData.q2_investment_period}
+                  onValueChange={(value) => setSecondFormData(prev => ({ ...prev, q2_investment_period: value }))}
+                  className="space-y-2 pl-4">
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="less_than_1" id="sq2-less-than-1" />
+                    <label htmlFor="sq2-less-than-1" className="text-sm">沒有或少於1年</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="1_to_3" id="sq2-1-to-3" />
+                    <label htmlFor="sq2-1-to-3" className="text-sm">1-3年</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="more_than_3" id="sq2-more-than-3" />
+                    <label htmlFor="sq2-more-than-3" className="text-sm">多於3年</label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              {/* Q3 */}
+              <div className="space-y-3">
+                <Label className="text-base font-medium block">Q3. 一般而言，預期愈高回報，亦會涉及較高的價格波幅。您可以接受以下哪個年度價格波幅？*</Label>
+                <RadioGroup value={secondFormData.q3_price_volatility}
+                  onValueChange={(value) => setSecondFormData(prev => ({ ...prev, q3_price_volatility: value }))}
+                  className="space-y-2 pl-4">
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="10_percent" id="sq3-10-percent" />
+                    <label htmlFor="sq3-10-percent" className="text-sm">價格波幅介乎-10%至+10%</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="20_percent" id="sq3-20-percent" />
+                    <label htmlFor="sq3-20-percent" className="text-sm">價格波幅介乎-20%至+20%</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="30_percent" id="sq3-30-percent" />
+                    <label htmlFor="sq3-30-percent" className="text-sm">價格波幅多於-30%至多於+30%</label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              {/* Q4 */}
+              <div className="space-y-3">
+                <Label className="text-base font-medium block">Q4. 在現時資產淨值中(撇除自住物業價值)，有多少個百分比可作投資用途？*</Label>
+                <RadioGroup value={secondFormData.q4_investment_percentage}
+                  onValueChange={(value) => setSecondFormData(prev => ({ ...prev, q4_investment_percentage: value }))}
+                  className="space-y-2 pl-4">
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="less_than_10" id="sq4-less-than-10" />
+                    <label htmlFor="sq4-less-than-10" className="text-sm">少於10%</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="10_to_20" id="sq4-10-to-20" />
+                    <label htmlFor="sq4-10-to-20" className="text-sm">介乎10%至20%</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="21_to_30" id="sq4-21-to-30" />
+                    <label htmlFor="sq4-21-to-30" className="text-sm">介乎21%至30%</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="31_to_50" id="sq4-31-to-50" />
+                    <label htmlFor="sq4-31-to-50" className="text-sm">介乎31%至50%</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="more_than_50" id="sq4-more-than-50" />
+                    <label htmlFor="sq4-more-than-50" className="text-sm">多於50%</label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              {/* Q5 */}
+              <div className="space-y-3">
+                <Label className="text-base font-medium block">Q5. 以下哪一句子最能貼切描述您對金融投資的一般態度？*</Label>
+                <RadioGroup value={secondFormData.q5_investment_attitude}
+                  onValueChange={(value) => setSecondFormData(prev => ({ ...prev, q5_investment_attitude: value }))}
+                  className="space-y-2 pl-4">
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="no_volatility" id="sq5-no-volatility" />
+                    <label htmlFor="sq5-no-volatility" className="text-sm">不能接受任何價格波動</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="small_volatility" id="sq5-small-volatility" />
+                    <label htmlFor="sq5-small-volatility" className="text-sm">只能接受較小幅度的價格波動</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="some_volatility" id="sq5-some-volatility" />
+                    <label htmlFor="sq5-some-volatility" className="text-sm">可接受若干價格波幅</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="large_volatility" id="sq5-large-volatility" />
+                    <label htmlFor="sq5-large-volatility" className="text-sm">可接受大幅度的價格波動</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="any_volatility" id="sq5-any-volatility" />
+                    <label htmlFor="sq5-any-volatility" className="text-sm">可接受任何幅度的價格波動</label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              {/* Q6 */}
+              <div className="space-y-3">
+                <Label className="text-base font-medium block">Q6. 您對衍生工具產品的認識。(可選擇多於一項)*</Label>
+                <div className="space-y-2 pl-4">
+                  <div className="flex items-start space-x-2">
+                    <Checkbox id="sq6-training" checked={secondFormData.q6_derivatives_knowledge.includes("training")}
+                      onCheckedChange={(checked) => handleSecondCheckboxChange("q6_derivatives_knowledge", "training", checked as boolean)} />
+                    <label htmlFor="sq6-training" className="text-sm">曾接受有關衍生產品的培訓或修讀相關課程</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <Checkbox id="sq6-experience" checked={secondFormData.q6_derivatives_knowledge.includes("experience")}
+                      onCheckedChange={(checked) => handleSecondCheckboxChange("q6_derivatives_knowledge", "experience", checked as boolean)} />
+                    <label htmlFor="sq6-experience" className="text-sm">現時或過去擁有與衍生產品有關的工作經驗</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <Checkbox id="sq6-transactions" checked={secondFormData.q6_derivatives_knowledge.includes("transactions")}
+                      onCheckedChange={(checked) => handleSecondCheckboxChange("q6_derivatives_knowledge", "transactions", checked as boolean)} />
+                    <label htmlFor="sq6-transactions" className="text-sm">過往3年曾執行5次或以上有關衍生產品的交易</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <Checkbox id="sq6-no-knowledge" checked={secondFormData.q6_derivatives_knowledge.includes("no_knowledge")}
+                      onCheckedChange={(checked) => handleSecondCheckboxChange("q6_derivatives_knowledge", "no_knowledge", checked as boolean)} />
+                    <label htmlFor="sq6-no-knowledge" className="text-sm">沒有衍生工具之認識</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* PART 2 */}
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold border-b pb-2">PART 2: 適用於個人/聯名客戶</h3>
+
+              {/* Q7 */}
+              <div className="space-y-3">
+                <Label className="text-base font-medium">Q7. 您屬於以下哪個年齡組別？*</Label>
+                <RadioGroup value={secondFormData.q7_age_group}
+                  onValueChange={(value) => setSecondFormData(prev => ({ ...prev, q7_age_group: value }))}
+                  className="space-y-2 pl-4">
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="age_18_25" id="sq7-age-18-25" />
+                    <label htmlFor="sq7-age-18-25" className="text-sm">介乎18至25歲</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="age_26_35" id="sq7-age-26-35" />
+                    <label htmlFor="sq7-age-26-35" className="text-sm">介乎26至35歲</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="age_36_50" id="sq7-age-36-50" />
+                    <label htmlFor="sq7-age-36-50" className="text-sm">介乎36至50歲</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="age_51_64" id="sq7-age-51-64" />
+                    <label htmlFor="sq7-age-51-64" className="text-sm">介乎51至64歲</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="age_65_plus" id="sq7-age-65-plus" />
+                    <label htmlFor="sq7-age-65-plus" className="text-sm">65歲或以上</label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              {/* Q8 */}
+              <div className="space-y-3">
+                <Label className="text-base font-medium">Q8. 您的教育程度是？*</Label>
+                <RadioGroup value={secondFormData.q8_education_level}
+                  onValueChange={(value) => setSecondFormData(prev => ({ ...prev, q8_education_level: value }))}
+                  className="space-y-2 pl-4">
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="primary_or_below" id="sq8-primary" />
+                    <label htmlFor="sq8-primary" className="text-sm">小學或以下</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="secondary" id="sq8-secondary" />
+                    <label htmlFor="sq8-secondary" className="text-sm">中學</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="post_secondary" id="sq8-post-secondary" />
+                    <label htmlFor="sq8-post-secondary" className="text-sm">大專或以上</label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              {/* Q9 */}
+              <div className="space-y-3">
+                <Label className="text-base font-medium">Q9. 您曾經或現時從以下哪些途徑獲取投資知識？*</Label>
+                <div className="space-y-2 pl-4">
+                  <div className="flex items-start space-x-2">
+                    <Checkbox id="sq9-never" checked={secondFormData.q9_investment_knowledge_sources.includes("never")}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setSecondFormData(prev => ({ ...prev, q9_investment_knowledge_sources: ["never"] }));
+                        } else {
+                          setSecondFormData(prev => ({ ...prev, q9_investment_knowledge_sources: prev.q9_investment_knowledge_sources.filter(v => v !== "never") }));
+                        }
+                      }} />
+                    <label htmlFor="sq9-never" className="text-sm">從未獲取及/或沒有興趣獲取任何投資知識</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <Checkbox id="sq9-relatives" checked={secondFormData.q9_investment_knowledge_sources.includes("relatives")}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setSecondFormData(prev => ({ ...prev, q9_investment_knowledge_sources: prev.q9_investment_knowledge_sources.filter(v => v !== "never").concat("relatives") }));
+                        } else {
+                          setSecondFormData(prev => ({ ...prev, q9_investment_knowledge_sources: prev.q9_investment_knowledge_sources.filter(v => v !== "relatives") }));
+                        }
+                      }} />
+                    <label htmlFor="sq9-relatives" className="text-sm">與親友及/或同事討論投資或理財話題</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <Checkbox id="sq9-media" checked={secondFormData.q9_investment_knowledge_sources.includes("media")}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setSecondFormData(prev => ({ ...prev, q9_investment_knowledge_sources: prev.q9_investment_knowledge_sources.filter(v => v !== "never").concat("media") }));
+                        } else {
+                          setSecondFormData(prev => ({ ...prev, q9_investment_knowledge_sources: prev.q9_investment_knowledge_sources.filter(v => v !== "media") }));
+                        }
+                      }} />
+                    <label htmlFor="sq9-media" className="text-sm">閱讀及/或收聽有關投資或財經新聞</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <Checkbox id="sq9-courses" checked={secondFormData.q9_investment_knowledge_sources.includes("courses")}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setSecondFormData(prev => ({ ...prev, q9_investment_knowledge_sources: prev.q9_investment_knowledge_sources.filter(v => v !== "never").concat("courses") }));
+                        } else {
+                          setSecondFormData(prev => ({ ...prev, q9_investment_knowledge_sources: prev.q9_investment_knowledge_sources.filter(v => v !== "courses") }));
+                        }
+                      }} />
+                    <label htmlFor="sq9-courses" className="text-sm">研究投資或財務相關事宜，或參加投資或財務相關課程</label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Q10 */}
+              <div className="space-y-3">
+                <Label className="text-base font-medium">Q10. 您需要將多少投資兌現，以滿足突發事件的流動資金需求？*</Label>
+                <RadioGroup value={secondFormData.q10_liquidity_needs}
+                  onValueChange={(value) => setSecondFormData(prev => ({ ...prev, q10_liquidity_needs: value }))}
+                  className="space-y-2 pl-4">
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="no_sell" id="sq10-no-sell" />
+                    <label htmlFor="sq10-no-sell" className="text-sm">不需要出售任何投資</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="sell_less_30" id="sq10-sell-less-30" />
+                    <label htmlFor="sq10-sell-less-30" className="text-sm">出售不超過30%的投資</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="sell_30_50" id="sq10-sell-30-50" />
+                    <label htmlFor="sq10-sell-30-50" className="text-sm">出售超過30%但不到50%的投資</label>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="sell_more_50" id="sq10-sell-more-50" />
+                    <label htmlFor="sq10-sell-more-50" className="text-sm">出售超過50%的投資</label>
+                  </div>
+                </RadioGroup>
+              </div>
+            </div>
+          </CardContent>
+        </>
+      )}
     </div>
   );
 

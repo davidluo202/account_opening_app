@@ -41,12 +41,29 @@ export default function EmploymentDetails() {
   const applicationId = parseInt(params.id || "0");
   const showReturnToPreview = useReturnToPreview();
 
+  // Check if joint account
+  const { data: accountSelection } = trpc.accountSelection.get.useQuery(
+    { applicationId },
+    { enabled: !!applicationId }
+  );
+  const isJoint = accountSelection?.customerType === 'joint';
+
   const [selectedIncomeSources, setSelectedIncomeSources] = useState<string[]>([]);
   const [incomeSourceOther, setIncomeSourceOther] = useState("");
   const [formData, setFormData] = useState({
     incomeSource: "",
     annualIncome: "",
     liquidAsset: "", // 流動資產（必填）
+    netWorth: "",
+  });
+
+  // Joint account: second holder
+  const [secondSelectedIncomeSources, setSecondSelectedIncomeSources] = useState<string[]>([]);
+  const [secondIncomeSourceOther, setSecondIncomeSourceOther] = useState("");
+  const [secondHolder, setSecondHolder] = useState({
+    incomeSource: "",
+    annualIncome: "",
+    liquidAsset: "",
     netWorth: "",
   });
 
@@ -120,6 +137,21 @@ export default function EmploymentDetails() {
     setFormData((fd) => ({ ...fd, incomeSource: combined }));
   };
 
+  const handleSecondIncomeSourceToggle = (value: string) => {
+    setSecondSelectedIncomeSources((prev) => {
+      const next = prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value];
+      const combined = buildIncomeSourceValue(next, secondIncomeSourceOther);
+      setSecondHolder((fd) => ({ ...fd, incomeSource: combined }));
+      return next;
+    });
+  };
+
+  const handleSecondOtherTextChange = (text: string) => {
+    setSecondIncomeSourceOther(text);
+    const combined = buildIncomeSourceValue(secondSelectedIncomeSources, text);
+    setSecondHolder((fd) => ({ ...fd, incomeSource: combined }));
+  };
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -184,6 +216,10 @@ const handleSave = () => {
             <strong>提示：</strong>所有金額幣種為港幣（HKD）
           </p>
         </div>
+
+        {isJoint && (
+          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">賬戶主要持有人 / Primary Account Holder</h3>
+        )}
 
         {/* 收入來源 */}
         <div className="space-y-2">
@@ -296,6 +332,112 @@ const handleSave = () => {
           </Select>
           {errors.netWorth && <p className="text-sm text-destructive">{errors.netWorth}</p>}
         </div>
+
+        {/* 聯名賬戶：第二持有人 */}
+        {isJoint && (
+          <>
+            <h3 className="text-lg font-bold text-primary border-b pb-2 mt-8 mb-2">賬戶第二持有人 / Second Account Holder</h3>
+
+            {/* 收入來源 */}
+            <div className="space-y-2">
+              <Label>
+                收入來源 / Income Source <span className="text-destructive">*</span>
+              </Label>
+              <p className="text-sm text-muted-foreground">可多選</p>
+              <div className="space-y-3 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                {incomeSources.map((source) => (
+                  <div key={source.value}>
+                    <div className="flex items-center space-x-3">
+                      <Checkbox
+                        id={`second-income-${source.value}`}
+                        checked={secondSelectedIncomeSources.includes(source.value)}
+                        onCheckedChange={() => handleSecondIncomeSourceToggle(source.value)}
+                        className="h-5 w-5 border-2 border-slate-400 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                      />
+                      <Label htmlFor={`second-income-${source.value}`} className="cursor-pointer font-normal">
+                        {source.label}
+                      </Label>
+                      {source.value === "other" && secondSelectedIncomeSources.includes("other") && (
+                        <Input
+                          value={secondIncomeSourceOther}
+                          onChange={(e) => handleSecondOtherTextChange(e.target.value)}
+                          placeholder="請填寫詳情"
+                          className="ml-2 h-8 w-48 text-sm"
+                        />
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 年收入範圍 */}
+            <div className="space-y-2">
+              <Label>
+                年收入範圍 / Annual Income Range <span className="text-destructive">*</span>
+              </Label>
+              <Select
+                value={secondHolder.annualIncome}
+                onValueChange={(v) => setSecondHolder({ ...secondHolder, annualIncome: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="請選擇年收入範圍" />
+                </SelectTrigger>
+                <SelectContent>
+                  {annualIncomeRanges.map((range) => (
+                    <SelectItem key={range.value} value={range.value}>
+                      {range.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* 流動資產範圍 */}
+            <div className="space-y-2">
+              <Label>
+                流動資產範圍 / Liquid Asset Range (HK$) <span className="text-destructive">*</span>
+              </Label>
+              <Select
+                value={secondHolder.liquidAsset}
+                onValueChange={(v) => setSecondHolder({ ...secondHolder, liquidAsset: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="請選擇流動資產範圍" />
+                </SelectTrigger>
+                <SelectContent>
+                  {netWorthRanges.map((range) => (
+                    <SelectItem key={range.value} value={range.value}>
+                      {range.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* 淨資產範圍 */}
+            <div className="space-y-2">
+              <Label>
+                淨資產範圍 / Net Worth Range <span className="text-destructive">*</span>
+              </Label>
+              <Select
+                value={secondHolder.netWorth}
+                onValueChange={(v) => setSecondHolder({ ...secondHolder, netWorth: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="請選擇淨資產範圍" />
+                </SelectTrigger>
+                <SelectContent>
+                  {netWorthRanges.map((range) => (
+                    <SelectItem key={range.value} value={range.value}>
+                      {range.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </>
+        )}
       </div>
     </ApplicationWizard>
   );

@@ -15,11 +15,26 @@ export default function TaxInfo() {
   const stepNum = parseInt(params.step || "10");
   const showReturnToPreview = useReturnToPreview();
 
+  // Check if joint account
+  const { data: accountSelection } = trpc.accountSelection.get.useQuery(
+    { applicationId },
+    { enabled: !!applicationId }
+  );
+  const isJoint = accountSelection?.customerType === 'joint';
+
   const [formData, setFormData] = useState({
     taxResidency: "",
     taxIdNumber: "",
     noTaxId: false, // 沒有稅務編號
     noTaxIdReason: "", // 沒有稅務編號的理由
+  });
+
+  // Joint account: second holder
+  const [secondHolder, setSecondHolder] = useState({
+    taxResidency: "",
+    taxIdNumber: "",
+    noTaxId: false,
+    noTaxIdReason: "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -153,6 +168,10 @@ const handleSave = () => {
           </p>
         </div>
 
+        {isJoint && (
+          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">賬戶主要持有人 / Primary Account Holder</h3>
+        )}
+
         {/* 稅務居住地 */}
         <div className="space-y-2">
           <Label htmlFor="taxResidency">
@@ -226,6 +245,63 @@ const handleSave = () => {
             </div>
           )}
         </div>
+
+        {/* 聯名賬戶：第二持有人 */}
+        {isJoint && (
+          <>
+            <h3 className="text-lg font-bold text-primary border-b pb-2 mt-8 mb-2">賬戶第二持有人 / Second Account Holder</h3>
+
+            {/* 稅務居住地 */}
+            <div className="space-y-2">
+              <Label>
+                居留司法管轄區 / Jurisdiction(s) of Residence <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                value={secondHolder.taxResidency}
+                onChange={(e) => setSecondHolder({ ...secondHolder, taxResidency: e.target.value })}
+                placeholder="請輸入居留司法管轄區"
+              />
+            </div>
+
+            {/* 稅務識別號 */}
+            <div className="space-y-2">
+              <Label>
+                稅務識別號 / Tax Identification Number（"TIN"）<span className="text-destructive">*</span>
+              </Label>
+              <Input
+                value={secondHolder.taxIdNumber}
+                onChange={(e) => setSecondHolder({ ...secondHolder, taxIdNumber: e.target.value })}
+                placeholder="請輸入稅務識別號"
+              />
+            </div>
+
+            {/* 沒有稅務編號 */}
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="secondNoTaxId"
+                  checked={secondHolder.noTaxId}
+                  onChange={(e) => setSecondHolder({ ...secondHolder, noTaxId: e.target.checked, taxIdNumber: e.target.checked ? "" : secondHolder.taxIdNumber, noTaxIdReason: "" })}
+                  className="w-4 h-4"
+                />
+                <Label htmlFor="secondNoTaxId" className="cursor-pointer">沒有稅務識別號 / No TIN</Label>
+              </div>
+              {secondHolder.noTaxId && (
+                <div className="space-y-2">
+                  <Label>
+                    請說明理由 / Please provide reason <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    value={secondHolder.noTaxIdReason}
+                    onChange={(e) => setSecondHolder({ ...secondHolder, noTaxIdReason: e.target.value })}
+                    placeholder="請輸入理由"
+                  />
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </ApplicationWizard>
   );

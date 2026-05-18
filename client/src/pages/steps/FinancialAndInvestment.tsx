@@ -47,6 +47,10 @@ export default function FinancialAndInvestment() {
   const [investmentObjectives, setInvestmentObjectives] = useState<string[]>([]);
   const [investmentExperience, setInvestmentExperience] = useState<Record<string, string>>({});
 
+  // Joint account: second holder
+  const [secondInvestmentObjectives, setSecondInvestmentObjectives] = useState<string[]>([]);
+  const [secondInvestmentExperience, setSecondInvestmentExperience] = useState<Record<string, string>>({});
+
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const { data: existingData, isLoading: isLoadingData } = trpc.financial.get.useQuery(
@@ -58,6 +62,7 @@ export default function FinancialAndInvestment() {
     { applicationId },
     { enabled: !!applicationId }
   );
+  const isJoint = accountSelection?.customerType === 'joint';
 
   const saveMutation = trpc.financial.save.useMutation({
     onSuccess: (result) => {
@@ -117,6 +122,19 @@ export default function FinancialAndInvestment() {
     if (errors.investmentExperience) {
       setErrors({ ...errors, investmentExperience: "" });
     }
+  };
+
+  const handleSecondObjectiveToggle = (value: string) => {
+    setSecondInvestmentObjectives(prev =>
+      prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
+    );
+  };
+
+  const handleSecondExperienceChange = (product: string, level: string) => {
+    setSecondInvestmentExperience(prev => ({
+      ...prev,
+      [product]: level,
+    }));
   };
 
   const validateForm = () => {
@@ -192,6 +210,10 @@ export default function FinancialAndInvestment() {
       showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-8">
+        {isJoint && (
+          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">賬戶主要持有人 / Primary Account Holder</h3>
+        )}
+
         {/* 投資目的 */}
         <div className="space-y-4">
           <div>
@@ -255,6 +277,69 @@ export default function FinancialAndInvestment() {
           )}
         </div>
 
+        {/* 聯名賬戶：第二持有人 */}
+        {isJoint && (
+          <>
+            <h3 className="text-lg font-bold text-primary border-b pb-2 mt-8 mb-2">賬戶第二持有人 / Second Account Holder</h3>
+
+            {/* 投資目的 */}
+            <div className="space-y-4">
+              <div>
+                <Label className="text-base">
+                  投資目的 / Investment Objectives <span className="text-destructive">*</span>
+                </Label>
+                <p className="text-sm text-muted-foreground mt-1">請至少選擇一項</p>
+              </div>
+              <div className="space-y-3 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                {investmentObjectiveOptions.map((option) => (
+                  <div key={option.value} className="flex items-center space-x-3">
+                    <Checkbox
+                      id={`second-${option.value}`}
+                      checked={secondInvestmentObjectives.includes(option.value)}
+                      onCheckedChange={() => handleSecondObjectiveToggle(option.value)}
+                      className="h-5 w-5 border-2 border-slate-400 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                    />
+                    <Label htmlFor={`second-${option.value}`} className="cursor-pointer font-normal">
+                      {option.label}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 投資經驗 */}
+            <div className="space-y-4">
+              <div>
+                <Label className="text-base font-semibold text-slate-800">
+                  投資經驗 / Investment Experience <span className="text-destructive">*</span>
+                </Label>
+                <p className="text-sm text-slate-600 mt-1">請至少填寫一項投資產品的經驗</p>
+              </div>
+              <div className="space-y-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                {investmentProducts.map((product) => (
+                  <div key={product.key} className="grid md:grid-cols-[200px_1fr] gap-4 items-center">
+                    <Label htmlFor={`second-${product.key}`} className="font-medium text-slate-700">{product.label}</Label>
+                    <Select
+                      value={secondInvestmentExperience[product.key] || ""}
+                      onValueChange={(v) => handleSecondExperienceChange(product.key, v)}
+                    >
+                      <SelectTrigger id={`second-${product.key}`} className="bg-white border-slate-300">
+                        <SelectValue placeholder="請選擇經驗年限" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {experienceLevels.map((level) => (
+                          <SelectItem key={level.value} value={level.value}>
+                            {level.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
 
       </div>
     </ApplicationWizard>

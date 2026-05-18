@@ -189,6 +189,32 @@ export default function BankAccount() {
   const stepNum = parseInt(params.step || "9");
   const showReturnToPreview = useReturnToPreview();
 
+  // Check if joint account
+  const { data: accountSelection } = trpc.accountSelection.get.useQuery(
+    { applicationId },
+    { enabled: !!applicationId }
+  );
+  const isJoint = accountSelection?.customerType === 'joint';
+
+  // Joint account: second holder bank accounts
+  const [secondHolderAccounts, setSecondHolderAccounts] = useState<Array<{
+    bankName: string;
+    swiftCode: string;
+    accountType: string;
+    accountCurrency: string;
+    accountNumber: string;
+    accountHolderName: string;
+  }>>([]);
+  const [isAddingSecond, setIsAddingSecond] = useState(false);
+  const [secondFormData, setSecondFormData] = useState({
+    bankName: "",
+    swiftCode: "",
+    accountType: "saving",
+    accountCurrency: "HKD",
+    accountNumber: "",
+    accountHolderName: "",
+  });
+
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [bankSearchQuery, setBankSearchQuery] = useState("");
@@ -403,6 +429,10 @@ const handleNext = () => {
       showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-6">
+        {isJoint && (
+          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">賬戶主要持有人 / Primary Account Holder</h3>
+        )}
+
         {/* 已添加的銀行賬戶列表 */}
         {bankAccounts && bankAccounts.length > 0 && (
           <div className="space-y-4">
@@ -720,6 +750,105 @@ const handleNext = () => {
           <div className="text-center py-8 text-muted-foreground">
             尚未添加銀行賬戶，請點擊上方按鈕添加
           </div>
+        )}
+
+        {/* 聯名賬戶：第二持有人 */}
+        {isJoint && (
+          <>
+            <h3 className="text-lg font-bold text-primary border-b pb-2 mt-8 mb-2">賬戶第二持有人 / Second Account Holder</h3>
+
+            {/* 已添加的第二持有人銀行賬戶 */}
+            {secondHolderAccounts.length > 0 && (
+              <div className="space-y-4">
+                <h4 className="font-semibold">已添加的銀行賬戶</h4>
+                {secondHolderAccounts.map((account, idx) => (
+                  <Card key={idx} className="p-4">
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-1">
+                        <div className="font-medium">{account.bankName}</div>
+                        <div className="text-sm text-muted-foreground">SWIFT Code: {account.swiftCode || '-'}</div>
+                        <div className="text-sm text-muted-foreground">賬戶號碼: {account.accountNumber}</div>
+                        <div className="text-sm text-muted-foreground">幣種: {account.accountCurrency}</div>
+                        <div className="text-sm text-muted-foreground">持有人: {account.accountHolderName}</div>
+                      </div>
+                      <Button variant="ghost" size="sm" onClick={() => {
+                        setSecondHolderAccounts(prev => prev.filter((_, i) => i !== idx));
+                      }} title="刪除">
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            {!isAddingSecond ? (
+              <Button variant="outline" className="w-full" onClick={() => setIsAddingSecond(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                添加第二持有人銀行賬戶
+              </Button>
+            ) : (
+              <Card className="p-6 space-y-6">
+                <div className="flex justify-between items-center">
+                  <h4 className="font-semibold">添加銀行賬戶</h4>
+                  <Button variant="ghost" size="sm" onClick={() => setIsAddingSecond(false)}>取消</Button>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>銀行名稱 / Bank Name <span className="text-destructive">*</span></Label>
+                  <Input value={secondFormData.bankName}
+                    onChange={(e) => setSecondFormData({ ...secondFormData, bankName: e.target.value })}
+                    placeholder="請輸入銀行名稱" />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>SWIFT 代碼 / SWIFT Code <span className="text-destructive">*</span></Label>
+                  <Input value={secondFormData.swiftCode}
+                    onChange={(e) => setSecondFormData({ ...secondFormData, swiftCode: e.target.value.toUpperCase() })}
+                    placeholder="請輸入SWIFT Code" maxLength={11} />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>賬戶幣種 / Currency <span className="text-destructive">*</span></Label>
+                  <Select value={secondFormData.accountCurrency}
+                    onValueChange={(v) => setSecondFormData({ ...secondFormData, accountCurrency: v })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {currencies.map((currency) => (
+                        <SelectItem key={currency.value} value={currency.value}>{currency.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>賬戶號碼 / Account Number <span className="text-destructive">*</span></Label>
+                  <Input value={secondFormData.accountNumber}
+                    onChange={(e) => setSecondFormData({ ...secondFormData, accountNumber: e.target.value })}
+                    placeholder="請輸入賬戶號碼" />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>賬戶持有人姓名 / Account Holder Name <span className="text-destructive">*</span></Label>
+                  <Input value={secondFormData.accountHolderName}
+                    onChange={(e) => setSecondFormData({ ...secondFormData, accountHolderName: e.target.value })}
+                    placeholder="Please enter account holder name" />
+                </div>
+
+                <Button className="w-full" onClick={() => {
+                  if (!secondFormData.bankName.trim() || !secondFormData.accountNumber.trim() || !secondFormData.accountHolderName.trim()) {
+                    toast.error("請填寫必填項");
+                    return;
+                  }
+                  setSecondHolderAccounts(prev => [...prev, { ...secondFormData }]);
+                  setSecondFormData({ bankName: "", swiftCode: "", accountType: "saving", accountCurrency: "HKD", accountNumber: "", accountHolderName: "" });
+                  setIsAddingSecond(false);
+                }}>
+                  保存銀行賬戶
+                </Button>
+              </Card>
+            )}
+          </>
         )}
       </div>
     </ApplicationWizard>

@@ -68,6 +68,13 @@ export default function PersonalDetailedInfo() {
   const showReturnToPreview = useReturnToPreview();
   const { user } = useAuth();
 
+  // Check if joint account
+  const { data: accountSelection } = trpc.accountSelection.get.useQuery(
+    { applicationId },
+    { enabled: !!applicationId }
+  );
+  const isJoint = accountSelection?.customerType === 'joint';
+
   // 獲取用戶基本信息（用於匹配身份證信息）
   const { data: basicInfo, error: basicInfoError } = trpc.personalBasic.get.useQuery(
     { applicationId },
@@ -106,6 +113,21 @@ export default function PersonalDetailedInfo() {
     billingAddressOther: "",
     // 賬單首選語言
     preferredLanguage: "chinese" as "chinese" | "english",
+  });
+
+  // Joint account: second holder
+  const [secondHolder, setSecondHolder] = useState({
+    idType: "",
+    idNumber: "",
+    idIssuingCountry: "",
+    idIssuingPlaceOther: "",
+    idExpiryDate: "",
+    idIsPermanent: false,
+    maritalStatus: "",
+    educationLevel: "",
+    mobileCountryCode: "+852",
+    mobileNumber: "",
+    residentialAddress: "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -367,6 +389,9 @@ export default function PersonalDetailedInfo() {
       showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-6">
+        {isJoint && (
+          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">賬戶主要持有人 / Primary Account Holder</h3>
+        )}
         {/* 身份證件類型 */}
         <div className="space-y-2">
           <Label htmlFor="idType">
@@ -776,6 +801,204 @@ export default function PersonalDetailedInfo() {
             </label>
           </div>
         </div>
+
+        {/* 聯名賬戶：第二持有人 */}
+        {isJoint && (
+          <>
+            <h3 className="text-lg font-bold text-primary border-b pb-2 mt-8 mb-2">賬戶第二持有人 / Second Account Holder</h3>
+            {/* 身份證件類型 */}
+            <div className="space-y-2">
+              <Label>
+                身份證件類型 / ID Type <span className="text-destructive">*</span>
+              </Label>
+              <Select
+                value={secondHolder.idType}
+                onValueChange={(v) => setSecondHolder({ ...secondHolder, idType: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="請選擇證件類型" />
+                </SelectTrigger>
+                <SelectContent>
+                  {idTypes.map((type) => (
+                    <SelectItem key={type.value} value={type.value}>
+                      {type.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* 證件號碼 */}
+              <div className="space-y-2">
+                <Label>
+                  證件號碼 / ID Number <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  value={secondHolder.idNumber}
+                  onChange={(e) => setSecondHolder({ ...secondHolder, idNumber: e.target.value.toUpperCase() })}
+                  placeholder="請輸入證件號碼"
+                />
+              </div>
+
+              {/* 證件簽發國家/地區 */}
+              <div className="space-y-2">
+                <Label>
+                  證件簽發國家/地區 / Issuing Country <span className="text-destructive">*</span>
+                </Label>
+                <Select
+                  value={secondHolder.idIssuingCountry}
+                  onValueChange={(v) => setSecondHolder({ ...secondHolder, idIssuingCountry: v, idIssuingPlaceOther: "" })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="請選擇國家/地區" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {idIssuingCountries.map((country) => (
+                      <SelectItem key={country.value} value={country.value}>
+                        {country.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {secondHolder.idIssuingCountry === "OTHER" && (
+                <div className="space-y-2">
+                  <Label>
+                    請輸入國家/地區 <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    value={secondHolder.idIssuingPlaceOther}
+                    onChange={(e) => setSecondHolder({ ...secondHolder, idIssuingPlaceOther: e.target.value })}
+                    placeholder="請輸入國家/地區"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* 證件有效期 */}
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2 mb-2">
+                <Checkbox
+                  id="secondIdIsPermanent"
+                  checked={secondHolder.idIsPermanent}
+                  onCheckedChange={(checked) => setSecondHolder({ ...secondHolder, idIsPermanent: checked as boolean, idExpiryDate: "" })}
+                />
+                <Label htmlFor="secondIdIsPermanent" className="cursor-pointer">
+                  證件長期有效 / Permanent
+                </Label>
+              </div>
+              {!secondHolder.idIsPermanent && (
+                <>
+                  <Label>
+                    證件有效期 / Expiry Date <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    type="date"
+                    value={secondHolder.idExpiryDate}
+                    onChange={(e) => setSecondHolder({ ...secondHolder, idExpiryDate: e.target.value })}
+                  />
+                </>
+              )}
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* 婚姻狀況 */}
+              <div className="space-y-2">
+                <Label>
+                  婚姻狀況 / Marital Status <span className="text-destructive">*</span>
+                </Label>
+                <Select
+                  value={secondHolder.maritalStatus}
+                  onValueChange={(v) => setSecondHolder({ ...secondHolder, maritalStatus: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="請選擇婚姻狀況" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {maritalStatuses.map((status) => (
+                      <SelectItem key={status.value} value={status.value}>
+                        {status.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* 學歷 */}
+              <div className="space-y-2">
+                <Label>
+                  學歷 / Education Level <span className="text-destructive">*</span>
+                </Label>
+                <Select
+                  value={secondHolder.educationLevel}
+                  onValueChange={(v) => setSecondHolder({ ...secondHolder, educationLevel: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="請選擇學歷" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {educationLevels.map((level) => (
+                      <SelectItem key={level.value} value={level.value}>
+                        {level.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* 手機號碼 */}
+            <div className="space-y-2">
+              <Label>
+                手機號碼 / Mobile Number <span className="text-destructive">*</span>
+              </Label>
+              <div className="flex gap-2">
+                <Select
+                  value={secondHolder.mobileCountryCode}
+                  onValueChange={(v) => setSecondHolder({ ...secondHolder, mobileCountryCode: v })}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {countryCodes.map((code) => (
+                      <SelectItem key={code.value} value={code.value}>
+                        {code.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input
+                  value={secondHolder.mobileNumber}
+                  onChange={(e) => setSecondHolder({ ...secondHolder, mobileNumber: e.target.value })}
+                  placeholder="請輸入手機號碼"
+                  className="flex-1"
+                />
+              </div>
+            </div>
+
+            {/* 住宅地址 */}
+            <div className="space-y-2">
+              <Label>
+                住宅地址 / Residential Address <span className="text-destructive">*</span>
+              </Label>
+              <Textarea
+                value={secondHolder.residentialAddress}
+                onChange={(e) => setSecondHolder({ ...secondHolder, residentialAddress: e.target.value })}
+                onBlur={() => {
+                  const converted = convertToTraditional(secondHolder.residentialAddress);
+                  if (converted !== secondHolder.residentialAddress) {
+                    setSecondHolder({ ...secondHolder, residentialAddress: converted });
+                  }
+                }}
+                placeholder="請輸入完整住宅地址"
+                rows={3}
+              />
+            </div>
+          </>
+        )}
       </div>
     </ApplicationWizard>
   );
