@@ -52,6 +52,22 @@ export default function OccupationInfo() {
     { enabled: !!applicationId }
   );
   const isCorporate = accountSelection?.customerType === 'corporate';
+  const isJoint = accountSelection?.customerType === 'joint';
+
+  const [secondFormData, setSecondFormData] = useState({
+    employmentStatus: "" as "employed" | "self_employed" | "retired" | "student" | "housewife" | "others" | "",
+    companyName: "",
+    position: "",
+    yearsOfService: "",
+    industry: "",
+    companyAddress: "",
+    officePhone: "",
+    officeFaxNo: "",
+    mobilePhone: "",
+    correspondenceAddress: "",
+  });
+  const secondNeedsEmploymentDetails = secondFormData.employmentStatus === "employed" || secondFormData.employmentStatus === "self_employed" || secondFormData.employmentStatus === "others";
+  const secondNeedsContactInfo = secondFormData.employmentStatus === "retired" || secondFormData.employmentStatus === "student" || secondFormData.employmentStatus === "housewife" || secondFormData.employmentStatus === "others";
 
   const { data: existingData, isLoading: isLoadingData } = trpc.occupation.get.useQuery(
     { applicationId },
@@ -243,6 +259,10 @@ const handleSave = () => {
               + 添加其他關聯人士
             </Button>
           </div>
+        )}
+
+        {isJoint && (
+          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">賬戶主要持有人 / Primary Account Holder</h3>
         )}
 
         {/* 就業狀況 */}
@@ -482,6 +502,85 @@ const handleSave = () => {
               {errors.correspondenceAddress && <p className="text-sm text-destructive">{errors.correspondenceAddress}</p>}
             </div>
           </div>
+        )}
+        {/* 第二持有人 */}
+        {isJoint && (
+          <>
+            <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2 mt-8">賬戶第二持有人 / Second Account Holder</h3>
+
+            <div className="space-y-2">
+              <Label>就業狀況 / Employment Status <span className="text-destructive">*</span></Label>
+              <Select value={secondFormData.employmentStatus} onValueChange={(v) => setSecondFormData({ ...secondFormData, employmentStatus: v as any })}>
+                <SelectTrigger><SelectValue placeholder="請選擇就業狀況" /></SelectTrigger>
+                <SelectContent>
+                  {employmentStatuses.map((s) => (<SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {secondNeedsEmploymentDetails && (
+              <div className="space-y-6 p-6 bg-muted/50 rounded-lg">
+                <h4 className="font-semibold text-lg">
+                  {secondFormData.employmentStatus === "employed" ? "僱傭詳情 / Employment Details" : "自僱詳情 / Self-Employment Details"}
+                </h4>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label>{secondFormData.employmentStatus === "employed" ? "公司名稱 / Company Name" : "業務名稱 / Business Name"} <span className="text-destructive">*</span></Label>
+                    <Input value={secondFormData.companyName} onChange={(e) => setSecondFormData({ ...secondFormData, companyName: e.target.value })} placeholder="請輸入名稱" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>職務名稱 / Position <span className="text-destructive">*</span></Label>
+                    <Input value={secondFormData.position} onChange={(e) => setSecondFormData({ ...secondFormData, position: e.target.value })} placeholder="請輸入職務" />
+                  </div>
+                </div>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label>從業年限 / Years of Service <span className="text-destructive">*</span></Label>
+                    <Input type="text" value={secondFormData.yearsOfService} onChange={(e) => setSecondFormData({ ...secondFormData, yearsOfService: e.target.value })} placeholder="請輸入年限" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>行業 / Industry <span className="text-destructive">*</span></Label>
+                    <Select value={secondFormData.industry} onValueChange={(v) => setSecondFormData({ ...secondFormData, industry: v })}>
+                      <SelectTrigger><SelectValue placeholder="請選擇行業" /></SelectTrigger>
+                      <SelectContent>
+                        {industries.map((ind) => (<SelectItem key={ind} value={ind}>{ind}</SelectItem>))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>{secondFormData.employmentStatus === "employed" ? "公司地址 / Company Address" : "業務地址 / Business Address"} <span className="text-destructive">*</span></Label>
+                  <Textarea value={secondFormData.companyAddress} onChange={(e) => setSecondFormData({ ...secondFormData, companyAddress: e.target.value })} placeholder="請輸入地址" rows={3} />
+                </div>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label>辦公電話 / Office Phone (可選)</Label>
+                    <Input value={secondFormData.officePhone} onChange={(e) => setSecondFormData({ ...secondFormData, officePhone: e.target.value.replace(/\D/g, "") })} placeholder="請輸入辦公電話" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>辦公傳真號 / Office Fax No. (可選)</Label>
+                    <Input value={secondFormData.officeFaxNo} onChange={(e) => setSecondFormData({ ...secondFormData, officeFaxNo: e.target.value.replace(/\D/g, "") })} placeholder="請輸入辦公傳真號" />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {secondNeedsContactInfo && (
+              <div className="space-y-6 p-6 bg-muted/50 rounded-lg">
+                <h4 className="font-semibold text-lg">聯繫方式 / Contact Information</h4>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label>手提電話 / Mobile Phone No. <span className="text-destructive">*</span></Label>
+                    <Input value={secondFormData.mobilePhone} onChange={(e) => setSecondFormData({ ...secondFormData, mobilePhone: e.target.value.replace(/\D/g, "") })} placeholder="請輸入手提電話" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>通訊地址 / Correspondence Address <span className="text-destructive">*</span></Label>
+                  <Textarea value={secondFormData.correspondenceAddress} onChange={(e) => setSecondFormData({ ...secondFormData, correspondenceAddress: e.target.value })} placeholder="請輸入通訊地址" rows={3} />
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </ApplicationWizard>
