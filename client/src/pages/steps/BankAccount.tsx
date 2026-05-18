@@ -207,13 +207,16 @@ export default function BankAccount() {
   }>>([]);
   const [isAddingSecond, setIsAddingSecond] = useState(false);
   const [secondFormData, setSecondFormData] = useState({
+    bankLocation: "HK",
     bankName: "",
+    bankCode: "",
     swiftCode: "",
     accountType: "saving",
     accountCurrency: "HKD",
     accountNumber: "",
     accountHolderName: "",
   });
+  const [secondBankSearchQuery, setSecondBankSearchQuery] = useState("");
 
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -795,10 +798,49 @@ const handleNext = () => {
                 </div>
 
                 <div className="space-y-2">
+                  <Label>銀行所在地 / Bank Location <span className="text-destructive">*</span></Label>
+                  <Select value={secondFormData.bankLocation}
+                    onValueChange={(v) => {
+                      setSecondFormData({ ...secondFormData, bankLocation: v, bankName: "", bankCode: "" });
+                      setSecondBankSearchQuery("");
+                    }}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="HK">香港 / Hong Kong</SelectItem>
+                      <SelectItem value="OTHER">其他 / Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
                   <Label>銀行名稱 / Bank Name <span className="text-destructive">*</span></Label>
-                  <Input value={secondFormData.bankName}
-                    onChange={(e) => setSecondFormData({ ...secondFormData, bankName: e.target.value })}
-                    placeholder="請輸入銀行名稱" />
+                  {secondFormData.bankLocation === "HK" ? (
+                    <>
+                      <Input
+                        placeholder="輸入銀行名稱或代碼搜索..."
+                        value={secondBankSearchQuery}
+                        onChange={(e) => setSecondBankSearchQuery(e.target.value)}
+                        className="mb-2"
+                      />
+                      <Select value={secondFormData.bankCode}
+                        onValueChange={(code) => {
+                          const bank = hkBanks.find(b => b.code === code);
+                          if (bank) setSecondFormData({ ...secondFormData, bankCode: code, bankName: bank.name });
+                        }}>
+                        <SelectTrigger><SelectValue placeholder="選擇銀行" /></SelectTrigger>
+                        <SelectContent className="max-h-[300px]">
+                          {hkBanks
+                            .filter(bank => secondBankSearchQuery === "" || bank.name.toLowerCase().includes(secondBankSearchQuery.toLowerCase()) || bank.code.includes(secondBankSearchQuery))
+                            .map((bank) => (<SelectItem key={bank.code} value={bank.code}>{bank.code} - {bank.name}</SelectItem>))
+                          }
+                        </SelectContent>
+                      </Select>
+                    </>
+                  ) : (
+                    <Input value={secondFormData.bankName}
+                      onChange={(e) => setSecondFormData({ ...secondFormData, bankName: e.target.value })}
+                      placeholder="請輸入銀行名稱" />
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -841,7 +883,8 @@ const handleNext = () => {
                     return;
                   }
                   setSecondHolderAccounts(prev => [...prev, { ...secondFormData }]);
-                  setSecondFormData({ bankName: "", swiftCode: "", accountType: "saving", accountCurrency: "HKD", accountNumber: "", accountHolderName: "" });
+                  setSecondFormData({ bankLocation: "HK", bankName: "", bankCode: "", swiftCode: "", accountType: "saving", accountCurrency: "HKD", accountNumber: "", accountHolderName: "" });
+                  setSecondBankSearchQuery("");
                   setIsAddingSecond(false);
                 }}>
                   保存銀行賬戶
