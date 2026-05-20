@@ -33,6 +33,19 @@ export default function RegulatoryDeclaration() {
     signature: "",
   });
 
+  // Joint account: second holder
+  const [secondFormData, setSecondFormData] = useState({
+    isPEP: false,
+    isUSPerson: false,
+    hasReadAgreement: false,
+    acceptsETO: false,
+    acceptsAML: false,
+    acceptsRiskAssessment: false,
+    hasReadConfirmation: false,
+    objectsDirectMarketing: false,
+    signature: "",
+  });
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [agreementOpen, setAgreementOpen] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
@@ -43,6 +56,7 @@ export default function RegulatoryDeclaration() {
     { enabled: !!applicationId }
   );
   const isCorporate = accountSelection?.customerType === 'corporate';
+  const isJoint = accountSelection?.customerType === 'joint';
 
   // 獲取個人基本信息以驗證簽名
   const { data: basicInfo } = trpc.personalBasic.get.useQuery(
@@ -66,6 +80,25 @@ export default function RegulatoryDeclaration() {
       toast.error(`保存失敗: ${error.message}`);
     },
   });
+
+  // Load existing second holder data
+  const { data: existingSecondHolder } = trpc.secondHolder.get.useQuery(
+    { applicationId, stepName: 'regulatoryDeclaration' },
+    { enabled: !!applicationId && isJoint }
+  );
+  const saveSecondHolderMutation = trpc.secondHolder.save.useMutation();
+
+  useEffect(() => {
+    if (existingSecondHolder && typeof existingSecondHolder === 'object') {
+      setSecondFormData(prev => ({ ...prev, ...(existingSecondHolder as any) }));
+    }
+  }, [existingSecondHolder]);
+
+  // 獲取第二持有人基本信息以驗證簽名
+  const { data: secondBasicInfo } = trpc.secondHolder.get.useQuery(
+    { applicationId, stepName: 'personalBasic' },
+    { enabled: !!applicationId && isJoint }
+  );
 
   useEffect(() => {
     if (existingData) {
@@ -112,6 +145,29 @@ export default function RegulatoryDeclaration() {
       newErrors.signature = "簽名必須與您的英文姓名一致";
     }
 
+    if (isJoint) {
+      if (!secondFormData.hasReadAgreement) {
+        newErrors.secondHasReadAgreement = "請先閱讀開戶協議";
+      }
+      if (!secondFormData.hasReadConfirmation) {
+        newErrors.secondHasReadConfirmation = "請先閱讀客戶確認";
+      }
+      if (!secondFormData.acceptsETO) {
+        newErrors.secondAcceptsETO = "請確認接受電子交易條例約束";
+      }
+      if (!secondFormData.acceptsAML) {
+        newErrors.secondAcceptsAML = "請確認接受反洗錢和合規監管要求約束";
+      }
+      if (!secondFormData.acceptsRiskAssessment) {
+        newErrors.secondAcceptsRiskAssessment = "請確認已閱讀並理解風險評估問卷";
+      }
+      if (!secondFormData.signature.trim()) {
+        newErrors.secondSignature = "請輸入第二持有人的英文姓名作為電子簽名";
+      } else if (secondBasicInfo && typeof secondBasicInfo === 'object' && (secondBasicInfo as any).englishName && secondFormData.signature.trim().toLowerCase() !== (secondBasicInfo as any).englishName.toLowerCase()) {
+        newErrors.secondSignature = "簽名必須與第二持有人的英文姓名一致";
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -120,6 +176,14 @@ const handleNext = () => {
     if (!validateForm()) {
       toast.error("請檢查表單中的錯誤");
       return;
+    }
+
+    if (isJoint) {
+      saveSecondHolderMutation.mutate({
+        applicationId,
+        stepName: 'regulatoryDeclaration',
+        data: secondFormData,
+      });
     }
 
     saveMutation.mutate({
@@ -159,6 +223,10 @@ const handleNext = () => {
       showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-6">
+        {isJoint && (
+          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">賬戶主要持有人 / Primary Account Holder</h3>
+        )}
+
         {/* 機構：關聯人士監管聲明標題 */}
         {isCorporate && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
@@ -476,6 +544,208 @@ const handleNext = () => {
             </p>
           </div>
         </Card>
+
+        {isJoint && (
+          <>
+            <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2 mt-8">賬戶第二持有人 / Second Account Holder</h3>
+
+            {/* PEP 声明 - Second Holder */}
+            <Card className="p-6 space-y-4">
+              <h4 className="font-semibold text-lg">政治公眾人物聲明 / PEP Declaration</h4>
+              <p className="text-sm text-muted-foreground">
+                政治公眾人物（PEP）是指在政府、軍隊、司法機構或國有企業中擔任重要職務的人士，包括其家庭成員和密切關聯人士。
+              </p>
+              <div className="flex items-start space-x-2">
+                <Checkbox
+                  id="second_isPEP"
+                  checked={secondFormData.isPEP}
+                  onCheckedChange={(checked) => setSecondFormData({ ...secondFormData, isPEP: checked as boolean })}
+                />
+                <Label htmlFor="second_isPEP" className="cursor-pointer font-normal">
+                  我確認本人是政治公眾人物（PEP）或與PEP有密切關聯
+                </Label>
+              </div>
+            </Card>
+
+            {/* US Person 声明 - Second Holder */}
+            <Card className="p-6 space-y-4">
+              <h4 className="font-semibold text-lg">美國人士聲明 / US Person Declaration</h4>
+              <p className="text-sm text-muted-foreground">
+                美國人士包括美國公民、美國永久居民（綠卡持有人）、美國稅務居民或在美國註冊的實體。
+              </p>
+              <div className="flex items-start space-x-2">
+                <Checkbox
+                  id="second_isUSPerson"
+                  checked={secondFormData.isUSPerson}
+                  onCheckedChange={(checked) => setSecondFormData({ ...secondFormData, isUSPerson: checked as boolean })}
+                />
+                <Label htmlFor="second_isUSPerson" className="cursor-pointer font-normal">
+                  我確認本人是美國人士（US Person）
+                </Label>
+              </div>
+            </Card>
+
+            {/* 开户协议 - Second Holder */}
+            <Card className="p-6 space-y-4">
+              <h4 className="font-semibold text-lg">開戶協議 / Account Opening Agreement</h4>
+              <div className="flex items-start space-x-2">
+                <Checkbox
+                  id="second_hasReadAgreement"
+                  checked={secondFormData.hasReadAgreement}
+                  onCheckedChange={(checked) => {
+                    setSecondFormData({ ...secondFormData, hasReadAgreement: checked as boolean });
+                    if (errors.secondHasReadAgreement) {
+                      setErrors({ ...errors, secondHasReadAgreement: "" });
+                    }
+                  }}
+                />
+                <Label htmlFor="second_hasReadAgreement" className="cursor-pointer font-normal">
+                  我已閱讀並同意《開戶協議》的所有條款 <span className="text-destructive">*</span>
+                </Label>
+              </div>
+              {errors.secondHasReadAgreement && (
+                <p className="text-sm text-destructive">{errors.secondHasReadAgreement}</p>
+              )}
+            </Card>
+
+            {/* 电子签署和监管确认 - Second Holder */}
+            <Card className="p-6 space-y-6">
+              <h4 className="font-semibold text-lg">電子簽署與監管確認 / E-Signature & Regulatory Confirmation</h4>
+
+              <div className="space-y-4">
+                <div className="flex items-start space-x-2">
+                  <Checkbox
+                    id="second_acceptsETO"
+                    checked={secondFormData.acceptsETO}
+                    onCheckedChange={(checked) => {
+                      setSecondFormData({ ...secondFormData, acceptsETO: checked as boolean });
+                      if (errors.secondAcceptsETO) {
+                        setErrors({ ...errors, secondAcceptsETO: "" });
+                      }
+                    }}
+                  />
+                  <Label htmlFor="second_acceptsETO" className="cursor-pointer font-normal">
+                    我確認接受香港《電子交易條例》（ETO, Cap.553）對電子簽署的法律約束 <span className="text-destructive">*</span>
+                  </Label>
+                </div>
+                {errors.secondAcceptsETO && (
+                  <p className="text-sm text-destructive">{errors.secondAcceptsETO}</p>
+                )}
+
+                <div className="flex items-start space-x-2">
+                  <Checkbox
+                    id="second_acceptsAML"
+                    checked={secondFormData.acceptsAML}
+                    onCheckedChange={(checked) => {
+                      setSecondFormData({ ...secondFormData, acceptsAML: checked as boolean });
+                      if (errors.secondAcceptsAML) {
+                        setErrors({ ...errors, secondAcceptsAML: "" });
+                      }
+                    }}
+                  />
+                  <Label htmlFor="second_acceptsAML" className="cursor-pointer font-normal">
+                    我確認接受反洗錢（AML）和其他合規監管要求的約束 <span className="text-destructive">*</span>
+                  </Label>
+                </div>
+                {errors.secondAcceptsAML && (
+                  <p className="text-sm text-destructive">{errors.secondAcceptsAML}</p>
+                )}
+
+                <div className="flex items-start space-x-2">
+                  <Checkbox
+                    id="second_acceptsRiskAssessment"
+                    checked={secondFormData.acceptsRiskAssessment}
+                    onCheckedChange={(checked) => {
+                      setSecondFormData({ ...secondFormData, acceptsRiskAssessment: checked as boolean });
+                      if (errors.secondAcceptsRiskAssessment) {
+                        setErrors({ ...errors, secondAcceptsRiskAssessment: "" });
+                      }
+                    }}
+                  />
+                  <Label htmlFor="second_acceptsRiskAssessment" className="cursor-pointer font-normal">
+                    我已閱讀並理解上述風險評估問卷。我確認我完全理解並接受相關條款。 <span className="text-destructive">*</span>
+                  </Label>
+                </div>
+                {errors.secondAcceptsRiskAssessment && (
+                  <p className="text-sm text-destructive">{errors.secondAcceptsRiskAssessment}</p>
+                )}
+              </div>
+
+              {/* 确认书 - Second Holder */}
+              <div className="space-y-3">
+                <div className="flex items-start space-x-2">
+                  <Checkbox
+                    id="second_hasReadConfirmation"
+                    checked={secondFormData.hasReadConfirmation}
+                    onCheckedChange={(checked) => {
+                      setSecondFormData({ ...secondFormData, hasReadConfirmation: checked as boolean });
+                      if (errors.secondHasReadConfirmation) {
+                        setErrors({ ...errors, secondHasReadConfirmation: "" });
+                      }
+                    }}
+                  />
+                  <Label htmlFor="second_hasReadConfirmation" className="cursor-pointer font-normal">
+                    我已閱讀並同意客戶確認的所有內容 <span className="text-destructive">*</span>
+                  </Label>
+                </div>
+                {errors.secondHasReadConfirmation && (
+                  <p className="text-sm text-destructive">{errors.secondHasReadConfirmation}</p>
+                )}
+
+                {/* 直接促銷聲明 - Second Holder */}
+                <div className="mt-6">
+                  <div className="flex items-start space-x-2 mt-2">
+                    <Checkbox
+                      id="second_objectsDirectMarketing"
+                      checked={secondFormData.objectsDirectMarketing}
+                      onCheckedChange={(checked) => {
+                        setSecondFormData({ ...secondFormData, objectsDirectMarketing: checked as boolean });
+                      }}
+                    />
+                    <label htmlFor="second_objectsDirectMarketing" className="cursor-pointer font-normal text-sm leading-normal" style={{display: 'block'}}>
+                      <span style={{display: 'block'}}>本人（姓名如下）<span className="font-bold">反對使用個人資料於擬作出的直接促銷</span></span>
+                      <span style={{display: 'block'}}>The customer named <span className="font-bold">objects to the proposed use of his/her personal data in direct marketing</span>.</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* 电子签名 - Second Holder */}
+              <div className="space-y-2">
+                <Label htmlFor="second_signature" style={{fontSize: '16px', fontWeight: 700}}>
+                  電子簽名 / Electronic Signature <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="second_signature"
+                  value={secondFormData.signature}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === "" || /^[A-Za-z\s''\-,.]+$/.test(val)) {
+                      setSecondFormData({ ...secondFormData, signature: val });
+                      if (errors.secondSignature) {
+                        setErrors({ ...errors, secondSignature: "" });
+                      }
+                    }
+                  }}
+                  placeholder="Please enter your English name"
+                  className={errors.secondSignature ? "border-destructive" : ""}
+                />
+                {errors.secondSignature && <p className="text-sm text-destructive">{errors.secondSignature}</p>}
+                <p className="text-sm text-muted-foreground">
+                  第二持有人簽名（必須與第二持有人的英文名字一致）
+                </p>
+              </div>
+
+              <div className="p-4 bg-muted rounded-lg">
+                <p className="font-bold text-black" style={{margin: 0, fontSize: '16px'}}>聲明條款：</p>
+                <p className="text-black" style={{margin: 0, fontSize: '16px', lineHeight: '1.6'}}>
+                  本人確認已詳細閱讀、清楚了解並同意《開戶協議》的所有內容，願意接受協議條款的約束。
+                  本人的電子簽名具有與手寫簽名同等的法律效力。
+                </p>
+              </div>
+            </Card>
+          </>
+        )}
       </div>
     </ApplicationWizard>
   );

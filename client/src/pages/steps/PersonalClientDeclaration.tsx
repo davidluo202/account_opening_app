@@ -20,6 +20,13 @@ export default function PersonalClientDeclaration() {
   const stepNum = parseInt(params.step || "12");
   const showReturnToPreview = useReturnToPreview();
 
+  // Check if joint account
+  const { data: accountSelection } = trpc.accountSelection.get.useQuery(
+    { applicationId },
+    { enabled: !!applicationId }
+  );
+  const isJoint = accountSelection?.customerType === 'joint';
+
   // (A) Ultimate Beneficial Owner
   const [isUBO, setIsUBO] = useState<YesNo>("");
   const [uboName, setUboName] = useState("");
@@ -39,12 +46,49 @@ export default function PersonalClientDeclaration() {
   const [cmfRelativeEmployeeName, setCmfRelativeEmployeeName] = useState("");
   const [cmfRelativeRelationship, setCmfRelativeRelationship] = useState("");
 
+  // Joint account: second holder
+  const [secondIsUBO, setSecondIsUBO] = useState<YesNo>("");
+  const [secondUboName, setSecondUboName] = useState("");
+  const [secondUboIdPassport, setSecondUboIdPassport] = useState("");
+  const [secondUboCountry, setSecondUboCountry] = useState("");
+  const [secondUboAddress, setSecondUboAddress] = useState("");
+  const [secondIsSfcEmployee, setSecondIsSfcEmployee] = useState<YesNo>("");
+  const [secondSfcInstitutionName, setSecondSfcInstitutionName] = useState("");
+  const [secondIsCmfEmployee, setSecondIsCmfEmployee] = useState<YesNo>("");
+  const [secondIsCmfRelative, setSecondIsCmfRelative] = useState<YesNo>("");
+  const [secondCmfRelativeEmployeeName, setSecondCmfRelativeEmployeeName] = useState("");
+  const [secondCmfRelativeRelationship, setSecondCmfRelativeRelationship] = useState("");
+
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const { data: existingData, isLoading } = trpc.personalClientDeclaration.get.useQuery(
     { applicationId },
     { enabled: !!applicationId }
   );
+
+  // Load existing second holder data
+  const { data: existingSecondHolder } = trpc.secondHolder.get.useQuery(
+    { applicationId, stepName: 'personalClientDeclaration' },
+    { enabled: !!applicationId && isJoint }
+  );
+  const saveSecondHolderMutation = trpc.secondHolder.save.useMutation();
+
+  useEffect(() => {
+    if (existingSecondHolder && typeof existingSecondHolder === 'object') {
+      const d = existingSecondHolder as any;
+      if (d.isUBO !== undefined) setSecondIsUBO(d.isUBO);
+      if (d.uboName !== undefined) setSecondUboName(d.uboName);
+      if (d.uboIdPassport !== undefined) setSecondUboIdPassport(d.uboIdPassport);
+      if (d.uboCountry !== undefined) setSecondUboCountry(d.uboCountry);
+      if (d.uboAddress !== undefined) setSecondUboAddress(d.uboAddress);
+      if (d.isSfcEmployee !== undefined) setSecondIsSfcEmployee(d.isSfcEmployee);
+      if (d.sfcInstitutionName !== undefined) setSecondSfcInstitutionName(d.sfcInstitutionName);
+      if (d.isCmfEmployee !== undefined) setSecondIsCmfEmployee(d.isCmfEmployee);
+      if (d.isCmfRelative !== undefined) setSecondIsCmfRelative(d.isCmfRelative);
+      if (d.cmfRelativeEmployeeName !== undefined) setSecondCmfRelativeEmployeeName(d.cmfRelativeEmployeeName);
+      if (d.cmfRelativeRelationship !== undefined) setSecondCmfRelativeRelationship(d.cmfRelativeRelationship);
+    }
+  }, [existingSecondHolder]);
 
   const saveMutation = trpc.personalClientDeclaration.save.useMutation({
     onSuccess: (result) => {
@@ -91,6 +135,23 @@ export default function PersonalClientDeclaration() {
       if (!cmfRelativeEmployeeName.trim()) newErrors.cmfRelativeEmployeeName = "請輸入雇員姓名";
       if (!cmfRelativeRelationship.trim()) newErrors.cmfRelativeRelationship = "請輸入關係";
     }
+    if (isJoint) {
+      if (!secondIsUBO) newErrors.secondIsUBO = "請選擇";
+      if (secondIsUBO === "no") {
+        if (!secondUboName.trim()) newErrors.secondUboName = "請輸入最終受益擁有人姓名";
+        if (!secondUboIdPassport.trim()) newErrors.secondUboIdPassport = "請輸入身份證/護照號碼";
+        if (!secondUboCountry.trim()) newErrors.secondUboCountry = "請輸入簽發國家";
+        if (!secondUboAddress.trim()) newErrors.secondUboAddress = "請輸入地址";
+      }
+      if (!secondIsSfcEmployee) newErrors.secondIsSfcEmployee = "請選擇";
+      if (secondIsSfcEmployee === "yes" && !secondSfcInstitutionName.trim()) newErrors.secondSfcInstitutionName = "請輸入機構名稱";
+      if (!secondIsCmfEmployee) newErrors.secondIsCmfEmployee = "請選擇";
+      if (!secondIsCmfRelative) newErrors.secondIsCmfRelative = "請選擇";
+      if (secondIsCmfRelative === "yes") {
+        if (!secondCmfRelativeEmployeeName.trim()) newErrors.secondCmfRelativeEmployeeName = "請輸入雇員姓名";
+        if (!secondCmfRelativeRelationship.trim()) newErrors.secondCmfRelativeRelationship = "請輸入關係";
+      }
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -99,6 +160,25 @@ export default function PersonalClientDeclaration() {
     if (!validateForm()) {
       toast.error("請檢查表單中的錯誤");
       return;
+    }
+    if (isJoint) {
+      saveSecondHolderMutation.mutate({
+        applicationId,
+        stepName: 'personalClientDeclaration',
+        data: {
+          isUBO: secondIsUBO,
+          uboName: secondIsUBO === "no" ? secondUboName : "",
+          uboIdPassport: secondIsUBO === "no" ? secondUboIdPassport : "",
+          uboCountry: secondIsUBO === "no" ? secondUboCountry : "",
+          uboAddress: secondIsUBO === "no" ? secondUboAddress : "",
+          isSfcEmployee: secondIsSfcEmployee,
+          sfcInstitutionName: secondIsSfcEmployee === "yes" ? secondSfcInstitutionName : "",
+          isCmfEmployee: secondIsCmfEmployee,
+          isCmfRelative: secondIsCmfRelative,
+          cmfRelativeEmployeeName: secondIsCmfRelative === "yes" ? secondCmfRelativeEmployeeName : "",
+          cmfRelativeRelationship: secondIsCmfRelative === "yes" ? secondCmfRelativeRelationship : "",
+        },
+      });
     }
     saveMutation.mutate({
       applicationId,
@@ -154,6 +234,10 @@ export default function PersonalClientDeclaration() {
         <div>
           <p className="text-sm text-muted-foreground mt-1">請如實填寫以下聲明內容</p>
         </div>
+
+        {isJoint && (
+          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">賬戶主要持有人 / Primary Account Holder</h3>
+        )}
 
         {/* (A) Ultimate Beneficial Owner */}
         <Card className="p-6 space-y-4">
@@ -277,6 +361,135 @@ export default function PersonalClientDeclaration() {
             </div>
           )}
         </Card>
+
+        {isJoint && (
+          <>
+            <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2 mt-8">賬戶第二持有人 / Second Account Holder</h3>
+
+            {/* (A) Ultimate Beneficial Owner - Second Holder */}
+            <Card className="p-6 space-y-4">
+              <div>
+                <p className="font-medium">(A) 閣下是否此戶口之最終權益擁有人？（即閣下是否為本人而非第三者運作此賬戶？）</p>
+                <p className="text-sm text-muted-foreground mt-1">Are you the ultimate beneficial owner(s) in relation to the Account? (i.e. are you acting for your own and not for a third party?)</p>
+              </div>
+              <RadioGroup value={secondIsUBO} onChange={(v) => { setSecondIsUBO(v); if (errors.secondIsUBO) setErrors({...errors, secondIsUBO: ""}); }} name="second_isUBO" error={errors.secondIsUBO} />
+              {secondIsUBO === "no" && (
+                <div className="space-y-3 ml-6">
+                  <p className="text-sm text-muted-foreground">不是，賬戶之最終權益擁有人是：/ No, details of the ultimate beneficial owner(s) is/are:</p>
+                  <div className="space-y-2">
+                    <Label>姓名 / Name <span className="text-destructive">*</span></Label>
+                    <Input
+                      value={secondUboName}
+                      onChange={(e) => setSecondUboName(e.target.value)}
+                      onBlur={() => setSecondUboName(convertToTraditional(secondUboName))}
+                      placeholder="請輸入最終受益擁有人姓名"
+                      className={errors.secondUboName ? "border-destructive" : ""}
+                    />
+                    {errors.secondUboName && <p className="text-sm text-destructive">{errors.secondUboName}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label>身份證/護照號碼 / ID/Passport No. <span className="text-destructive">*</span></Label>
+                    <Input
+                      value={secondUboIdPassport}
+                      onChange={(e) => setSecondUboIdPassport(e.target.value)}
+                      placeholder="請輸入身份證/護照號碼"
+                      className={errors.secondUboIdPassport ? "border-destructive" : ""}
+                    />
+                    {errors.secondUboIdPassport && <p className="text-sm text-destructive">{errors.secondUboIdPassport}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label>簽發國家 / Country of Issue <span className="text-destructive">*</span></Label>
+                    <Input
+                      value={secondUboCountry}
+                      onChange={(e) => setSecondUboCountry(e.target.value)}
+                      onBlur={() => setSecondUboCountry(convertToTraditional(secondUboCountry))}
+                      placeholder="請輸入簽發國家"
+                      className={errors.secondUboCountry ? "border-destructive" : ""}
+                    />
+                    {errors.secondUboCountry && <p className="text-sm text-destructive">{errors.secondUboCountry}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label>地址 / Address <span className="text-destructive">*</span></Label>
+                    <Textarea
+                      value={secondUboAddress}
+                      onChange={(e) => setSecondUboAddress(e.target.value)}
+                      onBlur={() => setSecondUboAddress(convertToTraditional(secondUboAddress))}
+                      placeholder="請輸入最終受益擁有人地址"
+                      className={errors.secondUboAddress ? "border-destructive" : ""}
+                    />
+                    {errors.secondUboAddress && <p className="text-sm text-destructive">{errors.secondUboAddress}</p>}
+                  </div>
+                </div>
+              )}
+            </Card>
+
+            {/* (B) SFC Licensed Corporation / Registered Institution - Second Holder */}
+            <Card className="p-6 space-y-4">
+              <div>
+                <p className="font-medium">(B) 閣下是否證監會註冊持牌法團或註冊機構之雇員或董事？</p>
+                <p className="text-sm text-muted-foreground mt-1">Are you an employee or director of a Licensed Corporation or Registered Institution registered with the Securities and Futures Commission?</p>
+              </div>
+              <RadioGroup value={secondIsSfcEmployee} onChange={(v) => { setSecondIsSfcEmployee(v); if (errors.secondIsSfcEmployee) setErrors({...errors, secondIsSfcEmployee: ""}); }} name="second_isSfcEmployee" error={errors.secondIsSfcEmployee} />
+              {secondIsSfcEmployee === "yes" && (
+                <div className="space-y-2 ml-6">
+                  <Label>請提供有關持牌法團或註冊機構名稱 / Please provide the name of the Licensed Corporation or Registered Institution <span className="text-destructive">*</span></Label>
+                  <Input
+                    value={secondSfcInstitutionName}
+                    onChange={(e) => setSecondSfcInstitutionName(e.target.value)}
+                    onBlur={() => setSecondSfcInstitutionName(convertToTraditional(secondSfcInstitutionName))}
+                    placeholder="請輸入機構名稱"
+                    className={errors.secondSfcInstitutionName ? "border-destructive" : ""}
+                  />
+                  {errors.secondSfcInstitutionName && <p className="text-sm text-destructive">{errors.secondSfcInstitutionName}</p>}
+                </div>
+              )}
+            </Card>
+
+            {/* (C) CMF Employee - Second Holder */}
+            <Card className="p-6 space-y-4">
+              <div>
+                <p className="font-medium">(C) 閣下是否誠港金融股份有限公司之雇員？</p>
+                <p className="text-sm text-muted-foreground mt-1">Are you an employee of Canton Mutual Financial Limited?</p>
+              </div>
+              <RadioGroup value={secondIsCmfEmployee} onChange={(v) => { setSecondIsCmfEmployee(v); if (errors.secondIsCmfEmployee) setErrors({...errors, secondIsCmfEmployee: ""}); }} name="second_isCmfEmployee" error={errors.secondIsCmfEmployee} />
+            </Card>
+
+            {/* (D) Relative of CMF Employee or Director - Second Holder */}
+            <Card className="p-6 space-y-4">
+              <div>
+                <p className="font-medium">(D) 閣下是否誠港金融股份有限公司雇員或董事之親屬？</p>
+                <p className="text-sm text-muted-foreground mt-1">Are you the relative of an employee or director of Canton Mutual Financial Limited?</p>
+              </div>
+              <RadioGroup value={secondIsCmfRelative} onChange={(v) => { setSecondIsCmfRelative(v); if (errors.secondIsCmfRelative) setErrors({...errors, secondIsCmfRelative: ""}); }} name="second_isCmfRelative" error={errors.secondIsCmfRelative} />
+              {secondIsCmfRelative === "yes" && (
+                <div className="space-y-3 ml-6">
+                  <div className="space-y-2">
+                    <Label>雇員姓名 / Name of Employee <span className="text-destructive">*</span></Label>
+                    <Input
+                      value={secondCmfRelativeEmployeeName}
+                      onChange={(e) => setSecondCmfRelativeEmployeeName(e.target.value)}
+                      onBlur={() => setSecondCmfRelativeEmployeeName(convertToTraditional(secondCmfRelativeEmployeeName))}
+                      placeholder="請輸入雇員姓名"
+                      className={errors.secondCmfRelativeEmployeeName ? "border-destructive" : ""}
+                    />
+                    {errors.secondCmfRelativeEmployeeName && <p className="text-sm text-destructive">{errors.secondCmfRelativeEmployeeName}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label>關係 / Relationship</Label>
+                    <Input
+                      value={secondCmfRelativeRelationship}
+                      onChange={(e) => setSecondCmfRelativeRelationship(e.target.value)}
+                      onBlur={() => setSecondCmfRelativeRelationship(convertToTraditional(secondCmfRelativeRelationship))}
+                      placeholder="請輸入與該員工的關係"
+                      className={errors.secondCmfRelativeRelationship ? "border-destructive" : ""}
+                    />
+                    {errors.secondCmfRelativeRelationship && <p className="text-sm text-destructive">{errors.secondCmfRelativeRelationship}</p>}
+                  </div>
+                </div>
+              )}
+            </Card>
+          </>
+        )}
       </div>
     </ApplicationWizard>
   );
