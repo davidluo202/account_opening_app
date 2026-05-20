@@ -124,6 +124,13 @@ export default function TaxInfo() {
     if (!formData.noTaxId && !formData.taxIdNumber.trim()) newErrors.taxIdNumber = "請輸入稅務識別號";
     if (formData.noTaxId && !formData.noTaxIdReason.trim()) newErrors.noTaxIdReason = "請輸入沒有稅務編號的理由";
 
+    // 聯名賬戶：驗證第二持有人
+    if (isJoint) {
+      if (!secondHolder.taxResidency.trim()) newErrors.secondTaxResidency = "請填寫第二持有人的居留司法管轄區";
+      if (!secondHolder.noTaxId && !secondHolder.taxIdNumber.trim()) newErrors.secondTaxIdNumber = "請填寫第二持有人的稅務識別號";
+      if (secondHolder.noTaxId && !secondHolder.noTaxIdReason.trim()) newErrors.secondNoTaxIdReason = "請填寫第二持有人的沒有稅務編號理由";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -277,9 +284,14 @@ const handleSave = () => {
               </Label>
               <Input
                 value={secondHolder.taxResidency}
-                onChange={(e) => setSecondHolder({ ...secondHolder, taxResidency: e.target.value })}
+                onChange={(e) => {
+                  setSecondHolder({ ...secondHolder, taxResidency: e.target.value });
+                  if (errors.secondTaxResidency) setErrors({ ...errors, secondTaxResidency: "" });
+                }}
                 placeholder="請輸入居留司法管轄區"
+                className={errors.secondTaxResidency ? "border-destructive" : ""}
               />
+              {errors.secondTaxResidency && <p className="text-sm text-destructive">{errors.secondTaxResidency}</p>}
             </div>
 
             {/* 稅務識別號 */}
@@ -289,9 +301,14 @@ const handleSave = () => {
               </Label>
               <Input
                 value={secondHolder.taxIdNumber}
-                onChange={(e) => setSecondHolder({ ...secondHolder, taxIdNumber: e.target.value })}
+                onChange={(e) => {
+                  setSecondHolder({ ...secondHolder, taxIdNumber: e.target.value });
+                  if (errors.secondTaxIdNumber) setErrors({ ...errors, secondTaxIdNumber: "" });
+                }}
                 placeholder="請輸入稅務識別號"
+                className={errors.secondTaxIdNumber ? "border-destructive" : ""}
               />
+              {errors.secondTaxIdNumber && <p className="text-sm text-destructive">{errors.secondTaxIdNumber}</p>}
             </div>
 
             {/* 沒有稅務編號 */}
@@ -313,9 +330,14 @@ const handleSave = () => {
                   </Label>
                   <Input
                     value={secondHolder.noTaxIdReason}
-                    onChange={(e) => setSecondHolder({ ...secondHolder, noTaxIdReason: e.target.value })}
+                    onChange={(e) => {
+                      setSecondHolder({ ...secondHolder, noTaxIdReason: e.target.value });
+                      if (errors.secondNoTaxIdReason) setErrors({ ...errors, secondNoTaxIdReason: "" });
+                    }}
                     placeholder="請輸入理由"
+                    className={errors.secondNoTaxIdReason ? "border-destructive" : ""}
                   />
+                  {errors.secondNoTaxIdReason && <p className="text-sm text-destructive">{errors.secondNoTaxIdReason}</p>}
                 </div>
               )}
             </div>

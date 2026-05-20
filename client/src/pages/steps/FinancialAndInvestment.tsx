@@ -164,7 +164,16 @@ export default function FinancialAndInvestment() {
       newErrors.investmentExperience = "請至少填寫一項投資經驗";
     }
 
-
+    // 聯名賬戶：驗證第二持有人
+    if (isJoint) {
+      if (secondInvestmentObjectives.length === 0) {
+        newErrors.secondInvestmentObjectives = "請填寫第二持有人的投資目的";
+      }
+      const hasSecondExperience = Object.keys(secondInvestmentExperience).length > 0;
+      if (!hasSecondExperience) {
+        newErrors.secondInvestmentExperience = "請填寫第二持有人的投資經驗";
+      }
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -311,13 +320,16 @@ export default function FinancialAndInvestment() {
                 </Label>
                 <p className="text-sm text-muted-foreground mt-1">請至少選擇一項</p>
               </div>
-              <div className="space-y-3 bg-slate-50 p-4 rounded-lg border border-slate-200">
+              <div className={`space-y-3 bg-slate-50 p-4 rounded-lg border ${errors.secondInvestmentObjectives ? "border-destructive" : "border-slate-200"}`}>
                 {investmentObjectiveOptions.map((option) => (
                   <div key={option.value} className="flex items-center space-x-3">
                     <Checkbox
                       id={`second-${option.value}`}
                       checked={secondInvestmentObjectives.includes(option.value)}
-                      onCheckedChange={() => handleSecondObjectiveToggle(option.value)}
+                      onCheckedChange={() => {
+                        handleSecondObjectiveToggle(option.value);
+                        if (errors.secondInvestmentObjectives) setErrors({ ...errors, secondInvestmentObjectives: "" });
+                      }}
                       className="h-5 w-5 border-2 border-slate-400 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                     />
                     <Label htmlFor={`second-${option.value}`} className="cursor-pointer font-normal">
@@ -326,6 +338,7 @@ export default function FinancialAndInvestment() {
                   </div>
                 ))}
               </div>
+              {errors.secondInvestmentObjectives && <p className="text-sm text-destructive">{errors.secondInvestmentObjectives}</p>}
             </div>
 
             {/* 投資經驗 */}
@@ -336,13 +349,16 @@ export default function FinancialAndInvestment() {
                 </Label>
                 <p className="text-sm text-slate-600 mt-1">請至少填寫一項投資產品的經驗</p>
               </div>
-              <div className="space-y-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
+              <div className={`space-y-4 bg-slate-50 p-4 rounded-lg border ${errors.secondInvestmentExperience ? "border-destructive" : "border-slate-200"}`}>
                 {investmentProducts.map((product) => (
                   <div key={product.key} className="grid md:grid-cols-[200px_1fr] gap-4 items-center">
                     <Label htmlFor={`second-${product.key}`} className="font-medium text-slate-700">{product.label}</Label>
                     <Select
                       value={secondInvestmentExperience[product.key] || ""}
-                      onValueChange={(v) => handleSecondExperienceChange(product.key, v)}
+                      onValueChange={(v) => {
+                        handleSecondExperienceChange(product.key, v);
+                        if (errors.secondInvestmentExperience) setErrors({ ...errors, secondInvestmentExperience: "" });
+                      }}
                     >
                       <SelectTrigger id={`second-${product.key}`} className="bg-white border-slate-300">
                         <SelectValue placeholder="請選擇經驗年限" />
@@ -358,6 +374,7 @@ export default function FinancialAndInvestment() {
                   </div>
                 ))}
               </div>
+              {errors.secondInvestmentExperience && <p className="text-sm text-destructive">{errors.secondInvestmentExperience}</p>}
             </div>
           </>
         )}

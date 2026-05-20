@@ -345,6 +345,23 @@ export default function PersonalDetailedInfo() {
       newErrors.billingAddressOther = "請輸入賬單通訊地址";
     }
 
+    // 聯名賬戶：驗證第二持有人
+    if (isJoint) {
+      if (!secondHolder.idType) newErrors.secondIdType = "請填寫第二持有人的證件類型";
+      if (!secondHolder.idNumber.trim()) newErrors.secondIdNumber = "請填寫第二持有人的證件號碼";
+      if (!secondHolder.idIssuingCountry) newErrors.secondIdIssuingCountry = "請填寫第二持有人的證件簽發國家/地區";
+      if (secondHolder.idIssuingCountry === "OTHER" && !secondHolder.idIssuingPlaceOther?.trim()) {
+        newErrors.secondIdIssuingPlaceOther = "請填寫第二持有人的證件簽發國家/地區";
+      }
+      if (!secondHolder.idIsPermanent && !secondHolder.idExpiryDate) {
+        newErrors.secondIdExpiryDate = "請填寫第二持有人的證件有效期";
+      }
+      if (!secondHolder.maritalStatus) newErrors.secondMaritalStatus = "請填寫第二持有人的婚姻狀況";
+      if (!secondHolder.educationLevel) newErrors.secondEducationLevel = "請填寫第二持有人的學歷";
+      if (!secondHolder.mobileNumber.trim()) newErrors.secondMobileNumber = "請填寫第二持有人的手機號碼";
+      if (!secondHolder.residentialAddress.trim()) newErrors.secondResidentialAddress = "請填寫第二持有人的住宅地址";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -832,9 +849,12 @@ export default function PersonalDetailedInfo() {
               </Label>
               <Select
                 value={secondHolder.idType}
-                onValueChange={(v) => setSecondHolder({ ...secondHolder, idType: v })}
+                onValueChange={(v) => {
+                  setSecondHolder({ ...secondHolder, idType: v });
+                  if (errors.secondIdType) setErrors({ ...errors, secondIdType: "" });
+                }}
               >
-                <SelectTrigger>
+                <SelectTrigger className={errors.secondIdType ? "border-destructive" : ""}>
                   <SelectValue placeholder="請選擇證件類型" />
                 </SelectTrigger>
                 <SelectContent>
@@ -845,6 +865,7 @@ export default function PersonalDetailedInfo() {
                   ))}
                 </SelectContent>
               </Select>
+              {errors.secondIdType && <p className="text-sm text-destructive">{errors.secondIdType}</p>}
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
@@ -855,9 +876,14 @@ export default function PersonalDetailedInfo() {
                 </Label>
                 <Input
                   value={secondHolder.idNumber}
-                  onChange={(e) => setSecondHolder({ ...secondHolder, idNumber: e.target.value.toUpperCase() })}
+                  onChange={(e) => {
+                    setSecondHolder({ ...secondHolder, idNumber: e.target.value.toUpperCase() });
+                    if (errors.secondIdNumber) setErrors({ ...errors, secondIdNumber: "" });
+                  }}
                   placeholder="請輸入證件號碼"
+                  className={errors.secondIdNumber ? "border-destructive" : ""}
                 />
+                {errors.secondIdNumber && <p className="text-sm text-destructive">{errors.secondIdNumber}</p>}
               </div>
 
               {/* 證件簽發國家/地區 */}
@@ -867,9 +893,12 @@ export default function PersonalDetailedInfo() {
                 </Label>
                 <Select
                   value={secondHolder.idIssuingCountry}
-                  onValueChange={(v) => setSecondHolder({ ...secondHolder, idIssuingCountry: v, idIssuingPlaceOther: "" })}
+                  onValueChange={(v) => {
+                    setSecondHolder({ ...secondHolder, idIssuingCountry: v, idIssuingPlaceOther: "" });
+                    if (errors.secondIdIssuingCountry) setErrors({ ...errors, secondIdIssuingCountry: "" });
+                  }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className={errors.secondIdIssuingCountry ? "border-destructive" : ""}>
                     <SelectValue placeholder="請選擇國家/地區" />
                   </SelectTrigger>
                   <SelectContent>
@@ -880,6 +909,7 @@ export default function PersonalDetailedInfo() {
                     ))}
                   </SelectContent>
                 </Select>
+                {errors.secondIdIssuingCountry && <p className="text-sm text-destructive">{errors.secondIdIssuingCountry}</p>}
               </div>
 
               {secondHolder.idIssuingCountry === "OTHER" && (
@@ -889,9 +919,14 @@ export default function PersonalDetailedInfo() {
                   </Label>
                   <Input
                     value={secondHolder.idIssuingPlaceOther}
-                    onChange={(e) => setSecondHolder({ ...secondHolder, idIssuingPlaceOther: e.target.value })}
+                    onChange={(e) => {
+                      setSecondHolder({ ...secondHolder, idIssuingPlaceOther: e.target.value });
+                      if (errors.secondIdIssuingPlaceOther) setErrors({ ...errors, secondIdIssuingPlaceOther: "" });
+                    }}
                     placeholder="請輸入國家/地區"
+                    className={errors.secondIdIssuingPlaceOther ? "border-destructive" : ""}
                   />
+                  {errors.secondIdIssuingPlaceOther && <p className="text-sm text-destructive">{errors.secondIdIssuingPlaceOther}</p>}
                 </div>
               )}
             </div>
@@ -916,8 +951,13 @@ export default function PersonalDetailedInfo() {
                   <Input
                     type="date"
                     value={secondHolder.idExpiryDate}
-                    onChange={(e) => setSecondHolder({ ...secondHolder, idExpiryDate: e.target.value })}
+                    onChange={(e) => {
+                      setSecondHolder({ ...secondHolder, idExpiryDate: e.target.value });
+                      if (errors.secondIdExpiryDate) setErrors({ ...errors, secondIdExpiryDate: "" });
+                    }}
+                    className={errors.secondIdExpiryDate ? "border-destructive" : ""}
                   />
+                  {errors.secondIdExpiryDate && <p className="text-sm text-destructive">{errors.secondIdExpiryDate}</p>}
                 </>
               )}
             </div>
@@ -930,9 +970,12 @@ export default function PersonalDetailedInfo() {
                 </Label>
                 <Select
                   value={secondHolder.maritalStatus}
-                  onValueChange={(v) => setSecondHolder({ ...secondHolder, maritalStatus: v })}
+                  onValueChange={(v) => {
+                    setSecondHolder({ ...secondHolder, maritalStatus: v });
+                    if (errors.secondMaritalStatus) setErrors({ ...errors, secondMaritalStatus: "" });
+                  }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className={errors.secondMaritalStatus ? "border-destructive" : ""}>
                     <SelectValue placeholder="請選擇婚姻狀況" />
                   </SelectTrigger>
                   <SelectContent>
@@ -943,6 +986,7 @@ export default function PersonalDetailedInfo() {
                     ))}
                   </SelectContent>
                 </Select>
+                {errors.secondMaritalStatus && <p className="text-sm text-destructive">{errors.secondMaritalStatus}</p>}
               </div>
 
               {/* 學歷 */}
@@ -952,9 +996,12 @@ export default function PersonalDetailedInfo() {
                 </Label>
                 <Select
                   value={secondHolder.educationLevel}
-                  onValueChange={(v) => setSecondHolder({ ...secondHolder, educationLevel: v })}
+                  onValueChange={(v) => {
+                    setSecondHolder({ ...secondHolder, educationLevel: v });
+                    if (errors.secondEducationLevel) setErrors({ ...errors, secondEducationLevel: "" });
+                  }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className={errors.secondEducationLevel ? "border-destructive" : ""}>
                     <SelectValue placeholder="請選擇學歷" />
                   </SelectTrigger>
                   <SelectContent>
@@ -965,6 +1012,7 @@ export default function PersonalDetailedInfo() {
                     ))}
                   </SelectContent>
                 </Select>
+                {errors.secondEducationLevel && <p className="text-sm text-destructive">{errors.secondEducationLevel}</p>}
               </div>
             </div>
 
@@ -991,11 +1039,15 @@ export default function PersonalDetailedInfo() {
                 </Select>
                 <Input
                   value={secondHolder.mobileNumber}
-                  onChange={(e) => setSecondHolder({ ...secondHolder, mobileNumber: e.target.value })}
+                  onChange={(e) => {
+                    setSecondHolder({ ...secondHolder, mobileNumber: e.target.value });
+                    if (errors.secondMobileNumber) setErrors({ ...errors, secondMobileNumber: "" });
+                  }}
                   placeholder="請輸入手機號碼"
-                  className="flex-1"
+                  className={`flex-1 ${errors.secondMobileNumber ? "border-destructive" : ""}`}
                 />
               </div>
+              {errors.secondMobileNumber && <p className="text-sm text-destructive">{errors.secondMobileNumber}</p>}
             </div>
 
             {/* 住宅地址 */}
@@ -1005,7 +1057,10 @@ export default function PersonalDetailedInfo() {
               </Label>
               <Textarea
                 value={secondHolder.residentialAddress}
-                onChange={(e) => setSecondHolder({ ...secondHolder, residentialAddress: e.target.value })}
+                onChange={(e) => {
+                  setSecondHolder({ ...secondHolder, residentialAddress: e.target.value });
+                  if (errors.secondResidentialAddress) setErrors({ ...errors, secondResidentialAddress: "" });
+                }}
                 onBlur={() => {
                   const converted = convertToTraditional(secondHolder.residentialAddress);
                   if (converted !== secondHolder.residentialAddress) {
@@ -1014,7 +1069,9 @@ export default function PersonalDetailedInfo() {
                 }}
                 placeholder="請輸入完整住宅地址"
                 rows={3}
+                className={errors.secondResidentialAddress ? "border-destructive" : ""}
               />
+              {errors.secondResidentialAddress && <p className="text-sm text-destructive">{errors.secondResidentialAddress}</p>}
             </div>
           </>
         )}

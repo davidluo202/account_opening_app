@@ -176,6 +176,14 @@ export default function EmploymentDetails() {
     if (!formData.liquidAsset) newErrors.liquidAsset = "請選擇流動資產範圍";
     if (!formData.netWorth) newErrors.netWorth = "請選擇淨資產範圍";
 
+    // 聯名賬戶：驗證第二持有人
+    if (isJoint) {
+      if (secondSelectedIncomeSources.length === 0) newErrors.secondIncomeSource = "請填寫第二持有人的收入來源";
+      if (!secondHolder.annualIncome) newErrors.secondAnnualIncome = "請填寫第二持有人的年收入範圍";
+      if (!secondHolder.liquidAsset) newErrors.secondLiquidAsset = "請填寫第二持有人的流動資產範圍";
+      if (!secondHolder.netWorth) newErrors.secondNetWorth = "請填寫第二持有人的淨資產範圍";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -366,14 +374,17 @@ const handleSave = () => {
                 收入來源 / Income Source <span className="text-destructive">*</span>
               </Label>
               <p className="text-sm text-muted-foreground">可多選</p>
-              <div className="space-y-3 bg-slate-50 p-4 rounded-lg border border-slate-200">
+              <div className={`space-y-3 bg-slate-50 p-4 rounded-lg border ${errors.secondIncomeSource ? "border-destructive" : "border-slate-200"}`}>
                 {incomeSources.map((source) => (
                   <div key={source.value}>
                     <div className="flex items-center space-x-3">
                       <Checkbox
                         id={`second-income-${source.value}`}
                         checked={secondSelectedIncomeSources.includes(source.value)}
-                        onCheckedChange={() => handleSecondIncomeSourceToggle(source.value)}
+                        onCheckedChange={() => {
+                          handleSecondIncomeSourceToggle(source.value);
+                          if (errors.secondIncomeSource) setErrors({ ...errors, secondIncomeSource: "" });
+                        }}
                         className="h-5 w-5 border-2 border-slate-400 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                       />
                       <Label htmlFor={`second-income-${source.value}`} className="cursor-pointer font-normal">
@@ -391,6 +402,7 @@ const handleSave = () => {
                   </div>
                 ))}
               </div>
+              {errors.secondIncomeSource && <p className="text-sm text-destructive">{errors.secondIncomeSource}</p>}
             </div>
 
             {/* 年收入範圍 */}
@@ -400,9 +412,12 @@ const handleSave = () => {
               </Label>
               <Select
                 value={secondHolder.annualIncome}
-                onValueChange={(v) => setSecondHolder({ ...secondHolder, annualIncome: v })}
+                onValueChange={(v) => {
+                  setSecondHolder({ ...secondHolder, annualIncome: v });
+                  if (errors.secondAnnualIncome) setErrors({ ...errors, secondAnnualIncome: "" });
+                }}
               >
-                <SelectTrigger>
+                <SelectTrigger className={errors.secondAnnualIncome ? "border-destructive" : ""}>
                   <SelectValue placeholder="請選擇年收入範圍" />
                 </SelectTrigger>
                 <SelectContent>
@@ -413,6 +428,7 @@ const handleSave = () => {
                   ))}
                 </SelectContent>
               </Select>
+              {errors.secondAnnualIncome && <p className="text-sm text-destructive">{errors.secondAnnualIncome}</p>}
             </div>
 
             {/* 流動資產範圍 */}
@@ -422,9 +438,12 @@ const handleSave = () => {
               </Label>
               <Select
                 value={secondHolder.liquidAsset}
-                onValueChange={(v) => setSecondHolder({ ...secondHolder, liquidAsset: v })}
+                onValueChange={(v) => {
+                  setSecondHolder({ ...secondHolder, liquidAsset: v });
+                  if (errors.secondLiquidAsset) setErrors({ ...errors, secondLiquidAsset: "" });
+                }}
               >
-                <SelectTrigger>
+                <SelectTrigger className={errors.secondLiquidAsset ? "border-destructive" : ""}>
                   <SelectValue placeholder="請選擇流動資產範圍" />
                 </SelectTrigger>
                 <SelectContent>
@@ -435,6 +454,7 @@ const handleSave = () => {
                   ))}
                 </SelectContent>
               </Select>
+              {errors.secondLiquidAsset && <p className="text-sm text-destructive">{errors.secondLiquidAsset}</p>}
             </div>
 
             {/* 淨資產範圍 */}
@@ -444,9 +464,12 @@ const handleSave = () => {
               </Label>
               <Select
                 value={secondHolder.netWorth}
-                onValueChange={(v) => setSecondHolder({ ...secondHolder, netWorth: v })}
+                onValueChange={(v) => {
+                  setSecondHolder({ ...secondHolder, netWorth: v });
+                  if (errors.secondNetWorth) setErrors({ ...errors, secondNetWorth: "" });
+                }}
               >
-                <SelectTrigger>
+                <SelectTrigger className={errors.secondNetWorth ? "border-destructive" : ""}>
                   <SelectValue placeholder="請選擇淨資產範圍" />
                 </SelectTrigger>
                 <SelectContent>
@@ -457,6 +480,7 @@ const handleSave = () => {
                   ))}
                 </SelectContent>
               </Select>
+              {errors.secondNetWorth && <p className="text-sm text-destructive">{errors.secondNetWorth}</p>}
             </div>
           </>
         )}

@@ -418,6 +418,20 @@ export default function RiskQuestionnaire() {
       if (!formData.q8_education_level) newErrors.q8 = "請選擇一項";
       if (formData.q9_investment_knowledge_sources.length === 0) newErrors.q9 = "請至少選擇一項";
       if (!formData.q10_liquidity_needs) newErrors.q10 = "請選擇一項";
+
+      // 聯名賬戶：驗證第二持有人
+      if (isJoint) {
+        if (secondFormData.q1_current_investments.length === 0) newErrors.sq1 = "請填寫第二持有人的Q1";
+        if (!secondFormData.q2_investment_period) newErrors.sq2 = "請填寫第二持有人的Q2";
+        if (!secondFormData.q3_price_volatility) newErrors.sq3 = "請填寫第二持有人的Q3";
+        if (!secondFormData.q4_investment_percentage) newErrors.sq4 = "請填寫第二持有人的Q4";
+        if (!secondFormData.q5_investment_attitude) newErrors.sq5 = "請填寫第二持有人的Q5";
+        if (secondFormData.q6_derivatives_knowledge.length === 0) newErrors.sq6 = "請填寫第二持有人的Q6";
+        if (!secondFormData.q7_age_group) newErrors.sq7 = "請填寫第二持有人的Q7";
+        if (!secondFormData.q8_education_level) newErrors.sq8 = "請填寫第二持有人的Q8";
+        if (secondFormData.q9_investment_knowledge_sources.length === 0) newErrors.sq9 = "請填寫第二持有人的Q9";
+        if (!secondFormData.q10_liquidity_needs) newErrors.sq10 = "請填寫第二持有人的Q10";
+      }
     }
 
     setErrors(newErrors);
@@ -1608,6 +1622,7 @@ export default function RiskQuestionnaire() {
                     </label>
                   </div>
                 </div>
+                {errors.sq1 && <p className="text-sm text-destructive">{errors.sq1}</p>}
               </div>
 
               {/* Q2 */}
@@ -1629,6 +1644,7 @@ export default function RiskQuestionnaire() {
                     <label htmlFor="sq2-more-than-3" className="text-sm">多於3年</label>
                   </div>
                 </RadioGroup>
+                {errors.sq2 && <p className="text-sm text-destructive">{errors.sq2}</p>}
               </div>
 
               {/* Q3 */}
@@ -1650,6 +1666,7 @@ export default function RiskQuestionnaire() {
                     <label htmlFor="sq3-30-percent" className="text-sm">價格波幅多於-30%至多於+30%</label>
                   </div>
                 </RadioGroup>
+                {errors.sq3 && <p className="text-sm text-destructive">{errors.sq3}</p>}
               </div>
 
               {/* Q4 */}
@@ -1679,6 +1696,7 @@ export default function RiskQuestionnaire() {
                     <label htmlFor="sq4-more-than-50" className="text-sm">多於50%</label>
                   </div>
                 </RadioGroup>
+                {errors.sq4 && <p className="text-sm text-destructive">{errors.sq4}</p>}
               </div>
 
               {/* Q5 */}
@@ -1708,6 +1726,7 @@ export default function RiskQuestionnaire() {
                     <label htmlFor="sq5-any-volatility" className="text-sm">可接受任何幅度的價格波動</label>
                   </div>
                 </RadioGroup>
+                {errors.sq5 && <p className="text-sm text-destructive">{errors.sq5}</p>}
               </div>
 
               {/* Q6 */}
@@ -1735,6 +1754,7 @@ export default function RiskQuestionnaire() {
                     <label htmlFor="sq6-no-knowledge" className="text-sm">沒有衍生工具之認識</label>
                   </div>
                 </div>
+                {errors.sq6 && <p className="text-sm text-destructive">{errors.sq6}</p>}
               </div>
             </div>
 
@@ -1769,6 +1789,7 @@ export default function RiskQuestionnaire() {
                     <label htmlFor="sq7-age-65-plus" className="text-sm">65歲或以上</label>
                   </div>
                 </RadioGroup>
+                {errors.sq7 && <p className="text-sm text-destructive">{errors.sq7}</p>}
               </div>
 
               {/* Q8 */}
@@ -1790,6 +1811,7 @@ export default function RiskQuestionnaire() {
                     <label htmlFor="sq8-post-secondary" className="text-sm">大專或以上</label>
                   </div>
                 </RadioGroup>
+                {errors.sq8 && <p className="text-sm text-destructive">{errors.sq8}</p>}
               </div>
 
               {/* Q9 */}
@@ -1841,6 +1863,7 @@ export default function RiskQuestionnaire() {
                     <label htmlFor="sq9-courses" className="text-sm">研究投資或財務相關事宜，或參加投資或財務相關課程</label>
                   </div>
                 </div>
+                {errors.sq9 && <p className="text-sm text-destructive">{errors.sq9}</p>}
               </div>
 
               {/* Q10 */}
@@ -1866,6 +1889,7 @@ export default function RiskQuestionnaire() {
                     <label htmlFor="sq10-sell-more-50" className="text-sm">出售超過50%的投資</label>
                   </div>
                 </RadioGroup>
+                {errors.sq10 && <p className="text-sm text-destructive">{errors.sq10}</p>}
               </div>
             </div>
           </CardContent>

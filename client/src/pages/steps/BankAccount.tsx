@@ -421,6 +421,10 @@ const handleNext = () => {
       toast.error("請至少添加一個銀行賬戶");
       return;
     }
+    if (isJoint && secondHolderAccounts.length === 0) {
+      toast.error("請填寫第二持有人的銀行賬戶（至少一個）");
+      return;
+    }
     if (isJoint) {
       saveSecondHolderMutation.mutate({ applicationId, stepName: 'bankAccount', data: { secondHolderAccounts } });
     }
