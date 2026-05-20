@@ -1,6 +1,6 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { getLoginUrl } from "@/const";
+import { getLoginUrl, APP_VERSION } from "@/const";
 import { useLocation } from "wouter";
 import { FileText, Shield, Zap, Users } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -207,7 +207,7 @@ export default function Home() {
       <footer className="border-t bg-slate-900 py-8 text-white">
         <div className="container flex flex-col items-center gap-2 text-sm">
           <p>© 2026 誠港金融. All rights reserved.</p>
-          <p className="text-xs font-mono bg-slate-800 px-3 py-1 rounded border border-slate-700">v1.0.260504.002</p>
+          <p className="text-xs font-mono bg-slate-800 px-3 py-1 rounded border border-slate-700">{APP_VERSION}</p>
         </div>
       </footer>
     </div>

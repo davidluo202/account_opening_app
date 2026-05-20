@@ -128,7 +128,7 @@ export default function ApplicationWizard({
               <div className="hidden sm:block border-l pl-3 ml-1">
                 <h1 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                   誠港金融開戶系統
-                  <span className="text-xs font-mono bg-blue-100 text-blue-800 px-2 py-0.5 rounded border border-blue-200">v1.0.260504.002</span>
+                  <span className="text-xs font-mono bg-blue-100 text-blue-800 px-2 py-0.5 rounded border border-blue-200">{APP_VERSION}</span>
                 </h1>
               </div>
             </div>
@@ -143,7 +143,7 @@ export default function ApplicationWizard({
           <div className="sm:hidden mb-3">
             <h1 className="text-base font-semibold text-gray-800 flex items-center justify-between">
               <span>誠港金融開戶系統</span>
-              <span className="text-xs font-mono bg-blue-100 text-blue-800 px-2 py-0.5 rounded border border-blue-200">v1.0.260504.002</span>
+              <span className="text-xs font-mono bg-blue-100 text-blue-800 px-2 py-0.5 rounded border border-blue-200">{APP_VERSION}</span>
             </h1>
           </div>
           <div className="space-y-2">
