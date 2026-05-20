@@ -6,7 +6,7 @@ export const translations: Record<string, string> = {
   // 客戶類型
   individual: '個人賬戶',
   joint: '聯名賬戶',
-  corporate: '機構賬戶',
+  corporate: '公司/機構賬戶',
   
   // 賬戶類型
   cash: '現金賬戶',

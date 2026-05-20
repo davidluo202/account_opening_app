@@ -117,7 +117,7 @@ const handleNext = () => {
               <RadioGroupItem value="corporate" id="corporate" />
               <Label htmlFor="corporate" className="flex-1 cursor-pointer">
                 <div>
-                  <div className="font-medium">機構賬戶 / Corporate Account</div>
+                  <div className="font-medium">公司/機構賬戶 / Corporate/Institutional Account</div>
                   <div className="text-sm text-gray-500">可選擇公司/機構專業投資者</div>
                 </div>
               </Label>
