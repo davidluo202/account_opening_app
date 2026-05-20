@@ -51,6 +51,7 @@ export default function DocumentUpload() {
     { enabled: !!applicationId }
   );
   const isCorporate = accountSelection?.customerType === 'corporate';
+  const isJoint = accountSelection?.customerType === 'joint';
 
   // 查詢公司基本信息以判斷註冊國家
   const { data: corporateBasic } = trpc.corporateBasic.get.useQuery(
@@ -132,7 +133,12 @@ export default function DocumentUpload() {
 
   const hasRequiredDocuments = () => {
     const requiredTypes = currentDocTypes.filter(t => t.required).map(t => t.value);
-    return requiredTypes.every(type => getUploadedDocument(type));
+    const primaryOk = requiredTypes.every(type => getUploadedDocument(type));
+    if (isJoint) {
+      const secondOk = requiredTypes.every(type => getUploadedDocument(`second_${type}`));
+      return primaryOk && secondOk;
+    }
+    return primaryOk;
   };
 
 const handleNext = () => {
@@ -170,6 +176,10 @@ const handleNext = () => {
             <strong>提示：</strong>請上傳清晰的文件照片或掃描件，支持JPG、PNG、PDF格式，單個文件不超過10MB
           </p>
         </div>
+
+        {isJoint && (
+          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">賬戶主要持有人 / Primary Account Holder</h3>
+        )}
 
         <div className="space-y-4">
           {currentDocTypes.map((docType) => {
@@ -268,6 +278,70 @@ const handleNext = () => {
             );
           })}
         </div>
+
+        {/* 第二持有人文件上傳 */}
+        {isJoint && (
+          <>
+            <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2 mt-8">賬戶第二持有人 / Second Account Holder</h3>
+            <div className="space-y-4">
+              {documentTypes.map((docType) => {
+                const secondType = `second_${docType.value}`;
+                const uploaded = getUploadedDocument(secondType);
+                const isUploadingThis = uploading === secondType;
+                return (
+                  <Card key={secondType} className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <Label className="text-base">
+                          {docType.label}
+                          {docType.required && <span className="text-destructive ml-1">*</span>}
+                        </Label>
+                        {docType.value === 'w8ben' && (
+                          <div className="mt-2">
+                            <a href="https://www.irs.gov/pub/irs-pdf/fw8ben.pdf" target="_blank" rel="noopener noreferrer"
+                              className="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded text-xs font-medium hover:bg-blue-100">
+                              W8BEN 下載
+                            </a>
+                            <p className="text-xs text-muted-foreground mt-1">以上文件來源於美國國稅局 (IRS) 官方網站</p>
+                          </div>
+                        )}
+                        {uploaded && (
+                          <div className="mt-2 flex items-center gap-2 text-sm text-green-700">
+                            <CheckCircle2 className="h-4 w-4" />
+                            <span>{(uploaded as any).fileName || '已上傳'}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <input
+                          type="file"
+                          accept=".jpg,.jpeg,.png,.pdf"
+                          className="hidden"
+                          ref={(el) => { if (el) fileInputRefs.current[secondType] = el; }}
+                          onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileSelect(secondType, f); }}
+                        />
+                        <Button
+                          variant={uploaded ? "outline" : "default"}
+                          size="sm"
+                          disabled={isUploadingThis}
+                          onClick={() => fileInputRefs.current[secondType]?.click()}
+                        >
+                          {isUploadingThis ? (
+                            <><Loader2 className="h-4 w-4 mr-2 animate-spin" />上傳中...</>
+                          ) : uploaded ? (
+                            <><FileText className="h-4 w-4 mr-2" />重新上傳</>
+                          ) : (
+                            <><Upload className="h-4 w-4 mr-2" />上傳文件</>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+          </>
+        )}
 
         {documents && documents.length > 0 && (
           <div className="text-sm text-muted-foreground">
