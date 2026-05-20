@@ -63,6 +63,19 @@ export default function PersonalBasicInfo() {
     { enabled: !!applicationId }
   );
 
+  // Load existing second holder data
+  const { data: existingSecondHolder } = trpc.secondHolder.get.useQuery(
+    { applicationId, stepName: 'personalBasic' },
+    { enabled: !!applicationId && isJoint }
+  );
+  const saveSecondHolderMutation = trpc.secondHolder.save.useMutation();
+
+  useEffect(() => {
+    if (existingSecondHolder && typeof existingSecondHolder === 'object') {
+      setSecondHolder(prev => ({ ...prev, ...(existingSecondHolder as any) }));
+    }
+  }, [existingSecondHolder]);
+
   const saveMutation = trpc.personalBasic.save.useMutation({
     onSuccess: (result) => {
       if (result.success && result.data) {
@@ -211,6 +224,9 @@ export default function PersonalBasicInfo() {
       placeOfBirth: formData.placeOfBirth,
       nationality,
     });
+    if (isJoint) {
+      saveSecondHolderMutation.mutate({ applicationId, stepName: 'personalBasic', data: secondHolder });
+    }
   };
 
   const handleNext = () => {
@@ -219,10 +235,13 @@ export default function PersonalBasicInfo() {
       return;
     }
 
-    const nationality = formData.nationality === "other" 
-      ? formData.otherNationality 
+    const nationality = formData.nationality === "other"
+      ? formData.otherNationality
       : formData.nationality;
 
+    if (isJoint) {
+      saveSecondHolderMutation.mutate({ applicationId, stepName: 'personalBasic', data: secondHolder });
+    }
     saveMutation.mutate({
       applicationId,
       chineseName: formData.chineseName,

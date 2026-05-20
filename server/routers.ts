@@ -2117,6 +2117,37 @@ export const appRouter = router({
       }),
   }),
 
+  // 聯名賬戶第二持有人數據（通用JSON存儲）
+  secondHolder: router({
+    save: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+        stepName: z.string(),
+        data: z.record(z.string(), z.any()),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const application = await db.getApplicationById(input.applicationId);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
+        }
+        await db.saveSecondHolderData(input.applicationId, input.stepName, input.data);
+        return { success: true };
+      }),
+
+    get: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+        stepName: z.string().optional(),
+      }))
+      .query(async ({ input, ctx }) => {
+        const application = await db.getApplicationById(input.applicationId);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
+        }
+        return await db.getSecondHolderData(input.applicationId, input.stepName);
+      }),
+  }),
+
 });
 
 export type AppRouter = typeof appRouter;

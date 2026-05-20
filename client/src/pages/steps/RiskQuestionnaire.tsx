@@ -130,6 +130,19 @@ export default function RiskQuestionnaire() {
     riskDescription: "",
   });
 
+  // Load existing second holder data
+  const { data: existingSecondHolder } = trpc.secondHolder.get.useQuery(
+    { applicationId, stepName: 'riskQuestionnaire' },
+    { enabled: !!applicationId && isJoint }
+  );
+  const saveSecondHolderMutation = trpc.secondHolder.save.useMutation();
+
+  useEffect(() => {
+    if (existingSecondHolder && typeof existingSecondHolder === 'object') {
+      setSecondFormData(prev => ({ ...prev, ...(existingSecondHolder as any) }));
+    }
+  }, [existingSecondHolder]);
+
   const handleSecondCheckboxChange = (field: keyof FormData, value: string, checked: boolean) => {
     setSecondFormData(prev => {
       const currentArray = prev[field] as string[];
@@ -472,6 +485,10 @@ export default function RiskQuestionnaire() {
         riskLevel,
         riskDescription,
       });
+    }
+
+    if (isJoint) {
+      saveSecondHolderMutation.mutate({ applicationId: applicationId!, stepName: 'riskQuestionnaire', data: { ...secondFormData } });
     }
   };
 

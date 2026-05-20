@@ -39,6 +39,19 @@ export default function TaxInfo() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Load existing second holder data
+  const { data: existingSecondHolder } = trpc.secondHolder.get.useQuery(
+    { applicationId, stepName: 'taxInfo' },
+    { enabled: !!applicationId && isJoint }
+  );
+  const saveSecondHolderMutation = trpc.secondHolder.save.useMutation();
+
+  useEffect(() => {
+    if (existingSecondHolder && typeof existingSecondHolder === 'object') {
+      setSecondHolder(prev => ({ ...prev, ...(existingSecondHolder as any) }));
+    }
+  }, [existingSecondHolder]);
+
   // 獲取個人/機構基本信息以自動填充稅務居住地和證件號碼
   const { data: basicInfo } = trpc.personalBasic.get.useQuery(
     { applicationId },
@@ -125,6 +138,9 @@ const handleSave = () => {
       applicationId,
       ...formData,
     });
+    if (isJoint) {
+      saveSecondHolderMutation.mutate({ applicationId, stepName: 'taxInfo', data: secondHolder });
+    }
   };
 
   const handleNext = () => {
@@ -133,6 +149,9 @@ const handleSave = () => {
       return;
     }
 
+    if (isJoint) {
+      saveSecondHolderMutation.mutate({ applicationId, stepName: 'taxInfo', data: secondHolder });
+    }
     saveMutation.mutate({
       applicationId,
       ...formData,

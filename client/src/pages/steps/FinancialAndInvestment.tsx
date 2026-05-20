@@ -64,6 +64,21 @@ export default function FinancialAndInvestment() {
   );
   const isJoint = accountSelection?.customerType === 'joint';
 
+  // Load existing second holder data
+  const { data: existingSecondHolder } = trpc.secondHolder.get.useQuery(
+    { applicationId, stepName: 'financial' },
+    { enabled: !!applicationId && isJoint }
+  );
+  const saveSecondHolderMutation = trpc.secondHolder.save.useMutation();
+
+  useEffect(() => {
+    if (existingSecondHolder && typeof existingSecondHolder === 'object') {
+      const sh = existingSecondHolder as any;
+      if (sh.secondInvestmentObjectives) setSecondInvestmentObjectives(sh.secondInvestmentObjectives);
+      if (sh.secondInvestmentExperience) setSecondInvestmentExperience(sh.secondInvestmentExperience);
+    }
+  }, [existingSecondHolder]);
+
   const saveMutation = trpc.financial.save.useMutation({
     onSuccess: (result) => {
       if (result.success && result.data) {
@@ -167,6 +182,9 @@ export default function FinancialAndInvestment() {
       investmentExperience,
 
     });
+    if (isJoint) {
+      saveSecondHolderMutation.mutate({ applicationId, stepName: 'financial', data: { secondInvestmentObjectives, secondInvestmentExperience } });
+    }
   };
 
   const handleNext = () => {
@@ -175,6 +193,9 @@ export default function FinancialAndInvestment() {
       return;
     }
 
+    if (isJoint) {
+      saveSecondHolderMutation.mutate({ applicationId, stepName: 'financial', data: { secondInvestmentObjectives, secondInvestmentExperience } });
+    }
     saveMutation.mutate({
       applicationId,
       investmentObjectives,

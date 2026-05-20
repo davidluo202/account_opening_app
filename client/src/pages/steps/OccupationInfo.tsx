@@ -69,6 +69,19 @@ export default function OccupationInfo() {
   const secondNeedsEmploymentDetails = secondFormData.employmentStatus === "employed" || secondFormData.employmentStatus === "self_employed" || secondFormData.employmentStatus === "others";
   const secondNeedsContactInfo = secondFormData.employmentStatus === "retired" || secondFormData.employmentStatus === "student" || secondFormData.employmentStatus === "housewife" || secondFormData.employmentStatus === "others";
 
+  // Load existing second holder data
+  const { data: existingSecondHolder } = trpc.secondHolder.get.useQuery(
+    { applicationId, stepName: 'occupation' },
+    { enabled: !!applicationId && isJoint }
+  );
+  const saveSecondHolderMutation = trpc.secondHolder.save.useMutation();
+
+  useEffect(() => {
+    if (existingSecondHolder && typeof existingSecondHolder === 'object') {
+      setSecondFormData(prev => ({ ...prev, ...(existingSecondHolder as any) }));
+    }
+  }, [existingSecondHolder]);
+
   const { data: existingData, isLoading: isLoadingData } = trpc.occupation.get.useQuery(
     { applicationId },
     { enabled: !!applicationId }
@@ -197,6 +210,9 @@ const handleSave = () => {
       mobilePhone: needsContactInfo ? formData.mobilePhone : undefined,
       correspondenceAddress: needsContactInfo ? formData.correspondenceAddress : undefined,
     });
+    if (isJoint) {
+      saveSecondHolderMutation.mutate({ applicationId, stepName: 'occupation', data: secondFormData });
+    }
   };
 
   const handleNext = () => {
@@ -205,6 +221,9 @@ const handleSave = () => {
       return;
     }
 
+    if (isJoint) {
+      saveSecondHolderMutation.mutate({ applicationId, stepName: 'occupation', data: secondFormData });
+    }
     saveMutation.mutate({
       applicationId,
       employmentStatus: formData.employmentStatus as any,

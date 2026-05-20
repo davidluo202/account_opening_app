@@ -218,6 +218,20 @@ export default function BankAccount() {
   });
   const [secondBankSearchQuery, setSecondBankSearchQuery] = useState("");
 
+  // Load existing second holder data
+  const { data: existingSecondHolder } = trpc.secondHolder.get.useQuery(
+    { applicationId, stepName: 'bankAccount' },
+    { enabled: !!applicationId && isJoint }
+  );
+  const saveSecondHolderMutation = trpc.secondHolder.save.useMutation();
+
+  useEffect(() => {
+    if (existingSecondHolder && typeof existingSecondHolder === 'object') {
+      const sh = existingSecondHolder as any;
+      if (sh.secondHolderAccounts) setSecondHolderAccounts(sh.secondHolderAccounts);
+    }
+  }, [existingSecondHolder]);
+
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [bankSearchQuery, setBankSearchQuery] = useState("");
@@ -406,6 +420,9 @@ const handleNext = () => {
     if (!bankAccounts || bankAccounts.length === 0) {
       toast.error("請至少添加一個銀行賬戶");
       return;
+    }
+    if (isJoint) {
+      saveSecondHolderMutation.mutate({ applicationId, stepName: 'bankAccount', data: { secondHolderAccounts } });
     }
     setLocation(`/application/${applicationId}/step/${stepNum + 1}`);
   };

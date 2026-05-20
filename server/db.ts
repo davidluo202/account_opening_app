@@ -164,6 +164,17 @@ export async function syncMissingTables() {
       if (e?.code !== 'ER_DUP_FIELDNAME') console.error('Add passwordResetExpires column error:', e);
     }
     
+    // Second holder data table (JSON blob per application, keyed by step)
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS \`second_holder_data\` (
+        \`id\` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        \`applicationId\` int NOT NULL UNIQUE,
+        \`data\` text NOT NULL,
+        \`createdAt\` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        \`updatedAt\` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `);
+
     console.log("[Database] Schema sync completed successfully.");
   } catch (error) {
     console.error("[Database] Schema sync failed:", error);
@@ -835,7 +846,8 @@ export async function getCompleteApplicationData(applicationId: number) {
     face,
     regulatory,
     relatedPartiesData,
-    personalClientDeclarationData
+    personalClientDeclarationData,
+    secondHolderAllData
   ] = await Promise.all([
     getApplicationById(applicationId),
     safe(() => getAccountSelection(applicationId)),
@@ -854,7 +866,8 @@ export async function getCompleteApplicationData(applicationId: number) {
     safe(() => getFaceVerification(applicationId)),
     safe(() => getRegulatoryDeclarations(applicationId)),
     safe(() => getCorporateRelatedParties(applicationId)),
-    safe(() => getPersonalClientDeclaration(applicationId))
+    safe(() => getPersonalClientDeclaration(applicationId)),
+    safe(() => getSecondHolderData(applicationId))
   ]);
 
   return {
@@ -875,7 +888,8 @@ export async function getCompleteApplicationData(applicationId: number) {
     face,
     regulatory,
     relatedParties: relatedPartiesData,
-    personalClientDeclaration: personalClientDeclarationData
+    personalClientDeclaration: personalClientDeclarationData,
+    secondHolderData: secondHolderAllData
   };
 }
 
@@ -1537,5 +1551,60 @@ export async function getCorporateRelatedParties(applicationId: number) {
   if (result.length === 0) return [];
   const data = result[0];
   return JSON.parse(data.relatedParties || '[]');
+}
+
+// ==================== 聯名賬戶第二持有人數據 ====================
+
+/**
+ * 保存第二持有人數據（JSON blob，按step分區）
+ * stepName: e.g. "personalBasic", "personalDetailed", "occupation", etc.
+ * stepData: the second holder's form data for that step
+ */
+export async function saveSecondHolderData(applicationId: number, stepName: string, stepData: any) {
+  const mysql2 = await import("mysql2/promise");
+  const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+  try {
+    // Get existing data first
+    const [rows]: any = await conn.execute(
+      'SELECT `data` FROM `second_holder_data` WHERE `applicationId` = ? LIMIT 1',
+      [applicationId]
+    );
+    let existing: Record<string, any> = {};
+    if (rows && rows.length > 0) {
+      try { existing = JSON.parse(rows[0].data); } catch { existing = {}; }
+    }
+    // Merge step data
+    existing[stepName] = stepData;
+    const jsonStr = JSON.stringify(existing);
+
+    await conn.execute(
+      `INSERT INTO \`second_holder_data\` (\`applicationId\`, \`data\`) VALUES (?, ?)
+       ON DUPLICATE KEY UPDATE \`data\` = VALUES(\`data\`)`,
+      [applicationId, jsonStr]
+    );
+  } finally {
+    await conn.end();
+  }
+}
+
+/**
+ * 獲取第二持有人數據
+ * 返回整個JSON對象（所有step的數據），或指定step的數據
+ */
+export async function getSecondHolderData(applicationId: number, stepName?: string) {
+  const mysql2 = await import("mysql2/promise");
+  const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+  try {
+    const [rows]: any = await conn.execute(
+      'SELECT `data` FROM `second_holder_data` WHERE `applicationId` = ? LIMIT 1',
+      [applicationId]
+    );
+    if (!rows || rows.length === 0) return stepName ? null : {};
+    let parsed: Record<string, any> = {};
+    try { parsed = JSON.parse(rows[0].data); } catch { parsed = {}; }
+    return stepName ? (parsed[stepName] ?? null) : parsed;
+  } finally {
+    await conn.end();
+  }
 }
 

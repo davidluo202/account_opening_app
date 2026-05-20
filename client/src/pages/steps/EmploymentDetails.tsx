@@ -69,6 +69,22 @@ export default function EmploymentDetails() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Load existing second holder data
+  const { data: existingSecondHolder } = trpc.secondHolder.get.useQuery(
+    { applicationId, stepName: 'employment' },
+    { enabled: !!applicationId && isJoint }
+  );
+  const saveSecondHolderMutation = trpc.secondHolder.save.useMutation();
+
+  useEffect(() => {
+    if (existingSecondHolder && typeof existingSecondHolder === 'object') {
+      const sh = existingSecondHolder as any;
+      if (sh.secondHolder) setSecondHolder(prev => ({ ...prev, ...sh.secondHolder }));
+      if (sh.secondSelectedIncomeSources) setSecondSelectedIncomeSources(sh.secondSelectedIncomeSources);
+      if (sh.secondIncomeSourceOther) setSecondIncomeSourceOther(sh.secondIncomeSourceOther);
+    }
+  }, [existingSecondHolder]);
+
   const { data: existingData, isLoading: isLoadingData } = trpc.employment.get.useQuery(
     { applicationId },
     { enabled: !!applicationId }
@@ -174,6 +190,9 @@ const handleSave = () => {
       applicationId,
       ...formData,
     });
+    if (isJoint) {
+      saveSecondHolderMutation.mutate({ applicationId, stepName: 'employment', data: { secondHolder, secondSelectedIncomeSources, secondIncomeSourceOther } });
+    }
   };
 
   const handleNext = () => {
@@ -182,6 +201,9 @@ const handleSave = () => {
       return;
     }
 
+    if (isJoint) {
+      saveSecondHolderMutation.mutate({ applicationId, stepName: 'employment', data: { secondHolder, secondSelectedIncomeSources, secondIncomeSourceOther } });
+    }
     saveMutation.mutate({
       applicationId,
       ...formData,

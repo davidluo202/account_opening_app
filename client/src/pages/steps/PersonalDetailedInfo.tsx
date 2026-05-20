@@ -137,6 +137,19 @@ export default function PersonalDetailedInfo() {
   const [countdown, setCountdown] = useState(0);
   const [isSendingCode, setIsSendingCode] = useState(false);
 
+  // Load existing second holder data
+  const { data: existingSecondHolder } = trpc.secondHolder.get.useQuery(
+    { applicationId, stepName: 'personalDetailed' },
+    { enabled: !!applicationId && isJoint }
+  );
+  const saveSecondHolderMutation = trpc.secondHolder.save.useMutation();
+
+  useEffect(() => {
+    if (existingSecondHolder && typeof existingSecondHolder === 'object') {
+      setSecondHolder(prev => ({ ...prev, ...(existingSecondHolder as any) }));
+    }
+  }, [existingSecondHolder]);
+
   const { data: existingData, isLoading: isLoadingData, error: detailedInfoError } = trpc.personalDetailed.get.useQuery(
     { applicationId },
     { 
@@ -349,6 +362,9 @@ export default function PersonalDetailedInfo() {
       idExpiryDate: formData.idIsPermanent ? undefined : formData.idExpiryDate,
       emailVerified, // 保存郵箱驗證狀態
     });
+    if (isJoint) {
+      saveSecondHolderMutation.mutate({ applicationId, stepName: 'personalDetailed', data: secondHolder });
+    }
   };
 
   const handleNext = () => {
@@ -357,6 +373,9 @@ export default function PersonalDetailedInfo() {
       return;
     }
 
+    if (isJoint) {
+      saveSecondHolderMutation.mutate({ applicationId, stepName: 'personalDetailed', data: secondHolder });
+    }
     saveMutation.mutate({
       applicationId,
       ...formData,
