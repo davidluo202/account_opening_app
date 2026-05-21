@@ -35,12 +35,11 @@ const corporateSteps: Step[] = [
   { id: 3, title: "公司財務狀況", description: "填寫公司財務資料" },
   { id: 4, title: "公司投資經驗與目標", description: "填寫投資經驗與目標" },
   { id: 5, title: "關聯人士信息", description: "填寫董事及授權人資料" },
-  { id: 6, title: "風險評估問卷", description: "完成風險評估" },
-  { id: 7, title: "結算銀行賬戶", description: "添加公司銀行賬戶" },
-  { id: 8, title: "稅務信息", description: "填寫公司稅務資料" },
-  { id: 9, title: "文件上傳", description: "上傳公司證明文件" },
-  { id: 10, title: "客戶聲明", description: "填寫客戶聲明" },
-  { id: 11, title: "監管聲明", description: "公司蓋章與簽署" },
+  { id: 6, title: "結算銀行賬戶", description: "添加公司銀行賬戶" },
+  { id: 7, title: "稅務信息", description: "填寫公司稅務資料" },
+  { id: 8, title: "文件上傳", description: "上傳公司證明文件" },
+  { id: 9, title: "客戶聲明", description: "填寫客戶聲明" },
+  { id: 10, title: "監管聲明", description: "公司蓋章與簽署" },
 ];
 
 interface ApplicationWizardProps {

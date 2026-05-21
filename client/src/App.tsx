@@ -87,12 +87,11 @@ function StepRouter() {
       case 3: return <CorporateFinancial applicationId={applicationId} stepNum={stepNum} />; // 公司財務狀況
       case 4: return <CorporateInvestment applicationId={applicationId} stepNum={stepNum} />; // 公司投資經驗與目標
       case 5: return <CorporateRelatedParties />; // 关联人士
-      case 6: return <RiskQuestionnaire />;
-      case 7: return <BankAccount />;
-      case 8: return <TaxInfo />;
-      case 9: return <DocumentUpload />;
-      case 10: return <ClientDeclaration />;
-      case 11: return <RegulatoryDeclaration />;
+      case 6: return <BankAccount />;
+      case 7: return <TaxInfo />;
+      case 8: return <DocumentUpload />;
+      case 9: return <ClientDeclaration />;
+      case 10: return <RegulatoryDeclaration />;
       default: return <NotFound />;
     }
   } else {
