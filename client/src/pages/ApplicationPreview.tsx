@@ -262,6 +262,10 @@ export default function ApplicationPreview() {
 
   // 判断是否为機構客戶
   const isCorporate = accountSelection?.customerType === 'corporate';
+  // 判断是否为聯名賬戶
+  const isJoint = accountSelection?.customerType === 'joint';
+  // 第二持有人數據（聯名賬戶）
+  const sh = (completeData as any)?.secondHolderData as Record<string, any> | undefined;
 
   const handleSaveAndGenerateNumber = () => {
     if (!application?.applicationNumber) {
@@ -614,6 +618,10 @@ export default function ApplicationPreview() {
               </tbody>
             </table>
             ) : (
+            <>
+            {isJoint && (
+              <div className="bg-yellow-50 p-2 px-3 border-b font-semibold text-sm">賬戶主要持有人 / Primary Account Holder</div>
+            )}
             <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
@@ -636,6 +644,34 @@ export default function ApplicationPreview() {
                 </tr>
               </tbody>
             </table>
+            {isJoint && sh?.personalBasic && (
+              <>
+                <div className="bg-orange-50 p-2 px-3 border-b border-t font-semibold text-sm">賬戶第二持有人 / Second Account Holder</div>
+                <table className="w-full min-w-[800px]">
+                  <tbody>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">中文姓名 Name (Chinese)</td>
+                      <td className="p-3 w-1/4 border-r">{sh.personalBasic.chineseName || "-"}</td>
+                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">英文姓名 Name (English)</td>
+                      <td className="p-3 w-1/4">{sh.personalBasic.englishName || "-"}</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">性別 Gender</td>
+                      <td className="p-3 border-r">{translateGender(sh.personalBasic.gender)}</td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">出生日期 Date of Birth</td>
+                      <td className="p-3">{formatDate(sh.personalBasic.dateOfBirth)}</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">出生地 Place of Birth</td>
+                      <td className="p-3 border-r">{sh.personalBasic.placeOfBirth || "-"}</td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">國籍 Nationality</td>
+                      <td className="p-3">{sh.personalBasic.nationality || "-"}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </>
+            )}
+            </>
             )}
           </div>
 
@@ -792,6 +828,9 @@ export default function ApplicationPreview() {
                 </Button>
               </h3>
             </div>
+            {isJoint && (
+              <div className="bg-yellow-50 p-2 px-3 border-b font-semibold text-sm">賬戶主要持有人 / Primary Account Holder</div>
+            )}
             <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
@@ -856,6 +895,53 @@ export default function ApplicationPreview() {
                 </tr>
               </tbody>
             </table>
+            {isJoint && sh?.personalDetailed && (
+              <>
+                <div className="bg-orange-50 p-2 px-3 border-b border-t font-semibold text-sm">賬戶第二持有人 / Second Account Holder</div>
+                <table className="w-full min-w-[800px]">
+                  <tbody>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">證件類型 ID Type</td>
+                      <td className="p-3 w-1/4 border-r">{translateIdType(sh.personalDetailed.idType)}</td>
+                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">證件號碼 ID Number</td>
+                      <td className="p-3 w-1/4">{sh.personalDetailed.idNumber || "-"}</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">簽發國家/地區 Issuing Country</td>
+                      <td className="p-3 border-r">
+                        {sh.personalDetailed.idIssuingCountry === "OTHER"
+                          ? sh.personalDetailed.idIssuingPlaceOther
+                          : translateIssuingCountry(sh.personalDetailed.idIssuingCountry)}
+                      </td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">有效期 Expiry Date</td>
+                      <td className="p-3">
+                        {sh.personalDetailed.idIsPermanent ? "長期有效" : formatDate(sh.personalDetailed.idExpiryDate)}
+                      </td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">婚姻狀況 Marital Status</td>
+                      <td className="p-3 border-r">{translateMaritalStatus(sh.personalDetailed.maritalStatus)}</td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">學歷 Education</td>
+                      <td className="p-3">{translateEducationLevel(sh.personalDetailed.educationLevel)}</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">電子郵箱 Email</td>
+                      <td className="p-3 border-r">{sh.personalDetailed.email || "-"}</td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">手機號碼 Mobile</td>
+                      <td className="p-3">
+                        {sh.personalDetailed.mobileCountryCode && sh.personalDetailed.mobileNumber
+                          ? `${sh.personalDetailed.mobileCountryCode} ${sh.personalDetailed.mobileNumber}`
+                          : "-"}
+                      </td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">住宅地址 Residential Address</td>
+                      <td className="p-3" colSpan={3}>{sh.personalDetailed.residentialAddress || "-"}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </>
+            )}
           </div>
           )}
 
@@ -870,6 +956,9 @@ export default function ApplicationPreview() {
                 </Button>
               </h3>
             </div>
+            {isJoint && (
+              <div className="bg-yellow-50 p-2 px-3 border-b font-semibold text-sm">賬戶主要持有人 / Primary Account Holder</div>
+            )}
             <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
@@ -914,6 +1003,39 @@ export default function ApplicationPreview() {
                 )}
               </tbody>
             </table>
+            {isJoint && sh?.occupation && (
+              <>
+                <div className="bg-orange-50 p-2 px-3 border-b border-t font-semibold text-sm">賬戶第二持有人 / Second Account Holder</div>
+                <table className="w-full min-w-[800px]">
+                  <tbody>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">就業狀況 Employment Status</td>
+                      <td className="p-3" colSpan={3}>{translateEmploymentStatus(sh.occupation.employmentStatus)}</td>
+                    </tr>
+                    {(sh.occupation.employmentStatus === "employed" || sh.occupation.employmentStatus === "self_employed") && (
+                      <>
+                        <tr className="border-b">
+                          <td className="p-3 bg-gray-50 font-semibold border-r">公司名稱 Company Name</td>
+                          <td className="p-3 border-r">{sh.occupation.companyName || "-"}</td>
+                          <td className="p-3 bg-gray-50 font-semibold border-r">職位 Position</td>
+                          <td className="p-3">{sh.occupation.position || "-"}</td>
+                        </tr>
+                        <tr className="border-b">
+                          <td className="p-3 bg-gray-50 font-semibold border-r">从业年限 Years of Service</td>
+                          <td className="p-3 border-r">{sh.occupation.yearsOfService || "-"}</td>
+                          <td className="p-3 bg-gray-50 font-semibold border-r">行业 Industry</td>
+                          <td className="p-3">{sh.occupation.industry || "-"}</td>
+                        </tr>
+                        <tr className="border-b">
+                          <td className="p-3 bg-gray-50 font-semibold border-r">辦公地址 Office Address</td>
+                          <td className="p-3" colSpan={3}>{sh.occupation.companyAddress || "-"}</td>
+                        </tr>
+                      </>
+                    )}
+                  </tbody>
+                </table>
+              </>
+            )}
           </div>
           )}
 
@@ -928,6 +1050,9 @@ export default function ApplicationPreview() {
                 </Button>
               </h3>
             </div>
+            {isJoint && (
+              <div className="bg-yellow-50 p-2 px-3 border-b font-semibold text-sm">賬戶主要持有人 / Primary Account Holder</div>
+            )}
             <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
@@ -944,6 +1069,27 @@ export default function ApplicationPreview() {
                 </tr>
               </tbody>
             </table>
+            {isJoint && sh?.employment?.secondHolder && (
+              <>
+                <div className="bg-orange-50 p-2 px-3 border-b border-t font-semibold text-sm">賬戶第二持有人 / Second Account Holder</div>
+                <table className="w-full min-w-[800px]">
+                  <tbody>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">收入來源 Income Source</td>
+                      <td className="p-3 w-1/4 border-r">{formatIncomeSource(sh.employment.secondHolder.incomeSource)}</td>
+                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">年收入 Annual Income</td>
+                      <td className="p-3 w-1/4">{formatAmountRange(sh.employment.secondHolder.annualIncome)}</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">流動資產 Liquid Asset</td>
+                      <td className="p-3 border-r">{formatAmountRange(sh.employment.secondHolder.liquidAsset)}</td>
+                      <td className="p-3 bg-gray-50 font-semibold border-r">淨資產 Net Worth</td>
+                      <td className="p-3">{formatAmountRange(sh.employment.secondHolder.netWorth)}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </>
+            )}
           </div>
           )}
 
@@ -958,6 +1104,9 @@ export default function ApplicationPreview() {
                   </Button>
                 </h3>
               </div>
+              {isJoint && (
+                <div className="bg-yellow-50 p-2 px-3 border-b font-semibold text-sm">賬戶主要持有人 / Primary Account Holder</div>
+              )}
               <table className="w-full min-w-[800px]">
                 <tbody>
                   <tr className="border-b">
@@ -970,6 +1119,23 @@ export default function ApplicationPreview() {
                   </tr>
                 </tbody>
               </table>
+              {isJoint && sh?.financial && (
+                <>
+                  <div className="bg-orange-50 p-2 px-3 border-b border-t font-semibold text-sm">賬戶第二持有人 / Second Account Holder</div>
+                  <table className="w-full min-w-[800px]">
+                    <tbody>
+                      <tr className="border-b">
+                        <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">投資目的 Investment Objective</td>
+                        <td className="p-3" colSpan={3}>{formatInvestmentObjectives(sh.financial.secondInvestmentObjectives) || "-"}</td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="p-3 bg-gray-50 font-semibold border-r">投資經驗 Investment Experience</td>
+                        <td className="p-3" colSpan={3}>{formatInvestmentExperience(sh.financial.secondInvestmentExperience)}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </>
+              )}
             </div>
           )}
 
@@ -1012,6 +1178,9 @@ export default function ApplicationPreview() {
                 </Button>
               </h3>
             </div>
+            {isJoint && (
+              <div className="bg-yellow-50 p-2 px-3 border-b font-semibold text-sm">賬戶主要持有人 / Primary Account Holder</div>
+            )}
             {riskQuestionnaire ? (
               <div className="p-6 space-y-6">
                 {/* 問卷答案详情 */}
@@ -1208,6 +1377,33 @@ export default function ApplicationPreview() {
             ) : (
               <div className="p-6 text-center text-gray-500">未填写風險評估問卷</div>
             )}
+            {isJoint && (
+              <>
+                <div className="bg-orange-50 p-2 px-3 border-b border-t font-semibold text-sm">賬戶第二持有人 / Second Account Holder</div>
+                {sh?.riskQuestionnaire ? (
+                  <div className="p-6">
+                    <table className="w-full min-w-[800px] border">
+                      <tbody>
+                        <tr className="border-b">
+                          <td className="p-3 bg-gray-50 font-semibold w-1/3 border-r">風險評估總分 Total Score</td>
+                          <td className="p-3">{sh.riskQuestionnaire.totalScore ?? calculateRiskLevel(sh.riskQuestionnaire).totalScore}</td>
+                        </tr>
+                        <tr className="border-b">
+                          <td className="p-3 bg-gray-50 font-semibold border-r">風險等級 Risk Level</td>
+                          <td className="p-3 font-semibold">{sh.riskQuestionnaire.riskLevel ?? calculateRiskLevel(sh.riskQuestionnaire).riskLevel}</td>
+                        </tr>
+                        <tr className="border-b">
+                          <td className="p-3 bg-gray-50 font-semibold border-r">風險描述 Risk Description</td>
+                          <td className="p-3 text-sm text-gray-600">{sh.riskQuestionnaire.riskDescription ?? calculateRiskLevel(sh.riskQuestionnaire).riskDescription}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="p-6 text-center text-gray-500">未填写風險評估問卷</div>
+                )}
+              </>
+            )}
           </div>
 
 
@@ -1221,6 +1417,9 @@ export default function ApplicationPreview() {
                 </Button>
               </h3>
             </div>
+            {isJoint && (
+              <div className="bg-yellow-50 p-2 px-3 border-b font-semibold text-sm">賬戶主要持有人 / Primary Account Holder</div>
+            )}
             {bankAccounts && bankAccounts.length > 0 ? (
               <table className="w-full min-w-[800px]">
                 <tbody>
@@ -1259,6 +1458,43 @@ export default function ApplicationPreview() {
             ) : (
               <div className="p-6 text-center text-gray-500">未添加銀行賬戶</div>
             )}
+            {isJoint && (
+              <>
+                <div className="bg-orange-50 p-2 px-3 border-b border-t font-semibold text-sm">賬戶第二持有人 / Second Account Holder</div>
+                {sh?.bankAccount?.secondHolderAccounts && sh.bankAccount.secondHolderAccounts.length > 0 ? (
+                  <table className="w-full min-w-[800px]">
+                    <tbody>
+                      {sh.bankAccount.secondHolderAccounts.map((account: any, index: number) => (
+                        <Fragment key={index}>
+                          <tr className="border-b bg-gray-50">
+                            <td className="p-3 font-semibold border-r" style={{width: '33%'}}>銀行名稱<br/>Bank Name</td>
+                            <td className="p-3 font-semibold border-r" style={{width: '33%'}}>SWIFT Code</td>
+                            <td className="p-3 font-semibold" style={{width: '33%'}}>賬戶类型<br/>Account Type</td>
+                          </tr>
+                          <tr className="border-b">
+                            <td className="p-3 border-r">{account.bankName}</td>
+                            <td className="p-3 border-r">{account.swiftCode || '-'}</td>
+                            <td className="p-3">{translateBankAccountType(account.accountType)}</td>
+                          </tr>
+                          <tr className="border-b bg-gray-50">
+                            <td className="p-3 font-semibold border-r">币种<br/>Currency</td>
+                            <td className="p-3 font-semibold border-r">账号<br/>Account Number</td>
+                            <td className="p-3 font-semibold">持有人<br/>Holder Name</td>
+                          </tr>
+                          <tr className="border-b">
+                            <td className="p-3 border-r">{account.accountCurrency}</td>
+                            <td className="p-3 border-r">{account.accountNumber}</td>
+                            <td className="p-3">{account.accountHolderName}</td>
+                          </tr>
+                        </Fragment>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <div className="p-6 text-center text-gray-500">未添加銀行賬戶</div>
+                )}
+              </>
+            )}
           </div>
 
           {/* 稅務信息 */}
@@ -1271,6 +1507,9 @@ export default function ApplicationPreview() {
                 </Button>
               </h3>
             </div>
+            {isJoint && (
+              <div className="bg-yellow-50 p-2 px-3 border-b font-semibold text-sm">賬戶主要持有人 / Primary Account Holder</div>
+            )}
             <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
@@ -1281,6 +1520,21 @@ export default function ApplicationPreview() {
                 </tr>
               </tbody>
             </table>
+            {isJoint && sh?.taxInfo && (
+              <>
+                <div className="bg-orange-50 p-2 px-3 border-b border-t font-semibold text-sm">賬戶第二持有人 / Second Account Holder</div>
+                <table className="w-full min-w-[800px]">
+                  <tbody>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">稅務管轄區 Tax Jurisdiction</td>
+                      <td className="p-3 w-1/4 border-r">{sh.taxInfo.taxResidency || "-"}</td>
+                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">稅務识别号 TIN</td>
+                      <td className="p-3 w-1/4">{sh.taxInfo.taxIdNumber || "-"}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </>
+            )}
           </div>
 
           {/* 文件上传（個人第10步；機構第8步） */}
@@ -1365,6 +1619,9 @@ export default function ApplicationPreview() {
                 </Button>
               </h3>
             </div>
+            {isJoint && (
+              <div className="bg-yellow-50 p-2 px-3 border-b font-semibold text-sm">賬戶主要持有人 / Primary Account Holder</div>
+            )}
             <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
@@ -1396,6 +1653,42 @@ export default function ApplicationPreview() {
                 </tr>
               </tbody>
             </table>
+            {isJoint && sh?.personalClientDeclaration && (
+              <>
+                <div className="bg-orange-50 p-2 px-3 border-b border-t font-semibold text-sm">賬戶第二持有人 / Second Account Holder</div>
+                <table className="w-full min-w-[800px]">
+                  <tbody>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">最終權益擁有人 Ultimate Beneficial Owner</td>
+                      <td className="p-3 w-3/4">{sh.personalClientDeclaration.isUBO === "yes" ? "是 Yes" : "否 No"}</td>
+                    </tr>
+                    {sh.personalClientDeclaration.isUBO === "no" && sh.personalClientDeclaration.uboName && (
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">受益人資料 Beneficial Owner Details</td>
+                      <td className="p-3">
+                        姓名: {sh.personalClientDeclaration.uboName} |
+                        證件: {sh.personalClientDeclaration.uboIdPassport} |
+                        國家: {sh.personalClientDeclaration.uboCountry} |
+                        地址: {sh.personalClientDeclaration.uboAddress}
+                      </td>
+                    </tr>
+                    )}
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">SFC持牌機構雇員/董事</td>
+                      <td className="p-3">{sh.personalClientDeclaration.isSfcEmployee === "yes" ? `是 - ${sh.personalClientDeclaration.sfcInstitutionName}` : "否 No"}</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">誠港金融雇員 CMF Employee</td>
+                      <td className="p-3">{sh.personalClientDeclaration.isCmfEmployee === "yes" ? "是 Yes" : "否 No"}</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">誠港金融雇員/董事親屬 CMF Relative</td>
+                      <td className="p-3">{sh.personalClientDeclaration.isCmfRelative === "yes" ? `是 - ${sh.personalClientDeclaration.cmfRelativeEmployeeName} (${sh.personalClientDeclaration.cmfRelativeRelationship})` : "否 No"}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </>
+            )}
           </div>
 
           {/* 监管声明（個人第13步；機構第11步） */}
@@ -1408,6 +1701,9 @@ export default function ApplicationPreview() {
                 </Button>
               </h3>
             </div>
+            {isJoint && (
+              <div className="bg-yellow-50 p-2 px-3 border-b font-semibold text-sm">賬戶主要持有人 / Primary Account Holder</div>
+            )}
             <table className="w-full min-w-[800px]">
               <tbody>
                 <tr className="border-b">
@@ -1521,6 +1817,45 @@ export default function ApplicationPreview() {
                 )}
               </tbody>
             </table>
+            {isJoint && sh?.regulatoryDeclaration && (
+              <>
+                <div className="bg-orange-50 p-2 px-3 border-b border-t font-semibold text-sm">賬戶第二持有人 / Second Account Holder</div>
+                <table className="w-full min-w-[800px]">
+                  <tbody>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">是否为PEP</td>
+                      <td className="p-3 w-1/4 border-r">{sh.regulatoryDeclaration.isPEP ? "是" : "否"}</td>
+                      <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">是否为US Person</td>
+                      <td className="p-3 w-1/4">{sh.regulatoryDeclaration.isUSPerson ? "是" : "否"}</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">直接促銷 Direct Marketing</td>
+                      <td className="p-3" colSpan={3}>
+                        {sh.regulatoryDeclaration.objectsDirectMarketing ? (
+                          <span className="text-red-500 flex items-center">
+                            <X className="h-4 w-4 mr-2" />
+                            反對
+                          </span>
+                        ) : (
+                          <span className="text-green-600 flex items-center">
+                            <Check className="h-4 w-4 mr-2" />
+                            同意
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                    {sh.regulatoryDeclaration.signature && (
+                      <tr className="border-b">
+                        <td className="p-3 bg-gray-50 font-semibold border-r">電子簽名 Signature</td>
+                        <td className="p-3" colSpan={3}>
+                          <span className="font-semibold">{sh.regulatoryDeclaration.signature}</span>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </>
+            )}
           </div>
         </Card>
 
