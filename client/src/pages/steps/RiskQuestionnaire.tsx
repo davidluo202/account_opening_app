@@ -502,7 +502,51 @@ export default function RiskQuestionnaire() {
     }
 
     if (isJoint) {
-      saveSecondHolderMutation.mutate({ applicationId: applicationId!, stepName: 'riskQuestionnaire', data: { ...secondFormData } });
+      // Calculate second holder score using same logic as primary
+      const calcSecondScore = () => {
+        let s = 0;
+        if (secondFormData.q1_current_investments.includes("savings")) s += 40;
+        if (secondFormData.q1_current_investments.includes("bonds")) s += 40;
+        if (secondFormData.q1_current_investments.includes("derivatives")) s += 40;
+        if (secondFormData.q2_investment_period === "less_than_1") s += 10;
+        else if (secondFormData.q2_investment_period === "1_to_3") s += 30;
+        else if (secondFormData.q2_investment_period === "more_than_3") s += 50;
+        if (secondFormData.q3_price_volatility === "10_percent") s += 10;
+        else if (secondFormData.q3_price_volatility === "20_percent") s += 30;
+        else if (secondFormData.q3_price_volatility === "30_percent") s += 50;
+        if (secondFormData.q4_investment_percentage === "less_than_10") s += 10;
+        else if (secondFormData.q4_investment_percentage === "10_to_20") s += 20;
+        else if (secondFormData.q4_investment_percentage === "21_to_30") s += 30;
+        else if (secondFormData.q4_investment_percentage === "31_to_50") s += 40;
+        else if (secondFormData.q4_investment_percentage === "more_than_50") s += 50;
+        if (secondFormData.q5_investment_attitude === "no_volatility") s += 10;
+        else if (secondFormData.q5_investment_attitude === "small_volatility") s += 20;
+        else if (secondFormData.q5_investment_attitude === "some_volatility") s += 30;
+        else if (secondFormData.q5_investment_attitude === "large_volatility") s += 40;
+        else if (secondFormData.q5_investment_attitude === "any_volatility") s += 50;
+        if (secondFormData.q6_derivatives_knowledge.includes("training")) s += 40;
+        if (secondFormData.q6_derivatives_knowledge.includes("experience")) s += 40;
+        if (secondFormData.q6_derivatives_knowledge.includes("transactions")) s += 40;
+        if (secondFormData.q7_age_group === "age_18_25") s += 20;
+        else if (secondFormData.q7_age_group === "age_26_35") s += 30;
+        else if (secondFormData.q7_age_group === "age_36_50") s += 40;
+        else if (secondFormData.q7_age_group === "age_51_64") s += 20;
+        else if (secondFormData.q7_age_group === "age_65_plus") s += 10;
+        if (secondFormData.q8_education_level === "primary_or_below") s += 10;
+        else if (secondFormData.q8_education_level === "secondary") s += 30;
+        else if (secondFormData.q8_education_level === "post_secondary") s += 50;
+        if (secondFormData.q9_investment_knowledge_sources.includes("relatives")) s += 40;
+        if (secondFormData.q9_investment_knowledge_sources.includes("media")) s += 40;
+        if (secondFormData.q9_investment_knowledge_sources.includes("courses")) s += 40;
+        if (secondFormData.q10_liquidity_needs === "no_sell") s += 50;
+        else if (secondFormData.q10_liquidity_needs === "sell_less_30") s += 30;
+        else if (secondFormData.q10_liquidity_needs === "sell_30_50") s += 20;
+        else if (secondFormData.q10_liquidity_needs === "sell_more_50") s += 10;
+        return getRiskLevel(s);
+      };
+      const secondResult = calcSecondScore();
+      setSecondFormData(prev => ({ ...prev, totalScore: secondResult.totalScore, riskLevel: secondResult.riskLevel, riskDescription: secondResult.riskDescription }));
+      saveSecondHolderMutation.mutate({ applicationId: applicationId!, stepName: 'riskQuestionnaire', data: { ...secondFormData, totalScore: secondResult.totalScore, riskLevel: secondResult.riskLevel, riskDescription: secondResult.riskDescription } });
     }
   };
 
@@ -1893,6 +1937,27 @@ export default function RiskQuestionnaire() {
               </div>
             </div>
           </CardContent>
+
+          {/* 第二持有人風險評估結果 */}
+          {secondFormData.riskLevel && secondFormData.riskDescription && (
+            <div className="mt-8 p-6 bg-muted/50 rounded-lg border-2 border-primary/20">
+              <h3 className="text-lg font-semibold mb-4 text-primary">第二持有人風險評估結果</h3>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-muted-foreground">總分：</span>
+                  <span className="text-2xl font-bold text-primary">{secondFormData.totalScore || 0}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-muted-foreground">風險等級：</span>
+                  <span className="text-xl font-semibold text-primary">{secondFormData.riskLevel}</span>
+                </div>
+                <div className="mt-4">
+                  <p className="text-sm font-medium text-muted-foreground mb-2">投資取向：</p>
+                  <p className="text-sm leading-relaxed whitespace-pre-line">{secondFormData.riskDescription}</p>
+                </div>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>
