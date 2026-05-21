@@ -1831,7 +1831,7 @@ export default function ApplicationPreview() {
                     <tr className="border-b">
                       <td className="p-3 bg-gray-50 font-semibold border-r">已閱讀開戶協議 Read Agreement</td>
                       <td className="p-3" colSpan={3}>
-                        {sh.regulatoryDeclaration.agreementRead ? (
+                        {(sh.regulatoryDeclaration.hasReadAgreement || sh.regulatoryDeclaration.agreementRead) ? (
                           <span className="text-green-600 flex items-center"><Check className="h-4 w-4 mr-2" />是</span>
                         ) : (<span className="text-gray-500">否</span>)}
                       </td>
@@ -1839,7 +1839,7 @@ export default function ApplicationPreview() {
                     <tr className="border-b">
                       <td className="p-3 bg-gray-50 font-semibold border-r">接受電子交易條例 ETO Consent</td>
                       <td className="p-3" colSpan={3}>
-                        {sh.regulatoryDeclaration.electronicSignatureConsent ? (
+                        {(sh.regulatoryDeclaration.acceptsETO || sh.regulatoryDeclaration.electronicSignatureConsent) ? (
                           <span className="text-green-600 flex items-center"><Check className="h-4 w-4 mr-2" />已接受</span>
                         ) : (<span className="text-gray-500">未接受</span>)}
                       </td>
@@ -1847,7 +1847,7 @@ export default function ApplicationPreview() {
                     <tr className="border-b">
                       <td className="p-3 bg-gray-50 font-semibold border-r">接受反洗錢和合規監管 AML Consent</td>
                       <td className="p-3" colSpan={3}>
-                        {sh.regulatoryDeclaration.amlComplianceConsent ? (
+                        {(sh.regulatoryDeclaration.acceptsAML || sh.regulatoryDeclaration.amlComplianceConsent) ? (
                           <span className="text-green-600 flex items-center"><Check className="h-4 w-4 mr-2" />已接受</span>
                         ) : (<span className="text-gray-500">未接受</span>)}
                       </td>
@@ -1855,7 +1855,7 @@ export default function ApplicationPreview() {
                     <tr className="border-b">
                       <td className="p-3 bg-gray-50 font-semibold border-r">風險評估確認 Risk Assessment Consent</td>
                       <td className="p-3" colSpan={3}>
-                        {sh.regulatoryDeclaration.riskAssessmentConsent ? (
+                        {(sh.regulatoryDeclaration.acceptsRiskAssessment || sh.regulatoryDeclaration.riskAssessmentConsent) ? (
                           <span className="text-green-600 flex items-center"><Check className="h-4 w-4 mr-2" />已確認</span>
                         ) : (<span className="text-gray-500">未確認</span>)}
                       </td>
@@ -1863,7 +1863,7 @@ export default function ApplicationPreview() {
                     <tr className="border-b">
                       <td className="p-3 bg-gray-50 font-semibold border-r">客戶確認 Client Confirmation</td>
                       <td className="p-3" colSpan={3}>
-                        {sh.regulatoryDeclaration.confirmationRead ? (
+                        {(sh.regulatoryDeclaration.hasReadConfirmation || sh.regulatoryDeclaration.confirmationRead) ? (
                           <span className="text-green-600 flex items-center"><Check className="h-4 w-4 mr-2" />已閱讀並同意</span>
                         ) : (<span className="text-gray-500">未確認</span>)}
                       </td>
