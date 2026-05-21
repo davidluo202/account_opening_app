@@ -182,7 +182,7 @@ const handleNext = () => {
       saveSecondHolderMutation.mutate({
         applicationId,
         stepName: 'regulatoryDeclaration',
-        data: secondFormData,
+        data: { ...secondFormData, signedAt: new Date().toISOString() },
       });
     }
 
