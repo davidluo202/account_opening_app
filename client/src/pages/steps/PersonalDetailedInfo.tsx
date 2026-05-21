@@ -877,10 +877,15 @@ export default function PersonalDetailedInfo() {
                 <Input
                   value={secondHolder.idNumber}
                   onChange={(e) => {
-                    setSecondHolder({ ...secondHolder, idNumber: e.target.value.toUpperCase() });
+                    let val = e.target.value.replace(/（/g, '(').replace(/）/g, ')').toUpperCase();
+                    if (secondHolder.idType === 'mainland_id') {
+                      val = val.replace(/[^\dX]/g, '').slice(0, 18);
+                    }
+                    setSecondHolder({ ...secondHolder, idNumber: val });
                     if (errors.secondIdNumber) setErrors({ ...errors, secondIdNumber: "" });
                   }}
-                  placeholder="請輸入證件號碼"
+                  placeholder={secondHolder.idType === 'mainland_id' ? '請輸入18位身份證號碼' : '請輸入證件號碼'}
+                  maxLength={secondHolder.idType === 'mainland_id' ? 18 : undefined}
                   className={errors.secondIdNumber ? "border-destructive" : ""}
                 />
                 {errors.secondIdNumber && <p className="text-sm text-destructive">{errors.secondIdNumber}</p>}
