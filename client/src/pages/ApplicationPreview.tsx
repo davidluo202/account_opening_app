@@ -1829,18 +1829,52 @@ export default function ApplicationPreview() {
                       <td className="p-3 w-1/4">{sh.regulatoryDeclaration.isUSPerson ? "是" : "否"}</td>
                     </tr>
                     <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">已閱讀開戶協議 Read Agreement</td>
+                      <td className="p-3" colSpan={3}>
+                        {sh.regulatoryDeclaration.agreementRead ? (
+                          <span className="text-green-600 flex items-center"><Check className="h-4 w-4 mr-2" />是</span>
+                        ) : (<span className="text-gray-500">否</span>)}
+                      </td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">接受電子交易條例 ETO Consent</td>
+                      <td className="p-3" colSpan={3}>
+                        {sh.regulatoryDeclaration.electronicSignatureConsent ? (
+                          <span className="text-green-600 flex items-center"><Check className="h-4 w-4 mr-2" />已接受</span>
+                        ) : (<span className="text-gray-500">未接受</span>)}
+                      </td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">接受反洗錢和合規監管 AML Consent</td>
+                      <td className="p-3" colSpan={3}>
+                        {sh.regulatoryDeclaration.amlComplianceConsent ? (
+                          <span className="text-green-600 flex items-center"><Check className="h-4 w-4 mr-2" />已接受</span>
+                        ) : (<span className="text-gray-500">未接受</span>)}
+                      </td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">風險評估確認 Risk Assessment Consent</td>
+                      <td className="p-3" colSpan={3}>
+                        {sh.regulatoryDeclaration.riskAssessmentConsent ? (
+                          <span className="text-green-600 flex items-center"><Check className="h-4 w-4 mr-2" />已確認</span>
+                        ) : (<span className="text-gray-500">未確認</span>)}
+                      </td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-3 bg-gray-50 font-semibold border-r">客戶確認 Client Confirmation</td>
+                      <td className="p-3" colSpan={3}>
+                        {sh.regulatoryDeclaration.confirmationRead ? (
+                          <span className="text-green-600 flex items-center"><Check className="h-4 w-4 mr-2" />已閱讀並同意</span>
+                        ) : (<span className="text-gray-500">未確認</span>)}
+                      </td>
+                    </tr>
+                    <tr className="border-b">
                       <td className="p-3 bg-gray-50 font-semibold border-r">直接促銷 Direct Marketing</td>
                       <td className="p-3" colSpan={3}>
                         {sh.regulatoryDeclaration.objectsDirectMarketing ? (
-                          <span className="text-red-500 flex items-center">
-                            <X className="h-4 w-4 mr-2" />
-                            反對
-                          </span>
+                          <span className="text-red-500 flex items-center"><X className="h-4 w-4 mr-2" />反對 — 反對使用個人資料於直接促銷</span>
                         ) : (
-                          <span className="text-green-600 flex items-center">
-                            <Check className="h-4 w-4 mr-2" />
-                            同意
-                          </span>
+                          <span className="text-green-600 flex items-center"><Check className="h-4 w-4 mr-2" />同意 — 同意使用個人資料於直接促銷</span>
                         )}
                       </td>
                     </tr>
@@ -1848,7 +1882,12 @@ export default function ApplicationPreview() {
                       <tr className="border-b">
                         <td className="p-3 bg-gray-50 font-semibold border-r">電子簽名 Signature</td>
                         <td className="p-3" colSpan={3}>
-                          <span className="font-semibold">{sh.regulatoryDeclaration.signature}</span>
+                          <div className="flex flex-col">
+                            <span className="font-semibold">{sh.regulatoryDeclaration.signature}</span>
+                            {sh.regulatoryDeclaration.signedAt && (
+                              <span className="text-sm text-gray-500 mt-1">签署时间: {new Date(sh.regulatoryDeclaration.signedAt).toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     )}
