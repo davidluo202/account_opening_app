@@ -44,13 +44,32 @@ export default function TaxInfo() {
     { applicationId, stepName: 'taxInfo' },
     { enabled: !!applicationId && isJoint }
   );
+  // Load second holder's basic info for auto-fill
+  const { data: secondBasicData } = trpc.secondHolder.get.useQuery(
+    { applicationId, stepName: 'personalBasic' },
+    { enabled: !!applicationId && isJoint }
+  );
+  const { data: secondDetailedData } = trpc.secondHolder.get.useQuery(
+    { applicationId, stepName: 'personalDetailed' },
+    { enabled: !!applicationId && isJoint }
+  );
   const saveSecondHolderMutation = trpc.secondHolder.save.useMutation();
 
   useEffect(() => {
-    if (existingSecondHolder && typeof existingSecondHolder === 'object') {
+    if (existingSecondHolder && typeof existingSecondHolder === 'object' && (existingSecondHolder as any).taxResidency) {
+      // Use saved tax info if exists
       setSecondHolder(prev => ({ ...prev, ...(existingSecondHolder as any) }));
+    } else if (secondBasicData || secondDetailedData) {
+      // Auto-fill from second holder's basic/detailed info
+      const basic = secondBasicData as any;
+      const detailed = secondDetailedData as any;
+      setSecondHolder(prev => ({
+        ...prev,
+        taxResidency: prev.taxResidency || basic?.nationality || '',
+        taxIdNumber: prev.taxIdNumber || detailed?.idNumber || '',
+      }));
     }
-  }, [existingSecondHolder]);
+  }, [existingSecondHolder, secondBasicData, secondDetailedData]);
 
   // 獲取個人/機構基本信息以自動填充稅務居住地和證件號碼
   const { data: basicInfo } = trpc.personalBasic.get.useQuery(
