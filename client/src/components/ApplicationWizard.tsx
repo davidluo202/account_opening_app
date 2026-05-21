@@ -31,7 +31,7 @@ const individualSteps: Step[] = [
 
 const corporateSteps: Step[] = [
   { id: 1, title: "客戶與賬戶類型", description: "選擇客戶與賬戶類型" },
-  { id: 2, title: "公司基本信息", description: "填寫公司基本資料" },
+  { id: 2, title: "機構基本信息", description: "填寫機構基本資料" },
   { id: 3, title: "公司財務狀況", description: "填寫公司財務資料" },
   { id: 4, title: "公司投資經驗與目標", description: "填寫投資經驗與目標" },
   { id: 5, title: "關聯人士信息", description: "填寫董事及授權人資料" },
