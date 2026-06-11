@@ -273,38 +273,38 @@ export default function FaceVerification() {
     handleVerify(imageData);
   };
 
+  const compareFacesMutation = trpc.faceVerification.compareFaces.useMutation();
+
   const handleVerify = async (imageData: string) => {
     setIsVerifying(true);
     setVerificationResult(null);
-    
+
     try {
-      // 模拟验证过程（因为Face++ API可能没有配置）
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // 简单的人脸检测验证
-      const confidence = 85 + Math.random() * 15; // 85-100之间的随机值
-      const success = confidence >= 85;
-      
-      setVerificationResult({
-        success,
-        confidence,
-        message: success 
-          ? `人臉驗證成功，置信度：${confidence.toFixed(2)}%`
-          : `人臉驗證失敗，置信度：${confidence.toFixed(2)}%（需要≥85%）`,
+      // Call AWS Rekognition via server-side tRPC route
+      const result = await compareFacesMutation.mutateAsync({
+        applicationId,
+        selfieBase64: imageData,
       });
-      
-      if (success) {
+
+      setVerificationResult({
+        success: result.success,
+        confidence: result.confidence,
+        message: result.message,
+      });
+
+      if (result.success) {
         toast.success('人臉驗證成功');
       } else {
         toast.error('人臉驗證失敗，請重新拍攝');
       }
     } catch (error: any) {
       console.error('Verification error:', error);
-      toast.error('驗證失敗，請重試');
+      const errorMsg = error?.message || '驗證過程出錯，請重試';
+      toast.error(errorMsg.length > 80 ? '驗證失敗，請重試' : errorMsg);
       setVerificationResult({
         success: false,
         confidence: 0,
-        message: '驗證過程出錯，請重試',
+        message: errorMsg.length > 100 ? '驗證過程出錯，請重試' : errorMsg,
       });
     } finally {
       setIsVerifying(false);

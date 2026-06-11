@@ -1202,63 +1202,165 @@ export const appRouter = router({
         return await db.getFaceVerification(input.applicationId);
       }),
     
-    // Face++人脸比对API
+    // AWS Rekognition 人脸比对API
     compareFaces: protectedProcedure
       .input(z.object({
-        selfieImageUrl: z.string(),
-        idCardImageUrl: z.string(),
+        applicationId: z.number(),
+        selfieBase64: z.string(), // base64 encoded selfie image
       }))
-      .mutation(async ({ input }) => {
-        const { selfieImageUrl, idCardImageUrl } = input;
-        
-        // 检查Face++ API密钥是否配置
-        const apiKey = process.env.FACEPP_API_KEY;
-        const apiSecret = process.env.FACEPP_API_SECRET;
-        
-        if (!apiKey || !apiSecret) {
-          throw new Error('Face++ API密鑰未配置');
+      .mutation(async ({ input, ctx }) => {
+        const { applicationId, selfieBase64 } = input;
+
+        const application = await db.getApplicationById(applicationId);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
         }
-        
+
+        // 获取已上传的身份证正面照片
+        const documents = await db.getUploadedDocuments(applicationId);
+        const idFrontDoc = documents.find((doc: any) => doc.documentType === 'id_front');
+        if (!idFrontDoc) {
+          throw new Error('請先上傳身份證正面照片');
+        }
+
         try {
-          // 调用Face++ Compare API
-          const formData = new FormData();
-          formData.append('api_key', apiKey);
-          formData.append('api_secret', apiSecret);
-          formData.append('image_url1', selfieImageUrl);
-          formData.append('image_url2', idCardImageUrl);
-          
-          const response = await fetch('https://api-us.faceplusplus.com/facepp/v3/compare', {
-            method: 'POST',
-            body: formData,
+          const { RekognitionClient, CompareFacesCommand } = await import('@aws-sdk/client-rekognition');
+
+          const rekognitionClient = new RekognitionClient({
+            region: process.env.AWS_REKOGNITION_REGION || process.env.AWS_REGION || 'ap-southeast-1',
           });
-          
-          if (!response.ok) {
-            throw new Error(`Face++ API請求失敗: ${response.statusText}`);
-          }
-          
-          const result = await response.json();
-          
-          // 检查是否有错误
-          if (result.error_message) {
-            throw new Error(`Face++ API錯誤: ${result.error_message}`);
-          }
-          
-          // 获取置信度（0-100）
-          const confidence = result.confidence || 0;
-          const threshold = 90; // 90%置信度阈值
-          const success = confidence >= threshold;
-          
+
+          // Selfie: decode base64
+          const selfieData = selfieBase64.replace(/^data:image\/\w+;base64,/, '');
+          const selfieBuffer = Buffer.from(selfieData, 'base64');
+
+          // ID photo: fetch from S3 using fileKey
+          const { GetObjectCommand } = await import('@aws-sdk/client-s3');
+          const { S3Client } = await import('@aws-sdk/client-s3');
+          const s3Client = new S3Client({ region: process.env.AWS_REGION || 'ap-southeast-1' });
+          const s3Response = await s3Client.send(new GetObjectCommand({
+            Bucket: process.env.S3_BUCKET!,
+            Key: idFrontDoc.fileKey,
+          }));
+          const idPhotoBuffer = Buffer.from(await s3Response.Body!.transformToByteArray());
+
+          // Call Rekognition CompareFaces
+          const command = new CompareFacesCommand({
+            SourceImage: { Bytes: selfieBuffer },
+            TargetImage: { Bytes: idPhotoBuffer },
+            SimilarityThreshold: 70, // minimum threshold to return matches
+          });
+
+          const result = await rekognitionClient.send(command);
+
+          const topMatch = result.FaceMatches?.[0];
+          const similarity = topMatch?.Similarity ?? 0;
+          const threshold = 90;
+          const success = similarity >= threshold;
+
           return {
             success,
-            confidence,
-            message: success 
-              ? `人臉比對成功，置信度：${confidence.toFixed(2)}%`
-              : `人臉比對失敗，置信度：${confidence.toFixed(2)}%（需要≥${threshold}%）`,
+            confidence: similarity,
+            message: success
+              ? `人臉比對成功，相似度：${similarity.toFixed(2)}%`
+              : `人臉比對失敗，相似度：${similarity.toFixed(2)}%（需要≥${threshold}%）`,
           };
         } catch (error: any) {
-          console.error('Face++ API error:', error);
+          console.error('AWS Rekognition error:', error);
           throw new Error(`人臉比對失敗: ${error.message}`);
         }
+      }),
+  }),
+
+  // SMS短信验证 (Twilio Verify)
+  sms: router({
+    sendVerification: protectedProcedure
+      .input(z.object({
+        phoneNumber: z.string().min(8), // E.164 format or local number
+      }))
+      .mutation(async ({ input }) => {
+        const accountSid = process.env.TWILIO_ACCOUNT_SID;
+        const authToken = process.env.TWILIO_AUTH_TOKEN;
+        let serviceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
+
+        if (!accountSid || !authToken) {
+          throw new Error('Twilio credentials not configured');
+        }
+
+        const twilio = (await import('twilio')).default;
+        const client = twilio(accountSid, authToken);
+
+        // Create Verify Service if not exists
+        if (!serviceSid) {
+          const service = await client.verify.v2.services.create({
+            friendlyName: 'CMF Account Opening',
+          });
+          serviceSid = service.sid;
+          console.log(`[Twilio] Created Verify Service: ${serviceSid}`);
+          // Note: In production, store this in env. For now log it.
+        }
+
+        // Send verification code
+        const verification = await client.verify.v2
+          .services(serviceSid)
+          .verifications.create({
+            to: input.phoneNumber,
+            channel: 'sms',
+          });
+
+        console.log(`[SMS] Verification sent to ${input.phoneNumber}, status: ${verification.status}`);
+
+        return { success: true, status: verification.status };
+      }),
+
+    checkVerification: protectedProcedure
+      .input(z.object({
+        phoneNumber: z.string().min(8),
+        code: z.string().length(6),
+        applicationId: z.number(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const accountSid = process.env.TWILIO_ACCOUNT_SID;
+        const authToken = process.env.TWILIO_AUTH_TOKEN;
+        let serviceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
+
+        if (!accountSid || !authToken) {
+          throw new Error('Twilio credentials not configured');
+        }
+
+        const application = await db.getApplicationById(input.applicationId);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
+        }
+
+        const twilio = (await import('twilio')).default;
+        const client = twilio(accountSid, authToken);
+
+        if (!serviceSid) {
+          throw new Error('Twilio Verify Service not configured. Please send a code first.');
+        }
+
+        const verificationCheck = await client.verify.v2
+          .services(serviceSid)
+          .verificationChecks.create({
+            to: input.phoneNumber,
+            code: input.code,
+          });
+
+        const approved = verificationCheck.status === 'approved';
+
+        if (approved) {
+          // Update phoneVerified status in personalDetailedInfo
+          await db.updatePhoneVerified(input.applicationId, true);
+          // Save SMS verification record
+          await db.saveSmsVerificationRecord(input.applicationId, input.phoneNumber);
+        }
+
+        return {
+          success: approved,
+          status: verificationCheck.status,
+          message: approved ? '手機號碼驗證成功' : '驗證碼錯誤或已過期',
+        };
       }),
   }),
   

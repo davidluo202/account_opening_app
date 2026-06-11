@@ -43,6 +43,18 @@ export const emailVerificationCodes = mysqlTable("email_verification_codes", {
 });
 
 /**
+ * 短信验证记录表
+ */
+export const smsVerificationRecords = mysqlTable("sms_verification_records", {
+  id: int("id").autoincrement().primaryKey(),
+  applicationId: int("applicationId").notNull(),
+  phoneNumber: varchar("phoneNumber", { length: 50 }).notNull(),
+  verified: boolean("verified").default(false).notNull(),
+  verifiedAt: timestamp("verifiedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+/**
  * 开户申请主表
  */
 export const applications = mysqlTable("applications", {
@@ -168,6 +180,7 @@ export const personalDetailedInfo = mysqlTable("personal_detailed_info", {
   mobileNumber: varchar("mobileNumber", { length: 50 }).notNull(),
   faxNo: varchar("faxNo", { length: 50 }), // 传真号码
   emailVerified: boolean("emailVerified").default(false).notNull(), // 邮箱验证状态
+  phoneVerified: boolean("phoneVerified").default(false).notNull(), // 手机验证状态
   residentialAddress: text("residentialAddress").notNull(),
   // 账单通讯地址
   billingAddressType: mysqlEnum("billingAddressType", ["residential", "office", "other"]).notNull(),

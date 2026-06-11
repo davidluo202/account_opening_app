@@ -175,6 +175,25 @@ export async function syncMissingTables() {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
 
+    // SMS verification records table
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS \`sms_verification_records\` (
+        \`id\` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        \`applicationId\` int NOT NULL,
+        \`phoneNumber\` varchar(50) NOT NULL,
+        \`verified\` boolean DEFAULT false NOT NULL,
+        \`verifiedAt\` timestamp DEFAULT NULL,
+        \`createdAt\` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `);
+
+    // Add phoneVerified column to personal_detailed_info
+    try {
+      await db.execute(sql.raw("ALTER TABLE `personal_detailed_info` ADD COLUMN `phoneVerified` boolean NOT NULL DEFAULT false"));
+    } catch (e: any) {
+      if (e?.code !== 'ER_DUP_FIELDNAME') console.error('Add phoneVerified column error:', e);
+    }
+
     console.log("[Database] Schema sync completed successfully.");
   } catch (error) {
     console.error("[Database] Schema sync failed:", error);
@@ -690,6 +709,27 @@ export async function getFaceVerification(applicationId: number) {
   if (!db) return null;
   const result = await db.select().from(faceVerification).where(eq(faceVerification.applicationId, applicationId)).limit(1);
   return result.length > 0 ? result[0] : null;
+}
+
+export async function updatePhoneVerified(applicationId: number, verified: boolean) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(personalDetailedInfo)
+    .set({ phoneVerified: verified })
+    .where(eq(personalDetailedInfo.applicationId, applicationId));
+}
+
+export async function saveSmsVerificationRecord(applicationId: number, phoneNumber: string) {
+  const mysql2 = await import("mysql2/promise");
+  const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+  try {
+    await conn.execute(
+      `INSERT INTO \`sms_verification_records\` (\`applicationId\`, \`phoneNumber\`, \`verified\`, \`verifiedAt\`) VALUES (?, ?, true, NOW())`,
+      [applicationId, phoneNumber]
+    );
+  } finally {
+    await conn.end();
+  }
 }
 
 export async function saveRegulatoryDeclarations(applicationId: number, data: any) {

@@ -7,10 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, CheckCircle2 } from "lucide-react";
 import { convertToTraditional } from "@/lib/converter";
 import { validateHKID, validateChinaIDWithMatch, validateIDExpiry } from "@/lib/validators";
 
@@ -137,6 +138,13 @@ export default function PersonalDetailedInfo() {
   const [countdown, setCountdown] = useState(0);
   const [isSendingCode, setIsSendingCode] = useState(false);
 
+  // SMS phone verification state
+  const [phoneVerified, setPhoneVerified] = useState(false);
+  const [smsCode, setSmsCode] = useState("");
+  const [showSmsInput, setShowSmsInput] = useState(false);
+  const [smsCountdown, setSmsCountdown] = useState(0);
+  const [isSendingSms, setIsSendingSms] = useState(false);
+
   // Load existing second holder data
   const { data: existingSecondHolder } = trpc.secondHolder.get.useQuery(
     { applicationId, stepName: 'personalDetailed' },
@@ -208,6 +216,10 @@ export default function PersonalDetailedInfo() {
         // 註冊時已驗證過電郵，自動標記為已驗證
         setEmailVerified(true);
       }
+      // 從數據庫讀取手機驗證狀態
+      if ((existingData as any).phoneVerified) {
+        setPhoneVerified(true);
+      }
     } else if (user?.email) {
       // 首次進入，用註冊電郵預填
       setFormData(prev => ({ ...prev, email: user.email }) as any);
@@ -215,13 +227,21 @@ export default function PersonalDetailedInfo() {
     }
   }, [existingData, user]);
 
-  // 倒計時器
+  // 倒計時器 (email)
   useEffect(() => {
     if (countdown > 0) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timer);
     }
   }, [countdown]);
+
+  // 倒計時器 (SMS)
+  useEffect(() => {
+    if (smsCountdown > 0) {
+      const timer = setTimeout(() => setSmsCountdown(smsCountdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [smsCountdown]);
 
   const sendVerificationCodeMutation = trpc.auth.sendVerificationCode.useMutation({
     onSuccess: () => {
@@ -278,6 +298,66 @@ export default function PersonalDetailedInfo() {
       return;
     }
     verifyCodeMutation.mutate({ email: formData.email, code: verificationCode });
+  };
+
+  // SMS verification mutations
+  const sendSmsMutation = trpc.sms.sendVerification.useMutation({
+    onSuccess: () => {
+      toast.success("驗證碼已發送至您的手機，請查收！", { duration: 5000 });
+      setShowSmsInput(true);
+      setSmsCountdown(90);
+      setIsSendingSms(false);
+      setTimeout(() => {
+        document.getElementById('smsCode')?.focus();
+      }, 100);
+    },
+    onError: (error) => {
+      toast.error(`發送失敗: ${error.message}`);
+      setIsSendingSms(false);
+    },
+  });
+
+  const checkSmsMutation = trpc.sms.checkVerification.useMutation({
+    onSuccess: (result) => {
+      if (result.success) {
+        toast.success("手機號碼驗證成功");
+        setPhoneVerified(true);
+        setShowSmsInput(false);
+        setSmsCountdown(0);
+      } else {
+        toast.error(result.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(`驗證失敗: ${error.message}`);
+    },
+  });
+
+  const handleSendSmsCode = () => {
+    if (!formData.mobileNumber.trim()) {
+      toast.error("請先輸入手機號碼");
+      return;
+    }
+    setIsSendingSms(true);
+    const fullPhone = formData.mobileCountryCode + formData.mobileNumber;
+    sendSmsMutation.mutate({ phoneNumber: fullPhone });
+  };
+
+  const handleVerifySmsCode = () => {
+    if (!smsCode.trim()) {
+      toast.error("請輸入驗證碼");
+      return;
+    }
+    if (smsCode.length !== 6) {
+      toast.error("驗證碼必須為6位數字");
+      return;
+    }
+    const fullPhone = formData.mobileCountryCode + formData.mobileNumber;
+    checkSmsMutation.mutate({
+      phoneNumber: fullPhone,
+      code: smsCode,
+      applicationId,
+    });
   };
 
   const validateForm = () => {
@@ -703,6 +783,58 @@ export default function PersonalDetailedInfo() {
             />
           </div>
           {errors.mobileNumber && <p className="text-sm text-destructive">{errors.mobileNumber}</p>}
+
+          {/* SMS Verification */}
+          {phoneVerified ? (
+            <div className="flex items-center gap-2 text-sm text-green-600">
+              <CheckCircle2 className="h-4 w-4" />
+              手機號碼已驗證
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={isSendingSms || smsCountdown > 0 || !formData.mobileNumber.trim()}
+                  onClick={handleSendSmsCode}
+                >
+                  {isSendingSms ? (
+                    <><Loader2 className="mr-1 h-3 w-3 animate-spin" />發送中...</>
+                  ) : smsCountdown > 0 ? (
+                    `${smsCountdown}s 後重發`
+                  ) : (
+                    '發送短信驗證碼'
+                  )}
+                </Button>
+              </div>
+              {showSmsInput && (
+                <div className="flex gap-2 items-center">
+                  <Input
+                    id="smsCode"
+                    value={smsCode}
+                    onChange={(e) => setSmsCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    placeholder="請輸入6位驗證碼"
+                    className="w-[200px]"
+                    maxLength={6}
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    disabled={smsCode.length !== 6 || checkSmsMutation.isPending}
+                    onClick={handleVerifySmsCode}
+                  >
+                    {checkSmsMutation.isPending ? (
+                      <><Loader2 className="mr-1 h-3 w-3 animate-spin" />驗證中...</>
+                    ) : (
+                      '驗證'
+                    )}
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* 傳真號碼 */}
