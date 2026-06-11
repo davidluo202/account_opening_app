@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, LogOut, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
+import { Loader2, LogOut, CheckCircle, XCircle, ArrowLeft, Shield, AlertTriangle } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
 import { translate, formatInvestmentObjectives, getRiskToleranceDescription } from "@/lib/translations";
@@ -122,6 +122,191 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
+function SanctionsScreeningCard({ applicationId }: { applicationId: number }) {
+  const { data: screeningResults, refetch } = trpc.sanctions.getResults.useQuery(
+    { applicationId },
+    { enabled: !!applicationId }
+  );
+
+  const screenMutation = trpc.sanctions.screen.useMutation({
+    onSuccess: (data) => {
+      refetch();
+      if (data.testMode) {
+        toast("制裁筛查完成（测试模式 - API Key未配置）");
+      } else if (data.screeningResult === 'clean') {
+        toast.success("制裁筛查通过 - 无匹配记录");
+      } else {
+        toast.warning(`制裁筛查发现 ${data.matchCount} 条潜在匹配`);
+      }
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "制裁筛查失败");
+    },
+  });
+
+  const latestResult = screeningResults?.[0];
+
+  const getStatusBadge = () => {
+    if (!latestResult) {
+      return <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-600">未筛查</span>;
+    }
+    switch (latestResult.screeningResult) {
+      case 'clean':
+        return <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">Clean / 通过</span>;
+      case 'potential_match':
+        return <span className="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700">Potential Match / 潜在匹配</span>;
+      case 'confirmed_match':
+        return <span className="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700">Confirmed Match / 确认匹配</span>;
+    }
+  };
+
+  let matchDetails: any[] = [];
+  if (latestResult?.matchDetails) {
+    try { matchDetails = JSON.parse(latestResult.matchDetails); } catch {}
+  }
+
+  const isTestMode = matchDetails.length === 1 && matchDetails[0]?.testMode;
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5" />
+              制裁/PEP筛查
+            </CardTitle>
+            <CardDescription>Sanctions.io PEP & Sanctions Screening</CardDescription>
+          </div>
+          {getStatusBadge()}
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <Button
+          onClick={() => screenMutation.mutate({ applicationId })}
+          disabled={screenMutation.isPending}
+          variant={latestResult ? "outline" : "default"}
+        >
+          {screenMutation.isPending ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              筛查中...
+            </>
+          ) : latestResult ? (
+            <>
+              <Shield className="h-4 w-4 mr-2" />
+              重新筛查
+            </>
+          ) : (
+            <>
+              <Shield className="h-4 w-4 mr-2" />
+              执行制裁筛查
+            </>
+          )}
+        </Button>
+
+        {latestResult && (
+          <div className="space-y-3">
+            <div className="text-sm space-y-1">
+              <div className="flex justify-between">
+                <span className="text-gray-600">筛查对象：</span>
+                <span className="font-medium">{latestResult.fullName}</span>
+              </div>
+              {latestResult.dateOfBirth && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">出生日期：</span>
+                  <span className="font-medium">{latestResult.dateOfBirth}</span>
+                </div>
+              )}
+              {latestResult.nationality && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">国籍：</span>
+                  <span className="font-medium">{latestResult.nationality}</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span className="text-gray-600">匹配数量：</span>
+                <span className="font-medium">{latestResult.matchCount}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">筛查时间：</span>
+                <span className="font-medium">
+                  {new Date(latestResult.screenedAt).toLocaleString('zh-CN', {
+                    year: 'numeric', month: '2-digit', day: '2-digit',
+                    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+                  })}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">筛查人员：</span>
+                <span className="font-medium">{latestResult.screenedBy || '-'}</span>
+              </div>
+            </div>
+
+            {isTestMode && (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-md">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 text-amber-600" />
+                  <span className="text-sm text-amber-700">测试模式 - SANCTIONS_IO_API_KEY 未配置，返回模拟清洁结果</span>
+                </div>
+              </div>
+            )}
+
+            {latestResult.screeningResult === 'potential_match' && !isTestMode && matchDetails.length > 0 && (
+              <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md space-y-2">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                  <span className="text-sm font-medium text-yellow-800">发现 {matchDetails.length} 条潜在匹配</span>
+                </div>
+                <div className="max-h-60 overflow-y-auto text-xs">
+                  <pre className="whitespace-pre-wrap text-gray-700">
+                    {JSON.stringify(matchDetails, null, 2)}
+                  </pre>
+                </div>
+              </div>
+            )}
+
+            {latestResult.screeningResult === 'confirmed_match' && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                <div className="flex items-center gap-2">
+                  <XCircle className="h-4 w-4 text-red-600" />
+                  <span className="text-sm font-medium text-red-800">确认匹配制裁/PEP名单 - 请联系合规部</span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {screeningResults && screeningResults.length > 1 && (
+          <details className="text-sm">
+            <summary className="cursor-pointer text-gray-500 hover:text-gray-700">
+              查看历史筛查记录（{screeningResults.length} 条）
+            </summary>
+            <div className="mt-2 space-y-2">
+              {screeningResults.slice(1).map((record) => (
+                <div key={record.id} className="p-2 bg-gray-50 rounded text-xs space-y-1">
+                  <div className="flex justify-between">
+                    <span>{new Date(record.screenedAt).toLocaleString('zh-CN')}</span>
+                    <span className={
+                      record.screeningResult === 'clean' ? 'text-green-600' :
+                      record.screeningResult === 'potential_match' ? 'text-yellow-600' : 'text-red-600'
+                    }>
+                      {record.screeningResult === 'clean' ? 'Clean' :
+                       record.screeningResult === 'potential_match' ? 'Potential Match' : 'Confirmed Match'}
+                      {' '}({record.matchCount} matches)
+                    </span>
+                  </div>
+                  <div className="text-gray-500">By: {record.screenedBy || '-'}</div>
+                </div>
+              ))}
+            </div>
+          </details>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function ApprovalDetail() {
   const { id } = useParams<{ id: string }>();
@@ -926,8 +1111,11 @@ export default function ApprovalDetail() {
           </CardContent>
         </Card>
 
+        {/* Sanctions / PEP Screening */}
+        <SanctionsScreeningCard applicationId={Number(id)} />
+
         {/* Approval Actions or Approval Info */}
-        {applicationData?.application?.status === 'approved' || 
+        {applicationData?.application?.status === 'approved' ||
          (applicationData?.application?.firstApprovalStatus === 'approved' && applicationData?.application?.secondApprovalStatus === 'approved') ? (
           /* 已批准的申請顯示審批信息 */
           <Card>

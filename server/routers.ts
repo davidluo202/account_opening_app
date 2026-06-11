@@ -2250,6 +2250,119 @@ export const appRouter = router({
       }),
   }),
 
+  // 制裁/PEP筛查
+  sanctions: router({
+    // 执行制裁筛查
+    screen: protectedProcedure
+      .input(z.object({ applicationId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        // 检查用户是否为审批人员或管理员
+        if (ctx.user.role !== 'admin' && !ctx.user.email?.endsWith('@cmfinancial.com')) {
+          throw new Error('没有权限执行制裁筛查');
+        }
+
+        // 获取申请人信息
+        const applicationData = await db.getCompleteApplicationData(input.applicationId);
+        if (!applicationData?.application) {
+          throw new Error('申请不存在');
+        }
+
+        const basicInfo = applicationData.basicInfo;
+        if (!basicInfo) {
+          throw new Error('申请人基本信息不存在，无法执行筛查');
+        }
+
+        const fullName = basicInfo.englishName || basicInfo.chineseName;
+        const dateOfBirth = basicInfo.dateOfBirth || undefined;
+        const nationality = basicInfo.nationality || undefined;
+
+        const apiKey = process.env.SANCTIONS_IO_API_KEY;
+
+        // If no API key, return mock clean result
+        if (!apiKey) {
+          const record = await db.saveSanctionsScreeningRecord({
+            applicationId: input.applicationId,
+            fullName,
+            dateOfBirth,
+            nationality,
+            screeningResult: 'clean',
+            matchCount: 0,
+            matchDetails: JSON.stringify({ testMode: true, message: 'SANCTIONS_IO_API_KEY not configured - test mode' }),
+            screenedBy: ctx.user.email || undefined,
+          });
+
+          return {
+            testMode: true,
+            screeningResult: 'clean' as const,
+            matchCount: 0,
+            matchDetails: [],
+            recordId: record.id,
+          };
+        }
+
+        // Call Sanctions.io API
+        try {
+          const response = await fetch('https://api.sanctions.io/search/v2.3', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+              name: fullName,
+              ...(dateOfBirth ? { dateOfBirth } : {}),
+              ...(nationality ? { nationality } : {}),
+              type: 'person',
+            }),
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Sanctions.io API error: ${response.status} ${errorText}`);
+          }
+
+          const apiResult = await response.json();
+          const matches = apiResult.results || apiResult.matches || [];
+          const matchCount = matches.length;
+          const screeningResult = matchCount === 0 ? 'clean' : 'potential_match';
+
+          const record = await db.saveSanctionsScreeningRecord({
+            applicationId: input.applicationId,
+            fullName,
+            dateOfBirth,
+            nationality,
+            screeningResult,
+            matchCount,
+            matchDetails: JSON.stringify(matches),
+            screenedBy: ctx.user.email || undefined,
+          });
+
+          return {
+            testMode: false,
+            screeningResult,
+            matchCount,
+            matchDetails: matches,
+            recordId: record.id,
+          };
+        } catch (error: any) {
+          console.error('Sanctions.io API call failed:', error);
+          throw new Error(`制裁筛查失败: ${error.message}`);
+        }
+      }),
+
+    // 获取筛查结果
+    getResults: protectedProcedure
+      .input(z.object({ applicationId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        // 检查用户是否为审批人员或管理员
+        if (ctx.user.role !== 'admin' && !ctx.user.email?.endsWith('@cmfinancial.com')) {
+          throw new Error('没有权限查看制裁筛查结果');
+        }
+
+        return await db.getSanctionsScreeningRecords(input.applicationId);
+      }),
+  }),
+
 });
 
 export type AppRouter = typeof appRouter;

@@ -1,9 +1,9 @@
 import { eq, and, desc, gt, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { 
-  InsertUser, 
-  users, 
-  applications, 
+import {
+  InsertUser,
+  users,
+  applications,
   applicationNumberSequences,
   accountSelections,
   personalBasicInfo,
@@ -21,7 +21,8 @@ import {
   personalClientDeclarations,
   emailVerificationCodes,
   approvers,
-  approvalRecords
+  approvalRecords,
+  sanctionsScreeningRecords,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -184,6 +185,23 @@ export async function syncMissingTables() {
         \`verified\` boolean DEFAULT false NOT NULL,
         \`verifiedAt\` timestamp DEFAULT NULL,
         \`createdAt\` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `);
+
+    // Sanctions screening records table
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS \`sanctions_screening_records\` (
+        \`id\` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        \`applicationId\` int NOT NULL,
+        \`fullName\` varchar(500) NOT NULL,
+        \`dateOfBirth\` varchar(10) DEFAULT NULL,
+        \`nationality\` varchar(100) DEFAULT NULL,
+        \`screeningResult\` enum('clean','potential_match','confirmed_match') NOT NULL,
+        \`matchCount\` int NOT NULL DEFAULT 0,
+        \`matchDetails\` text DEFAULT NULL,
+        \`screenedAt\` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        \`screenedBy\` varchar(320) DEFAULT NULL,
+        INDEX \`idx_sanctions_applicationId\` (\`applicationId\`)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
 
@@ -1646,5 +1664,51 @@ export async function getSecondHolderData(applicationId: number, stepName?: stri
   } finally {
     await conn.end();
   }
+}
+
+// ==================== 制裁/PEP筛查 ====================
+
+/**
+ * 保存制裁筛查记录
+ */
+export async function saveSanctionsScreeningRecord(data: {
+  applicationId: number;
+  fullName: string;
+  dateOfBirth?: string;
+  nationality?: string;
+  screeningResult: 'clean' | 'potential_match' | 'confirmed_match';
+  matchCount: number;
+  matchDetails?: string;
+  screenedBy?: string;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const [result] = await db.insert(sanctionsScreeningRecords).values({
+    applicationId: data.applicationId,
+    fullName: data.fullName,
+    dateOfBirth: data.dateOfBirth || null,
+    nationality: data.nationality || null,
+    screeningResult: data.screeningResult,
+    matchCount: data.matchCount,
+    matchDetails: data.matchDetails || null,
+    screenedBy: data.screenedBy || null,
+  });
+
+  return { id: result.insertId };
+}
+
+/**
+ * 获取申请的制裁筛查记录
+ */
+export async function getSanctionsScreeningRecords(applicationId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(sanctionsScreeningRecords)
+    .where(eq(sanctionsScreeningRecords.applicationId, applicationId))
+    .orderBy(desc(sanctionsScreeningRecords.screenedAt));
 }
 

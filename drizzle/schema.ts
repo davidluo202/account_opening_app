@@ -430,6 +430,25 @@ export const customerDeclarations = mysqlTable("customer_declarations", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
+/**
+ * 制裁/PEP筛查记录表
+ */
+export const sanctionsScreeningRecords = mysqlTable("sanctions_screening_records", {
+  id: int("id").autoincrement().primaryKey(),
+  applicationId: int("applicationId").notNull(),
+  fullName: varchar("fullName", { length: 500 }).notNull(),
+  dateOfBirth: varchar("dateOfBirth", { length: 10 }), // YYYY-MM-DD
+  nationality: varchar("nationality", { length: 100 }),
+  screeningResult: mysqlEnum("screeningResult", ["clean", "potential_match", "confirmed_match"]).notNull(),
+  matchCount: int("matchCount").default(0).notNull(),
+  matchDetails: text("matchDetails"), // JSON text
+  screenedAt: timestamp("screenedAt").defaultNow().notNull(),
+  screenedBy: varchar("screenedBy", { length: 320 }), // approver email
+});
+
+export type SanctionsScreeningRecord = typeof sanctionsScreeningRecords.$inferSelect;
+export type InsertSanctionsScreeningRecord = typeof sanctionsScreeningRecords.$inferInsert;
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type Application = typeof applications.$inferSelect;
