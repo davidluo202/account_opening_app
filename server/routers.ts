@@ -1336,8 +1336,16 @@ export const appRouter = router({
         const twilio = (await import('twilio')).default;
         const client = twilio(accountSid, authToken);
 
+        // Auto-find or create Verify Service (Serverless instances don't share memory)
         if (!serviceSid) {
-          throw new Error('Twilio Verify Service not configured. Please send a code first.');
+          const services = await client.verify.v2.services.list({ limit: 10 });
+          const existing = services.find((s: any) => s.friendlyName === 'CMF Account Opening');
+          if (existing) {
+            serviceSid = existing.sid;
+          } else {
+            const service = await client.verify.v2.services.create({ friendlyName: 'CMF Account Opening' });
+            serviceSid = service.sid;
+          }
         }
 
         const verificationCheck = await client.verify.v2
