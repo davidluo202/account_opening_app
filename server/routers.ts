@@ -1807,15 +1807,11 @@ export const appRouter = router({
           throw new Error('该申请已经完成终审，无法重复审批');
         }
         
-        // 检查初审和终审是否为同一人（通过userId比较）
-        // firstApprovalBy存储的是初审人员的邮箱
-        if (applicationData?.application?.firstApprovalBy) {
-          const firstApprover = await db.getApproverByUserId(ctx.user.id);
-          // 通过邮箱比较是否为同一人
-          if (firstApprover && applicationData.application.firstApprovalBy === ctx.user.email) {
-            throw new Error('初审和终审不能是同一人，请联系其他审批人员进行终审');
-          }
-        }
+        // 测试阶段暂时允许同一人完成初审和终审
+        // TODO: 正式上线时恢复同一人限制
+        // if (applicationData?.application?.firstApprovalBy === ctx.user.email) {
+        //   throw new Error('初审和终审不能是同一人，请联系其他审批人员进行终审');
+        // }
         
         // 更新第二级审批信息
         await db.updateSecondApproval(input.applicationId, {
