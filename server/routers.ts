@@ -1111,10 +1111,17 @@ export const appRouter = router({
         // 将base64转换为Buffer
         const buffer = Buffer.from(fileData, 'base64');
         const fileKey = `applications/${applicationId}/${documentType}/${nanoid()}-${fileName}`;
-        
+
         // 上传到S3
-        const { url } = await storagePut(fileKey, buffer, mimeType);
-        
+        let url: string;
+        try {
+          const result = await storagePut(fileKey, buffer, mimeType);
+          url = result.url;
+        } catch (uploadErr: any) {
+          console.error('[Upload] Storage error:', uploadErr.message, 'S3_BUCKET:', process.env.S3_BUCKET ? 'set' : 'NOT SET', 'AWS_KEY:', process.env.AWS_ACCESS_KEY_ID ? 'set' : 'NOT SET');
+          throw new Error(`文件上傳失敗: ${uploadErr.message}`);
+        }
+
         // 保存到数据库
         const id = await db.saveUploadedDocument(applicationId, {
           documentType,
@@ -1124,9 +1131,9 @@ export const appRouter = router({
           mimeType,
           fileSize: buffer.length,
         });
-        
+
         await db.updateApplicationStep(applicationId, 10);
-        
+
         return { success: true, id, url };
       }),
     
