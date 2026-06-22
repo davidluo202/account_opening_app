@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useState } from "react";
 import { TopHeader } from "@/components/TopHeader";
 import { useLang } from '@/lib/i18n';
+import { toast } from "sonner";
 
 const statusLabels: Record<string, { zh: string; en: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   draft: { zh: "草稿", en: "Draft", variant: "secondary" },
@@ -43,6 +44,9 @@ export default function Applications() {
   const createMutation = trpc.application.create.useMutation({
     onSuccess: (data) => {
       setLocation(`/application/${data.applicationId}/step/1`);
+    },
+    onError: (error) => {
+      toast.error(`${t('創建申請失敗', 'Failed to create application', '创建申请失败')}: ${error.message}`);
     },
   });
   const logoutMutation = trpc.auth.logout.useMutation({
