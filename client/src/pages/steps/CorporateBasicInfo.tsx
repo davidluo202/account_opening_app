@@ -225,7 +225,7 @@ export default function CorporateBasicInfo() {
     if (!formData.contactName.trim()) {
       newErrors.contactName = t(‘請輸入聯絡人姓名’, ‘Please enter contact name’, ‘请输入联络人姓名’);
     } else if (!/^[A-Za-z\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\s·\-’’,]+$/.test(formData.contactName)) {
-      newErrors.contactName = t(‘姓名只允許中文（繁/簡會自動轉繁）、英文字母、空格、·、-、\’、英文逗號,；不允許數字及其他符號’, ‘Name only allows Chinese, English letters, spaces, middle dot, hyphen, apostrophe and comma’, ‘姓名只允许中文（繁/简会自动转繁）、英文字母、空格、·、-、\’、英文逗号,；不允许数字及其他符号’);
+      newErrors.contactName = t("姓名只允許中文（繁/簡會自動轉繁）、英文字母、空格、·、-、’、英文逗號,；不允許數字及其他符號", "Name only allows Chinese, English letters, spaces, middle dot, hyphen, apostrophe and comma", "姓名只允许中文（繁/简会自动转繁）、英文字母、空格、·、-、’、英文逗号,；不允许数字及其他符号");
     }
     if (!formData.contactTitle.trim()) newErrors.contactTitle = t(‘請輸入職銜’, ‘Please enter title’, ‘请输入职衔’);
 

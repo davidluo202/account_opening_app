@@ -170,11 +170,11 @@ export default function FinancialAndInvestment() {
     // 聯名賬戶：驗證第二持有人
     if (isJoint) {
       if (secondInvestmentObjectives.length === 0) {
-        newErrors.secondInvestmentObjectives = t('請填寫第二持有人的投資目的', 'Please fill in second holder\'s investment objectives', '请填写第二持有人的投资目的');
+        newErrors.secondInvestmentObjectives = t('請填寫第二持有人的投資目的', "Please fill in second holder's investment objectives", '请填写第二持有人的投资目的');
       }
       const hasSecondExperience = Object.keys(secondInvestmentExperience).length > 0;
       if (!hasSecondExperience) {
-        newErrors.secondInvestmentExperience = t('請填寫第二持有人的投資經驗', 'Please fill in second holder\'s investment experience', '请填写第二持有人的投资经验');
+        newErrors.secondInvestmentExperience = t('請填寫第二持有人的投資經驗', "Please fill in second holder's investment experience", '请填写第二持有人的投资经验');
       }
     }
 

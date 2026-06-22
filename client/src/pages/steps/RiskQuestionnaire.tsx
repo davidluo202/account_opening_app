@@ -598,7 +598,7 @@ export default function RiskQuestionnaire() {
     <div>
       <h3 className="text-xl font-semibold mb-2">{t('風險評估問卷', 'Risk Profile Questionnaire', '风险评估问卷')}</h3>
       <p className="text-sm text-muted-foreground mb-6">
-        {t('請根據貴公司的實際情況填寫以下問卷，以評估風險承受能力', 'Please complete the following questionnaire based on your company\'s actual situation to assess risk tolerance', '请根据贵公司的实际情况填写以下问卷，以评估风险承受能力')}
+        {t('請根據貴公司的實際情況填寫以下問卷，以評估風險承受能力', "Please complete the following questionnaire based on your company's actual situation to assess risk tolerance", '请根据贵公司的实际情况填写以下问卷，以评估风险承受能力')}
       </p>
       <CardContent className="space-y-8">
         {/* PART 1: Q1-Q6 */}
@@ -1008,7 +1008,7 @@ export default function RiskQuestionnaire() {
         {/* 風險等級結果顯示 */}
         {corpFormData.riskLevel && corpFormData.riskDescription && (
           <div className="mt-8 p-6 bg-muted/50 rounded-lg border-2 border-primary/20">
-            <h3 className="text-lg font-semibold mb-4 text-primary">{t('貴公司的風險評估結果', 'Your Company\'s Risk Assessment Result', '贵公司的风险评估结果')}</h3>
+            <h3 className="text-lg font-semibold mb-4 text-primary">{t('貴公司的風險評估結果', "Your Company's Risk Assessment Result", '贵公司的风险评估结果')}</h3>
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <span className="text-sm font-medium text-muted-foreground">{t('總分：', 'Total Score: ', '总分：')}</span>
