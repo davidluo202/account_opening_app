@@ -28,6 +28,7 @@ export default function RegulatoryDeclaration() {
     acceptsETO: false,
     acceptsAML: false,
     acceptsRiskAssessment: false,
+    acceptsBcanConsent: false,
     hasReadConfirmation: false,
     objectsDirectMarketing: false,
     signature: "",
@@ -109,6 +110,7 @@ export default function RegulatoryDeclaration() {
         acceptsETO: existingData.electronicSignatureConsent,
         acceptsAML: existingData.amlComplianceConsent,
         acceptsRiskAssessment: existingData.riskAssessmentConsent || false,
+        acceptsBcanConsent: existingData.bcanConsentAccepted || false,
         hasReadConfirmation: !!existingData.confirmationRead,
         objectsDirectMarketing: !!existingData.objectsDirectMarketing,
         signature: existingData.signatureName,
@@ -137,6 +139,10 @@ export default function RegulatoryDeclaration() {
 
     if (!formData.acceptsRiskAssessment) {
       newErrors.acceptsRiskAssessment = "請確認已閱讀並理解風險評估問卷";
+    }
+
+    if (!formData.acceptsBcanConsent) {
+      newErrors.acceptsBcanConsent = "請確認同意投資者識別碼制度";
     }
 
     if (!formData.signature.trim()) {
@@ -196,6 +202,7 @@ const handleNext = () => {
       electronicSignatureConsent: formData.acceptsETO,
       amlComplianceConsent: formData.acceptsAML,
       riskAssessmentConsent: formData.acceptsRiskAssessment,
+      bcanConsentAccepted: formData.acceptsBcanConsent,
       confirmationRead: formData.hasReadConfirmation,
       objectsDirectMarketing: formData.objectsDirectMarketing,
     });
@@ -405,6 +412,25 @@ const handleNext = () => {
             </div>
             {errors.acceptsRiskAssessment && (
               <p className="text-sm text-destructive">{errors.acceptsRiskAssessment}</p>
+            )}
+
+            <div className="flex items-start space-x-2">
+              <Checkbox
+                id="acceptsBcanConsent"
+                checked={formData.acceptsBcanConsent}
+                onCheckedChange={(checked) => {
+                  setFormData({ ...formData, acceptsBcanConsent: checked as boolean });
+                  if (errors.acceptsBcanConsent) {
+                    setErrors({ ...errors, acceptsBcanConsent: "" });
+                  }
+                }}
+              />
+              <Label htmlFor="acceptsBcanConsent" className="cursor-pointer font-normal">
+                我同意並授權誠港金融股份有限公司（Canton Mutual Financial Limited，CE號：BSU667）根據香港聯合交易所有限公司及香港證券及期貨事務監察委員會的投資者識別碼制度（Investor Identification Regime），為本人分配券商客戶編碼（BCAN），並將該編碼連同本人的客戶識別信息（CID）提交予香港交易所及證監會作交易實名制登記之用。本人理解此BCAN將附加於本人透過誠港金融提交的每一筆港股交易訂單中。 <span className="text-destructive">*</span>
+              </Label>
+            </div>
+            {errors.acceptsBcanConsent && (
+              <p className="text-sm text-destructive">{errors.acceptsBcanConsent}</p>
             )}
           </div>
 

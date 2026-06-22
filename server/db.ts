@@ -23,6 +23,7 @@ import {
   approvers,
   approvalRecords,
   sanctionsScreeningRecords,
+  bcanSequences,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -1710,5 +1711,97 @@ export async function getSanctionsScreeningRecords(applicationId: number) {
     .from(sanctionsScreeningRecords)
     .where(eq(sanctionsScreeningRecords.applicationId, applicationId))
     .orderBy(desc(sanctionsScreeningRecords.screenedAt));
+}
+
+
+// ==================== 账户号 & BCAN 生成 ====================
+
+/**
+ * 生成客户账户号和BCAN
+ *
+ * 账户号格式（14位）：AA-B-C-YYYY-SSSSSS
+ *   AA = 客户类型（10=零售, 20=企业, 30=机构）
+ *   B = 账户类型（1=现金, 2=保证金, 3=托管, 5=衍生品）
+ *   C = 渠道（0=线上, 1=线下）
+ *   YYYY = 开户年份
+ *   SSSSSS = 全局递增流水号
+ *
+ * BCAN = 流水号部分（6位），港交所端以 CE号BSU667 + BCAN 组合唯一标识
+ */
+export async function generateBcan(applicationId: number): Promise<string | null> {
+  const db = await getDb();
+  if (!db) return null;
+
+  // 检查是否已有BCAN
+  const existing = await db
+    .select({ bcanCode: applications.bcanCode })
+    .from(applications)
+    .where(eq(applications.id, applicationId))
+    .limit(1);
+  if (existing[0]?.bcanCode) return existing[0].bcanCode;
+
+  // 获取账户选择信息
+  const acctSel = await db
+    .select()
+    .from(accountSelections)
+    .where(eq(accountSelections.applicationId, applicationId))
+    .limit(1);
+
+  const customerType = acctSel[0]?.customerType || 'individual';
+  const aa = customerType === 'corporate' ? '20' : customerType === 'joint' ? '30' : '10';
+  const accountType = acctSel[0]?.accountType || 'cash';
+  const b = accountType === 'margin' ? '2' : accountType === 'derivatives' ? '5' : '1';
+  const c = '0';
+  const yyyy = new Date().getFullYear().toString();
+
+  // 全局递增流水号
+  const seqRows = await db.select().from(bcanSequences).limit(1);
+  const currentSeq = seqRows[0]?.lastSequence || 0;
+  const nextSeq = currentSeq + 1;
+
+  await db
+    .update(bcanSequences)
+    .set({ lastSequence: nextSeq })
+    .where(eq(bcanSequences.id, seqRows[0]?.id || 1));
+
+  const seqStr = String(nextSeq).padStart(6, '0');
+  const clientId = `${aa}${b}${c}${yyyy}${seqStr}`;
+  const bcanCode = seqStr;
+
+  await db
+    .update(applications)
+    .set({ clientId, bcanCode, bcanGeneratedAt: new Date() })
+    .where(eq(applications.id, applicationId));
+
+  return bcanCode;
+}
+
+/**
+ * 导出BCAN-CID Mapping数据（用于上报港交所）
+ */
+export async function getBcanMappingData() {
+  const db = await getDb();
+  if (!db) return [];
+
+  const results = await db
+    .select({
+      clientId: applications.clientId,
+      bcanCode: applications.bcanCode,
+      bcanGeneratedAt: applications.bcanGeneratedAt,
+      applicationNumber: applications.applicationNumber,
+      englishName: personalBasicInfo.englishName,
+      chineseName: personalBasicInfo.chineseName,
+      idType: personalDetailedInfo.idType,
+      idNumber: personalDetailedInfo.idNumber,
+    })
+    .from(applications)
+    .innerJoin(personalBasicInfo, eq(personalBasicInfo.applicationId, applications.id))
+    .innerJoin(personalDetailedInfo, eq(personalDetailedInfo.applicationId, applications.id))
+    .where(and(
+      eq(applications.status, 'approved'),
+      gt(applications.bcanCode, '')
+    ));
+
+  return results;
 }
 

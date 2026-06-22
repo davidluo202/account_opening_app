@@ -362,23 +362,67 @@ export default function PersonalBasicInfo() {
           </Select>
         </div>
 
-        {/* 出生日期 */}
+        {/* 出生日期 - 年/月/日下拉选择 */}
         <div className="space-y-2">
-          <Label htmlFor="dateOfBirth">
+          <Label>
             出生日期 / Date of Birth <span className="text-destructive">*</span>
           </Label>
-          <Input
-            id="dateOfBirth"
-            type="date"
-            value={formData.dateOfBirth}
-            onChange={(e) => {
-              setFormData({ ...formData, dateOfBirth: e.target.value });
-              if (errors.dateOfBirth) {
-                setErrors({ ...errors, dateOfBirth: "" });
-              }
-            }}
-            className={errors.dateOfBirth ? "border-destructive" : ""}
-          />
+          <div className="grid grid-cols-3 gap-2">
+            <Select
+              value={formData.dateOfBirth ? formData.dateOfBirth.split('-')[0] : ''}
+              onValueChange={(year) => {
+                const parts = (formData.dateOfBirth || '--').split('-');
+                const newDate = `${year}-${parts[1] || ''}-${parts[2] || ''}`;
+                setFormData({ ...formData, dateOfBirth: newDate });
+                if (errors.dateOfBirth) setErrors({ ...errors, dateOfBirth: '' });
+              }}
+            >
+              <SelectTrigger className={errors.dateOfBirth ? "border-destructive" : ""}>
+                <SelectValue placeholder="年份 / Year" />
+              </SelectTrigger>
+              <SelectContent className="max-h-60">
+                {Array.from({ length: 80 }, (_, i) => new Date().getFullYear() - 18 - i).map(y => (
+                  <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              value={formData.dateOfBirth?.split('-')[1] || ''}
+              onValueChange={(month) => {
+                const parts = (formData.dateOfBirth || '--').split('-');
+                const newDate = `${parts[0] || ''}-${month}-${parts[2] || ''}`;
+                setFormData({ ...formData, dateOfBirth: newDate });
+                if (errors.dateOfBirth) setErrors({ ...errors, dateOfBirth: '' });
+              }}
+            >
+              <SelectTrigger className={errors.dateOfBirth ? "border-destructive" : ""}>
+                <SelectValue placeholder="月份 / Month" />
+              </SelectTrigger>
+              <SelectContent>
+                {Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0')).map(m => (
+                  <SelectItem key={m} value={m}>{m}月</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              value={formData.dateOfBirth?.split('-')[2] || ''}
+              onValueChange={(day) => {
+                const parts = (formData.dateOfBirth || '--').split('-');
+                const newDate = `${parts[0] || ''}-${parts[1] || ''}-${day}`;
+                setFormData({ ...formData, dateOfBirth: newDate });
+                if (errors.dateOfBirth) setErrors({ ...errors, dateOfBirth: '' });
+              }}
+            >
+              <SelectTrigger className={errors.dateOfBirth ? "border-destructive" : ""}>
+                <SelectValue placeholder="日期 / Day" />
+              </SelectTrigger>
+              <SelectContent className="max-h-60">
+                {Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0')).map(d => (
+                  <SelectItem key={d} value={d}>{d}日</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           {errors.dateOfBirth && (
             <p className="text-sm text-destructive">{errors.dateOfBirth}</p>
           )}
@@ -506,8 +550,29 @@ export default function PersonalBasicInfo() {
               </div>
               <div className="space-y-2">
                 <Label>出生日期 / Date of Birth <span className="text-destructive">*</span></Label>
-                <Input type="date" value={secondHolder.dateOfBirth} onChange={(e) => setSecondHolder({ ...secondHolder, dateOfBirth: e.target.value })}
-                  className={errors.secondDateOfBirth ? "border-destructive" : ""} />
+                <div className="grid grid-cols-3 gap-2">
+                  <Select value={secondHolder.dateOfBirth?.split('-')[0] || ''} onValueChange={(year) => {
+                    const parts = (secondHolder.dateOfBirth || '--').split('-');
+                    setSecondHolder({ ...secondHolder, dateOfBirth: `${year}-${parts[1] || ''}-${parts[2] || ''}` });
+                  }}>
+                    <SelectTrigger className={errors.secondDateOfBirth ? "border-destructive" : ""}><SelectValue placeholder="年份" /></SelectTrigger>
+                    <SelectContent className="max-h-60">{Array.from({ length: 80 }, (_, i) => new Date().getFullYear() - 18 - i).map(y => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}</SelectContent>
+                  </Select>
+                  <Select value={secondHolder.dateOfBirth?.split('-')[1] || ''} onValueChange={(month) => {
+                    const parts = (secondHolder.dateOfBirth || '--').split('-');
+                    setSecondHolder({ ...secondHolder, dateOfBirth: `${parts[0] || ''}-${month}-${parts[2] || ''}` });
+                  }}>
+                    <SelectTrigger className={errors.secondDateOfBirth ? "border-destructive" : ""}><SelectValue placeholder="月份" /></SelectTrigger>
+                    <SelectContent>{Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0')).map(m => <SelectItem key={m} value={m}>{m}月</SelectItem>)}</SelectContent>
+                  </Select>
+                  <Select value={secondHolder.dateOfBirth?.split('-')[2] || ''} onValueChange={(day) => {
+                    const parts = (secondHolder.dateOfBirth || '--').split('-');
+                    setSecondHolder({ ...secondHolder, dateOfBirth: `${parts[0] || ''}-${parts[1] || ''}-${day}` });
+                  }}>
+                    <SelectTrigger className={errors.secondDateOfBirth ? "border-destructive" : ""}><SelectValue placeholder="日期" /></SelectTrigger>
+                    <SelectContent className="max-h-60">{Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0')).map(d => <SelectItem key={d} value={d}>{d}日</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
                 {errors.secondDateOfBirth && <p className="text-sm text-destructive">{errors.secondDateOfBirth}</p>}
               </div>
             </div>

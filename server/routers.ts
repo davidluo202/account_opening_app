@@ -1476,6 +1476,7 @@ export const appRouter = router({
         electronicSignatureConsent: z.boolean(),
         amlComplianceConsent: z.boolean(),
         riskAssessmentConsent: z.boolean(),
+        bcanConsentAccepted: z.boolean().optional(),
         confirmationRead: z.boolean().optional(),
         objectsDirectMarketing: z.boolean().optional(),
       }))
@@ -1830,7 +1831,16 @@ export const appRouter = router({
         
         // 更新申请状态为最终批准
         await db.updateApplicationStatus(input.applicationId, 'approved');
-        
+
+        // 生成账户号和BCAN（账户流水号部分）
+        let bcanCode = '';
+        try {
+          bcanCode = await db.generateBcan(input.applicationId) || '';
+          console.log(`[BCAN] Generated for application ${input.applicationId}: ${bcanCode}`);
+        } catch (bcanError) {
+          console.error('Failed to generate BCAN:', bcanError);
+        }
+
         // 记录审批操作
         await db.createApprovalRecord({
           applicationId: input.applicationId,
@@ -2364,6 +2374,31 @@ export const appRouter = router({
         }
 
         return await db.getSanctionsScreeningRecords(input.applicationId);
+      }),
+  }),
+
+  // BCAN管理
+  bcan: router({
+    exportMapping: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (ctx.user.role !== 'admin' && !ctx.user.email?.endsWith('@cmfinancial.com')) {
+          throw new Error('没有权限导出BCAN数据');
+        }
+        const data = await db.getBcanMappingData();
+        return {
+          institutionCode: 'BSU667',
+          generatedAt: new Date().toISOString(),
+          records: data.map(r => ({
+            bcanCode: r.bcanCode,
+            clientId: r.clientId,
+            englishName: r.englishName,
+            chineseName: r.chineseName,
+            idType: r.idType,
+            idNumber: r.idNumber,
+            generatedAt: r.bcanGeneratedAt,
+          })),
+          totalCount: data.length,
+        };
       }),
   }),
 

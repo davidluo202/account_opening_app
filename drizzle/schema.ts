@@ -94,6 +94,10 @@ export const applications = mysqlTable("applications", {
   customerPdfUrl: varchar("customerPdfUrl", { length: 500 }), // 客户版PDF URL（不包含审批信息）
   firstReviewPdfUrl: varchar("firstReviewPdfUrl", { length: 500 }), // 初审版PDF URL（包含初审信息）
   finalReviewPdfUrl: varchar("finalReviewPdfUrl", { length: 500 }), // 终审版PDF URL（包含初审+终审信息）
+  // 客户号与BCAN相关字段
+  clientId: varchar("clientId", { length: 20 }), // 客户账户号（14位：AA-B-C-YYYY-SSSSSS）
+  bcanCode: varchar("bcanCode", { length: 30 }), // BCAN = 账户流水号（6位）
+  bcanGeneratedAt: timestamp("bcanGeneratedAt"), // BCAN生成时间
 });
 
 /**
@@ -312,6 +316,7 @@ export const regulatoryDeclarations = mysqlTable("regulatory_declarations", {
   electronicSignatureConsent: boolean("electronicSignatureConsent").default(false).notNull(),
   amlComplianceConsent: boolean("amlComplianceConsent").default(false).notNull(),
   riskAssessmentConsent: boolean("riskAssessmentConsent").default(false).notNull(),
+  bcanConsentAccepted: boolean("bcanConsentAccepted").default(false).notNull(), // 投资者识别码制度同意书
   confirmationRead: boolean("confirmationRead").default(false),
   objectsDirectMarketing: boolean("objectsDirectMarketing").default(false),
   signedAt: timestamp("signedAt"),
@@ -347,6 +352,15 @@ export const clientDeclarations = mysqlTable("client_declarations", {
 });
 
 export type ClientDeclaration = typeof clientDeclarations.$inferSelect;
+
+/**
+ * 客户CID序号表 - 用于生成账户号流水号
+ */
+export const bcanSequences = mysqlTable("bcan_sequences", {
+  id: int("id").autoincrement().primaryKey(),
+  lastSequence: int("lastSequence").default(0).notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
 
 /**
  * 审批人员表
