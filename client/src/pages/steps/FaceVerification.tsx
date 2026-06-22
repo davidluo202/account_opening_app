@@ -394,7 +394,7 @@ export default function FaceVerification() {
           <Alert className="bg-green-50 border-green-200">
             <CheckCircle2 className="h-4 w-4 text-green-600" />
             <AlertDescription className="text-green-800">
-              <strong>✓ {t('人臉驗證已通過', 'Face verification passed', '人脸验证已通过')}</strong>{t('，您可以直接點擊”下一步”繼續申請流程。', '. You can click “Next” to continue.', '，您可以直接点击”下一步”继续申请流程。')}
+              <strong>✓ {t('人臉驗證已通過', 'Face verification passed', '人脸验证已通过')}</strong>{t('，您可以直接點擊"下一步"繼續申請流程。', '. You can click "Next" to continue.', '，您可以直接点击"下一步"继续申请流程。')}
             </AlertDescription>
           </Alert>
         )}

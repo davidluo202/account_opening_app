@@ -223,11 +223,11 @@ export default function CorporateBasicInfo() {
     }
 
     if (!formData.contactName.trim()) {
-      newErrors.contactName = t(‘請輸入聯絡人姓名’, ‘Please enter contact name’, ‘请输入联络人姓名’);
+      newErrors.contactName = t('請輸入聯絡人姓名', 'Please enter contact name', '请输入联络人姓名');
     } else if (!/^[A-Za-z\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\s·\-\u0027\u2018\u2019,]+$/.test(formData.contactName)) {
-      newErrors.contactName = t("姓名只允許中文（繁/簡會自動轉繁）、英文字母、空格、·、-、’、英文逗號,；不允許數字及其他符號", "Name only allows Chinese, English letters, spaces, middle dot, hyphen, apostrophe and comma", "姓名只允许中文（繁/简会自动转繁）、英文字母、空格、·、-、’、英文逗号,；不允许数字及其他符号");
+      newErrors.contactName = t("姓名只允許中文（繁/簡會自動轉繁）、英文字母、空格、·、-、'、英文逗號,；不允許數字及其他符號", "Name only allows Chinese, English letters, spaces, middle dot, hyphen, apostrophe and comma", "姓名只允许中文（繁/简会自动转繁）、英文字母、空格、·、-、'、英文逗号,；不允许数字及其他符号");
     }
-    if (!formData.contactTitle.trim()) newErrors.contactTitle = t(‘請輸入職銜’, ‘Please enter title’, ‘请输入职衔’);
+    if (!formData.contactTitle.trim()) newErrors.contactTitle = t('請輸入職銜', 'Please enter title', '请输入职衔');
 
     validatePhone(formData.contactCountryCode, formData.contactPhone, 'contactPhone');
 
@@ -509,10 +509,10 @@ export default function CorporateBasicInfo() {
                 id="contactName"
                 value={formData.contactName}
                 onChange={(e) => {
-                  // 只允許：中文（繁/簡）、英文字母、空格、·、-、’、英文逗號 ,
+                  // 只允許：中文（繁/簡）、英文字母、空格、·、-、'、英文逗號 ,
                   // 其餘（數字/其他符號/全形符號）一律移除
                   const raw = e.target.value;
-                  const filtered = raw.replace(/[^A-Za-z\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\s·\-’',]/g, "");
+                  const filtered = raw.replace(/[^A-Za-z\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\s·\-'',]/g, "");
                   setFormData({ ...formData, contactName: filtered });
                 }}
                 onBlur={() => setFormData({ ...formData, contactName: handleSCT(formData.contactName) })}
