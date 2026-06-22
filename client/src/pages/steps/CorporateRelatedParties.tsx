@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { Loader2, Plus, Trash2, Save, Edit } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { convertToTraditional } from "@/lib/converter";
+import { useLang } from '@/lib/i18n';
 
 interface RelatedParty {
   id: string;
@@ -32,30 +33,30 @@ interface RelatedParty {
   address: string;
 }
 
-const countryCodes = [
-  { value: "+852", label: "+852 香港", length: 8 },
-  { value: "+86", label: "+86 中國內地", length: 11 },
-  { value: "+853", label: "+853 澳門", length: 8 },
-  { value: "+886", label: "+886 台灣", length: 9 },
-  { value: "+1", label: "+1 美國/加拿大", length: 10 },
-  { value: "+44", label: "+44 英國", length: 10 },
-  { value: "+65", label: "+65 新加坡", length: 8 },
-  { value: "+81", label: "+81 日本", length: 10 },
-  { value: "+61", label: "+61 澳洲", length: 9 },
+const countryCodesData = [
+  { value: "+852", tLabel: ['香港', 'Hong Kong', '香港'] as const, length: 8 },
+  { value: "+86", tLabel: ['中國內地', 'Chinese Mainland', '中国内地'] as const, length: 11 },
+  { value: "+853", tLabel: ['澳門', 'Macau', '澳门'] as const, length: 8 },
+  { value: "+886", tLabel: ['台灣', 'Taiwan', '台湾'] as const, length: 9 },
+  { value: "+1", tLabel: ['美國/加拿大', 'US/Canada', '美国/加拿大'] as const, length: 10 },
+  { value: "+44", tLabel: ['英國', 'UK', '英国'] as const, length: 10 },
+  { value: "+65", tLabel: ['新加坡', 'Singapore', '新加坡'] as const, length: 8 },
+  { value: "+81", tLabel: ['日本', 'Japan', '日本'] as const, length: 10 },
+  { value: "+61", tLabel: ['澳洲', 'Australia', '澳洲'] as const, length: 9 },
 ];
 
-const idIssuingCountries = [
-  { value: "HK", label: "香港 Hong Kong" },
-  { value: "CN", label: "中國內地 Chinese Mainland" },
-  { value: "MO", label: "澳門 Macau" },
-  { value: "TW", label: "台灣 Taiwan" },
-  { value: "US", label: "美國 United States" },
-  { value: "GB", label: "英國 United Kingdom" },
-  { value: "SG", label: "新加坡 Singapore" },
-  { value: "AU", label: "澳洲 Australia" },
-  { value: "CA", label: "加拿大 Canada" },
-  { value: "JP", label: "日本 Japan" },
-  { value: "OTHER", label: "其他 Other" },
+const idIssuingCountriesData = [
+  { value: "HK", tLabel: ['香港', 'Hong Kong', '香港'] as const },
+  { value: "CN", tLabel: ['中國內地', 'Chinese Mainland', '中国内地'] as const },
+  { value: "MO", tLabel: ['澳門', 'Macau', '澳门'] as const },
+  { value: "TW", tLabel: ['台灣', 'Taiwan', '台湾'] as const },
+  { value: "US", tLabel: ['美國', 'United States', '美国'] as const },
+  { value: "GB", tLabel: ['英國', 'United Kingdom', '英国'] as const },
+  { value: "SG", tLabel: ['新加坡', 'Singapore', '新加坡'] as const },
+  { value: "AU", tLabel: ['澳洲', 'Australia', '澳洲'] as const },
+  { value: "CA", tLabel: ['加拿大', 'Canada', '加拿大'] as const },
+  { value: "JP", tLabel: ['日本', 'Japan', '日本'] as const },
+  { value: "OTHER", tLabel: ['其他', 'Other', '其他'] as const },
 ];
 
 const defaultParty = (): RelatedParty => ({
@@ -94,12 +95,15 @@ const isAgeAtLeast18 = (dateOfBirth: string): boolean => {
 // Validate phone number based on country code
 const validatePhone = (phone: string, countryCode: string): boolean => {
   if (!phone) return true; // Optional field
-  const expectedLength = countryCodes.find(c => c.value === countryCode)?.length;
+  const expectedLength = countryCodesData.find(c => c.value === countryCode)?.length;
   if (!expectedLength) return true;
   return phone.replace(/\D/g, '').length === expectedLength;
 };
 
 export default function CorporateRelatedParties() {
+  const { t } = useLang();
+  const countryCodes = countryCodesData.map(c => ({ value: c.value, label: `${c.value} ${t(c.tLabel[0], c.tLabel[1], c.tLabel[2])}`, length: c.length }));
+  const idIssuingCountries = idIssuingCountriesData.map(c => ({ value: c.value, label: t(c.tLabel[0], c.tLabel[1], c.tLabel[2]) }));
   const params = useParams<{ id: string; step?: string }>();
   const [, setLocation] = useLocation();
   const draftStorageKey = `corporateRelatedParties:draft:${params.id || "0"}`;
@@ -210,11 +214,11 @@ export default function CorporateRelatedParties() {
     onSuccess: (result) => {
       if (result.success) {
         utils.corporateRelatedParties.get.invalidate({ applicationId });
-        toast.success("保存成功");
+        toast.success(t('保存成功', 'Saved successfully', '保存成功'));
         setLocation(`/application/${applicationId}/step/${stepNum + 1}`);
       }
     },
-    onError: (error) => toast.error(`保存失敗: ${error.message}`)
+    onError: (error) => toast.error(`${t('保存失敗', 'Save failed', '保存失败')}: ${error.message}`)
   });
 
   const saveOnlyMutation = trpc.corporateRelatedParties.save.useMutation({
@@ -222,30 +226,30 @@ export default function CorporateRelatedParties() {
       // 靜默保存，不提示
       utils.corporateRelatedParties.get.invalidate({ applicationId });
     },
-    onError: (error) => toast.error(`自動保存失敗: ${error.message}`)
+    onError: (error) => toast.error(`${t('自動保存失敗', 'Auto-save failed', '自动保存失败')}: ${error.message}`)
   });
 
   const validateParty = (party: RelatedParty, forSave: boolean = false) => {
     const errs: Record<string, string> = {};
-    if (!party.relationshipType) errs.relationshipType = "請選擇關係類型";
-    if (!party.name) errs.name = "請輸入姓名";
-    if (!party.gender) errs.gender = "請選擇性別";
-    
+    if (!party.relationshipType) errs.relationshipType = t('請選擇關係類型', 'Please select relationship type', '请选择关系类型');
+    if (!party.name) errs.name = t('請輸入姓名', 'Please enter name', '请输入姓名');
+    if (!party.gender) errs.gender = t('請選擇性別', 'Please select gender', '请选择性别');
+
     if (!party.dateOfBirth) {
-      errs.dateOfBirth = "請選擇出生日期";
+      errs.dateOfBirth = t('請選擇出生日期', 'Please select date of birth', '请选择出生日期');
     } else if (!isAgeAtLeast18(party.dateOfBirth)) {
-      errs.dateOfBirth = "關聯人士必須年滿18歲";
+      errs.dateOfBirth = t('關聯人士必須年滿18歲', 'Related party must be at least 18 years old', '关联人士必须年满18岁');
     }
-    
-    if (!party.idType) errs.idType = "請選擇證件類型";
-    if (!party.idIssuingPlace) errs.idIssuingPlace = "請選擇證件簽發地";
+
+    if (!party.idType) errs.idType = t('請選擇證件類型', 'Please select ID type', '请选择证件类型');
+    if (!party.idIssuingPlace) errs.idIssuingPlace = t('請選擇證件簽發地', 'Please select ID issuing place', '请选择证件签发地');
 
     if (!party.idNumber) {
-      errs.idNumber = "請輸入證件號碼";
+      errs.idNumber = t('請輸入證件號碼', 'Please enter ID number', '请输入证件号码');
     } else if (party.idType === "mainland_id") {
       // 中國大陸居民身份證：必須18位阿拉伯數字
       if (!/^\d{18}$/.test(party.idNumber)) {
-        errs.idNumber = "請輸入正確的18位二代居民身份證號碼";
+        errs.idNumber = t('請輸入正確的18位二代居民身份證號碼', 'Please enter a valid 18-digit Mainland ID number', '请输入正确的18位二代居民身份证号码');
       }
     } else if (party.idType === "hkid") {
       // 香港身份證：1位大楷英文字母 + 6位數字 + (1位數字或大楷英文字母)
@@ -254,11 +258,11 @@ export default function CorporateRelatedParties() {
       // Remove parentheses for the "must be exactly 8 chars" rule
       const withoutParen = normalized.replace(/[()]/g, "");
       if (withoutParen.length !== 8) {
-        errs.idNumber = "請輸入正確的香港身份證號碼";
+        errs.idNumber = t('請輸入正確的香港身份證號碼', 'Please enter a valid HKID number', '请输入正确的香港身份证号码');
       } else {
         const hkidRegex = /^[A-Z]\d{6}[0-9A-Z]$/;
         if (!hkidRegex.test(withoutParen)) {
-          errs.idNumber = "請輸入正確的香港身份證號碼";
+          errs.idNumber = t('請輸入正確的香港身份證號碼', 'Please enter a valid HKID number', '请输入正确的香港身份证号码');
         }
       }
     }
@@ -266,19 +270,19 @@ export default function CorporateRelatedParties() {
     // Phone validation
     if (party.phone && !validatePhone(party.phone, party.phoneCountryCode)) {
       const expectedLength = countryCodes.find(c => c.value === party.phoneCountryCode)?.length;
-      errs.phone = `電話號碼必須為${expectedLength}位數字`;
+      errs.phone = t(`電話號碼必須為${expectedLength}位數字`, `Phone number must be ${expectedLength} digits`, `电话号码必须为${expectedLength}位数字`);
     }
 
     // Email validation (optional, but if filled, must be valid)
     if (party.email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(party.email)) {
-        errs.email = "電郵格式不正確";
+        errs.email = t('電郵格式不正確', 'Invalid email format', '电邮格式不正确');
       }
     }
     
     if (!party.phone && !party.email && !party.address) {
-      errs.contact = "請至少提供一種聯絡方式";
+      errs.contact = t('請至少提供一種聯絡方式', 'Please provide at least one contact method', '请至少提供一种联络方式');
     }
     
     setErrors(errs);
@@ -286,16 +290,16 @@ export default function CorporateRelatedParties() {
   };
 
   const requiredTypes: { key: RelatedParty["relationshipType"]; label: string }[] = [
-    { key: "director", label: "董事 / Director" },
-    { key: "shareholder", label: "股東 / Shareholder" },
-    { key: "beneficial_owner", label: "最終受益人 / Ultimate Beneficial Owner" },
-    { key: "authorized_signatory", label: "授權簽署人 / Authorized Signatory" },
+    { key: "director", label: t('董事', 'Director', '董事') },
+    { key: "shareholder", label: t('股東', 'Shareholder', '股东') },
+    { key: "beneficial_owner", label: t('最終受益人', 'Ultimate Beneficial Owner', '最终受益人') },
+    { key: "authorized_signatory", label: t('授權簽署人', 'Authorized Signatory', '授权签署人') },
   ];
 
   const validateRequiredTypes = (parties: RelatedParty[]): boolean => {
     const missing = requiredTypes
-      .filter(t => !parties.some(p => p.relationshipType === t.key))
-      .map(t => t.label);
+      .filter(rt => !parties.some(p => p.relationshipType === rt.key))
+      .map(rt => rt.label);
     setMissingTypes(missing);
     return missing.length === 0;
   };
@@ -317,10 +321,10 @@ export default function CorporateRelatedParties() {
       if (existingIndex >= 0) {
         newList = [...savedParties];
         newList[existingIndex] = convertedParty;
-        toast.success("關聯方已更新");
+        toast.success(t('關聯方已更新', 'Related party updated', '关联方已更新'));
       } else {
         newList = [...savedParties, convertedParty];
-        toast.success("關聯方已添加");
+        toast.success(t('關聯方已添加', 'Related party added', '关联方已添加'));
       }
       setSavedParties(newList);
       saveOnlyMutation.mutate({ applicationId, relatedParties: newList });
@@ -357,14 +361,14 @@ export default function CorporateRelatedParties() {
       if (validateParty(convertedParty)) {
         const prospectiveList = [convertedParty];
         if (!validateRequiredTypes(prospectiveList)) {
-          toast.error("請確保每種必填關係類型至少有一位關聯方");
+          toast.error(t('請確保每種必填關係類型至少有一位關聯方', 'Please ensure at least one related party for each required relationship type', '请确保每种必填关系类型至少有一位关联方'));
           return;
         }
         saveMutation.mutate({ applicationId, relatedParties: prospectiveList });
       }
     } else {
       if (!validateRequiredTypes(savedParties)) {
-        toast.error("請確保每種必填關係類型至少有一位關聯方");
+        toast.error(t('請確保每種必填關係類型至少有一位關聯方', 'Please ensure at least one related party for each required relationship type', '请确保每种必填关系类型至少有一位关联方'));
         return;
       }
       saveMutation.mutate({ applicationId, relatedParties: savedParties });
@@ -381,16 +385,16 @@ export default function CorporateRelatedParties() {
       if (validateParty(convertedParty)) {
         const prospectiveList = [convertedParty];
         if (!validateRequiredTypes(prospectiveList)) {
-          toast.error("請確保每種必填關係類型至少有一位關聯方");
+          toast.error(t('請確保每種必填關係類型至少有一位關聯方', 'Please ensure at least one related party for each required relationship type', '请确保每种必填关系类型至少有一位关联方'));
           return;
         }
         saveMutation.mutate({ applicationId, relatedParties: prospectiveList });
       } else {
-        toast.error("請填寫完整信息後再繼續");
+        toast.error(t('請填寫完整信息後再繼續', 'Please complete all required information before proceeding', '请填写完整信息后再继续'));
       }
     } else {
       if (!validateRequiredTypes(savedParties)) {
-        toast.error("請確保每種必填關係類型至少有一位關聯方");
+        toast.error(t('請確保每種必填關係類型至少有一位關聯方', 'Please ensure at least one related party for each required relationship type', '请确保每种必填关系类型至少有一位关联方'));
         return;
       }
       saveMutation.mutate({ applicationId, relatedParties: savedParties });
@@ -426,20 +430,20 @@ export default function CorporateRelatedParties() {
     >
       <div className="space-y-8">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">關聯方信息 / Related Parties</h2>
-          <p className="text-sm text-slate-500 mt-1">請提供所有董事、股東、最終受益人或授權簽署人的信息</p>
+          <h2 className="text-xl font-bold text-slate-900">{t('關聯方信息', 'Related Parties', '关联方信息')}</h2>
+          <p className="text-sm text-slate-500 mt-1">{t('請提供所有董事、股東、最終受益人或授權簽署人的信息', 'Please provide information for all directors, shareholders, beneficial owners or authorized signatories', '请提供所有董事、股东、最终受益人或授权签署人的信息')}</p>
         </div>
 
         {/* Saved Parties List */}
         {savedParties.length > 0 && (
           <div className="space-y-4">
-            <h3 className="font-semibold text-slate-700">已添加的關聯方 ({savedParties.length})</h3>
+            <h3 className="font-semibold text-slate-700">{t('已添加的關聯方', 'Added Related Parties', '已添加的关联方')} ({savedParties.length})</h3>
             {savedParties.map((party, index) => (
               <div key={party.id} className="p-4 border border-green-200 rounded-lg bg-green-50 flex justify-between items-center">
                 <div>
                   <p className="font-medium">{party.name}</p>
                   <p className="text-sm text-slate-500">
-                    {party.relationshipType === 'director' ? '董事' : party.relationshipType === 'shareholder' ? '股東' : party.relationshipType === 'beneficial_owner' ? '最終受益人' : party.relationshipType === 'authorized_signatory' ? '授權簽署人' : '其他'}
+                    {party.relationshipType === 'director' ? t('董事', 'Director', '董事') : party.relationshipType === 'shareholder' ? t('股東', 'Shareholder', '股东') : party.relationshipType === 'beneficial_owner' ? t('最終受益人', 'Beneficial Owner', '最终受益人') : party.relationshipType === 'authorized_signatory' ? t('授權簽署人', 'Authorized Signatory', '授权签署人') : t('其他', 'Other', '其他')}
                   </p>
                 </div>
                 <div className="flex items-center gap-1">
@@ -457,27 +461,27 @@ export default function CorporateRelatedParties() {
 
         {/* Add New Party Form */}
         <div className="p-6 border-2 border-blue-200 rounded-lg bg-blue-50 space-y-6">
-          <h3 className="text-lg font-semibold text-slate-800">添加新關聯方</h3>
+          <h3 className="text-lg font-semibold text-slate-800">{t('添加新關聯方', 'Add New Related Party', '添加新关联方')}</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
-              <Label>關係類型 / Relationship Type <span className="text-destructive">*</span></Label>
+              <Label>{t('關係類型', 'Relationship Type', '关系类型')} <span className="text-destructive">*</span></Label>
               <div className="flex gap-2">
                 <Select value={currentParty.relationshipType} onValueChange={(v: any) => setCurrentParty({ ...currentParty, relationshipType: v })}>
-                  <SelectTrigger><SelectValue placeholder="選擇類型" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder={t('選擇類型', 'Select type', '选择类型')} /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="director">董事 / Director</SelectItem>
-                    <SelectItem value="shareholder">股東 / Shareholder</SelectItem>
-                    <SelectItem value="beneficial_owner">最終受益人 / Beneficial Owner</SelectItem>
-                    <SelectItem value="authorized_signatory">授權簽署人 / Authorized Signatory</SelectItem>
-                    <SelectItem value="other">其他 / Other</SelectItem>
+                    <SelectItem value="director">{t('董事', 'Director', '董事')}</SelectItem>
+                    <SelectItem value="shareholder">{t('股東', 'Shareholder', '股东')}</SelectItem>
+                    <SelectItem value="beneficial_owner">{t('最終受益人', 'Beneficial Owner', '最终受益人')}</SelectItem>
+                    <SelectItem value="authorized_signatory">{t('授權簽署人', 'Authorized Signatory', '授权签署人')}</SelectItem>
+                    <SelectItem value="other">{t('其他', 'Other', '其他')}</SelectItem>
                   </SelectContent>
                 </Select>
                 {currentParty.relationshipType === "other" && (
                   <Input
                     value={currentParty.relationshipTypeOther || ""}
                     onChange={e => setCurrentParty({ ...currentParty, relationshipTypeOther: e.target.value })}
-                    placeholder="請輸入關係類型"
+                    placeholder={t('請輸入關係類型', 'Enter relationship type', '请输入关系类型')}
                     className="flex-1"
                   />
                 )}
@@ -492,12 +496,12 @@ export default function CorporateRelatedParties() {
                   checked={currentParty.isDefaultContact}
                   onCheckedChange={(v) => setCurrentParty({ ...currentParty, isDefaultContact: !!v })}
                 />
-                <Label htmlFor="default-contact">設為默認賬戶聯繫人</Label>
+                <Label htmlFor="default-contact">{t('設為默認賬戶聯繫人', 'Set as default account contact', '设为默认账户联系人')}</Label>
               </div>
             </div>
 
             <div className="space-y-3">
-              <Label>中文姓名 / Chinese Name <span className="text-destructive">*</span></Label>
+              <Label>{t('中文姓名', 'Chinese Name', '中文姓名')} <span className="text-destructive">*</span></Label>
               <Input
                 value={currentParty.name}
                 onChange={e => setCurrentParty({ ...currentParty, name: e.target.value })}
@@ -510,29 +514,29 @@ export default function CorporateRelatedParties() {
             </div>
 
             <div className="space-y-3">
-              <Label>英文姓名 / English Name <span className="text-destructive">*</span></Label>
+              <Label>{t('英文姓名', 'English Name', '英文姓名')} <span className="text-destructive">*</span></Label>
               <Input
                 value={currentParty.englishName}
                 onChange={e => setCurrentParty({ ...currentParty, englishName: e.target.value.toUpperCase() })}
-                placeholder="As shown on ID/Passport"
+                placeholder={t('請輸入英文姓名（與證件一致）', 'As shown on ID/Passport', '请输入英文姓名（与证件一致）')}
               />
             </div>
 
             <div className="space-y-3">
-              <Label>性別 / Gender <span className="text-destructive">*</span></Label>
+              <Label>{t('性別', 'Gender', '性别')} <span className="text-destructive">*</span></Label>
               <Select value={currentParty.gender} onValueChange={(v: any) => setCurrentParty({ ...currentParty, gender: v })}>
-                <SelectTrigger><SelectValue placeholder="選擇性別" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder={t('選擇性別', 'Select gender', '选择性别')} /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="male">男 / Male</SelectItem>
-                  <SelectItem value="female">女 / Female</SelectItem>
-                  <SelectItem value="other">其他 / Other</SelectItem>
+                  <SelectItem value="male">{t('男', 'Male', '男')}</SelectItem>
+                  <SelectItem value="female">{t('女', 'Female', '女')}</SelectItem>
+                  <SelectItem value="other">{t('其他', 'Other', '其他')}</SelectItem>
                 </SelectContent>
               </Select>
               {errors.gender && <p className="text-sm text-destructive">{errors.gender}</p>}
             </div>
 
             <div className="space-y-3">
-              <Label>出生日期 / Date of Birth <span className="text-destructive">*</span> (必須年滿18歲)</Label>
+              <Label>{t('出生日期', 'Date of Birth', '出生日期')} <span className="text-destructive">*</span> ({t('必須年滿18歲', 'Must be at least 18', '必须年满18岁')})</Label>
               <Input 
                 type="date" 
                 value={currentParty.dateOfBirth} 
@@ -542,15 +546,15 @@ export default function CorporateRelatedParties() {
             </div>
 
             <div className="space-y-3">
-              <Label>證件類型 / ID Type <span className="text-destructive">*</span></Label>
+              <Label>{t('證件類型', 'ID Type', '证件类型')} <span className="text-destructive">*</span></Label>
               <div className="flex gap-2">
                 <Select value={currentParty.idType} onValueChange={(v: any) => setCurrentParty({ ...currentParty, idType: v })}>
-                  <SelectTrigger><SelectValue placeholder="選擇證件" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder={t('選擇證件', 'Select ID type', '选择证件')} /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="hkid">香港身份證 / HKID</SelectItem>
-                    <SelectItem value="passport">護照 / Passport</SelectItem>
-                    <SelectItem value="mainland_id">中國大陸居民身份證 / Mainland ID</SelectItem>
-                    <SelectItem value="other">其他 / Other</SelectItem>
+                    <SelectItem value="hkid">{t('香港身份證', 'HKID', '香港身份证')}</SelectItem>
+                    <SelectItem value="passport">{t('護照', 'Passport', '护照')}</SelectItem>
+                    <SelectItem value="mainland_id">{t('中國大陸居民身份證', 'Mainland ID', '中国大陆居民身份证')}</SelectItem>
+                    <SelectItem value="other">{t('其他', 'Other', '其他')}</SelectItem>
                   </SelectContent>
                 </Select>
                 {currentParty.idType === "other" && (
@@ -562,7 +566,7 @@ export default function CorporateRelatedParties() {
                         setCurrentParty({ ...currentParty, idTypeOther: convertToTraditional(currentParty.idTypeOther) });
                       }
                     }}
-                    placeholder="請輸入證件類型"
+                    placeholder={t('請輸入證件類型', 'Enter ID type', '请输入证件类型')}
                     className="flex-1"
                   />
                 )}
@@ -571,10 +575,10 @@ export default function CorporateRelatedParties() {
             </div>
 
             <div className="space-y-3">
-              <Label>證件簽發地 / ID Issuing Country <span className="text-destructive">*</span></Label>
+              <Label>{t('證件簽發地', 'ID Issuing Country', '证件签发地')} <span className="text-destructive">*</span></Label>
               <div className="flex gap-2">
                 <Select value={currentParty.idIssuingPlace} onValueChange={(v: any) => setCurrentParty({ ...currentParty, idIssuingPlace: v })}>
-                  <SelectTrigger><SelectValue placeholder="選擇國家/地區" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder={t('選擇國家/地區', 'Select country/region', '选择国家/地区')} /></SelectTrigger>
                   <SelectContent>
                     {idIssuingCountries.map(c => (
                       <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
@@ -590,7 +594,7 @@ export default function CorporateRelatedParties() {
                         setCurrentParty({ ...currentParty, idIssuingPlaceOther: convertToTraditional(currentParty.idIssuingPlaceOther) });
                       }
                     }}
-                    placeholder="請輸入國家/地區"
+                    placeholder={t('請輸入國家/地區', 'Enter country/region', '请输入国家/地区')}
                     className="flex-1"
                   />
                 )}
@@ -599,7 +603,7 @@ export default function CorporateRelatedParties() {
             </div>
 
             <div className="space-y-3">
-              <Label>證件號碼 / ID Number <span className="text-destructive">*</span></Label>
+              <Label>{t('證件號碼', 'ID Number', '证件号码')} <span className="text-destructive">*</span></Label>
               <Input
                 value={currentParty.idNumber}
                 onChange={e => {
@@ -609,11 +613,11 @@ export default function CorporateRelatedParties() {
                 }}
                 onBlur={() => setCurrentParty({ ...currentParty, idNumber: currentParty.idNumber.toUpperCase() })}
                 placeholder={
-                  currentParty.idType === 'hkid' ? '請輸入您的香港身份證號碼，例如:A123456(0)' : 
-                  currentParty.idType === 'mainland_id' ? '請輸入您的二代居民身份證號碼，由18位數字組成。' : 
-                  currentParty.idType === 'passport' ? '請輸入您的護照號碼' : 
-                  currentParty.idType === 'other' ? '請輸入您的證件號碼' : 
-                  '請輸入您的證件號碼'
+                  currentParty.idType === 'hkid' ? t('請輸入您的香港身份證號碼，例如:A123456(0)', 'Enter your HKID number, e.g. A123456(0)', '请输入您的香港身份证号码，例如:A123456(0)') :
+                  currentParty.idType === 'mainland_id' ? t('請輸入您的二代居民身份證號碼，由18位數字組成。', 'Enter your 18-digit Mainland ID number', '请输入您的二代居民身份证号码，由18位数字组成。') :
+                  currentParty.idType === 'passport' ? t('請輸入您的護照號碼', 'Enter your passport number', '请输入您的护照号码') :
+                  currentParty.idType === 'other' ? t('請輸入您的證件號碼', 'Enter your ID number', '请输入您的证件号码') :
+                  t('請輸入您的證件號碼', 'Enter your ID number', '请输入您的证件号码')
                 }
                 className={currentParty.idType ? 'placeholder:text-gray-400' : ''}
               />
@@ -621,7 +625,7 @@ export default function CorporateRelatedParties() {
             </div>
 
             <div className="space-y-3">
-              <Label>電話號碼 / Telephone No.</Label>
+              <Label>{t('電話號碼', 'Telephone No.', '电话号码')}</Label>
               <div className="flex gap-2">
                 <Select 
                   value={currentParty.phoneCountryCode} 
@@ -640,14 +644,14 @@ export default function CorporateRelatedParties() {
                   className="flex-1"
                   value={currentParty.phone} 
                   onChange={e => setCurrentParty({ ...currentParty, phone: e.target.value })} 
-                  placeholder="請輸入電話號碼"
+                  placeholder={t('請輸入電話號碼', 'Enter phone number', '请输入电话号码')}
                 />
               </div>
               {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
             </div>
 
             <div className="space-y-3">
-              <Label>電郵地址 / E-mail</Label>
+              <Label>{t('電郵地址', 'E-mail', '电邮地址')}</Label>
               <Input
                 type="email"
                 value={currentParty.email}
@@ -659,7 +663,7 @@ export default function CorporateRelatedParties() {
             </div>
 
             <div className="space-y-3 md:col-span-2">
-              <Label>地址 / Address</Label>
+              <Label>{t('地址', 'Address', '地址')}</Label>
               <Input 
                 value={currentParty.address} 
                 onChange={e => setCurrentParty({ ...currentParty, address: e.target.value })}
@@ -676,13 +680,13 @@ export default function CorporateRelatedParties() {
 
           <Button type="button" onClick={handleAddParty} className="w-full bg-green-600 hover:bg-green-700">
             <Save className="h-4 w-4 mr-2" />
-            添加此關聯方到列表
+            {t('添加此關聯方到列表', 'Add This Related Party to List', '添加此关联方到列表')}
           </Button>
         </div>
 
         {missingTypes.length > 0 && (
           <div className="p-4 border border-destructive rounded-lg bg-red-50">
-            <p className="text-sm font-semibold text-destructive mb-2">以下必填關係類型尚未添加 / The following required relationship types are missing:</p>
+            <p className="text-sm font-semibold text-destructive mb-2">{t('以下必填關係類型尚未添加', 'The following required relationship types are missing', '以下必填关系类型尚未添加')}:</p>
             <ul className="list-disc list-inside space-y-1">
               {missingTypes.map(t => (
                 <li key={t} className="text-sm text-destructive">{t}</li>
@@ -692,7 +696,7 @@ export default function CorporateRelatedParties() {
         )}
 
         {savedParties.length === 0 && (
-          <p className="text-center text-slate-500 text-sm">請填寫上方表格並點擊"添加此關聯方到列表"，然後點擊下一步</p>
+          <p className="text-center text-slate-500 text-sm">{t('請填寫上方表格並點擊"添加此關聯方到列表"，然後點擊下一步', 'Please fill in the form above and click "Add This Related Party to List", then click Next', '请填写上方表格并点击"添加此关联方到列表"，然后点击下一步')}</p>
         )}
       </div>
     </ApplicationWizard>

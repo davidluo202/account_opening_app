@@ -9,37 +9,39 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-
-const incomeSources = [
-  { value: "salary", label: "薪金 / Salary" },
-  { value: "business", label: "業務收入 / Business Income" },
-  { value: "investment", label: "投資收益 / Investment Income" },
-  { value: "other", label: "其他 / Other" },
-];
-
-const annualIncomeRanges = [
-  { value: "0-100000", label: "HKD 0 - 100,000" },
-  { value: "100000-300000", label: "HKD 100,000 - 300,000" },
-  { value: "300000-500000", label: "HKD 300,000 - 500,000" },
-  { value: "500000-1000000", label: "HKD 500,000 - 1,000,000" },
-  { value: "1000000-3000000", label: "HKD 1,000,000 - 3,000,000" },
-  { value: "3000000+", label: "HKD 3,000,000+" },
-];
-
-const netWorthRanges = [
-  { value: "0-500000", label: "HKD 0 - 500,000" },
-  { value: "500000-1000000", label: "HKD 500,000 - 1,000,000" },
-  { value: "1000000-3000000", label: "HKD 1,000,000 - 3,000,000" },
-  { value: "3000000-5000000", label: "HKD 3,000,000 - 5,000,000" },
-  { value: "5000000-10000000", label: "HKD 5,000,000 - 10,000,000" },
-  { value: "10000000+", label: "HKD 10,000,000+" },
-];
+import { useLang } from '@/lib/i18n';
 
 export default function EmploymentDetails() {
+  const { t } = useLang();
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
   const showReturnToPreview = useReturnToPreview();
+
+  const incomeSources = [
+    { value: "salary", label: t('薪金', 'Salary', '薪金') },
+    { value: "business", label: t('業務收入', 'Business Income', '业务收入') },
+    { value: "investment", label: t('投資收益', 'Investment Income', '投资收益') },
+    { value: "other", label: t('其他', 'Other', '其他') },
+  ];
+
+  const annualIncomeRanges = [
+    { value: "0-100000", label: "HKD 0 - 100,000" },
+    { value: "100000-300000", label: "HKD 100,000 - 300,000" },
+    { value: "300000-500000", label: "HKD 300,000 - 500,000" },
+    { value: "500000-1000000", label: "HKD 500,000 - 1,000,000" },
+    { value: "1000000-3000000", label: "HKD 1,000,000 - 3,000,000" },
+    { value: "3000000+", label: "HKD 3,000,000+" },
+  ];
+
+  const netWorthRanges = [
+    { value: "0-500000", label: "HKD 0 - 500,000" },
+    { value: "500000-1000000", label: "HKD 500,000 - 1,000,000" },
+    { value: "1000000-3000000", label: "HKD 1,000,000 - 3,000,000" },
+    { value: "3000000-5000000", label: "HKD 3,000,000 - 5,000,000" },
+    { value: "5000000-10000000", label: "HKD 5,000,000 - 10,000,000" },
+    { value: "10000000+", label: "HKD 10,000,000+" },
+  ];
 
   // Check if joint account
   const { data: accountSelection } = trpc.accountSelection.get.useQuery(
@@ -93,23 +95,23 @@ export default function EmploymentDetails() {
   const saveMutation = trpc.employment.save.useMutation({
     onSuccess: (result) => {
       if (result.success && result.data) {
-        toast.success("保存成功");
+        toast.success(t('保存成功', 'Saved successfully', '保存成功'));
         setLocation(`/application/${applicationId}/step/7`);
       }
     },
     onError: (error) => {
-      toast.error(`保存失敗: ${error.message}`);
+      toast.error(`${t('保存失敗', 'Save failed', '保存失败')}: ${error.message}`);
     },
   });
 
   const saveOnlyMutation = trpc.employment.save.useMutation({
     onSuccess: (result) => {
       if (result.success && result.data) {
-        toast.success("保存成功");
+        toast.success(t('保存成功', 'Saved successfully', '保存成功'));
       }
     },
     onError: (error) => {
-      toast.error(`保存失敗: ${error.message}`);
+      toast.error(`${t('保存失敗', 'Save failed', '保存失败')}: ${error.message}`);
     },
   });
 
@@ -171,17 +173,16 @@ export default function EmploymentDetails() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (selectedIncomeSources.length === 0) newErrors.incomeSource = "請選擇收入來源";
-    if (!formData.annualIncome) newErrors.annualIncome = "請選擇年收入範圍";
-    if (!formData.liquidAsset) newErrors.liquidAsset = "請選擇流動資產範圍";
-    if (!formData.netWorth) newErrors.netWorth = "請選擇淨資產範圍";
+    if (selectedIncomeSources.length === 0) newErrors.incomeSource = t('請選擇收入來源', 'Please select income source', '请选择收入来源');
+    if (!formData.annualIncome) newErrors.annualIncome = t('請選擇年收入範圍', 'Please select annual income range', '请选择年收入范围');
+    if (!formData.liquidAsset) newErrors.liquidAsset = t('請選擇流動資產範圍', 'Please select liquid asset range', '请选择流动资产范围');
+    if (!formData.netWorth) newErrors.netWorth = t('請選擇淨資產範圍', 'Please select net worth range', '请选择净资产范围');
 
-    // 聯名賬戶：驗證第二持有人
     if (isJoint) {
-      if (secondSelectedIncomeSources.length === 0) newErrors.secondIncomeSource = "請填寫第二持有人的收入來源";
-      if (!secondHolder.annualIncome) newErrors.secondAnnualIncome = "請填寫第二持有人的年收入範圍";
-      if (!secondHolder.liquidAsset) newErrors.secondLiquidAsset = "請填寫第二持有人的流動資產範圍";
-      if (!secondHolder.netWorth) newErrors.secondNetWorth = "請填寫第二持有人的淨資產範圍";
+      if (secondSelectedIncomeSources.length === 0) newErrors.secondIncomeSource = t('請填寫第二持有人的收入來源', 'Please select income source for second holder', '请填写第二持有人的收入来源');
+      if (!secondHolder.annualIncome) newErrors.secondAnnualIncome = t('請填寫第二持有人的年收入範圍', 'Please select annual income range for second holder', '请填写第二持有人的年收入范围');
+      if (!secondHolder.liquidAsset) newErrors.secondLiquidAsset = t('請填寫第二持有人的流動資產範圍', 'Please select liquid asset range for second holder', '请填写第二持有人的流动资产范围');
+      if (!secondHolder.netWorth) newErrors.secondNetWorth = t('請填寫第二持有人的淨資產範圍', 'Please select net worth range for second holder', '请填写第二持有人的净资产范围');
     }
 
     setErrors(newErrors);
@@ -190,7 +191,7 @@ export default function EmploymentDetails() {
 
 const handleSave = () => {
     if (!validateForm()) {
-      toast.error("請檢查表單中的錯誤");
+      toast.error(t('請檢查表單中的錯誤', 'Please check the form for errors', '请检查表单中的错误'));
       return;
     }
 
@@ -205,7 +206,7 @@ const handleSave = () => {
 
   const handleNext = () => {
     if (!validateForm()) {
-      toast.error("請檢查表單中的錯誤");
+      toast.error(t('請檢查表單中的錯誤', 'Please check the form for errors', '请检查表单中的错误'));
       return;
     }
 
@@ -243,20 +244,20 @@ const handleSave = () => {
       <div className="space-y-6">
         <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
           <p className="text-sm text-blue-900">
-            <strong>提示：</strong>所有金額幣種為港幣（HKD）
+            <strong>{t('提示：', 'Note: ', '提示：')}</strong>{t('所有金額幣種為港幣（HKD）', 'All amounts are in Hong Kong Dollars (HKD)', '所有金额币种为港币（HKD）')}
           </p>
         </div>
 
         {isJoint && (
-          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">賬戶主要持有人 / Primary Account Holder</h3>
+          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">{t('賬戶主要持有人', 'Primary Account Holder', '账户主要持有人')}</h3>
         )}
 
         {/* 收入來源 */}
         <div className="space-y-2">
           <Label>
-            收入來源 / Income Source <span className="text-destructive">*</span>
+            {t('收入來源', 'Income Source', '收入来源')} <span className="text-destructive">*</span>
           </Label>
-          <p className="text-sm text-muted-foreground">可多選</p>
+          <p className="text-sm text-muted-foreground">{t('可多選', 'Multiple selections allowed', '可多选')}</p>
           <div className={`space-y-3 bg-slate-50 p-4 rounded-lg border ${errors.incomeSource ? "border-destructive" : "border-slate-200"}`}>
             {incomeSources.map((source) => (
               <div key={source.value}>
@@ -274,7 +275,7 @@ const handleSave = () => {
                     <Input
                       value={incomeSourceOther}
                       onChange={(e) => handleOtherTextChange(e.target.value)}
-                      placeholder="請填寫詳情"
+                      placeholder={t('請填寫詳情', 'Please specify', '请填写详情')}
                       className="ml-2 h-8 w-48 text-sm"
                     />
                   )}
@@ -288,7 +289,7 @@ const handleSave = () => {
         {/* 年收入範圍 */}
         <div className="space-y-2">
           <Label htmlFor="annualIncome">
-            年收入範圍 / Annual Income Range <span className="text-destructive">*</span>
+            {t('年收入範圍', 'Annual Income Range', '年收入范围')} <span className="text-destructive">*</span>
           </Label>
           <Select 
             value={formData.annualIncome} 
@@ -298,7 +299,7 @@ const handleSave = () => {
             }}
           >
             <SelectTrigger className={errors.annualIncome ? "border-destructive" : ""}>
-              <SelectValue placeholder="請選擇年收入範圍" />
+              <SelectValue placeholder={t('請選擇年收入範圍', 'Please select annual income range', '请选择年收入范围')} />
             </SelectTrigger>
             <SelectContent>
               {annualIncomeRanges.map((range) => (
@@ -314,7 +315,7 @@ const handleSave = () => {
         {/* 流動資產範圍 */}
         <div className="space-y-2">
           <Label htmlFor="liquidAsset">
-            流動資產範圍 / Liquid Asset Range (HK$) <span className="text-destructive">*</span>
+            {t('流動資產範圍 (HK$)', 'Liquid Asset Range (HK$)', '流动资产范围 (HK$)')} <span className="text-destructive">*</span>
           </Label>
           <Select
             value={formData.liquidAsset}
@@ -324,7 +325,7 @@ const handleSave = () => {
             }}
           >
             <SelectTrigger className={errors.liquidAsset ? "border-destructive" : ""}>
-              <SelectValue placeholder="請選擇流動資產範圍" />
+              <SelectValue placeholder={t('請選擇流動資產範圍', 'Please select liquid asset range', '请选择流动资产范围')} />
             </SelectTrigger>
             <SelectContent>
               {netWorthRanges.map((range) => (
@@ -340,7 +341,7 @@ const handleSave = () => {
         {/* 淨資產範圍 */}
         <div className="space-y-2">
           <Label htmlFor="netWorth">
-            淨資產範圍 / Net Worth Range <span className="text-destructive">*</span>
+            {t('淨資產範圍', 'Net Worth Range', '净资产范围')} <span className="text-destructive">*</span>
           </Label>
           <Select 
             value={formData.netWorth} 
@@ -350,7 +351,7 @@ const handleSave = () => {
             }}
           >
             <SelectTrigger className={errors.netWorth ? "border-destructive" : ""}>
-              <SelectValue placeholder="請選擇淨資產範圍" />
+              <SelectValue placeholder={t('請選擇淨資產範圍', 'Please select net worth range', '请选择净资产范围')} />
             </SelectTrigger>
             <SelectContent>
               {netWorthRanges.map((range) => (
@@ -366,14 +367,14 @@ const handleSave = () => {
         {/* 聯名賬戶：第二持有人 */}
         {isJoint && (
           <>
-            <h3 className="text-lg font-bold text-primary border-b pb-2 mt-8 mb-2">賬戶第二持有人 / Second Account Holder</h3>
+            <h3 className="text-lg font-bold text-primary border-b pb-2 mt-8 mb-2">{t('賬戶第二持有人', 'Second Account Holder', '账户第二持有人')}</h3>
 
             {/* 收入來源 */}
             <div className="space-y-2">
               <Label>
-                收入來源 / Income Source <span className="text-destructive">*</span>
+                {t('收入來源', 'Income Source', '收入来源')} <span className="text-destructive">*</span>
               </Label>
-              <p className="text-sm text-muted-foreground">可多選</p>
+              <p className="text-sm text-muted-foreground">{t('可多選', 'Multiple selections allowed', '可多选')}</p>
               <div className={`space-y-3 bg-slate-50 p-4 rounded-lg border ${errors.secondIncomeSource ? "border-destructive" : "border-slate-200"}`}>
                 {incomeSources.map((source) => (
                   <div key={source.value}>
@@ -394,7 +395,7 @@ const handleSave = () => {
                         <Input
                           value={secondIncomeSourceOther}
                           onChange={(e) => handleSecondOtherTextChange(e.target.value)}
-                          placeholder="請填寫詳情"
+                          placeholder={t('請填寫詳情', 'Please specify', '请填写详情')}
                           className="ml-2 h-8 w-48 text-sm"
                         />
                       )}
@@ -408,7 +409,7 @@ const handleSave = () => {
             {/* 年收入範圍 */}
             <div className="space-y-2">
               <Label>
-                年收入範圍 / Annual Income Range <span className="text-destructive">*</span>
+                {t('年收入範圍', 'Annual Income Range', '年收入范围')} <span className="text-destructive">*</span>
               </Label>
               <Select
                 value={secondHolder.annualIncome}
@@ -418,7 +419,7 @@ const handleSave = () => {
                 }}
               >
                 <SelectTrigger className={errors.secondAnnualIncome ? "border-destructive" : ""}>
-                  <SelectValue placeholder="請選擇年收入範圍" />
+                  <SelectValue placeholder={t('請選擇年收入範圍', 'Please select annual income range', '请选择年收入范围')} />
                 </SelectTrigger>
                 <SelectContent>
                   {annualIncomeRanges.map((range) => (
@@ -434,7 +435,7 @@ const handleSave = () => {
             {/* 流動資產範圍 */}
             <div className="space-y-2">
               <Label>
-                流動資產範圍 / Liquid Asset Range (HK$) <span className="text-destructive">*</span>
+                {t('流動資產範圍 (HK$)', 'Liquid Asset Range (HK$)', '流动资产范围 (HK$)')} <span className="text-destructive">*</span>
               </Label>
               <Select
                 value={secondHolder.liquidAsset}
@@ -444,7 +445,7 @@ const handleSave = () => {
                 }}
               >
                 <SelectTrigger className={errors.secondLiquidAsset ? "border-destructive" : ""}>
-                  <SelectValue placeholder="請選擇流動資產範圍" />
+                  <SelectValue placeholder={t('請選擇流動資產範圍', 'Please select liquid asset range', '请选择流动资产范围')} />
                 </SelectTrigger>
                 <SelectContent>
                   {netWorthRanges.map((range) => (
@@ -460,7 +461,7 @@ const handleSave = () => {
             {/* 淨資產範圍 */}
             <div className="space-y-2">
               <Label>
-                淨資產範圍 / Net Worth Range <span className="text-destructive">*</span>
+                {t('淨資產範圍', 'Net Worth Range', '净资产范围')} <span className="text-destructive">*</span>
               </Label>
               <Select
                 value={secondHolder.netWorth}
@@ -470,7 +471,7 @@ const handleSave = () => {
                 }}
               >
                 <SelectTrigger className={errors.secondNetWorth ? "border-destructive" : ""}>
-                  <SelectValue placeholder="請選擇淨資產範圍" />
+                  <SelectValue placeholder={t('請選擇淨資產範圍', 'Please select net worth range', '请选择净资产范围')} />
                 </SelectTrigger>
                 <SelectContent>
                   {netWorthRanges.map((range) => (

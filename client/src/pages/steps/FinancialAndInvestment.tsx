@@ -9,31 +9,8 @@ import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import CorporateFinancial from "./CorporateFinancial";
+import { useLang } from '@/lib/i18n';
 
-const investmentObjectiveOptions = [
-  { value: "capital_growth", label: "資本增值 / Capital Growth" },
-  { value: "income_generation", label: "收入產生 / Income Generation" },
-  { value: "capital_preservation", label: "資本保值 / Capital Preservation" },
-  { value: "speculation", label: "投機 / Speculation" },
-  { value: "hedging", label: "對沖 / Hedging" },
-];
-
-const investmentProducts = [
-  { key: "stocks", label: "股票 / Stocks" },
-  { key: "bonds", label: "債券 / Bonds" },
-  { key: "funds", label: "基金 / Funds" },
-  { key: "derivatives", label: "衍生品 / Derivatives" },
-  { key: "forex", label: "外匯 / Forex" },
-  { key: "commodities", label: "商品 / Commodities" },
-];
-
-const experienceLevels = [
-  { value: "none", label: "無經驗 / None" },
-  { value: "less_than_1", label: "少於1年 / Less than 1 year" },
-  { value: "1_to_3", label: "1-3年 / 1-3 years" },
-  { value: "3_to_5", label: "3-5年 / 3-5 years" },
-  { value: "more_than_5", label: "5年以上 / More than 5 years" },
-];
 
 
 
@@ -43,6 +20,32 @@ export default function FinancialAndInvestment() {
   const applicationId = parseInt(params.id || "0");
   const stepNum = parseInt(params.step || "6");
   const showReturnToPreview = useReturnToPreview();
+  const { t } = useLang();
+
+  const investmentObjectiveOptions = [
+    { value: "capital_growth", label: t('資本增值', 'Capital Growth', '资本增值') },
+    { value: "income_generation", label: t('收入產生', 'Income Generation', '收入产生') },
+    { value: "capital_preservation", label: t('資本保值', 'Capital Preservation', '资本保值') },
+    { value: "speculation", label: t('投機', 'Speculation', '投机') },
+    { value: "hedging", label: t('對沖', 'Hedging', '对冲') },
+  ];
+
+  const investmentProducts = [
+    { key: "stocks", label: t('股票', 'Stocks', '股票') },
+    { key: "bonds", label: t('債券', 'Bonds', '债券') },
+    { key: "funds", label: t('基金', 'Funds', '基金') },
+    { key: "derivatives", label: t('衍生品', 'Derivatives', '衍生品') },
+    { key: "forex", label: t('外匯', 'Forex', '外汇') },
+    { key: "commodities", label: t('商品', 'Commodities', '商品') },
+  ];
+
+  const experienceLevels = [
+    { value: "none", label: t('無經驗', 'None', '无经验') },
+    { value: "less_than_1", label: t('少於1年', 'Less than 1 year', '少于1年') },
+    { value: "1_to_3", label: t('1-3年', '1-3 years', '1-3年') },
+    { value: "3_to_5", label: t('3-5年', '3-5 years', '3-5年') },
+    { value: "more_than_5", label: t('5年以上', 'More than 5 years', '5年以上') },
+  ];
 
   const [investmentObjectives, setInvestmentObjectives] = useState<string[]>([]);
   const [investmentExperience, setInvestmentExperience] = useState<Record<string, string>>({});
@@ -82,23 +85,23 @@ export default function FinancialAndInvestment() {
   const saveMutation = trpc.financial.save.useMutation({
     onSuccess: (result) => {
       if (result.success && result.data) {
-        toast.success("保存成功");
+        toast.success(t('保存成功', 'Saved successfully', '保存成功'));
         setLocation(`/application/${applicationId}/step/${stepNum + 1}`);
       }
     },
     onError: (error) => {
-      toast.error(`保存失敗: ${error.message}`);
+      toast.error(`${t('保存失敗', 'Save failed', '保存失败')}: ${error.message}`);
     },
   });
 
   const saveOnlyMutation = trpc.financial.save.useMutation({
     onSuccess: (result) => {
       if (result.success && result.data) {
-        toast.success("保存成功");
+        toast.success(t('保存成功', 'Saved successfully', '保存成功'));
       }
     },
     onError: (error) => {
-      toast.error(`保存失敗: ${error.message}`);
+      toast.error(`${t('保存失敗', 'Save failed', '保存失败')}: ${error.message}`);
     },
   });
 
@@ -156,22 +159,22 @@ export default function FinancialAndInvestment() {
     const newErrors: Record<string, string> = {};
 
     if (investmentObjectives.length === 0) {
-      newErrors.investmentObjectives = "請至少選擇一項投資目的";
+      newErrors.investmentObjectives = t('請至少選擇一項投資目的', 'Please select at least one investment objective', '请至少选择一项投资目的');
     }
 
     const hasExperience = Object.keys(investmentExperience).length > 0;
     if (!hasExperience) {
-      newErrors.investmentExperience = "請至少填寫一項投資經驗";
+      newErrors.investmentExperience = t('請至少填寫一項投資經驗', 'Please fill in at least one investment experience', '请至少填写一项投资经验');
     }
 
     // 聯名賬戶：驗證第二持有人
     if (isJoint) {
       if (secondInvestmentObjectives.length === 0) {
-        newErrors.secondInvestmentObjectives = "請填寫第二持有人的投資目的";
+        newErrors.secondInvestmentObjectives = t('請填寫第二持有人的投資目的', 'Please fill in second holder\'s investment objectives', '请填写第二持有人的投资目的');
       }
       const hasSecondExperience = Object.keys(secondInvestmentExperience).length > 0;
       if (!hasSecondExperience) {
-        newErrors.secondInvestmentExperience = "請填寫第二持有人的投資經驗";
+        newErrors.secondInvestmentExperience = t('請填寫第二持有人的投資經驗', 'Please fill in second holder\'s investment experience', '请填写第二持有人的投资经验');
       }
     }
 
@@ -181,7 +184,7 @@ export default function FinancialAndInvestment() {
 
   const handleSave = () => {
     if (!validateForm()) {
-      toast.error("請檢查表單中的錯誤");
+      toast.error(t('請檢查表單中的錯誤', 'Please check the form for errors', '请检查表单中的错误'));
       return;
     }
 
@@ -198,7 +201,7 @@ export default function FinancialAndInvestment() {
 
   const handleNext = () => {
     if (!validateForm()) {
-      toast.error("請檢查表單中的錯誤");
+      toast.error(t('請檢查表單中的錯誤', 'Please check the form for errors', '请检查表单中的错误'));
       return;
     }
 
@@ -241,16 +244,16 @@ export default function FinancialAndInvestment() {
     >
       <div className="space-y-8">
         {isJoint && (
-          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">賬戶主要持有人 / Primary Account Holder</h3>
+          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">{t('賬戶主要持有人', 'Primary Account Holder', '账户主要持有人')}</h3>
         )}
 
         {/* 投資目的 */}
         <div className="space-y-4">
           <div>
             <Label className="text-base">
-              投資目的 / Investment Objectives <span className="text-destructive">*</span>
+              {t('投資目的', 'Investment Objectives', '投资目的')} <span className="text-destructive">*</span>
             </Label>
-            <p className="text-sm text-muted-foreground mt-1">請至少選擇一項</p>
+            <p className="text-sm text-muted-foreground mt-1">{t('請至少選擇一項', 'Please select at least one', '请至少选择一项')}</p>
           </div>
           <div className="space-y-3 bg-slate-50 p-4 rounded-lg border border-slate-200">
             {investmentObjectiveOptions.map((option) => (
@@ -276,9 +279,9 @@ export default function FinancialAndInvestment() {
         <div className="space-y-4">
           <div>
             <Label className="text-base font-semibold text-slate-800">
-              投資經驗 / Investment Experience <span className="text-destructive">*</span>
+              {t('投資經驗', 'Investment Experience', '投资经验')} <span className="text-destructive">*</span>
             </Label>
-            <p className="text-sm text-slate-600 mt-1">請至少填寫一項投資產品的經驗</p>
+            <p className="text-sm text-slate-600 mt-1">{t('請至少填寫一項投資產品的經驗', 'Please fill in experience for at least one product', '请至少填写一项投资产品的经验')}</p>
           </div>
           <div className="space-y-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
             {investmentProducts.map((product) => (
@@ -289,7 +292,7 @@ export default function FinancialAndInvestment() {
                   onValueChange={(v) => handleExperienceChange(product.key, v)}
                 >
                   <SelectTrigger id={product.key} className="bg-white border-slate-300">
-                    <SelectValue placeholder="請選擇經驗年限" />
+                    <SelectValue placeholder={t('請選擇經驗年限', 'Select experience level', '请选择经验年限')} />
                   </SelectTrigger>
                   <SelectContent>
                     {experienceLevels.map((level) => (
@@ -310,15 +313,15 @@ export default function FinancialAndInvestment() {
         {/* 聯名賬戶：第二持有人 */}
         {isJoint && (
           <>
-            <h3 className="text-lg font-bold text-primary border-b pb-2 mt-8 mb-2">賬戶第二持有人 / Second Account Holder</h3>
+            <h3 className="text-lg font-bold text-primary border-b pb-2 mt-8 mb-2">{t('賬戶第二持有人', 'Second Account Holder', '账户第二持有人')}</h3>
 
             {/* 投資目的 */}
             <div className="space-y-4">
               <div>
                 <Label className="text-base">
-                  投資目的 / Investment Objectives <span className="text-destructive">*</span>
+                  {t('投資目的', 'Investment Objectives', '投资目的')} <span className="text-destructive">*</span>
                 </Label>
-                <p className="text-sm text-muted-foreground mt-1">請至少選擇一項</p>
+                <p className="text-sm text-muted-foreground mt-1">{t('請至少選擇一項', 'Please select at least one', '请至少选择一项')}</p>
               </div>
               <div className={`space-y-3 bg-slate-50 p-4 rounded-lg border ${errors.secondInvestmentObjectives ? "border-destructive" : "border-slate-200"}`}>
                 {investmentObjectiveOptions.map((option) => (
@@ -345,9 +348,9 @@ export default function FinancialAndInvestment() {
             <div className="space-y-4">
               <div>
                 <Label className="text-base font-semibold text-slate-800">
-                  投資經驗 / Investment Experience <span className="text-destructive">*</span>
+                  {t('投資經驗', 'Investment Experience', '投资经验')} <span className="text-destructive">*</span>
                 </Label>
-                <p className="text-sm text-slate-600 mt-1">請至少填寫一項投資產品的經驗</p>
+                <p className="text-sm text-slate-600 mt-1">{t('請至少填寫一項投資產品的經驗', 'Please fill in experience for at least one product', '请至少填写一项投资产品的经验')}</p>
               </div>
               <div className={`space-y-4 bg-slate-50 p-4 rounded-lg border ${errors.secondInvestmentExperience ? "border-destructive" : "border-slate-200"}`}>
                 {investmentProducts.map((product) => (
@@ -361,7 +364,7 @@ export default function FinancialAndInvestment() {
                       }}
                     >
                       <SelectTrigger id={`second-${product.key}`} className="bg-white border-slate-300">
-                        <SelectValue placeholder="請選擇經驗年限" />
+                        <SelectValue placeholder={t('請選擇經驗年限', 'Select experience level', '请选择经验年限')} />
                       </SelectTrigger>
                       <SelectContent>
                         {experienceLevels.map((level) => (

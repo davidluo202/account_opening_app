@@ -10,6 +10,7 @@ import { useLocation, useRoute } from "wouter";
 import { toast } from "sonner";
 import { translate, formatInvestmentExperience as formatInvExp, formatInvestmentObjectives, formatAmount, getRiskToleranceDescription } from "@/lib/translations";
 import { convertToTraditional } from "@/lib/converter";
+import { useLang } from '@/lib/i18n';
 
 // 使用翻譯工具中的函數
 const formatInvestmentExperience = formatInvExp;
@@ -135,6 +136,7 @@ export default function ApplicationPreview() {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [signatureName, setSignatureName] = useState("");
   const [signatureMethod, setSignatureMethod] = useState<"typed" | "iamsmart">("typed");
+  const { t } = useLang();
 
   // 获取完整申請数据
   const { data: completeData, isLoading, error: queryError, refetch } = trpc.application.getComplete.useQuery(
@@ -150,12 +152,12 @@ export default function ApplicationPreview() {
   // 生成申請编号
   const generateNumberMutation = trpc.application.generateNumber.useMutation({
     onSuccess: () => {
-      toast.success("申請编号已生成");
+      toast.success(t('申請编号已生成', 'Application number generated', '申请编号已生成'));
       setHasGeneratedNumber(true);
       refetch();
     },
     onError: (error) => {
-      toast.error(`生成申請编号失败: ${error.message}`);
+      toast.error(`${t('生成申請编号失敗', 'Failed to generate application number', '生成申请编号失败')}: ${error.message}`);
     },
   });
 
@@ -169,7 +171,7 @@ export default function ApplicationPreview() {
       setShowSuccessDialog(true);
     },
     onError: (error) => {
-      toast.error(`提交失敗: ${error.message}`);
+      toast.error(`${t('提交失敗', 'Submission failed', '提交失败')}: ${error.message}`);
     },
   });
 
@@ -197,11 +199,11 @@ export default function ApplicationPreview() {
         // 释放内存
         URL.revokeObjectURL(link.href);
         
-        toast.success("申請表PDF已保存到本地");
+        toast.success(t('申請表PDF已保存到本地', 'Application PDF saved locally', '申请表PDF已保存到本地'));
       }
     },
     onError: (error) => {
-      toast.error(`生成PDF失败: ${error.message}`);
+      toast.error(`${t('生成PDF失敗', 'Failed to generate PDF', '生成PDF失败')}: ${error.message}`);
     },
   });
 
@@ -239,7 +241,7 @@ export default function ApplicationPreview() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">加载中...</p>
+          <p className="text-muted-foreground">{t('載入中...', 'Loading...', '加载中...')}</p>
         </div>
       </div>
     );
@@ -249,10 +251,10 @@ export default function ApplicationPreview() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Card className="p-8 text-center">
-          <p className="text-lg mb-4">未找到申請数据</p>
-          {queryError && <p className="text-sm text-red-500 mb-4">錯誤: {queryError.message}</p>}
+          <p className="text-lg mb-4">{t('未找到申請數據', 'Application data not found', '未找到申请数据')}</p>
+          {queryError && <p className="text-sm text-red-500 mb-4">{t('錯誤', 'Error', '错误')}: {queryError.message}</p>}
           <p className="text-xs text-gray-500 mb-4">Application ID: {applicationId}</p>
-          <Button onClick={() => setLocation("/applications")}>返回申請列表</Button>
+          <Button onClick={() => setLocation("/applications")}>{t('返回申請列表', 'Back to Applications', '返回申请列表')}</Button>
         </Card>
       </div>
     );
@@ -271,17 +273,17 @@ export default function ApplicationPreview() {
     if (!application?.applicationNumber) {
       generateNumberMutation.mutate({ id: applicationId });
     } else {
-      toast.info("申請编号已存在");
+      toast.info(t('申請编号已存在', 'Application number already exists', '申请编号已存在'));
     }
   };
 
   const handleSubmit = () => {
     if (!application?.applicationNumber) {
-      toast.error("請先保存並生成申請編號");
+      toast.error(t('請先保存並生成申請編號', 'Please save and generate application number first', '请先保存并生成申请编号'));
       return;
     }
     if (application?.status === "submitted") {
-      toast.info("申請已提交，无需重复提交");
+      toast.info(t('申請已提交，無需重複提交', 'Application already submitted', '申请已提交，无需重复提交'));
       return;
     }
     // 显示签名对话框
@@ -291,7 +293,7 @@ export default function ApplicationPreview() {
 
   const handleConfirmSignature = () => {
     if (!signatureName.trim()) {
-      toast.error("請輸入簽名姓名");
+      toast.error(t('請輸入簽名姓名', 'Please enter signature name', '请输入签名姓名'));
       return;
     }
     submitMutation.mutate({ 
@@ -485,7 +487,7 @@ export default function ApplicationPreview() {
             <img src="/logo-zh.png" alt="誠港金融" className="h-12" />
           </a>
           <Button variant="ghost" onClick={() => setLocation("/applications")}>
-            返回申請列表
+            {t('返回申請列表', 'Back to Applications', '返回申请列表')}
           </Button>
         </div>
       </header>
@@ -493,8 +495,8 @@ export default function ApplicationPreview() {
       <div className="container max-w-5xl py-8">
         {/* 页面标题 */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">申請预览</h1>
-          <p className="text-gray-600 mt-2">請仔細核對以下信息，確認無誤後提交申請</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('申請預覽', 'Application Preview', '申请预览')}</h1>
+          <p className="text-gray-600 mt-2">{t('請仔細核對以下信息，確認無誤後提交申請', 'Please review the following information carefully before submitting', '请仔细核对以下信息，确认无误后提交申请')}</p>
         </div>
 
         {/* 申請编号和状态 */}
@@ -503,16 +505,16 @@ export default function ApplicationPreview() {
             <div>
               <p className="text-sm text-gray-600 mb-1">申請编号 Application No.</p>
               <p className="text-2xl font-bold text-primary">
-                {application?.applicationNumber || "未生成"}
+                {application?.applicationNumber || t('未生成', 'Not Generated', '未生成')}
               </p>
             </div>
             <div>
-              <p className="text-sm text-gray-600 mb-1">申請状态 Status</p>
+              <p className="text-sm text-gray-600 mb-1">{t('申請狀態', 'Status', '申请状态')}</p>
               <p className="text-2xl font-bold">
-                {application?.status === "draft" && "草稿"}
-                {application?.status === "submitted" && "已提交"}
-                {application?.status === "approved" && "已批准"}
-                {application?.status === "rejected" && "已拒绝"}
+                {application?.status === "draft" && t('草稿', 'Draft', '草稿')}
+                {application?.status === "submitted" && t('已提交', 'Submitted', '已提交')}
+                {application?.status === "approved" && t('已批准', 'Approved', '已批准')}
+                {application?.status === "rejected" && t('已拒絕', 'Rejected', '已拒绝')}
               </p>
             </div>
           </div>
@@ -554,7 +556,7 @@ export default function ApplicationPreview() {
               <h3 className="font-bold flex items-center justify-between">
                 <span>1. {isCorporate ? '公司基本信息 Corporate Basic Information' : '個人基本信息 Personal Basic Information'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(2)}>
-                  編輯
+                  {t('編輯', 'Edit', '编辑')}
                 </Button>
               </h3>
             </div>
@@ -814,7 +816,7 @@ export default function ApplicationPreview() {
                   </tbody>
                 </table>
               ) : (
-                <div className="p-6 text-center text-gray-500">未添加關聯人士</div>
+                <div className="p-6 text-center text-gray-500">{t('未添加關聯人士', 'No related parties added', '未添加关联人士')}</div>
               )}
             </div>
           </>
@@ -824,7 +826,7 @@ export default function ApplicationPreview() {
               <h3 className="font-bold flex items-center justify-between">
                 <span>2. 個人詳細信息 Personal Detailed Information</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(4)}>
-                  編輯
+                  {t('編輯', 'Edit', '编辑')}
                 </Button>
               </h3>
             </div>
@@ -952,7 +954,7 @@ export default function ApplicationPreview() {
               <h3 className="font-bold flex items-center justify-between">
                 <span>3. 職業信息 Occupation Information</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(5)}>
-                  編輯
+                  {t('編輯', 'Edit', '编辑')}
                 </Button>
               </h3>
             </div>
@@ -1046,7 +1048,7 @@ export default function ApplicationPreview() {
               <h3 className="font-bold flex items-center justify-between">
                 <span>4. 財務狀況 Financial Status</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(6)}>
-                  編輯
+                  {t('編輯', 'Edit', '编辑')}
                 </Button>
               </h3>
             </div>
@@ -1145,7 +1147,7 @@ export default function ApplicationPreview() {
               <h3 className="font-bold flex items-center justify-between">
                 <span>{isCorporate ? '4. 風險評估問卷 Risk Questionnaire' : '6. 風險評估問卷 Risk Questionnaire'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 5 : 7)}>
-                  編輯
+                  {t('編輯', 'Edit', '编辑')}
                 </Button>
               </h3>
             </div>
@@ -1174,7 +1176,7 @@ export default function ApplicationPreview() {
               <h3 className="font-bold flex items-center justify-between">
                 <span>{isCorporate ? '5. 風險評估問卷 Risk Assessment Questionnaire' : '6. 風險評估問卷 Risk Assessment Questionnaire'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 5 : 8)}>
-                  編輯
+                  {t('編輯', 'Edit', '编辑')}
                 </Button>
               </h3>
             </div>
@@ -1375,7 +1377,7 @@ export default function ApplicationPreview() {
                 </table>
               </div>
             ) : (
-              <div className="p-6 text-center text-gray-500">未填写風險評估問卷</div>
+              <div className="p-6 text-center text-gray-500">{t('未填寫風險評估問卷', 'Risk assessment questionnaire not completed', '未填写风险评估问卷')}</div>
             )}
             {isJoint && (
               <>
@@ -1400,7 +1402,7 @@ export default function ApplicationPreview() {
                     </table>
                   </div>
                 ) : (
-                  <div className="p-6 text-center text-gray-500">未填写風險評估問卷</div>
+                  <div className="p-6 text-center text-gray-500">{t('未填寫風險評估問卷', 'Risk assessment questionnaire not completed', '未填写风险评估问卷')}</div>
                 )}
               </>
             )}
@@ -1413,7 +1415,7 @@ export default function ApplicationPreview() {
               <h3 className="font-bold flex items-center justify-between">
                 <span>{isCorporate ? '6. 結算銀行賬戶 Settlement Bank Account' : '7. 銀行賬戶 Bank Account'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(8)}>
-                  編輯
+                  {t('編輯', 'Edit', '编辑')}
                 </Button>
               </h3>
             </div>
@@ -1456,7 +1458,7 @@ export default function ApplicationPreview() {
                 </tbody>
               </table>
             ) : (
-              <div className="p-6 text-center text-gray-500">未添加銀行賬戶</div>
+              <div className="p-6 text-center text-gray-500">{t('未添加銀行賬戶', 'No bank accounts added', '未添加银行账户')}</div>
             )}
             {isJoint && (
               <>
@@ -1491,7 +1493,7 @@ export default function ApplicationPreview() {
                     </tbody>
                   </table>
                 ) : (
-                  <div className="p-6 text-center text-gray-500">未添加銀行賬戶</div>
+                  <div className="p-6 text-center text-gray-500">{t('未添加銀行賬戶', 'No bank accounts added', '未添加银行账户')}</div>
                 )}
               </>
             )}
@@ -1503,7 +1505,7 @@ export default function ApplicationPreview() {
               <h3 className="font-bold flex items-center justify-between">
                 <span>{isCorporate ? '7. 稅務信息 Tax Information' : '8. 稅務信息 Tax Information'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(9)}>
-                  編輯
+                  {t('編輯', 'Edit', '编辑')}
                 </Button>
               </h3>
             </div>
@@ -1543,7 +1545,7 @@ export default function ApplicationPreview() {
               <h3 className="font-bold flex items-center justify-between">
                 <span>{isCorporate ? '8. 文件上傳 Document Upload' : '10. 文件上傳 Document Upload'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 9 : 10)}>
-                  編輯
+                  {t('編輯', 'Edit', '编辑')}
                 </Button>
               </h3>
             </div>
@@ -1566,7 +1568,7 @@ export default function ApplicationPreview() {
                           className="text-primary hover:underline"
                           onClick={() => handleViewDocument(doc)}
                         >
-                          查看
+                          {t('查看', 'View', '查看')}
                         </button>
                       </td>
                     </tr>
@@ -1574,7 +1576,7 @@ export default function ApplicationPreview() {
                 </tbody>
               </table>
             ) : (
-              <div className="p-6 text-center text-gray-500">未上传文件</div>
+              <div className="p-6 text-center text-gray-500">{t('未上傳文件', 'No documents uploaded', '未上传文件')}</div>
             )}
           </div>
 
@@ -1585,7 +1587,7 @@ export default function ApplicationPreview() {
               <h3 className="font-bold flex items-center justify-between">
                 <span>{isCorporate ? '' : '11. '}人臉識別 Face Verification</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(11)}>
-                  編輯
+                  {t('編輯', 'Edit', '编辑')}
                 </Button>
               </h3>
             </div>
@@ -1597,10 +1599,10 @@ export default function ApplicationPreview() {
                     {faceVerification?.verified ? (
                       <span className="text-green-600 flex items-center">
                         <Check className="h-4 w-4 mr-2" />
-                        已完成
+                        {t('已完成', 'Completed', '已完成')}
                       </span>
                     ) : (
-                      <span className="text-gray-500">未完成</span>
+                      <span className="text-gray-500">{t('未完成', 'Not Completed', '未完成')}</span>
                     )}
                   </td>
                 </tr>
@@ -1615,7 +1617,7 @@ export default function ApplicationPreview() {
               <h3 className="font-bold flex items-center justify-between">
                 <span>{isCorporate ? '9. 客戶聲明 Client Declaration' : '12. 客戶聲明 Client Declaration'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 10 : 12)}>
-                  編輯
+                  {t('編輯', 'Edit', '编辑')}
                 </Button>
               </h3>
             </div>
@@ -1697,7 +1699,7 @@ export default function ApplicationPreview() {
               <h3 className="font-bold flex items-center justify-between">
                 <span>{isCorporate ? '10. 監管聲明 Regulatory Declaration' : '13. 監管聲明 Regulatory Declaration'}</span>
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 11 : 13)}>
-                  編輯
+                  {t('編輯', 'Edit', '编辑')}
                 </Button>
               </h3>
             </div>
@@ -1708,9 +1710,9 @@ export default function ApplicationPreview() {
               <tbody>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">是否为PEP</td>
-                  <td className="p-3 w-1/4 border-r">{regulatory?.isPEP ? "是" : "否"}</td>
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">是否为US Person</td>
-                  <td className="p-3 w-1/4">{regulatory?.isUSPerson ? "是" : "否"}</td>
+                  <td className="p-3 w-1/4 border-r">{regulatory?.isPEP ? t('是', 'Yes', '是') : t('否', 'No', '否')}</td>
+                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">{t('是否為US Person', 'US Person', '是否为US Person')}</td>
+                  <td className="p-3 w-1/4">{regulatory?.isUSPerson ? t('是', 'Yes', '是') : t('否', 'No', '否')}</td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-3 bg-gray-50 font-semibold border-r">已閱讀開戶協議 Read Agreement</td>
@@ -1718,10 +1720,10 @@ export default function ApplicationPreview() {
                     {regulatory?.agreementRead ? (
                       <span className="text-green-600 flex items-center">
                         <Check className="h-4 w-4 mr-2" />
-                        是
+                        {t('是', 'Yes', '是')}
                       </span>
                     ) : (
-                      <span className="text-gray-500">否</span>
+                      <span className="text-gray-500">{t('否', 'No', '否')}</span>
                     )}
                   </td>
                 </tr>
@@ -1731,10 +1733,10 @@ export default function ApplicationPreview() {
                     {regulatory?.electronicSignatureConsent ? (
                       <span className="text-green-600 flex items-center">
                         <Check className="h-4 w-4 mr-2" />
-                        已接受
+                        {t('已接受', 'Accepted', '已接受')}
                       </span>
                     ) : (
-                      <span className="text-gray-500">未接受</span>
+                      <span className="text-gray-500">{t('未接受', 'Not Accepted', '未接受')}</span>
                     )}
                   </td>
                 </tr>
@@ -1744,10 +1746,10 @@ export default function ApplicationPreview() {
                     {regulatory?.amlComplianceConsent ? (
                       <span className="text-green-600 flex items-center">
                         <Check className="h-4 w-4 mr-2" />
-                        已接受
+                        {t('已接受', 'Accepted', '已接受')}
                       </span>
                     ) : (
-                      <span className="text-gray-500">未接受</span>
+                      <span className="text-gray-500">{t('未接受', 'Not Accepted', '未接受')}</span>
                     )}
                   </td>
                 </tr>
@@ -1757,10 +1759,10 @@ export default function ApplicationPreview() {
                     {regulatory?.riskAssessmentConsent ? (
                       <span className="text-green-600 flex items-center">
                         <Check className="h-4 w-4 mr-2" />
-                        已確認
+                        {t('已確認', 'Confirmed', '已确认')}
                       </span>
                     ) : (
-                      <span className="text-gray-500">未確認</span>
+                      <span className="text-gray-500">{t('未確認', 'Not Confirmed', '未确认')}</span>
                     )}
                   </td>
                 </tr>
@@ -1770,10 +1772,10 @@ export default function ApplicationPreview() {
                     {regulatory?.confirmationRead ? (
                       <span className="text-green-600 flex items-center">
                         <Check className="h-4 w-4 mr-2" />
-                        已閱讀並同意
+                        {t('已閱讀並同意', 'Read and Agreed', '已阅读并同意')}
                       </span>
                     ) : (
-                      <span className="text-gray-500">未確認</span>
+                      <span className="text-gray-500">{t('未確認', 'Not Confirmed', '未确认')}</span>
                     )}
                   </td>
                 </tr>
@@ -1783,12 +1785,12 @@ export default function ApplicationPreview() {
                     {regulatory?.objectsDirectMarketing ? (
                       <span className="text-red-500 flex items-center">
                         <X className="h-4 w-4 mr-2" />
-                        反對 — 反對使用個人資料於直接促銷
+                        {t('反對 — 反對使用個人資料於直接促銷', 'Object — Objects to use of personal data for direct marketing', '反对 — 反对使用个人资料于直接促销')}
                       </span>
                     ) : (
                       <span className="text-green-600 flex items-center">
                         <Check className="h-4 w-4 mr-2" />
-                        同意 — 同意使用個人資料於直接促銷
+                        {t('同意 — 同意使用個人資料於直接促銷', 'Agree — Agrees to use of personal data for direct marketing', '同意 — 同意使用个人资料于直接促销')}
                       </span>
                     )}
                   </td>
@@ -2008,7 +2010,7 @@ export default function ApplicationPreview() {
             }}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            上一步
+            {t('上一步', 'Previous', '上一步')}
           </Button>
 
           <div className="flex gap-4">
@@ -2019,7 +2021,7 @@ export default function ApplicationPreview() {
                 variant="outline"
               >
                 <Save className="h-4 w-4 mr-2" />
-                {generateNumberMutation.isPending ? "生成中..." : "保存並生成申請編號"}
+                {generateNumberMutation.isPending ? t('生成中...', 'Generating...', '生成中...') : t('保存並生成申請編號', 'Save & Generate Number', '保存并生成申请编号')}
               </Button>
             )}
 
@@ -2030,7 +2032,7 @@ export default function ApplicationPreview() {
                 variant="outline"
               >
                 <FileDown className="h-4 w-4 mr-2" />
-                {downloadPDFMutation.isPending ? "生成中..." : "保存为PDF"}
+                {downloadPDFMutation.isPending ? t('生成中...', 'Generating...', '生成中...') : t('保存為PDF', 'Save as PDF', '保存为PDF')}
               </Button>
             )}
 
@@ -2039,7 +2041,7 @@ export default function ApplicationPreview() {
               disabled={!application?.applicationNumber || application?.status === "submitted" || submitMutation.isPending}
               size="lg"
             >
-              {submitMutation.isPending ? "提交中..." : "提交申請"}
+              {submitMutation.isPending ? t('提交中...', 'Submitting...', '提交中...') : t('提交申請', 'Submit Application', '提交申请')}
             </Button>
           </div>
         </div>
@@ -2047,8 +2049,8 @@ export default function ApplicationPreview() {
         {/* 提示信息 */}
         {!application?.applicationNumber && (
           <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p className="text-sm text-yellow-800">
-              <strong>提示：</strong>請先點擊“保存並生成申請編號”按钮，生成申請編號後才能提交申請。
+            <p className=”text-sm text-yellow-800”>
+              <strong>{t('提示', 'Note', '提示')}：</strong>{t('請先點擊「保存並生成申請編號」按鈕，生成申請編號後才能提交申請。', 'Please click “Save & Generate Number” first. You can only submit after generating an application number.', '请先点击”保存并生成申请编号”按钮，生成申请编号后才能提交申请。')}
             </p>
           </div>
         )}
@@ -2058,15 +2060,15 @@ export default function ApplicationPreview() {
       <Dialog open={showSignatureDialog} onOpenChange={setShowSignatureDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>电子签署 Electronic Signature</DialogTitle>
+            <DialogTitle>{t('電子簽署', 'Electronic Signature', '电子签署')}</DialogTitle>
             <DialogDescription>
-              請輸入您的姓名以完成電子簽署。此签名具有法律效力，以香港《电子交易条例》（第553章）为基准。
+              {t('請輸入您的姓名以完成電子簽署。此簽名具有法律效力，以香港《電子交易條例》（第553章）為基準。', 'Please enter your name to complete the electronic signature. This signature has legal effect under the Electronic Transactions Ordinance (Cap. 553) of Hong Kong.', '请输入您的姓名以完成电子签署。此签名具有法律效力，以香港《电子交易条例》（第553章）为基准。')}
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">签名方式 Signature Method</label>
+              <label className="text-sm font-medium">{t('簽名方式', 'Signature Method', '签名方式')}</label>
               <div className="flex gap-4">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -2076,7 +2078,7 @@ export default function ApplicationPreview() {
                     onChange={(e) => setSignatureMethod(e.target.value as "typed")}
                     className="w-4 h-4"
                   />
-                  <span className="text-sm">輸入姓名 Typed Name</span>
+                  <span className="text-sm">{t('輸入姓名', 'Typed Name', '输入姓名')}</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -2092,7 +2094,7 @@ export default function ApplicationPreview() {
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium">簽名姓名 Signatory Name *</label>
+              <label className="text-sm font-medium">{t('簽名姓名', 'Signatory Name', '签名姓名')} <span className="text-destructive">*</span></label>
               <input
                 type="text"
                 value={signatureName}
@@ -2108,21 +2110,21 @@ export default function ApplicationPreview() {
             </div>
             
             <div className="bg-blue-50 p-3 rounded-lg text-sm text-blue-800">
-              <p className="font-semibold mb-1">電子簽署聲明：</p>
+              <p className="font-semibold mb-1">{t('電子簽署聲明：', 'Electronic Signature Declaration:', '电子签署声明：')}</p>
               <ul className="list-disc list-inside space-y-1 text-xs">
-                <li>本人同意使用電子簽署方式簽署本申請表</li>
-                <li>此電子簽署具有與手寫簽名同等的法律效力</li>
-                <li>簽署時間將自動記錄並包含在申請表中</li>
+                <li>{t('本人同意使用電子簽署方式簽署本申請表', 'I agree to sign this application form electronically', '本人同意使用电子签署方式签署本申请表')}</li>
+                <li>{t('此電子簽署具有與手寫簽名同等的法律效力', 'This electronic signature has the same legal effect as a handwritten signature', '此电子签署具有与手写签名同等的法律效力')}</li>
+                <li>{t('簽署時間將自動記錄並包含在申請表中', 'The signing time will be automatically recorded and included in the application form', '签署时间将自动记录并包含在申请表中')}</li>
               </ul>
             </div>
           </div>
           
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowSignatureDialog(false)}>
-              取消
+              {t('取消', 'Cancel', '取消')}
             </Button>
             <Button onClick={handleConfirmSignature} disabled={!signatureName.trim()}>
-              確認簽署並提交
+              {t('確認簽署並提交', 'Confirm & Submit', '确认签署并提交')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -2140,46 +2142,46 @@ export default function ApplicationPreview() {
           <DialogHeader>
             <DialogTitle className="text-2xl text-green-600 flex items-center">
               <Check className="h-6 w-6 mr-2" />
-              申請已成功提交！
+              {t('申請已成功提交！', 'Application Submitted Successfully!', '申请已成功提交！')}
             </DialogTitle>
             <DialogDescription className="text-base">
-              感謝您的申請，我們已收到您的開戶申請。
+              {t('感謝您的申請，我們已收到您的開戶申請。', 'Thank you for your application. We have received your account opening application.', '感谢您的申请，我们已收到您的开户申请。')}
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
             <div className="bg-blue-50 p-4 rounded-lg">
-              <h4 className="font-semibold mb-2">申請編號：{application?.applicationNumber}</h4>
+              <h4 className="font-semibold mb-2">{t('申請編號', 'Application No.', '申请编号')}：{application?.applicationNumber}</h4>
               <p className="text-sm text-gray-600">
-                我們已將確認郵件發送至您的郵箱：<strong>{personalDetailed?.email}</strong>
+                {t('我們已將確認郵件發送至您的郵箱', 'We have sent a confirmation email to', '我们已将确认邮件发送至您的邮箱')}：<strong>{personalDetailed?.email}</strong>
               </p>
               <p className="text-sm text-gray-600 mt-2">
-                郵件中包含您的申請表PDF文件，請注意查收。
+                {t('郵件中包含您的申請表PDF文件，請注意查收。', 'The email contains your application form PDF. Please check your inbox.', '邮件中包含您的申请表PDF文件，请注意查收。')}
               </p>
             </div>
             
             {pdfUrl && (
               <div className="bg-gray-50 p-4 rounded-lg">
-                <h4 className="font-semibold mb-2">下載申請表PDF</h4>
+                <h4 className="font-semibold mb-2">{t('下載申請表PDF', 'Download Application PDF', '下载申请表PDF')}</h4>
                 <p className="text-sm text-gray-600 mb-3">
-                  您也可以直接下載申請表PDF文件供存檔使用。
+                  {t('您也可以直接下載申請表PDF文件供存檔使用。', 'You can also download the application PDF for your records.', '您也可以直接下载申请表PDF文件供存档使用。')}
                 </p>
                 <Button
                   variant="outline"
                   onClick={() => window.open(pdfUrl, '_blank')}
                   className="w-full"
                 >
-                  下載申請表PDF
+                  {t('下載申請表PDF', 'Download Application PDF', '下载申请表PDF')}
                 </Button>
               </div>
             )}
             
             <div className="text-sm text-gray-600">
-              <p className="mb-2">後續流程：</p>
+              <p className="mb-2">{t('後續流程：', 'Next Steps:', '后续流程：')}</p>
               <ol className="list-decimal list-inside space-y-1 ml-2">
-                <li>我們的客戶服務團隊將在<strong>1-2個工作日</strong>內審核您的申請</li>
-                <li>審核通過後，我們將通過郵件通知您</li>
-                <li>如需補充資料，我們會及時與您聯繫</li>
+                <li>{t('我們的客戶服務團隊將在', 'Our customer service team will review your application within', '我们的客户服务团队将在')}<strong>{t('1-2個工作日', '1-2 business days', '1-2个工作日')}</strong>{t('內審核您的申請', '', '内审核您的申请')}</li>
+                <li>{t('審核通過後，我們將通過郵件通知您', 'After approval, we will notify you by email', '审核通过后，我们将通过邮件通知您')}</li>
+                <li>{t('如需補充資料，我們會及時與您聯繫', 'If additional documents are needed, we will contact you promptly', '如需补充资料，我们会及时与您联系')}</li>
               </ol>
             </div>
           </div>
@@ -2189,7 +2191,7 @@ export default function ApplicationPreview() {
               setShowSuccessDialog(false);
               setLocation("/applications");
             }}>
-              返回申請列表
+              {t('返回申請列表', 'Back to Applications', '返回申请列表')}
             </Button>
           </DialogFooter>
         </DialogContent>

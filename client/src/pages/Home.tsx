@@ -6,11 +6,13 @@ import { FileText, Shield, Zap, Users } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { TopHeader } from "@/components/TopHeader";
+import { useLang } from '@/lib/i18n';
 
 export default function Home() {
   const { user, loading, isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
   const [agreedToPrivacy, setAgreedToPrivacy] = useState(false);
+  const { t } = useLang();
 
   if (loading) {
     return (
@@ -31,11 +33,11 @@ export default function Home() {
       {/* Header */}
       <TopHeader>
         <Button variant="outline" size="sm" asChild>
-          <a href="/admin">審批系統</a>
+          <a href="/admin">{t('審批系統', 'Approval System', '审批系统')}</a>
         </Button>
         <Button variant="ghost" size="sm">English</Button>
         <Button asChild={agreedToPrivacy} disabled={!agreedToPrivacy}>
-          {agreedToPrivacy ? <a href={getLoginUrl()}>登入</a> : <span>登入</span>}
+          {agreedToPrivacy ? <a href={getLoginUrl()}>{t('登入', 'Login', '登入')}</a> : <span>{t('登入', 'Login', '登入')}</span>}
         </Button>
       </TopHeader>
 
@@ -44,49 +46,51 @@ export default function Home() {
       <main className="flex-1">
         <section className="container py-20 text-center">
           <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-            誠港金融開戶系統
+            {t('誠港金融開戶系統', 'Account Opening System', '诚港金融开户系统')}
           </h1>
-          <h2 className="text-3xl font-semibold text-blue-600 mb-6">
-            Account Opening System
-          </h2>
-          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            為香港SFC持牌法團設計的完整、合規、現代化的客戶開戶申請系統
-          </p>
-          <p className="text-base text-muted-foreground mb-12 max-w-2xl mx-auto">
-            Complete, compliant, and modern customer account opening system
+          <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto">
+            {t('為香港SFC持牌法團設計的完整、合規、現代化的客戶開戶申請系統', 'Complete, compliant, and modern customer account opening system', '为香港SFC持牌法团设计的完整、合规、现代化的客户开户申请系统')}
           </p>
           
           {/* 隐私声明 */}
           <div className="max-w-3xl mx-auto mb-8 p-6 bg-white rounded-lg shadow-sm border">
-            <h3 className="text-lg font-semibold mb-4">個人資料私隱保護聲明</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('個人資料私隱保護聲明', 'Personal Data Privacy Statement', '个人资料隐私保护声明')}</h3>
             <div className="text-sm text-muted-foreground space-y-3 text-left">
               <p>
-                誠港金融股份有限公司（以下簡稱「本公司」）及其關聯機構承諾尊重並保護閣下的個人資料私隱。閣下在開戶申請過程中提供的所有個人資料將僅用於以下目的：
+                {t(
+                  '誠港金融股份有限公司（以下簡稱「本公司」）及其關聯機構承諾尊重並保護閣下的個人資料私隱。閣下在開戶申請過程中提供的所有個人資料將僅用於以下目的：',
+                  'CM Financial Limited (hereinafter referred to as "the Company") and its affiliates are committed to respecting and protecting the privacy of your personal data. All personal data provided during the account opening process will be used solely for the following purposes:',
+                  '诚港金融股份有限公司（以下简称「本公司」）及其关联机构承诺尊重并保护阁下的个人资料隐私。阁下在开户申请过程中提供的所有个人资料将仅用于以下目的：'
+                )}
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>處理閣下的開戶申請</li>
-                <li>進行客戶身份識別及盡職調查（KYC）</li>
-                <li>遵守香港證券及期貨事務監察委員會（SFC）的監管要求</li>
-                <li>提供相關的金融服務及產品資訊</li>
+                <li>{t('處理閣下的開戶申請', 'Processing your account opening application', '处理阁下的开户申请')}</li>
+                <li>{t('進行客戶身份識別及盡職調查（KYC）', 'Conducting customer identification and due diligence (KYC)', '进行客户身份识别及尽职调查（KYC）')}</li>
+                <li>{t('遵守香港證券及期貨事務監察委員會（SFC）的監管要求', 'Complying with the regulatory requirements of the Securities and Futures Commission (SFC) of Hong Kong', '遵守香港证券及期货事务监察委员会（SFC）的监管要求')}</li>
+                <li>{t('提供相關的金融服務及產品資訊', 'Providing relevant financial services and product information', '提供相关的金融服务及产品资讯')}</li>
               </ul>
               <p>
-                本公司保證：
+                {t('本公司保證：', 'The Company guarantees:', '本公司保证：')}
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>不會將閣下的個人資料用於未經閣下同意的市場推銷活動</li>
-                <li>不會將閣下的個人資料出售、出租或交換給第三方</li>
-                <li>將採取合理的安全措施保護閣下的個人資料免受未經授權的查閱、使用或披露</li>
-                <li>僅在法律要求或監管需要的情況下向相關機構披露閣下的資料</li>
+                <li>{t('不會將閣下的個人資料用於未經閣下同意的市場推銷活動', 'Your personal data will not be used for marketing activities without your consent', '不会将阁下的个人资料用于未经阁下同意的市场推销活动')}</li>
+                <li>{t('不會將閣下的個人資料出售、出租或交換給第三方', 'Your personal data will not be sold, rented, or exchanged to third parties', '不会将阁下的个人资料出售、出租或交换给第三方')}</li>
+                <li>{t('將採取合理的安全措施保護閣下的個人資料免受未經授權的查閱、使用或披露', 'Reasonable security measures will be taken to protect your personal data from unauthorized access, use, or disclosure', '将采取合理的安全措施保护阁下的个人资料免受未经授权的查阅、使用或披露')}</li>
+                <li>{t('僅在法律要求或監管需要的情況下向相關機構披露閣下的資料', 'Your data will only be disclosed to relevant authorities when required by law or regulation', '仅在法律要求或监管需要的情况下向相关机构披露阁下的资料')}</li>
               </ul>
               <p>
-                閣下有權查閱、更正或刪除閣下的個人資料。如需了解更多關於個人資料私隱保護的資訊，請瀏覽
-                <a 
-                  href="https://www.pcpd.org.hk" 
-                  target="_blank" 
+                {t(
+                  '閣下有權查閱、更正或刪除閣下的個人資料。如需了解更多關於個人資料私隱保護的資訊，請瀏覽',
+                  'You have the right to access, correct, or delete your personal data. For more information about personal data privacy protection, please visit',
+                  '阁下有权查阅、更正或删除阁下的个人资料。如需了解更多关于个人资料隐私保护的资讯，请浏览'
+                )}
+                <a
+                  href="https://www.pcpd.org.hk"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:underline mx-1"
                 >
-                  香港個人資料私隱專員公署官網
+                  {t('香港個人資料私隱專員公署官網', 'the Office of the Privacy Commissioner for Personal Data, Hong Kong', '香港个人资料隐私专员公署官网')}
                 </a>
                 。
               </p>
@@ -104,11 +108,11 @@ export default function Home() {
                 htmlFor="privacy-agreement" 
                 className="text-sm font-semibold text-slate-800 cursor-pointer select-none leading-relaxed"
               >
-                我已閱讀並同意上述個人資料私隱保護聲明，並同意本公司按照聲明所述的目的收集、使用及儲存我的個人資料。
-                <br />
-                <span className="text-slate-600 text-xs font-normal mt-1 block">
-                  I have read and agree to the above Personal Data Privacy Statement, and consent to the collection, use and storage of my personal data by the Company for the purposes stated in the Statement.
-                </span>
+                {t(
+                  '我已閱讀並同意上述個人資料私隱保護聲明，並同意本公司按照聲明所述的目的收集、使用及儲存我的個人資料。',
+                  'I have read and agree to the above Personal Data Privacy Statement, and consent to the collection, use and storage of my personal data by the Company for the purposes stated in the Statement.',
+                  '我已阅读并同意上述个人资料隐私保护声明，并同意本公司按照声明所述的目的收集、使用及储存我的个人资料。'
+                )}
               </label>
             </div>
           </div>
@@ -120,9 +124,9 @@ export default function Home() {
               disabled={!agreedToPrivacy}
             >
               {agreedToPrivacy ? (
-                <a href={getLoginUrl()}>開始使用 / Get Started</a>
+                <a href={getLoginUrl()}>{t('開始使用', 'Get Started', '开始使用')}</a>
               ) : (
-                <span>開始使用 / Get Started</span>
+                <span>{t('開始使用', 'Get Started', '开始使用')}</span>
               )}
             </Button>
           </div>
@@ -131,17 +135,16 @@ export default function Home() {
         {/* Features Section */}
         <section className="container py-16">
           <h3 className="text-3xl font-bold text-center mb-12">
-            核心特性 / Core Features
+            {t('核心特性', 'Core Features', '核心特性')}
           </h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="bg-white p-6 rounded-lg shadow-sm border">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                 <Shield className="h-6 w-6 text-blue-600" />
               </div>
-              <h4 className="text-xl font-semibold mb-2">SFC合規設計</h4>
-              <p className="text-sm text-muted-foreground mb-2">SFC Compliant Design</p>
+              <h4 className="text-xl font-semibold mb-2">{t('SFC合規設計', 'SFC Compliant Design', 'SFC合规设计')}</h4>
               <p className="text-sm text-muted-foreground">
-                嚴格遵守香港SFC監管要求，內置KYC/AML合規檢查機制
+                {t('嚴格遵守香港SFC監管要求，內置KYC/AML合規檢查機制', 'Strictly compliant with Hong Kong SFC regulatory requirements, with built-in KYC/AML compliance checks', '严格遵守香港SFC监管要求，内置KYC/AML合规检查机制')}
               </p>
             </div>
 
@@ -149,10 +152,9 @@ export default function Home() {
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                 <Zap className="h-6 w-6 text-blue-600" />
               </div>
-              <h4 className="text-xl font-semibold mb-2">現代化交互</h4>
-              <p className="text-sm text-muted-foreground mb-2">Modern Interaction</p>
+              <h4 className="text-xl font-semibold mb-2">{t('現代化交互', 'Modern Interaction', '现代化交互')}</h4>
               <p className="text-sm text-muted-foreground">
-                採用新穎的KYC技術，支持人臉識別、數字簽名等現代化功能
+                {t('採用新穎的KYC技術，支持人臉識別、數字簽名等現代化功能', 'Adopting novel KYC technologies with support for face recognition, digital signatures, and more', '采用新颖的KYC技术，支持人脸识别、数字签名等现代化功能')}
               </p>
             </div>
 
@@ -160,10 +162,9 @@ export default function Home() {
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                 <Users className="h-6 w-6 text-blue-600" />
               </div>
-              <h4 className="text-xl font-semibold mb-2">完整的用戶旅程</h4>
-              <p className="text-sm text-muted-foreground mb-2">Complete User Journey</p>
+              <h4 className="text-xl font-semibold mb-2">{t('完整的用戶旅程', 'Complete User Journey', '完整的用户旅程')}</h4>
               <p className="text-sm text-muted-foreground">
-                從個人資料到開戶流程，流暢的用戶體驗設計
+                {t('從個人資料到開戶流程，流暢的用戶體驗設計', 'From personal information to account opening, a smooth user experience', '从个人资料到开户流程，流畅的用户体验设计')}
               </p>
             </div>
 
@@ -171,10 +172,9 @@ export default function Home() {
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                 <FileText className="h-6 w-6 text-blue-600" />
               </div>
-              <h4 className="text-xl font-semibold mb-2">後台管理系統</h4>
-              <p className="text-sm text-muted-foreground mb-2">Admin Management</p>
+              <h4 className="text-xl font-semibold mb-2">{t('後台管理系統', 'Admin Management', '后台管理系统')}</h4>
               <p className="text-sm text-muted-foreground">
-                完整的審批工作流、合規和文檔管理平台
+                {t('完整的審批工作流、合規和文檔管理平台', 'Complete approval workflow, compliance, and document management platform', '完整的审批工作流、合规和文档管理平台')}
               </p>
             </div>
           </div>
@@ -183,9 +183,9 @@ export default function Home() {
         {/* CTA Section */}
         <section className="container py-16 text-center">
           <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-12 text-white">
-            <h3 className="text-3xl font-bold mb-4">準備開始了嗎？</h3>
+            <h3 className="text-3xl font-bold mb-4">{t('準備開始了嗎？', 'Ready to Get Started?', '准备开始了吗？')}</h3>
             <p className="text-lg mb-8 opacity-90">
-              立即開始您的開戶申請流程
+              {t('立即開始您的開戶申請流程', 'Start your account opening process now', '立即开始您的开户申请流程')}
             </p>
             <Button 
               size="lg" 
@@ -194,9 +194,9 @@ export default function Home() {
               disabled={!agreedToPrivacy}
             >
               {agreedToPrivacy ? (
-                <a href={getLoginUrl()}>立即開始 / Start Now</a>
+                <a href={getLoginUrl()}>{t('立即開始', 'Start Now', '立即开始')}</a>
               ) : (
-                <span>立即開始 / Start Now</span>
+                <span>{t('立即開始', 'Start Now', '立即开始')}</span>
               )}
             </Button>
           </div>

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useLang } from '@/lib/i18n';
 
 export default function TaxInfo() {
   const params = useParams<{ id: string; step?: string }>();
@@ -14,6 +15,7 @@ export default function TaxInfo() {
   const applicationId = parseInt(params.id || "0");
   const stepNum = parseInt(params.step || "10");
   const showReturnToPreview = useReturnToPreview();
+  const { t } = useLang();
 
   // Check if joint account
   const { data: accountSelection } = trpc.accountSelection.get.useQuery(
@@ -94,23 +96,23 @@ export default function TaxInfo() {
   const saveMutation = trpc.tax.save.useMutation({
     onSuccess: (result) => {
       if (result.success && result.data) {
-        toast.success("保存成功");
+        toast.success(t("保存成功", "Saved successfully", "保存成功"));
         setLocation(`/application/${applicationId}/step/${stepNum + 1}`);
       }
     },
     onError: (error) => {
-      toast.error(`保存失敗: ${error.message}`);
+      toast.error(`${t("保存失敗", "Save failed", "保存失败")}: ${error.message}`);
     },
   });
 
   const saveOnlyMutation = trpc.tax.save.useMutation({
     onSuccess: (result) => {
       if (result.success && result.data) {
-        toast.success("保存成功");
+        toast.success(t("保存成功", "Saved successfully", "保存成功"));
       }
     },
     onError: (error) => {
-      toast.error(`保存失敗: ${error.message}`);
+      toast.error(`${t("保存失敗", "Save failed", "保存失败")}: ${error.message}`);
     },
   });
 
@@ -139,15 +141,15 @@ export default function TaxInfo() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.taxResidency.trim()) newErrors.taxResidency = "請輸入居留司法管轄區";
-    if (!formData.noTaxId && !formData.taxIdNumber.trim()) newErrors.taxIdNumber = "請輸入稅務識別號";
-    if (formData.noTaxId && !formData.noTaxIdReason.trim()) newErrors.noTaxIdReason = "請輸入沒有稅務編號的理由";
+    if (!formData.taxResidency.trim()) newErrors.taxResidency = t("請輸入居留司法管轄區", "Please enter jurisdiction of residence", "请输入居留司法管辖区");
+    if (!formData.noTaxId && !formData.taxIdNumber.trim()) newErrors.taxIdNumber = t("請輸入稅務識別號", "Please enter TIN", "请输入税务识别号");
+    if (formData.noTaxId && !formData.noTaxIdReason.trim()) newErrors.noTaxIdReason = t("請輸入沒有稅務編號的理由", "Please provide reason for no TIN", "请输入没有税务编号的理由");
 
     // 聯名賬戶：驗證第二持有人
     if (isJoint) {
-      if (!secondHolder.taxResidency.trim()) newErrors.secondTaxResidency = "請填寫第二持有人的居留司法管轄區";
-      if (!secondHolder.noTaxId && !secondHolder.taxIdNumber.trim()) newErrors.secondTaxIdNumber = "請填寫第二持有人的稅務識別號";
-      if (secondHolder.noTaxId && !secondHolder.noTaxIdReason.trim()) newErrors.secondNoTaxIdReason = "請填寫第二持有人的沒有稅務編號理由";
+      if (!secondHolder.taxResidency.trim()) newErrors.secondTaxResidency = t("請填寫第二持有人的居留司法管轄區", "Please enter second holder's jurisdiction of residence", "请填写第二持有人的居留司法管辖区");
+      if (!secondHolder.noTaxId && !secondHolder.taxIdNumber.trim()) newErrors.secondTaxIdNumber = t("請填寫第二持有人的稅務識別號", "Please enter second holder's TIN", "请填写第二持有人的税务识别号");
+      if (secondHolder.noTaxId && !secondHolder.noTaxIdReason.trim()) newErrors.secondNoTaxIdReason = t("請填寫第二持有人的沒有稅務編號理由", "Please provide second holder's reason for no TIN", "请填写第二持有人的没有税务编号理由");
     }
 
     setErrors(newErrors);
@@ -156,7 +158,7 @@ export default function TaxInfo() {
 
 const handleSave = () => {
     if (!validateForm()) {
-      toast.error("請檢查表單中的錯誤");
+      toast.error(t("請檢查表單中的錯誤", "Please check the form for errors", "请检查表单中的错误"));
       return;
     }
 
@@ -171,7 +173,7 @@ const handleSave = () => {
 
   const handleNext = () => {
     if (!validateForm()) {
-      toast.error("請檢查表單中的錯誤");
+      toast.error(t("請檢查表單中的錯誤", "Please check the form for errors", "请检查表单中的错误"));
       return;
     }
 
@@ -209,18 +211,22 @@ const handleSave = () => {
       <div className="space-y-6">
         <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
           <p className="text-sm text-blue-900">
-            <strong>提示：</strong>以下信息已從{corporateInfo ? "公司資料" : "您的個人資料"}中自動導入，請確認或修改
+            <strong>{t("提示：", "Note: ", "提示：")}</strong>{t(
+              `以下信息已從${corporateInfo ? "公司資料" : "您的個人資料"}中自動導入，請確認或修改`,
+              `The following information has been auto-imported from your ${corporateInfo ? "company profile" : "personal profile"}, please confirm or modify`,
+              `以下信息已从${corporateInfo ? "公司资料" : "您的个人资料"}中自动导入，请确认或修改`
+            )}
           </p>
         </div>
 
         {isJoint && (
-          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">賬戶主要持有人 / Primary Account Holder</h3>
+          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">{t("賬戶主要持有人", "Primary Account Holder", "账户主要持有人")}</h3>
         )}
 
         {/* 稅務居住地 */}
         <div className="space-y-2">
           <Label htmlFor="taxResidency">
-            居留司法管轄區 / Jurisdiction(s) of Residence <span className="text-destructive">*</span>
+            {t("居留司法管轄區", "Jurisdiction(s) of Residence", "居留司法管辖区")} <span className="text-destructive">*</span>
           </Label>
           <Input
             id="taxResidency"
@@ -229,17 +235,17 @@ const handleSave = () => {
               setFormData({ ...formData, taxResidency: e.target.value });
               if (errors.taxResidency) setErrors({ ...errors, taxResidency: "" });
             }}
-            placeholder="請輸入居留司法管轄區"
+            placeholder={t("請輸入居留司法管轄區", "Enter jurisdiction of residence", "请输入居留司法管辖区")}
             className={errors.taxResidency ? "border-destructive" : ""}
           />
           {errors.taxResidency && <p className="text-sm text-destructive">{errors.taxResidency}</p>}
-          <p className="text-sm text-muted-foreground">{corporateInfo ? "默認為公司註冊國家或地區" : "默認為您的國籍"}</p>
+          <p className="text-sm text-muted-foreground">{corporateInfo ? t("默認為公司註冊國家或地區", "Defaults to country/region of incorporation", "默认为公司注册国家或地区") : t("默認為您的國籍", "Defaults to your nationality", "默认为您的国籍")}</p>
         </div>
 
         {/* 稅務識別號 */}
         <div className="space-y-2">
           <Label htmlFor="taxIdNumber">
-            稅務識別號 / Tax Identification Number（"TIN"）<span className="text-destructive">*</span>
+            {t("稅務識別號", "Tax Identification Number (\"TIN\")", "税务识别号")} <span className="text-destructive">*</span>
           </Label>
           <Input
             id="taxIdNumber"
@@ -248,11 +254,11 @@ const handleSave = () => {
               setFormData({ ...formData, taxIdNumber: e.target.value });
               if (errors.taxIdNumber) setErrors({ ...errors, taxIdNumber: "" });
             }}
-            placeholder="請輸入稅務識別號"
+            placeholder={t("請輸入稅務識別號", "Enter TIN", "请输入税务识别号")}
             className={errors.taxIdNumber ? "border-destructive" : ""}
           />
           {errors.taxIdNumber && <p className="text-sm text-destructive">{errors.taxIdNumber}</p>}
-          <p className="text-sm text-muted-foreground">{corporateInfo ? "默認為商業登記證號碼" : "默認為您的證件號碼"}</p>
+          <p className="text-sm text-muted-foreground">{corporateInfo ? t("默認為商業登記證號碼", "Defaults to business registration number", "默认为商业登记证号码") : t("默認為您的證件號碼", "Defaults to your ID number", "默认为您的证件号码")}</p>
         </div>
 
         {/* 沒有稅務編號 */}
@@ -269,12 +275,12 @@ const handleSave = () => {
               }}
               className="w-4 h-4"
             />
-            <Label htmlFor="noTaxId" className="cursor-pointer">沒有稅務識別號 / No TIN</Label>
+            <Label htmlFor="noTaxId" className="cursor-pointer">{t("沒有稅務識別號", "No TIN", "没有税务识别号")}</Label>
           </div>
           {formData.noTaxId && (
             <div className="space-y-2">
               <Label htmlFor="noTaxIdReason">
-                請說明理由 / Please provide reason <span className="text-destructive">*</span>
+                {t("請說明理由", "Please provide reason", "请说明理由")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="noTaxIdReason"
@@ -283,7 +289,7 @@ const handleSave = () => {
                   setFormData({ ...formData, noTaxIdReason: e.target.value });
                   if (errors.noTaxIdReason) setErrors({ ...errors, noTaxIdReason: "" });
                 }}
-                placeholder="請輸入理由"
+                placeholder={t("請輸入理由", "Enter reason", "请输入理由")}
                 className={errors.noTaxIdReason ? "border-destructive" : ""}
               />
               {errors.noTaxIdReason && <p className="text-sm text-destructive">{errors.noTaxIdReason}</p>}
@@ -294,12 +300,12 @@ const handleSave = () => {
         {/* 聯名賬戶：第二持有人 */}
         {isJoint && (
           <>
-            <h3 className="text-lg font-bold text-primary border-b pb-2 mt-8 mb-2">賬戶第二持有人 / Second Account Holder</h3>
+            <h3 className="text-lg font-bold text-primary border-b pb-2 mt-8 mb-2">{t("賬戶第二持有人", "Second Account Holder", "账户第二持有人")}</h3>
 
             {/* 稅務居住地 */}
             <div className="space-y-2">
               <Label>
-                居留司法管轄區 / Jurisdiction(s) of Residence <span className="text-destructive">*</span>
+                {t("居留司法管轄區", "Jurisdiction(s) of Residence", "居留司法管辖区")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 value={secondHolder.taxResidency}
@@ -307,7 +313,7 @@ const handleSave = () => {
                   setSecondHolder({ ...secondHolder, taxResidency: e.target.value });
                   if (errors.secondTaxResidency) setErrors({ ...errors, secondTaxResidency: "" });
                 }}
-                placeholder="請輸入居留司法管轄區"
+                placeholder={t("請輸入居留司法管轄區", "Enter jurisdiction of residence", "请输入居留司法管辖区")}
                 className={errors.secondTaxResidency ? "border-destructive" : ""}
               />
               {errors.secondTaxResidency && <p className="text-sm text-destructive">{errors.secondTaxResidency}</p>}
@@ -316,7 +322,7 @@ const handleSave = () => {
             {/* 稅務識別號 */}
             <div className="space-y-2">
               <Label>
-                稅務識別號 / Tax Identification Number（"TIN"）<span className="text-destructive">*</span>
+                {t("稅務識別號", "Tax Identification Number (\"TIN\")", "税务识别号")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 value={secondHolder.taxIdNumber}
@@ -324,7 +330,7 @@ const handleSave = () => {
                   setSecondHolder({ ...secondHolder, taxIdNumber: e.target.value });
                   if (errors.secondTaxIdNumber) setErrors({ ...errors, secondTaxIdNumber: "" });
                 }}
-                placeholder="請輸入稅務識別號"
+                placeholder={t("請輸入稅務識別號", "Enter TIN", "请输入税务识别号")}
                 className={errors.secondTaxIdNumber ? "border-destructive" : ""}
               />
               {errors.secondTaxIdNumber && <p className="text-sm text-destructive">{errors.secondTaxIdNumber}</p>}
@@ -340,12 +346,12 @@ const handleSave = () => {
                   onChange={(e) => setSecondHolder({ ...secondHolder, noTaxId: e.target.checked, taxIdNumber: e.target.checked ? "" : secondHolder.taxIdNumber, noTaxIdReason: "" })}
                   className="w-4 h-4"
                 />
-                <Label htmlFor="secondNoTaxId" className="cursor-pointer">沒有稅務識別號 / No TIN</Label>
+                <Label htmlFor="secondNoTaxId" className="cursor-pointer">{t("沒有稅務識別號", "No TIN", "没有税务识别号")}</Label>
               </div>
               {secondHolder.noTaxId && (
                 <div className="space-y-2">
                   <Label>
-                    請說明理由 / Please provide reason <span className="text-destructive">*</span>
+                    {t("請說明理由", "Please provide reason", "请说明理由")} <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     value={secondHolder.noTaxIdReason}
@@ -353,7 +359,7 @@ const handleSave = () => {
                       setSecondHolder({ ...secondHolder, noTaxIdReason: e.target.value });
                       if (errors.secondNoTaxIdReason) setErrors({ ...errors, secondNoTaxIdReason: "" });
                     }}
-                    placeholder="請輸入理由"
+                    placeholder={t("請輸入理由", "Enter reason", "请输入理由")}
                     className={errors.secondNoTaxIdReason ? "border-destructive" : ""}
                   />
                   {errors.secondNoTaxIdReason && <p className="text-sm text-destructive">{errors.secondNoTaxIdReason}</p>}

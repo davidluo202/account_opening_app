@@ -11,6 +11,7 @@ import { convertToTraditional } from "@/lib/converter";
 import { industryOptions } from "@/lib/industryOptions";
 import { useReturnToPreview } from "@/hooks/useReturnToPreview";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { useLang } from '@/lib/i18n';
 
 const countries = [
   "中国", "香港", "澳门", "台湾", "美国", "加拿大", "英国", "澳大利亚", "新加坡", "日本", "韩国", "other"
@@ -39,6 +40,7 @@ const countryCodes = [
 ];
 
 export default function CorporateBasicInfo() {
+  const { t } = useLang();
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
@@ -85,23 +87,23 @@ export default function CorporateBasicInfo() {
   const saveMutation = trpc.corporateBasic.save.useMutation({
     onSuccess: (result) => {
       if (result.success) {
-        toast.success("保存成功");
+        toast.success(t('保存成功', 'Saved successfully', '保存成功'));
         setLocation(`/application/${applicationId}/step/3`);
       }
     },
     onError: (error) => {
-      toast.error(`保存失敗: ${error.message}`);
+      toast.error(`${t('保存失敗', 'Save failed', '保存失败')}: ${error.message}`);
     },
   });
 
   const saveOnlyMutation = trpc.corporateBasic.save.useMutation({
     onSuccess: (result) => {
       if (result.success) {
-        toast.success("保存成功");
+        toast.success(t('保存成功', 'Saved successfully', '保存成功'));
       }
     },
     onError: (error) => {
-      toast.error(`保存失敗: ${error.message}`);
+      toast.error(`${t('保存失敗', 'Save failed', '保存失败')}: ${error.message}`);
     },
   });
 
@@ -137,59 +139,59 @@ export default function CorporateBasicInfo() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.companyEnglishName.trim()) {
-      newErrors.companyEnglishName = "請輸入公司英文名稱";
+      newErrors.companyEnglishName = t('請輸入公司英文名稱', 'Please enter company English name', '请输入公司英文名称');
     } else if (!/^[A-Za-z\s]+$/.test(formData.companyEnglishName)) {
-      newErrors.companyEnglishName = "公司英文名稱只能包含英文字母和空格，不能包含特殊符號";
+      newErrors.companyEnglishName = t('公司英文名稱只能包含英文字母和空格，不能包含特殊符號', 'Company English name can only contain letters and spaces', '公司英文名称只能包含英文字母和空格，不能包含特殊符号');
     }
 
     if (
       formData.companyChineseName.trim() &&
       !/^[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]+$/.test(formData.companyChineseName)
     ) {
-      newErrors.companyChineseName = "公司中文名稱只能包含中文字（繁/簡會自動轉繁），不能包含特殊字符";
+      newErrors.companyChineseName = t('公司中文名稱只能包含中文字（繁/簡會自動轉繁），不能包含特殊字符', 'Company Chinese name can only contain Chinese characters', '公司中文名称只能包含中文字（繁/简会自动转繁），不能包含特殊字符');
     }
 
-    if (!formData.natureOfEntity.trim()) newErrors.natureOfEntity = "請選擇公司性質";
-    if (!formData.natureOfBusiness.trim()) newErrors.natureOfBusiness = "請選擇工作性質";
-    if (!formData.countryOfIncorporation) newErrors.countryOfIncorporation = "請選擇註冊國家";
+    if (!formData.natureOfEntity.trim()) newErrors.natureOfEntity = t('請選擇公司性質', 'Please select nature of entity', '请选择公司性质');
+    if (!formData.natureOfBusiness.trim()) newErrors.natureOfBusiness = t('請選擇工作性質', 'Please select nature of business', '请选择工作性质');
+    if (!formData.countryOfIncorporation) newErrors.countryOfIncorporation = t('請選擇註冊國家', 'Please select country of incorporation', '请选择注册国家');
     if (!formData.dateOfIncorporation) {
-      newErrors.dateOfIncorporation = "請選擇註冊日期";
+      newErrors.dateOfIncorporation = t('請選擇註冊日期', 'Please select date of incorporation', '请选择注册日期');
     } else {
       const selectedDate = new Date(formData.dateOfIncorporation);
       const today = new Date();
       today.setHours(23, 59, 59, 999);
       if (selectedDate > today) {
-        newErrors.dateOfIncorporation = "註冊日期不能晚於今天";
+        newErrors.dateOfIncorporation = t('註冊日期不能晚於今天', 'Date of incorporation cannot be later than today', '注册日期不能晚于今天');
       }
     }
 
     if (!formData.certificateOfIncorporationNo.trim()) {
-      newErrors.certificateOfIncorporationNo = "請輸入公司註冊證書號碼";
+      newErrors.certificateOfIncorporationNo = t('請輸入公司註冊證書號碼', 'Please enter certificate of incorporation number', '请输入公司注册证书号码');
     } else if (!/^\d+$/.test(formData.certificateOfIncorporationNo)) {
-      newErrors.certificateOfIncorporationNo = "格式錯誤，只能採用阿拉伯數字";
+      newErrors.certificateOfIncorporationNo = t('格式錯誤，只能採用阿拉伯數字', 'Invalid format, only digits allowed', '格式错误，只能采用阿拉伯数字');
     } else if (formData.certificateOfIncorporationNo.length > 8) {
-      newErrors.certificateOfIncorporationNo = "不能超過8位";
+      newErrors.certificateOfIncorporationNo = t('不能超過8位', 'Cannot exceed 8 digits', '不能超过8位');
     }
 
     // 商業登記號：若註冊國家為香港則必填
     if (formData.countryOfIncorporation === "香港" && !formData.businessRegistrationNo.trim()) {
-      newErrors.businessRegistrationNo = "請輸入商業登記證號碼";
+      newErrors.businessRegistrationNo = t('請輸入商業登記證號碼', 'Please enter business registration number', '请输入商业登记证号码');
     } else if (formData.businessRegistrationNo.trim() && !/^\d+$/.test(formData.businessRegistrationNo)) {
-      newErrors.businessRegistrationNo = "格式錯誤，只能採用阿拉伯數字";
+      newErrors.businessRegistrationNo = t('格式錯誤，只能採用阿拉伯數字', 'Invalid format, only digits allowed', '格式错误，只能采用阿拉伯数字');
     } else if (formData.businessRegistrationNo.length > 8) {
-      newErrors.businessRegistrationNo = "不能超過8位";
+      newErrors.businessRegistrationNo = t('不能超過8位', 'Cannot exceed 8 digits', '不能超过8位');
     }
 
-    if (!formData.registeredAddress.trim()) newErrors.registeredAddress = "請輸入註冊地址";
-    if (!formData.businessAddress.trim()) newErrors.businessAddress = "請輸入營業地址";
+    if (!formData.registeredAddress.trim()) newErrors.registeredAddress = t('請輸入註冊地址', 'Please enter registered address', '请输入注册地址');
+    if (!formData.businessAddress.trim()) newErrors.businessAddress = t('請輸入營業地址', 'Please enter business address', '请输入营业地址');
 
     const validatePhone = (code: string, phone: string, field: string) => {
       if (!phone.trim()) {
-        newErrors[field] = "請輸入電話號碼";
+        newErrors[field] = t('請輸入電話號碼', 'Please enter phone number', '请输入电话号码');
         return;
       }
       if (!/^\d+$/.test(phone)) {
-        newErrors[field] = "只能輸入阿拉伯數字";
+        newErrors[field] = t('只能輸入阿拉伯數字', 'Only digits allowed', '只能输入阿拉伯数字');
         return;
       }
 
@@ -207,32 +209,32 @@ export default function CorporateBasicInfo() {
       // 香港電話允許少於8位，其他嚴格校驗位數
       if (code === "+852") {
         if (phone.length > 8) {
-          newErrors[field] = `電話號碼格式錯誤：${code} 不能超過8位`;
+          newErrors[field] = t(`電話號碼格式錯誤：${code} 不能超過8位`, `Invalid phone format: ${code} cannot exceed 8 digits`, `电话号码格式错误：${code} 不能超过8位`);
         }
       } else if (requiredLen && phone.length !== requiredLen) {
-        newErrors[field] = `電話號碼格式錯誤：${code} 需輸入${requiredLen}位阿拉伯數字`;
+        newErrors[field] = t(`電話號碼格式錯誤：${code} 需輸入${requiredLen}位阿拉伯數字`, `Invalid phone format: ${code} requires ${requiredLen} digits`, `电话号码格式错误：${code} 需输入${requiredLen}位阿拉伯数字`);
       }
     };
 
     validatePhone(formData.officeCountryCode, formData.officeNo, 'officeNo');
 
     if (formData.facsimileNo.trim() && !/^[0-9+\s\-]+$/.test(formData.facsimileNo)) {
-      newErrors.facsimileNo = "格式錯誤，只能包含數字、+、空格或-";
+      newErrors.facsimileNo = t('格式錯誤，只能包含數字、+、空格或-', 'Invalid format, only digits, +, spaces or - allowed', '格式错误，只能包含数字、+、空格或-');
     }
 
     if (!formData.contactName.trim()) {
-      newErrors.contactName = "請輸入聯絡人姓名";
-    } else if (!/^[A-Za-z\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\s·\-’',]+$/.test(formData.contactName)) {
-      newErrors.contactName = "姓名只允許中文（繁/簡會自動轉繁）、英文字母、空格、·、-、’、英文逗號,；不允許數字及其他符號";
+      newErrors.contactName = t(‘請輸入聯絡人姓名’, ‘Please enter contact name’, ‘请输入联络人姓名’);
+    } else if (!/^[A-Za-z\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\s·\-’’,]+$/.test(formData.contactName)) {
+      newErrors.contactName = t(‘姓名只允許中文（繁/簡會自動轉繁）、英文字母、空格、·、-、\’、英文逗號,；不允許數字及其他符號’, ‘Name only allows Chinese, English letters, spaces, middle dot, hyphen, apostrophe and comma’, ‘姓名只允许中文（繁/简会自动转繁）、英文字母、空格、·、-、\’、英文逗号,；不允许数字及其他符号’);
     }
-    if (!formData.contactTitle.trim()) newErrors.contactTitle = "請輸入職銜";
+    if (!formData.contactTitle.trim()) newErrors.contactTitle = t(‘請輸入職銜’, ‘Please enter title’, ‘请输入职衔’);
 
     validatePhone(formData.contactCountryCode, formData.contactPhone, 'contactPhone');
 
     if (!formData.contactEmail.trim()) {
-      newErrors.contactEmail = "請輸入電郵地址";
+      newErrors.contactEmail = t('請輸入電郵地址', 'Please enter email address', '请输入电邮地址');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contactEmail)) {
-      newErrors.contactEmail = "電郵格式不正確";
+      newErrors.contactEmail = t('電郵格式不正確', 'Invalid email format', '电邮格式不正确');
     }
 
     // 電郵自動套用註冊電郵，無需再次驗證
@@ -294,16 +296,16 @@ export default function CorporateBasicInfo() {
       <div className="space-y-8">
         {/* 公司識別信息 */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold border-b pb-2">公司識別信息 / Company Identification</h3>
+          <h3 className="text-lg font-semibold border-b pb-2">{t('公司識別信息', 'Company Identification', '公司识别信息')}</h3>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="companyEnglishName">公司英文名稱 / Company English Name <span className="text-destructive">*</span></Label>
+              <Label htmlFor="companyEnglishName">{t('公司英文名稱', 'Company English Name', '公司英文名称')} <span className="text-destructive">*</span></Label>
               <div className="relative">
                 <Input
                   id="companyEnglishName"
                   value={formData.companyEnglishName}
                   onChange={(e) => setFormData({ ...formData, companyEnglishName: e.target.value })}
-                  placeholder="Enter Company English Name"
+                  placeholder={t('請輸入公司英文名稱', 'Enter Company English Name', '请输入公司英文名称')}
                   className={errors.companyEnglishName ? "border-destructive pr-10" : "pr-10"}
                 />
                 {formData.companyEnglishName.trim() && !errors.companyEnglishName && (
@@ -313,23 +315,23 @@ export default function CorporateBasicInfo() {
               {errors.companyEnglishName && <p className="text-sm text-destructive">{errors.companyEnglishName}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="companyChineseName">公司中文名稱 / Company Chinese Name</Label>
+              <Label htmlFor="companyChineseName">{t('公司中文名稱', 'Company Chinese Name', '公司中文名称')}</Label>
               <Input
                 id="companyChineseName"
                 value={formData.companyChineseName}
                 onChange={(e) => setFormData({ ...formData, companyChineseName: e.target.value })}
                 onBlur={() => setFormData({ ...formData, companyChineseName: handleSCT(formData.companyChineseName) })}
-                placeholder="請輸入公司中文名稱"
+                placeholder={t('請輸入公司中文名稱', 'Enter Company Chinese Name', '请输入公司中文名称')}
                 className={errors.companyChineseName ? "border-destructive" : ""}
               />
               {errors.companyChineseName && <p className="text-sm text-destructive">{errors.companyChineseName}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="natureOfEntity">公司性質 / Nature of Entity <span className="text-destructive">*</span></Label>
+              <Label htmlFor="natureOfEntity">{t('公司性質', 'Nature of Entity', '公司性质')} <span className="text-destructive">*</span></Label>
               <div className="flex gap-2">
                 <Select value={formData.natureOfEntity} onValueChange={(v) => setFormData({ ...formData, natureOfEntity: v })}>
                   <SelectTrigger className={errors.natureOfEntity ? "border-destructive" : ""}>
-                    <SelectValue placeholder="請選擇公司性質" />
+                    <SelectValue placeholder={t('請選擇公司性質', 'Select nature of entity', '请选择公司性质')} />
                   </SelectTrigger>
                   <SelectContent>
                     {entityNatures.map((n) => (
@@ -342,7 +344,7 @@ export default function CorporateBasicInfo() {
                     value={formData.natureOfEntityOther}
                     onChange={(e) => setFormData({ ...formData, natureOfEntityOther: e.target.value })}
                     onBlur={() => setFormData({ ...formData, natureOfEntityOther: convertToTraditional(formData.natureOfEntityOther) })}
-                    placeholder="請輸入公司性質"
+                    placeholder={t('請輸入公司性質', 'Enter nature of entity', '请输入公司性质')}
                     className="flex-1"
                   />
                 )}
@@ -350,11 +352,11 @@ export default function CorporateBasicInfo() {
               {errors.natureOfEntity && <p className="text-sm text-destructive">{errors.natureOfEntity}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="natureOfBusiness">工作性質 / Nature of Business <span className="text-destructive">*</span></Label>
+              <Label htmlFor="natureOfBusiness">{t('工作性質', 'Nature of Business', '工作性质')} <span className="text-destructive">*</span></Label>
               <div className="flex gap-2">
                 <Select value={formData.natureOfBusiness} onValueChange={(v) => setFormData({ ...formData, natureOfBusiness: v })}>
                   <SelectTrigger className={errors.natureOfBusiness ? "border-destructive" : ""}>
-                    <SelectValue placeholder="請選擇工作性質" />
+                    <SelectValue placeholder={t('請選擇工作性質', 'Select nature of business', '请选择工作性质')} />
                   </SelectTrigger>
                   <SelectContent>
                     {businessNatures.map((n) => (
@@ -367,7 +369,7 @@ export default function CorporateBasicInfo() {
                     value={formData.natureOfBusinessOther}
                     onChange={(e) => setFormData({ ...formData, natureOfBusinessOther: e.target.value })}
                     onBlur={() => setFormData({ ...formData, natureOfBusinessOther: convertToTraditional(formData.natureOfBusinessOther) })}
-                    placeholder="請輸入工作性質"
+                    placeholder={t('請輸入工作性質', 'Enter nature of business', '请输入工作性质')}
                     className="flex-1"
                   />
                 )}
@@ -375,15 +377,15 @@ export default function CorporateBasicInfo() {
               {errors.natureOfBusiness && <p className="text-sm text-destructive">{errors.natureOfBusiness}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="countryOfIncorporation">註冊國家 / Country of Incorporation <span className="text-destructive">*</span></Label>
+              <Label htmlFor="countryOfIncorporation">{t('註冊國家', 'Country of Incorporation', '注册国家')} <span className="text-destructive">*</span></Label>
               <div className="flex gap-2">
                 <Select value={formData.countryOfIncorporation} onValueChange={(v) => setFormData({ ...formData, countryOfIncorporation: v })}>
                   <SelectTrigger className={errors.countryOfIncorporation ? "border-destructive" : ""}>
-                    <SelectValue placeholder="請選擇國家" />
+                    <SelectValue placeholder={t('請選擇國家', 'Select country', '请选择国家')} />
                   </SelectTrigger>
                   <SelectContent>
                     {countries.map((c) => (
-                      <SelectItem key={c} value={c}>{c === "other" ? "其他 / Other" : c}</SelectItem>
+                      <SelectItem key={c} value={c}>{c === "other" ? t('其他', 'Other', '其他') : c}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -391,7 +393,7 @@ export default function CorporateBasicInfo() {
                   <Input
                     value={formData.countryOfIncorporationOther}
                     onChange={(e) => setFormData({ ...formData, countryOfIncorporationOther: e.target.value })}
-                    placeholder="請輸入國家"
+                    placeholder={t('請輸入國家', 'Enter country', '请输入国家')}
                     className="flex-1"
                   />
                 )}
@@ -399,7 +401,7 @@ export default function CorporateBasicInfo() {
               {errors.countryOfIncorporation && <p className="text-sm text-destructive">{errors.countryOfIncorporation}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="dateOfIncorporation">註冊日期 / Date of Incorporation <span className="text-destructive">*</span></Label>
+              <Label htmlFor="dateOfIncorporation">{t('註冊日期', 'Date of Incorporation', '注册日期')} <span className="text-destructive">*</span></Label>
               <Input
                 id="dateOfIncorporation"
                 type="date"
@@ -410,7 +412,7 @@ export default function CorporateBasicInfo() {
               {errors.dateOfIncorporation && <p className="text-sm text-destructive">{errors.dateOfIncorporation}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="certificateOfIncorporationNo">公司註冊證書號碼 / Certificate of Incorporation <span className="text-destructive">*</span></Label>
+              <Label htmlFor="certificateOfIncorporationNo">{t('公司註冊證書號碼', 'Certificate of Incorporation', '公司注册证书号码')} <span className="text-destructive">*</span></Label>
               <Input
                 id="certificateOfIncorporationNo"
                 value={formData.certificateOfIncorporationNo}
@@ -420,14 +422,14 @@ export default function CorporateBasicInfo() {
               {errors.certificateOfIncorporationNo && <p className="text-sm text-destructive">{errors.certificateOfIncorporationNo}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="businessRegistrationNo">商業登記證號碼 / Business Registration No.</Label>
+              <Label htmlFor="businessRegistrationNo">{t('商業登記證號碼', 'Business Registration No.', '商业登记证号码')}</Label>
               <Input
                 id="businessRegistrationNo"
                 value={formData.businessRegistrationNo}
                 onChange={(e) => setFormData({ ...formData, businessRegistrationNo: e.target.value })}
                 className={errors.businessRegistrationNo ? "border-destructive" : ""}
               />
-              <p className="text-xs text-muted-foreground">只適用於香港登記公司 / For Hong Kong Registration Company only</p>
+              <p className="text-xs text-muted-foreground">{t('只適用於香港登記公司', 'For Hong Kong Registration Company only', '只适用于香港登记公司')}</p>
               {errors.businessRegistrationNo && <p className="text-sm text-destructive">{errors.businessRegistrationNo}</p>}
             </div>
           </div>
@@ -435,10 +437,10 @@ export default function CorporateBasicInfo() {
 
         {/* 地址與聯繫方式 */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold border-b pb-2">地址與聯繫方式 / Address & Contact</h3>
+          <h3 className="text-lg font-semibold border-b pb-2">{t('地址與聯繫方式', 'Address & Contact', '地址与联系方式')}</h3>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="registeredAddress">註冊地址 / Registered Address <span className="text-destructive">*</span></Label>
+              <Label htmlFor="registeredAddress">{t('註冊地址', 'Registered Address', '注册地址')} <span className="text-destructive">*</span></Label>
               <Input
                 id="registeredAddress"
                 value={formData.registeredAddress}
@@ -449,7 +451,7 @@ export default function CorporateBasicInfo() {
               {errors.registeredAddress && <p className="text-sm text-destructive">{errors.registeredAddress}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="businessAddress">營業地址 / Business Address <span className="text-destructive">*</span></Label>
+              <Label htmlFor="businessAddress">{t('營業地址', 'Business Address', '营业地址')} <span className="text-destructive">*</span></Label>
               <Input
                 id="businessAddress"
                 value={formData.businessAddress}
@@ -461,7 +463,7 @@ export default function CorporateBasicInfo() {
             </div>
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="officeNo">辦事處電話 / Office No. <span className="text-destructive">*</span></Label>
+                <Label htmlFor="officeNo">{t('辦事處電話', 'Office No.', '办事处电话')} <span className="text-destructive">*</span></Label>
                 <div className="flex gap-2">
                   <Select 
                     value={formData.officeCountryCode} 
@@ -484,7 +486,7 @@ export default function CorporateBasicInfo() {
                 {errors.officeNo && <p className="text-sm text-destructive">{errors.officeNo}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="facsimileNo">傳真號碼 / Fax No.</Label>
+                <Label htmlFor="facsimileNo">{t('傳真號碼', 'Fax No.', '传真号码')}</Label>
                 <Input
                   id="facsimileNo"
                   value={formData.facsimileNo}
@@ -499,10 +501,10 @@ export default function CorporateBasicInfo() {
 
         {/* 賬戶聯絡人 */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold border-b pb-2">賬戶聯絡人 / Account Contact Person</h3>
+          <h3 className="text-lg font-semibold border-b pb-2">{t('賬戶聯絡人', 'Account Contact Person', '账户联络人')}</h3>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="contactName">姓名 / Name <span className="text-destructive">*</span></Label>
+              <Label htmlFor="contactName">{t('姓名', 'Name', '姓名')} <span className="text-destructive">*</span></Label>
               <Input
                 id="contactName"
                 value={formData.contactName}
@@ -519,7 +521,7 @@ export default function CorporateBasicInfo() {
               {errors.contactName && <p className="text-sm text-destructive">{errors.contactName}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="contactTitle">職銜 / Title <span className="text-destructive">*</span></Label>
+              <Label htmlFor="contactTitle">{t('職銜', 'Title', '职衔')} <span className="text-destructive">*</span></Label>
               <Input
                 id="contactTitle"
                 value={formData.contactTitle}
@@ -530,7 +532,7 @@ export default function CorporateBasicInfo() {
               {errors.contactTitle && <p className="text-sm text-destructive">{errors.contactTitle}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="contactPhone">電話號碼 / Telephone No. <span className="text-destructive">*</span></Label>
+              <Label htmlFor="contactPhone">{t('電話號碼', 'Telephone No.', '电话号码')} <span className="text-destructive">*</span></Label>
               <div className="flex gap-2">
                 <Select 
                   value={formData.contactCountryCode} 
@@ -554,8 +556,8 @@ export default function CorporateBasicInfo() {
             </div>
 
             <div className="space-y-2">
-              <Label>電郵地址 / E-mail <span className="text-destructive">*</span>
-                <span className="text-sm text-green-600 ml-2">（已於註冊時驗證）</span>
+              <Label>{t('電郵地址', 'E-mail', '电邮地址')} <span className="text-destructive">*</span>
+                <span className="text-sm text-green-600 ml-2">{t('（已於註冊時驗證）', '(Verified during registration)', '（已于注册时验证）')}</span>
               </Label>
               <Input
                 value={formData.contactEmail}
@@ -563,7 +565,7 @@ export default function CorporateBasicInfo() {
                 className="bg-green-50 border-green-300"
                 disabled
               />
-              <p className="text-xs text-muted-foreground">此電郵地址自動套用您註冊時驗證的電郵</p>
+              <p className="text-xs text-muted-foreground">{t('此電郵地址自動套用您註冊時驗證的電郵', 'This email is auto-filled from your verified registration email', '此电邮地址自动套用您注册时验证的电邮')}</p>
               {errors.contactEmail && <p className="text-sm text-destructive">{errors.contactEmail}</p>}
             </div>
 

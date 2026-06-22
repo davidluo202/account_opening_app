@@ -10,6 +10,7 @@ import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { convertToTraditional } from "@/lib/converter";
+import { useLang } from '@/lib/i18n';
 
 // Convert YYYY-MM to MM/YYYY for display
 const toMMYYYY = (val: string) => {
@@ -34,41 +35,11 @@ const formatDateInput = (raw: string, prev: string) => {
   return `${digits.slice(0, 2)}/${digits.slice(2, 6)}`;
 };
 
-const incomeSources = [
-  { value: "operation", label: "營業收入 / Operation Income" },
-  { value: "investment", label: "投資收益 / Investment Income" },
-  { value: "interest", label: "利息收入 / Interest Income" },
-  { value: "dividend", label: "股息收入 / Dividend Income" },
-  { value: "shareholder", label: "股東出資 / Shareholder Contribution" },
-  { value: "rental", label: "租金收入 / Rental Income" },
-  { value: "borrowing", label: "貸款 / External Borrowing" },
-  { value: "other", label: "其他 / Other" },
-];
-
-const assetItemsList = [
-  { value: "property", label: "房地產 / Property" },
-  { value: "securities", label: "上市證券 / Listed Securities" },
-  { value: "deposit", label: "存款 / Deposit" },
-  { value: "bonds", label: "債券 / Bonds" },
-  { value: "funds", label: "基金 / Funds" },
-  { value: "other", label: "其他 / Other" },
-];
-
 const valueRanges = [
   { value: "<1m", label: "<HK$1,000,000" },
   { value: "1m-5m", label: "HK$1,000,000 - HK$5,000,000" },
   { value: "5m-10m", label: "HK$5,000,001 - HK$10,000,000" },
   { value: ">10m", label: ">HK$10,000,000" },
-];
-
-// 曾投資產品
-const experiencedProductsList = [
-  { value: "property", label: "房地產 / Property" },
-  { value: "securities", label: "上市證券 / Listed Securities" },
-  { value: "deposit", label: "存款 / Deposit" },
-  { value: "bonds", label: "債券 / Bonds" },
-  { value: "funds", label: "基金 / Funds" },
-  { value: "other", label: "其他 / Other" },
 ];
 
 interface Props {
@@ -77,8 +48,38 @@ interface Props {
 }
 
 export default function CorporateFinancial({ applicationId, stepNum }: Props) {
+  const { t } = useLang();
   const [, setLocation] = useLocation();
   const showReturnToPreview = useReturnToPreview();
+
+  const incomeSources = [
+    { value: "operation", label: t('營業收入', 'Operation Income', '营业收入') },
+    { value: "investment", label: t('投資收益', 'Investment Income', '投资收益') },
+    { value: "interest", label: t('利息收入', 'Interest Income', '利息收入') },
+    { value: "dividend", label: t('股息收入', 'Dividend Income', '股息收入') },
+    { value: "shareholder", label: t('股東出資', 'Shareholder Contribution', '股东出资') },
+    { value: "rental", label: t('租金收入', 'Rental Income', '租金收入') },
+    { value: "borrowing", label: t('貸款', 'External Borrowing', '贷款') },
+    { value: "other", label: t('其他', 'Other', '其他') },
+  ];
+
+  const assetItemsList = [
+    { value: "property", label: t('房地產', 'Property', '房地产') },
+    { value: "securities", label: t('上市證券', 'Listed Securities', '上市证券') },
+    { value: "deposit", label: t('存款', 'Deposit', '存款') },
+    { value: "bonds", label: t('債券', 'Bonds', '债券') },
+    { value: "funds", label: t('基金', 'Funds', '基金') },
+    { value: "other", label: t('其他', 'Other', '其他') },
+  ];
+
+  const experiencedProductsList = [
+    { value: "property", label: t('房地產', 'Property', '房地产') },
+    { value: "securities", label: t('上市證券', 'Listed Securities', '上市证券') },
+    { value: "deposit", label: t('存款', 'Deposit', '存款') },
+    { value: "bonds", label: t('債券', 'Bonds', '债券') },
+    { value: "funds", label: t('基金', 'Funds', '基金') },
+    { value: "other", label: t('其他', 'Other', '其他') },
+  ];
 
   const [authorizedShareCapital, setAuthorizedShareCapital] = useState("");
   const [issuedShareCapital, setIssuedShareCapital] = useState("");
@@ -124,29 +125,29 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
   const saveMutation = trpc.corporateFinancial.save.useMutation({
     onSuccess: (result) => {
       if (result.success) {
-        toast.success("保存成功");
+        toast.success(t('保存成功', 'Saved successfully', '保存成功'));
         setLocation(`/application/${applicationId}/step/${stepNum + 1}`);
       }
     },
-    onError: (error) => toast.error(`保存失敗: ${error.message}`)
+    onError: (error) => toast.error(`${t('保存失敗', 'Save failed', '保存失败')}: ${error.message}`)
   });
 
   const saveOnlyMutation = trpc.corporateFinancial.save.useMutation({
     onSuccess: (result) => {
-      if (result.success) toast.success("保存成功");
+      if (result.success) toast.success(t('保存成功', 'Saved successfully', '保存成功'));
     },
-    onError: (error) => toast.error(`保存失敗: ${error.message}`)
+    onError: (error) => toast.error(`${t('保存失敗', 'Save failed', '保存失败')}: ${error.message}`)
   });
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
-    if (!authorizedShareCapital) newErrors.authorizedShareCapital = "此欄位必填";
-    if (!issuedShareCapital) newErrors.issuedShareCapital = "此欄位必填";
-    if (initialSourceOfWealth.length === 0) newErrors.initialSourceOfWealth = "請至少選擇一項";
-    if (!netAssetValue) newErrors.netAssetValue = "請選擇淨資產值";
-    if (!netAssetAuditDate) newErrors.netAssetAuditDate = "請填寫淨資產審計時間";
-    if (!profitAfterTax) newErrors.profitAfterTax = "請選擇稅後盈利";
-    if (!profitAuditDate) newErrors.profitAuditDate = "請填寫稅後盈利審計時間";
+    if (!authorizedShareCapital) newErrors.authorizedShareCapital = t('此欄位必填', 'This field is required', '此栏位必填');
+    if (!issuedShareCapital) newErrors.issuedShareCapital = t('此欄位必填', 'This field is required', '此栏位必填');
+    if (initialSourceOfWealth.length === 0) newErrors.initialSourceOfWealth = t('請至少選擇一項', 'Please select at least one', '请至少选择一项');
+    if (!netAssetValue) newErrors.netAssetValue = t('請選擇淨資產值', 'Please select net asset value', '请选择净资产值');
+    if (!netAssetAuditDate) newErrors.netAssetAuditDate = t('請填寫淨資產審計時間', 'Please enter net asset audit date', '请填写净资产审计时间');
+    if (!profitAfterTax) newErrors.profitAfterTax = t('請選擇稅後盈利', 'Please select profit after tax', '请选择税后盈利');
+    if (!profitAuditDate) newErrors.profitAuditDate = t('請填寫稅後盈利審計時間', 'Please enter profit audit date', '请填写税后盈利审计时间');
     // 曾投資產品和資產項目已移至步驟4
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -187,35 +188,35 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
     >
       <div className="space-y-8">
         <div className="space-y-4">
-          <Label className="text-base font-semibold text-slate-800">法定股本 / Authorized Share Capital <span className="text-destructive">*</span></Label>
+          <Label className="text-base font-semibold text-slate-800">{t('法定股本', 'Authorized Share Capital', '法定股本')} <span className="text-destructive">*</span></Label>
           <div className="flex items-center gap-2">
             <Input 
               className="bg-yellow-50 border-2 border-yellow-300 focus:border-blue-500 font-semibold" 
               value={authorizedShareCapital} 
               onChange={e => setAuthorizedShareCapital(e.target.value)}
-              placeholder="請輸入金額"
+              placeholder={t('請輸入金額', 'Enter amount', '请输入金额')}
             />
-            <span className="text-sm font-medium text-slate-600 whitespace-nowrap">萬港元</span>
+            <span className="text-sm font-medium text-slate-600 whitespace-nowrap">{t('萬港元', '0,000 HKD', '万港元')}</span>
           </div>
           {errors.authorizedShareCapital && <p className="text-sm text-destructive">{errors.authorizedShareCapital}</p>}
         </div>
 
         <div className="space-y-4">
-          <Label className="text-base font-semibold text-slate-800">已發行及繳足股本 / Issued Share Capital <span className="text-destructive">*</span></Label>
+          <Label className="text-base font-semibold text-slate-800">{t('已發行及繳足股本', 'Issued Share Capital', '已发行及缴足股本')} <span className="text-destructive">*</span></Label>
           <div className="flex items-center gap-2">
             <Input 
               className="bg-yellow-50 border-2 border-yellow-300 focus:border-blue-500 font-semibold" 
               value={issuedShareCapital} 
               onChange={e => setIssuedShareCapital(e.target.value)}
-              placeholder="請輸入金額"
+              placeholder={t('請輸入金額', 'Enter amount', '请输入金额')}
             />
-            <span className="text-sm font-medium text-slate-600 whitespace-nowrap">萬港元</span>
+            <span className="text-sm font-medium text-slate-600 whitespace-nowrap">{t('萬港元', '0,000 HKD', '万港元')}</span>
           </div>
           {errors.issuedShareCapital && <p className="text-sm text-destructive">{errors.issuedShareCapital}</p>}
         </div>
 
         <div className="space-y-4">
-          <Label className="text-base font-semibold text-slate-800">初始財富來源 / Initial Source of Wealth <span className="text-destructive">*</span></Label>
+          <Label className="text-base font-semibold text-slate-800">{t('初始財富來源', 'Initial Source of Wealth', '初始财富来源')} <span className="text-destructive">*</span></Label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border-2 border-slate-200">
             {incomeSources.map(src => (
               <div key={src.value} className="flex items-center space-x-3">
@@ -234,15 +235,15 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
-            <Label className="text-base font-semibold text-slate-800">淨資產值 / Net Asset Value <span className="text-destructive">*</span></Label>
+            <Label className="text-base font-semibold text-slate-800">{t('淨資產值', 'Net Asset Value', '净资产值')} <span className="text-destructive">*</span></Label>
             <Select value={netAssetValue} onValueChange={setNetAssetValue}>
-              <SelectTrigger className="bg-white border-2 border-slate-300 focus:border-blue-500"><SelectValue placeholder="選擇範圍" /></SelectTrigger>
+              <SelectTrigger className="bg-white border-2 border-slate-300 focus:border-blue-500"><SelectValue placeholder={t('選擇範圍', 'Select range', '选择范围')} /></SelectTrigger>
               <SelectContent>{valueRanges.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}</SelectContent>
             </Select>
             {errors.netAssetValue && <p className="text-sm text-destructive">{errors.netAssetValue}</p>}
           </div>
           <div className="space-y-4">
-            <Label className="text-base font-semibold text-slate-800">淨資產審計時間 (MM/YYYY) / Net Asset Audit Date <span className="text-destructive">*</span></Label>
+            <Label className="text-base font-semibold text-slate-800">{t('淨資產審計時間 (MM/YYYY)', 'Net Asset Audit Date (MM/YYYY)', '净资产审计时间 (MM/YYYY)')} <span className="text-destructive">*</span></Label>
             <Input 
               type="text"
               className="bg-white border-2 border-slate-300 focus:border-blue-500" 
@@ -261,15 +262,15 @@ export default function CorporateFinancial({ applicationId, stepNum }: Props) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
-            <Label className="text-base font-semibold text-slate-800">稅後盈利 / Profit After Tax <span className="text-destructive">*</span></Label>
+            <Label className="text-base font-semibold text-slate-800">{t('稅後盈利', 'Profit After Tax', '税后盈利')} <span className="text-destructive">*</span></Label>
             <Select value={profitAfterTax} onValueChange={setProfitAfterTax}>
-              <SelectTrigger className="bg-white border-2 border-slate-300 focus:border-blue-500"><SelectValue placeholder="選擇範圍" /></SelectTrigger>
+              <SelectTrigger className="bg-white border-2 border-slate-300 focus:border-blue-500"><SelectValue placeholder={t('選擇範圍', 'Select range', '选择范围')} /></SelectTrigger>
               <SelectContent>{valueRanges.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}</SelectContent>
             </Select>
             {errors.profitAfterTax && <p className="text-sm text-destructive">{errors.profitAfterTax}</p>}
           </div>
           <div className="space-y-4">
-            <Label className="text-base font-semibold text-slate-800">稅後盈利審計時間 (MM/YYYY) / Profit Audit Date <span className="text-destructive">*</span></Label>
+            <Label className="text-base font-semibold text-slate-800">{t('稅後盈利審計時間 (MM/YYYY)', 'Profit Audit Date (MM/YYYY)', '税后盈利审计时间 (MM/YYYY)')} <span className="text-destructive">*</span></Label>
             <Input 
               type="text"
               className="bg-white border-2 border-slate-300 focus:border-blue-500" 

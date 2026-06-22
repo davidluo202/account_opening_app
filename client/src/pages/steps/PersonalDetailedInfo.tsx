@@ -14,60 +14,62 @@ import { toast } from "sonner";
 import { Loader2, CheckCircle2 } from "lucide-react";
 import { convertToTraditional } from "@/lib/converter";
 import { validateHKID, validateChinaIDWithMatch, validateIDExpiry } from "@/lib/validators";
-
-const idIssuingCountries = [
-  { value: "HK", label: "香港 Hong Kong" },
-  { value: "CN", label: "中國內地 Chinese Mainland" },
-  { value: "MO", label: "澳門 Macau" },
-  { value: "TW", label: "台灣 Taiwan" },
-  { value: "US", label: "美國 United States" },
-  { value: "GB", label: "英國 United Kingdom" },
-  { value: "SG", label: "新加坡 Singapore" },
-  { value: "AU", label: "澳洲 Australia" },
-  { value: "CA", label: "加拿大 Canada" },
-  { value: "JP", label: "日本 Japan" },
-  { value: "OTHER", label: "其他 Other" },
-];
-
-const idTypes = [
-  { value: "hkid", label: "香港身份證 / HKID" },
-  { value: "passport", label: "護照 / Passport" },
-  { value: "mainland_id", label: "中國大陸身份證 / Mainland ID" },
-  { value: "other", label: "其他 / Other" },
-];
-
-const maritalStatuses = [
-  { value: "single", label: "單身 / Single" },
-  { value: "married", label: "已婚 / Married" },
-  { value: "divorced", label: "離異 / Divorced" },
-  { value: "widowed", label: "喪偶 / Widowed" },
-];
-
-const educationLevels = [
-  { value: "high_school", label: "中學 / High School" },
-  { value: "associate", label: "副學士 / Associate Degree" },
-  { value: "bachelor", label: "學士 / Bachelor" },
-  { value: "master", label: "碩士 / Master" },
-  { value: "doctorate", label: "博士 / Doctorate" },
-  { value: "other", label: "其他 / Other" },
-];
-
-const countryCodes = [
-  { value: "+852", label: "+852 (香港)" },
-  { value: "+86", label: "+86 (中國)" },
-  { value: "+1", label: "+1 (美國/加拿大)" },
-  { value: "+44", label: "+44 (英國)" },
-  { value: "+65", label: "+65 (新加坡)" },
-  { value: "+81", label: "+81 (日本)" },
-  { value: "+82", label: "+82 (韓國)" },
-];
+import { useLang } from '@/lib/i18n';
 
 export default function PersonalDetailedInfo() {
+  const { t } = useLang();
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
   const showReturnToPreview = useReturnToPreview();
   const { user } = useAuth();
+
+  const idIssuingCountries = [
+    { value: "HK", label: t("香港", "Hong Kong") },
+    { value: "CN", label: t("中國內地", "Chinese Mainland", "中国内地") },
+    { value: "MO", label: t("澳門", "Macau", "澳门") },
+    { value: "TW", label: t("台灣", "Taiwan", "台湾") },
+    { value: "US", label: t("美國", "United States", "美国") },
+    { value: "GB", label: t("英國", "United Kingdom", "英国") },
+    { value: "SG", label: t("新加坡", "Singapore") },
+    { value: "AU", label: t("澳洲", "Australia") },
+    { value: "CA", label: t("加拿大", "Canada") },
+    { value: "JP", label: t("日本", "Japan") },
+    { value: "OTHER", label: t("其他", "Other") },
+  ];
+
+  const idTypes = [
+    { value: "hkid", label: t("香港身份證", "HKID", "香港身份证") },
+    { value: "passport", label: t("護照", "Passport", "护照") },
+    { value: "mainland_id", label: t("中國大陸身份證", "Mainland ID", "中国大陆身份证") },
+    { value: "other", label: t("其他", "Other") },
+  ];
+
+  const maritalStatuses = [
+    { value: "single", label: t("單身", "Single", "单身") },
+    { value: "married", label: t("已婚", "Married") },
+    { value: "divorced", label: t("離異", "Divorced", "离异") },
+    { value: "widowed", label: t("喪偶", "Widowed", "丧偶") },
+  ];
+
+  const educationLevels = [
+    { value: "high_school", label: t("中學", "High School", "中学") },
+    { value: "associate", label: t("副學士", "Associate Degree", "副学士") },
+    { value: "bachelor", label: t("學士", "Bachelor", "学士") },
+    { value: "master", label: t("碩士", "Master", "硕士") },
+    { value: "doctorate", label: t("博士", "Doctorate") },
+    { value: "other", label: t("其他", "Other") },
+  ];
+
+  const countryCodes = [
+    { value: "+852", label: t("+852 (香港)", "+852 (HK)") },
+    { value: "+86", label: t("+86 (中國)", "+86 (CN)", "+86 (中国)") },
+    { value: "+1", label: t("+1 (美國/加拿大)", "+1 (US/CA)", "+1 (美国/加拿大)") },
+    { value: "+44", label: t("+44 (英國)", "+44 (UK)", "+44 (英国)") },
+    { value: "+65", label: t("+65 (新加坡)", "+65 (SG)") },
+    { value: "+81", label: t("+81 (日本)", "+81 (JP)") },
+    { value: "+82", label: t("+82 (韓國)", "+82 (KR)", "+82 (韩国)") },
+  ];
 
   // Check if joint account
   const { data: accountSelection } = trpc.accountSelection.get.useQuery(
@@ -79,7 +81,7 @@ export default function PersonalDetailedInfo() {
   // 獲取用戶基本信息（用於匹配身份證信息）
   const { data: basicInfo, error: basicInfoError } = trpc.personalBasic.get.useQuery(
     { applicationId },
-    { 
+    {
       enabled: !!applicationId,
       retry: 1,
     }
@@ -160,7 +162,7 @@ export default function PersonalDetailedInfo() {
 
   const { data: existingData, isLoading: isLoadingData, error: detailedInfoError } = trpc.personalDetailed.get.useQuery(
     { applicationId },
-    { 
+    {
       enabled: !!applicationId,
       retry: 1,
     }
@@ -174,23 +176,23 @@ export default function PersonalDetailedInfo() {
   const saveMutation = trpc.personalDetailed.save.useMutation({
     onSuccess: (result) => {
       if (result.success && result.data) {
-        toast.success("保存成功");
+        toast.success(t("保存成功", "Saved successfully", "保存成功"));
         setLocation(`/application/${applicationId}/step/4`);
       }
     },
     onError: (error) => {
-      toast.error(`保存失敗: ${error.message}`);
+      toast.error(t(`保存失敗: ${error.message}`, `Save failed: ${error.message}`, `保存失败: ${error.message}`));
     },
   });
 
   const saveOnlyMutation = trpc.personalDetailed.save.useMutation({
     onSuccess: (result) => {
       if (result.success) {
-        toast.success("保存成功");
+        toast.success(t("保存成功", "Saved successfully", "保存成功"));
       }
     },
     onError: (error) => {
-      toast.error(`保存失敗: ${error.message}`);
+      toast.error(t(`保存失敗: ${error.message}`, `Save failed: ${error.message}`, `保存失败: ${error.message}`));
     },
   });
 
@@ -245,43 +247,42 @@ export default function PersonalDetailedInfo() {
 
   const sendVerificationCodeMutation = trpc.auth.sendVerificationCode.useMutation({
     onSuccess: () => {
-      toast.success("驗證碼已發送至您的郵箱，請查收！", {
-        duration: 5000, // 顯示5秒
-        description: "請在下方輸入框中輸入6位數字驗證碼"
+      toast.success(t("驗證碼已發送至您的郵箱，請查收！", "Verification code sent to your email!", "验证码已发送至您的邮箱，请查收！"), {
+        duration: 5000,
+        description: t("請在下方輸入框中輸入6位數字驗證碼", "Please enter the 6-digit code below", "请在下方输入框中输入6位数字验证码")
       });
       setShowVerificationInput(true);
-      setCountdown(90); // 90秒倒計時
+      setCountdown(90);
       setIsSendingCode(false);
-      // 自動聚焦到驗證碼輸入框
       setTimeout(() => {
         document.getElementById('verificationCode')?.focus();
       }, 100);
     },
     onError: (error) => {
-      toast.error(`發送失敗: ${error.message}`);
+      toast.error(t(`發送失敗: ${error.message}`, `Send failed: ${error.message}`, `发送失败: ${error.message}`));
       setIsSendingCode(false);
     },
   });
 
   const verifyCodeMutation = trpc.auth.verifyCode.useMutation({
     onSuccess: () => {
-      toast.success("郵箱驗證成功");
+      toast.success(t("郵箱驗證成功", "Email verified successfully", "邮箱验证成功"));
       setEmailVerified(true);
       setShowVerificationInput(false);
       setCountdown(0);
     },
     onError: (error) => {
-      toast.error(`驗證失敗: ${error.message}`);
+      toast.error(t(`驗證失敗: ${error.message}`, `Verification failed: ${error.message}`, `验证失败: ${error.message}`));
     },
   });
 
   const handleSendVerificationCode = () => {
     if (!formData.email.trim()) {
-      toast.error("請先輸入郵箱地址");
+      toast.error(t("請先輸入郵箱地址", "Please enter your email address first", "请先输入邮箱地址"));
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      toast.error("請輸入有效的郵箱地址");
+      toast.error(t("請輸入有效的郵箱地址", "Please enter a valid email address", "请输入有效的邮箱地址"));
       return;
     }
     setIsSendingCode(true);
@@ -290,11 +291,11 @@ export default function PersonalDetailedInfo() {
 
   const handleVerifyCode = () => {
     if (!verificationCode.trim()) {
-      toast.error("請輸入驗證碼");
+      toast.error(t("請輸入驗證碼", "Please enter the verification code", "请输入验证码"));
       return;
     }
     if (verificationCode.length !== 6) {
-      toast.error("驗證碼必須為6位數字");
+      toast.error(t("驗證碼必須為6位數字", "Verification code must be 6 digits", "验证码必须为6位数字"));
       return;
     }
     verifyCodeMutation.mutate({ email: formData.email, code: verificationCode });
@@ -303,7 +304,7 @@ export default function PersonalDetailedInfo() {
   // SMS verification mutations
   const sendSmsMutation = trpc.sms.sendVerification.useMutation({
     onSuccess: () => {
-      toast.success("驗證碼已發送至您的手機，請查收！", { duration: 5000 });
+      toast.success(t("驗證碼已發送至您的手機，請查收！", "Verification code sent to your phone!", "验证码已发送至您的手机，请查收！"), { duration: 5000 });
       setShowSmsInput(true);
       setSmsCountdown(90);
       setIsSendingSms(false);
@@ -312,7 +313,7 @@ export default function PersonalDetailedInfo() {
       }, 100);
     },
     onError: (error) => {
-      toast.error(`發送失敗: ${error.message}`);
+      toast.error(t(`發送失敗: ${error.message}`, `Send failed: ${error.message}`, `发送失败: ${error.message}`));
       setIsSendingSms(false);
     },
   });
@@ -320,7 +321,7 @@ export default function PersonalDetailedInfo() {
   const checkSmsMutation = trpc.sms.checkVerification.useMutation({
     onSuccess: (result) => {
       if (result.success) {
-        toast.success("手機號碼驗證成功");
+        toast.success(t("手機號碼驗證成功", "Phone number verified successfully", "手机号码验证成功"));
         setPhoneVerified(true);
         setShowSmsInput(false);
         setSmsCountdown(0);
@@ -329,13 +330,13 @@ export default function PersonalDetailedInfo() {
       }
     },
     onError: (error) => {
-      toast.error(`驗證失敗: ${error.message}`);
+      toast.error(t(`驗證失敗: ${error.message}`, `Verification failed: ${error.message}`, `验证失败: ${error.message}`));
     },
   });
 
   const handleSendSmsCode = () => {
     if (!formData.mobileNumber.trim()) {
-      toast.error("請先輸入手機號碼");
+      toast.error(t("請先輸入手機號碼", "Please enter your mobile number first", "请先输入手机号码"));
       return;
     }
     setIsSendingSms(true);
@@ -345,11 +346,11 @@ export default function PersonalDetailedInfo() {
 
   const handleVerifySmsCode = () => {
     if (!smsCode.trim()) {
-      toast.error("請輸入驗證碼");
+      toast.error(t("請輸入驗證碼", "Please enter the verification code", "请输入验证码"));
       return;
     }
     if (smsCode.length !== 6) {
-      toast.error("驗證碼必須為6位數字");
+      toast.error(t("驗證碼必須為6位數字", "Verification code must be 6 digits", "验证码必须为6位数字"));
       return;
     }
     const fullPhone = formData.mobileCountryCode + formData.mobileNumber;
@@ -363,83 +364,80 @@ export default function PersonalDetailedInfo() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.idType) newErrors.idType = "請選擇證件類型";
-    
+    if (!formData.idType) newErrors.idType = t("請選擇證件類型", "Please select ID type", "请选择证件类型");
+
     // 證件號碼校驗
     if (!formData.idNumber.trim()) {
-      newErrors.idNumber = "請輸入證件號碼";
+      newErrors.idNumber = t("請輸入證件號碼", "Please enter ID number", "请输入证件号码");
     } else {
       // 根據證件類型進行格式校驗
       if (formData.idType === 'hkid') {
         const hkidResult = validateHKID(formData.idNumber);
         if (!hkidResult.valid) {
-          newErrors.idNumber = hkidResult.message || '香港身份證格式不正確';
+          newErrors.idNumber = hkidResult.message || t('香港身份證格式不正確', 'Invalid HKID format', '香港身份证格式不正确');
         }
       } else if (formData.idType === 'mainland_id') {
-        // 使用增强的校验函数，匹配出生日期和性别
         const cnidResult = validateChinaIDWithMatch(
           formData.idNumber,
           basicInfo?.dateOfBirth,
           basicInfo?.gender as 'male' | 'female' | 'other' | undefined
         );
         if (!cnidResult.valid) {
-          newErrors.idNumber = cnidResult.message || '大陸身份證格式不正確';
+          newErrors.idNumber = cnidResult.message || t('大陸身份證格式不正確', 'Invalid Mainland ID format', '大陆身份证格式不正确');
         }
       }
     }
-    if (!formData.idIssuingCountry) newErrors.idIssuingCountry = "請選擇證件簽發國家/地區";
+    if (!formData.idIssuingCountry) newErrors.idIssuingCountry = t("請選擇證件簽發國家/地區", "Please select issuing country/region", "请选择证件签发国家/地区");
     if (formData.idIssuingCountry === "OTHER" && !formData.idIssuingPlaceOther?.trim()) {
-      newErrors.idIssuingPlaceOther = "請輸入證件簽發國家/地區";
+      newErrors.idIssuingPlaceOther = t("請輸入證件簽發國家/地區", "Please enter issuing country/region", "请输入证件签发国家/地区");
     }
-    
-    // 使用validators.ts中的證件有效期校驗
+
     if (!formData.idIsPermanent) {
       if (!formData.idExpiryDate) {
-        newErrors.idExpiryDate = "請選擇證件有效期";
+        newErrors.idExpiryDate = t("請選擇證件有效期", "Please select ID expiry date", "请选择证件有效期");
       } else {
         const expiryResult = validateIDExpiry(formData.idExpiryDate);
         if (!expiryResult.valid) {
-          newErrors.idExpiryDate = expiryResult.message || '證件有效期必須大於1年';
+          newErrors.idExpiryDate = expiryResult.message || t('證件有效期必須大於1年', 'ID must be valid for more than 1 year', '证件有效期必须大于1年');
         }
       }
     }
 
-    if (!formData.maritalStatus) newErrors.maritalStatus = "請選擇婚姻狀況";
-    if (!formData.educationLevel) newErrors.educationLevel = "請選擇學歷";
-    
+    if (!formData.maritalStatus) newErrors.maritalStatus = t("請選擇婚姻狀況", "Please select marital status", "请选择婚姻状况");
+    if (!formData.educationLevel) newErrors.educationLevel = t("請選擇學歷", "Please select education level", "请选择学历");
+
     // 郵箱校驗
     if (!formData.email.trim()) {
-      newErrors.email = "請輸入電郵地址";
+      newErrors.email = t("請輸入電郵地址", "Please enter email address", "请输入电邮地址");
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "請輸入有效的電郵地址";
+      newErrors.email = t("請輸入有效的電郵地址", "Please enter a valid email address", "请输入有效的电邮地址");
     }
 
     // 手機號碼必填
-    if (!formData.mobileNumber.trim()) newErrors.mobileNumber = "請輸入手機號碼";
-    // 住宅電話可選，不需要驗證
+    if (!formData.mobileNumber.trim()) newErrors.mobileNumber = t("請輸入手機號碼", "Please enter mobile number", "请输入手机号码");
 
-    if (!formData.residentialAddress.trim()) newErrors.residentialAddress = "請輸入住宅地址";
-    
+    if (!formData.residentialAddress.trim()) newErrors.residentialAddress = t("請輸入住宅地址", "Please enter residential address", "请输入住宅地址");
+
     // 賬單通訊地址驗證
     if (formData.billingAddressType === "other" && !formData.billingAddressOther.trim()) {
-      newErrors.billingAddressOther = "請輸入賬單通訊地址";
+      newErrors.billingAddressOther = t("請輸入賬單通訊地址", "Please enter billing address", "请输入账单通讯地址");
     }
 
     // 聯名賬戶：驗證第二持有人
     if (isJoint) {
-      if (!secondHolder.idType) newErrors.secondIdType = "請填寫第二持有人的證件類型";
-      if (!secondHolder.idNumber.trim()) newErrors.secondIdNumber = "請填寫第二持有人的證件號碼";
-      if (!secondHolder.idIssuingCountry) newErrors.secondIdIssuingCountry = "請填寫第二持有人的證件簽發國家/地區";
+      if (!secondHolder.idType) newErrors.secondIdType = t("請填寫第二持有人的證件類型", "Please select second holder's ID type", "请填写第二持有人的证件类型");
+      if (!secondHolder.idNumber.trim()) newErrors.secondIdNumber = t("請填寫第二持有人的證件號碼", "Please enter second holder's ID number", "请填写第二持有人的证件号码");
+      if (!secondHolder.idIssuingCountry) newErrors.secondIdIssuingCountry = t("請填寫第二持有人的證件簽發國家/地區", "Please select second holder's issuing country/region", "请填写第二持有人的证件签发国家/地区");
       if (secondHolder.idIssuingCountry === "OTHER" && !secondHolder.idIssuingPlaceOther?.trim()) {
-        newErrors.secondIdIssuingPlaceOther = "請填寫第二持有人的證件簽發國家/地區";
+        newErrors.secondIdIssuingPlaceOther = t("請填寫第二持有人的證件簽發國家/地區", "Please enter second holder's issuing country/region", "请填写第二持有人的证件签发国家/地区");
       }
       if (!secondHolder.idIsPermanent && !secondHolder.idExpiryDate) {
-        newErrors.secondIdExpiryDate = "請填寫第二持有人的證件有效期";
+        newErrors.secondIdExpiryDate = t("請填寫第二持有人的證件有效期", "Please select second holder's ID expiry date", "请填写第二持有人的证件有效期");
       }
-      if (!secondHolder.maritalStatus) newErrors.secondMaritalStatus = "請填寫第二持有人的婚姻狀況";
-      if (!secondHolder.educationLevel) newErrors.secondEducationLevel = "請填寫第二持有人的學歷";
-      if (!secondHolder.mobileNumber.trim()) newErrors.secondMobileNumber = "請填寫第二持有人的手機號碼";
-      if (!secondHolder.residentialAddress.trim()) newErrors.secondResidentialAddress = "請填寫第二持有人的住宅地址";
+      if (!secondHolder.maritalStatus) newErrors.secondMaritalStatus = t("請填寫第二持有人的婚姻狀況", "Please select second holder's marital status", "请填写第二持有人的婚姻状况");
+      if (!secondHolder.educationLevel) newErrors.secondEducationLevel = t("請填寫第二持有人的學歷", "Please select second holder's education level", "请填写第二持有人的学历");
+      if (!secondHolder.mobileNumber.trim()) newErrors.secondMobileNumber = t("請填寫第二持有人的手機號碼", "Please enter second holder's mobile number", "请填写第二持有人的手机号码");
+      if (!secondHolder.residentialAddress.trim()) newErrors.secondResidentialAddress = t("請填寫第二持有人的住宅地址", "Please enter second holder's residential address", "请填写第二持有人的住宅地址");
     }
 
     setErrors(newErrors);
@@ -448,7 +446,7 @@ export default function PersonalDetailedInfo() {
 
   const handleSave = () => {
     if (!validateForm()) {
-      toast.error("請檢查表單中的錯誤");
+      toast.error(t("請檢查表單中的錯誤", "Please check the form for errors", "请检查表单中的错误"));
       return;
     }
 
@@ -457,7 +455,7 @@ export default function PersonalDetailedInfo() {
       ...formData,
       idIsPermanent: !!formData.idIsPermanent,
       idExpiryDate: formData.idIsPermanent ? undefined : formData.idExpiryDate,
-      emailVerified, // 保存郵箱驗證狀態
+      emailVerified,
     });
     if (isJoint) {
       saveSecondHolderMutation.mutate({ applicationId, stepName: 'personalDetailed', data: secondHolder });
@@ -466,7 +464,7 @@ export default function PersonalDetailedInfo() {
 
   const handleNext = () => {
     if (!validateForm()) {
-      toast.error("請檢查表單中的錯誤");
+      toast.error(t("請檢查表單中的錯誤", "Please check the form for errors", "请检查表单中的错误"));
       return;
     }
 
@@ -478,7 +476,7 @@ export default function PersonalDetailedInfo() {
       ...formData,
       idIsPermanent: !!formData.idIsPermanent,
       idExpiryDate: formData.idIsPermanent ? undefined : formData.idExpiryDate,
-      emailVerified, // 保存郵箱驗證狀態
+      emailVerified,
     });
   };
 
@@ -506,22 +504,22 @@ export default function PersonalDetailedInfo() {
     >
       <div className="space-y-6">
         {isJoint && (
-          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">賬戶主要持有人 / Primary Account Holder</h3>
+          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">{t('賬戶主要持有人', 'Primary Account Holder', '账户主要持有人')}</h3>
         )}
         {/* 身份證件類型 */}
         <div className="space-y-2">
           <Label htmlFor="idType">
-            身份證件類型 / ID Type <span className="text-destructive">*</span>
+            {t('身份證件類型', 'ID Type', '身份证件类型')} <span className="text-destructive">*</span>
           </Label>
-          <Select 
-            value={formData.idType} 
+          <Select
+            value={formData.idType}
             onValueChange={(v) => {
               setFormData({ ...formData, idType: v });
               if (errors.idType) setErrors({ ...errors, idType: "" });
             }}
           >
             <SelectTrigger className={errors.idType ? "border-destructive" : ""}>
-              <SelectValue placeholder="請選擇證件類型" />
+              <SelectValue placeholder={t('請選擇證件類型', 'Please select ID type', '请选择证件类型')} />
             </SelectTrigger>
             <SelectContent>
               {idTypes.map((type) => (
@@ -538,7 +536,7 @@ export default function PersonalDetailedInfo() {
           {/* 證件號碼 */}
           <div className="space-y-2">
             <Label htmlFor="idNumber">
-              證件號碼 / ID Number <span className="text-destructive">*</span>
+              {t('證件號碼', 'ID Number', '证件号码')} <span className="text-destructive">*</span>
             </Label>
             <Input
               id="idNumber"
@@ -552,7 +550,7 @@ export default function PersonalDetailedInfo() {
                 setFormData({ ...formData, idNumber: val });
                 if (errors.idNumber) setErrors({ ...errors, idNumber: "" });
               }}
-              placeholder={formData.idType === 'mainland_id' ? '請輸入18位身份證號碼' : '請輸入證件號碼'}
+              placeholder={formData.idType === 'mainland_id' ? t('請輸入18位身份證號碼', 'Please enter 18-digit ID number', '请输入18位身份证号码') : t('請輸入證件號碼', 'Please enter ID number', '请输入证件号码')}
               maxLength={formData.idType === 'mainland_id' ? 18 : undefined}
               className={errors.idNumber ? "border-destructive" : ""}
             />
@@ -562,7 +560,7 @@ export default function PersonalDetailedInfo() {
           {/* 證件簽發國家/地區 */}
           <div className="space-y-2">
             <Label htmlFor="idIssuingCountry">
-              證件簽發國家/地區 / Issuing Country <span className="text-destructive">*</span>
+              {t('證件簽發國家/地區', 'Issuing Country/Region', '证件签发国家/地区')} <span className="text-destructive">*</span>
             </Label>
             <Select
               value={formData.idIssuingCountry}
@@ -573,7 +571,7 @@ export default function PersonalDetailedInfo() {
               }}
             >
               <SelectTrigger className={errors.idIssuingCountry ? "border-destructive" : ""}>
-                <SelectValue placeholder="請選擇國家/地區" />
+                <SelectValue placeholder={t('請選擇國家/地區', 'Please select country/region', '请选择国家/地区')} />
               </SelectTrigger>
               <SelectContent>
                 {idIssuingCountries.map((country) => (
@@ -590,7 +588,7 @@ export default function PersonalDetailedInfo() {
           {formData.idIssuingCountry === "OTHER" && (
             <div className="space-y-2">
               <Label htmlFor="idIssuingPlaceOther">
-                請輸入國家/地區 <span className="text-destructive">*</span>
+                {t('請輸入國家/地區', 'Please enter country/region', '请输入国家/地区')} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="idIssuingPlaceOther"
@@ -599,7 +597,7 @@ export default function PersonalDetailedInfo() {
                   setFormData({ ...formData, idIssuingPlaceOther: e.target.value });
                   if (errors.idIssuingPlaceOther) setErrors({ ...errors, idIssuingPlaceOther: "" });
                 }}
-                placeholder="請輸入國家/地區"
+                placeholder={t('請輸入國家/地區', 'Please enter country/region', '请输入国家/地区')}
                 className={errors.idIssuingPlaceOther ? "border-destructive" : ""}
               />
               {errors.idIssuingPlaceOther && <p className="text-sm text-destructive">{errors.idIssuingPlaceOther}</p>}
@@ -619,14 +617,14 @@ export default function PersonalDetailedInfo() {
               }}
             />
             <Label htmlFor="idIsPermanent" className="cursor-pointer">
-              證件長期有效 / Permanent
+              {t('證件長期有效', 'Permanent', '证件长期有效')}
             </Label>
           </div>
-          
+
           {!formData.idIsPermanent && (
             <>
               <Label htmlFor="idExpiryDate">
-                證件有效期 / Expiry Date <span className="text-destructive">*</span>
+                {t('證件有效期', 'Expiry Date', '证件有效期')} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="idExpiryDate"
@@ -647,17 +645,17 @@ export default function PersonalDetailedInfo() {
           {/* 婚姻狀況 */}
           <div className="space-y-2">
             <Label htmlFor="maritalStatus">
-              婚姻狀況 / Marital Status <span className="text-destructive">*</span>
+              {t('婚姻狀況', 'Marital Status', '婚姻状况')} <span className="text-destructive">*</span>
             </Label>
-            <Select 
-              value={formData.maritalStatus} 
+            <Select
+              value={formData.maritalStatus}
               onValueChange={(v) => {
                 setFormData({ ...formData, maritalStatus: v });
                 if (errors.maritalStatus) setErrors({ ...errors, maritalStatus: "" });
               }}
             >
               <SelectTrigger className={errors.maritalStatus ? "border-destructive" : ""}>
-                <SelectValue placeholder="請選擇婚姻狀況" />
+                <SelectValue placeholder={t('請選擇婚姻狀況', 'Please select marital status', '请选择婚姻状况')} />
               </SelectTrigger>
               <SelectContent>
                 {maritalStatuses.map((status) => (
@@ -673,17 +671,17 @@ export default function PersonalDetailedInfo() {
           {/* 學歷 */}
           <div className="space-y-2">
             <Label htmlFor="educationLevel">
-              學歷 / Education Level <span className="text-destructive">*</span>
+              {t('學歷', 'Education Level', '学历')} <span className="text-destructive">*</span>
             </Label>
-            <Select 
-              value={formData.educationLevel} 
+            <Select
+              value={formData.educationLevel}
               onValueChange={(v) => {
                 setFormData({ ...formData, educationLevel: v });
                 if (errors.educationLevel) setErrors({ ...errors, educationLevel: "" });
               }}
             >
               <SelectTrigger className={errors.educationLevel ? "border-destructive" : ""}>
-                <SelectValue placeholder="請選擇學歷" />
+                <SelectValue placeholder={t('請選擇學歷', 'Please select education level', '请选择学历')} />
               </SelectTrigger>
               <SelectContent>
                 {educationLevels.map((level) => (
@@ -700,8 +698,8 @@ export default function PersonalDetailedInfo() {
         {/* 電郵地址 */}
         <div className="space-y-2">
             <Label htmlFor="email">
-              電郵地址 / Email <span className="text-destructive">*</span>
-              <span className="text-sm text-green-600 ml-2">（已於註冊時驗證）</span>
+              {t('電郵地址', 'Email', '电邮地址')} <span className="text-destructive">*</span>
+              <span className="text-sm text-green-600 ml-2">{t('（已於註冊時驗證）', '(Verified during registration)', '（已于注册时验证）')}</span>
             </Label>
             <Input
               id="email"
@@ -711,14 +709,14 @@ export default function PersonalDetailedInfo() {
               className="bg-green-50 border-green-300"
               disabled
             />
-            <p className="text-xs text-muted-foreground">此電郵地址自動套用您註冊時驗證的電郵</p>
+            <p className="text-xs text-muted-foreground">{t('此電郵地址自動套用您註冊時驗證的電郵', 'This email is automatically applied from your registration', '此电邮地址自动套用您注册时验证的电邮')}</p>
           {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
         </div>
 
         {/* 住宅電話 */}
         <div className="space-y-2">
           <Label htmlFor="phoneNumber">
-            住宅電話 / Residential Phone
+            {t('住宅電話', 'Residential Phone', '住宅电话')}
           </Label>
           <div className="flex gap-2">
             <Select
@@ -743,7 +741,7 @@ export default function PersonalDetailedInfo() {
                 setFormData({ ...formData, phoneNumber: e.target.value });
                 if (errors.phoneNumber) setErrors({ ...errors, phoneNumber: "" });
               }}
-              placeholder="請輸入住宅電話"
+              placeholder={t('請輸入住宅電話', 'Please enter residential phone', '请输入住宅电话')}
               className={`flex-1 ${errors.phoneNumber ? "border-destructive" : ""}`}
             />
           </div>
@@ -753,11 +751,11 @@ export default function PersonalDetailedInfo() {
         {/* 手機號碼 */}
         <div className="space-y-2">
           <Label htmlFor="mobileNumber">
-            手機號碼 / Mobile Number <span className="text-destructive">*</span>
+            {t('手機號碼', 'Mobile Number', '手机号码')} <span className="text-destructive">*</span>
           </Label>
           <div className="flex gap-2">
-            <Select 
-              value={formData.mobileCountryCode} 
+            <Select
+              value={formData.mobileCountryCode}
               onValueChange={(v) => setFormData({ ...formData, mobileCountryCode: v })}
             >
               <SelectTrigger className="w-[180px]">
@@ -778,7 +776,7 @@ export default function PersonalDetailedInfo() {
                 setFormData({ ...formData, mobileNumber: e.target.value });
                 if (errors.mobileNumber) setErrors({ ...errors, mobileNumber: "" });
               }}
-              placeholder="請輸入手機號碼"
+              placeholder={t('請輸入手機號碼', 'Please enter mobile number', '请输入手机号码')}
               className={`flex-1 ${errors.mobileNumber ? "border-destructive" : ""}`}
             />
           </div>
@@ -788,7 +786,7 @@ export default function PersonalDetailedInfo() {
           {phoneVerified ? (
             <div className="flex items-center gap-2 text-sm text-green-600">
               <CheckCircle2 className="h-4 w-4" />
-              手機號碼已驗證
+              {t('手機號碼已驗證', 'Phone number verified', '手机号码已验证')}
             </div>
           ) : (
             <div className="space-y-2">
@@ -801,11 +799,11 @@ export default function PersonalDetailedInfo() {
                   onClick={handleSendSmsCode}
                 >
                   {isSendingSms ? (
-                    <><Loader2 className="mr-1 h-3 w-3 animate-spin" />發送中...</>
+                    <><Loader2 className="mr-1 h-3 w-3 animate-spin" />{t('發送中...', 'Sending...', '发送中...')}</>
                   ) : smsCountdown > 0 ? (
-                    `${smsCountdown}s 後重發`
+                    `${smsCountdown}s ${t('後重發', 'to resend', '后重发')}`
                   ) : (
-                    '發送短信驗證碼'
+                    t('發送短信驗證碼', 'Send SMS code', '发送短信验证码')
                   )}
                 </Button>
               </div>
@@ -815,7 +813,7 @@ export default function PersonalDetailedInfo() {
                     id="smsCode"
                     value={smsCode}
                     onChange={(e) => setSmsCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    placeholder="請輸入6位驗證碼"
+                    placeholder={t('請輸入6位驗證碼', 'Enter 6-digit code', '请输入6位验证码')}
                     className="w-[200px]"
                     maxLength={6}
                   />
@@ -826,9 +824,9 @@ export default function PersonalDetailedInfo() {
                     onClick={handleVerifySmsCode}
                   >
                     {checkSmsMutation.isPending ? (
-                      <><Loader2 className="mr-1 h-3 w-3 animate-spin" />驗證中...</>
+                      <><Loader2 className="mr-1 h-3 w-3 animate-spin" />{t('驗證中...', 'Verifying...', '验证中...')}</>
                     ) : (
-                      '驗證'
+                      t('驗證', 'Verify', '验证')
                     )}
                   </Button>
                 </div>
@@ -840,20 +838,20 @@ export default function PersonalDetailedInfo() {
         {/* 傳真號碼 */}
         <div className="space-y-2">
           <Label htmlFor="faxNo">
-            傳真號碼 / Fax Number
+            {t('傳真號碼', 'Fax Number', '传真号码')}
           </Label>
           <Input
             id="faxNo"
             value={formData.faxNo}
             onChange={(e) => setFormData({ ...formData, faxNo: e.target.value })}
-            placeholder="請輸入傳真號碼"
+            placeholder={t('請輸入傳真號碼', 'Please enter fax number', '请输入传真号码')}
           />
         </div>
 
         {/* 住宅地址 */}
         <div className="space-y-2">
           <Label htmlFor="residentialAddress">
-            住宅地址 / Residential Address <span className="text-destructive">*</span>
+            {t('住宅地址', 'Residential Address', '住宅地址')} <span className="text-destructive">*</span>
           </Label>
             <Textarea
               id="residentialAddress"
@@ -869,7 +867,7 @@ export default function PersonalDetailedInfo() {
                   setFormData({ ...formData, residentialAddress: converted });
                 }
               }}
-              placeholder="請輸入完整住宅地址"
+              placeholder={t('請輸入完整住宅地址', 'Please enter full residential address', '请输入完整住宅地址')}
               rows={3}
               className={errors.residentialAddress ? "border-destructive" : ""}
             />
@@ -879,7 +877,7 @@ export default function PersonalDetailedInfo() {
         {/* 賬單通訊地址 */}
         <div className="space-y-2">
           <Label>
-            賬單通訊地址 / Billing Address <span className="text-destructive">*</span>
+            {t('賬單通訊地址', 'Billing Address', '账单通讯地址')} <span className="text-destructive">*</span>
           </Label>
           <div className="space-y-3">
             <div className="flex flex-col gap-2">
@@ -892,7 +890,7 @@ export default function PersonalDetailedInfo() {
                   onChange={(e) => setFormData({ ...formData, billingAddressType: e.target.value as "residential" | "office" | "other" })}
                   className="w-4 h-4"
                 />
-                <span>住宅住址 / Residential Address</span>
+                <span>{t('住宅住址', 'Residential Address', '住宅住址')}</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -903,7 +901,7 @@ export default function PersonalDetailedInfo() {
                   onChange={(e) => setFormData({ ...formData, billingAddressType: e.target.value as "residential" | "office" | "other" })}
                   className="w-4 h-4"
                 />
-                <span>辦公地址 / Office Address</span>
+                <span>{t('辦公地址', 'Office Address', '办公地址')}</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -914,7 +912,7 @@ export default function PersonalDetailedInfo() {
                   onChange={(e) => setFormData({ ...formData, billingAddressType: e.target.value as "residential" | "office" | "other" })}
                   className="w-4 h-4"
                 />
-                <span>其他 / Other</span>
+                <span>{t('其他', 'Other')}</span>
               </label>
             </div>
             {formData.billingAddressType === "other" && (
@@ -930,7 +928,7 @@ export default function PersonalDetailedInfo() {
                     setFormData({ ...formData, billingAddressOther: converted });
                   }
                 }}
-                placeholder="請輸入完整賬單通訊地址"
+                placeholder={t('請輸入完整賬單通訊地址', 'Please enter full billing address', '请输入完整账单通讯地址')}
                 rows={3}
                 className={errors.billingAddressOther ? "border-destructive" : ""}
               />
@@ -942,7 +940,7 @@ export default function PersonalDetailedInfo() {
         {/* 賬單首選語言 */}
         <div className="space-y-2">
           <Label>
-            賬單首選語言 / Preferred Language for Statements <span className="text-destructive">*</span>
+            {t('賬單首選語言', 'Preferred Language for Statements', '账单首选语言')} <span className="text-destructive">*</span>
           </Label>
           <div className="flex gap-4">
             <label className="flex items-center gap-2 cursor-pointer">
@@ -954,7 +952,7 @@ export default function PersonalDetailedInfo() {
                 onChange={(e) => setFormData({ ...formData, preferredLanguage: e.target.value as "chinese" | "english" })}
                 className="w-4 h-4"
               />
-              <span>中文 / Chinese</span>
+              <span>{t('中文', 'Chinese')}</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -965,7 +963,7 @@ export default function PersonalDetailedInfo() {
                 onChange={(e) => setFormData({ ...formData, preferredLanguage: e.target.value as "chinese" | "english" })}
                 className="w-4 h-4"
               />
-              <span>英文 / English</span>
+              <span>{t('英文', 'English')}</span>
             </label>
           </div>
         </div>
@@ -973,11 +971,11 @@ export default function PersonalDetailedInfo() {
         {/* 聯名賬戶：第二持有人 */}
         {isJoint && (
           <>
-            <h3 className="text-lg font-bold text-primary border-b pb-2 mt-8 mb-2">賬戶第二持有人 / Second Account Holder</h3>
+            <h3 className="text-lg font-bold text-primary border-b pb-2 mt-8 mb-2">{t('賬戶第二持有人', 'Second Account Holder', '账户第二持有人')}</h3>
             {/* 身份證件類型 */}
             <div className="space-y-2">
               <Label>
-                身份證件類型 / ID Type <span className="text-destructive">*</span>
+                {t('身份證件類型', 'ID Type', '身份证件类型')} <span className="text-destructive">*</span>
               </Label>
               <Select
                 value={secondHolder.idType}
@@ -987,7 +985,7 @@ export default function PersonalDetailedInfo() {
                 }}
               >
                 <SelectTrigger className={errors.secondIdType ? "border-destructive" : ""}>
-                  <SelectValue placeholder="請選擇證件類型" />
+                  <SelectValue placeholder={t('請選擇證件類型', 'Please select ID type', '请选择证件类型')} />
                 </SelectTrigger>
                 <SelectContent>
                   {idTypes.map((type) => (
@@ -1004,7 +1002,7 @@ export default function PersonalDetailedInfo() {
               {/* 證件號碼 */}
               <div className="space-y-2">
                 <Label>
-                  證件號碼 / ID Number <span className="text-destructive">*</span>
+                  {t('證件號碼', 'ID Number', '证件号码')} <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   value={secondHolder.idNumber}
@@ -1016,7 +1014,7 @@ export default function PersonalDetailedInfo() {
                     setSecondHolder({ ...secondHolder, idNumber: val });
                     if (errors.secondIdNumber) setErrors({ ...errors, secondIdNumber: "" });
                   }}
-                  placeholder={secondHolder.idType === 'mainland_id' ? '請輸入18位身份證號碼' : '請輸入證件號碼'}
+                  placeholder={secondHolder.idType === 'mainland_id' ? t('請輸入18位身份證號碼', 'Please enter 18-digit ID number', '请输入18位身份证号码') : t('請輸入證件號碼', 'Please enter ID number', '请输入证件号码')}
                   maxLength={secondHolder.idType === 'mainland_id' ? 18 : undefined}
                   className={errors.secondIdNumber ? "border-destructive" : ""}
                 />
@@ -1026,7 +1024,7 @@ export default function PersonalDetailedInfo() {
               {/* 證件簽發國家/地區 */}
               <div className="space-y-2">
                 <Label>
-                  證件簽發國家/地區 / Issuing Country <span className="text-destructive">*</span>
+                  {t('證件簽發國家/地區', 'Issuing Country/Region', '证件签发国家/地区')} <span className="text-destructive">*</span>
                 </Label>
                 <Select
                   value={secondHolder.idIssuingCountry}
@@ -1036,7 +1034,7 @@ export default function PersonalDetailedInfo() {
                   }}
                 >
                   <SelectTrigger className={errors.secondIdIssuingCountry ? "border-destructive" : ""}>
-                    <SelectValue placeholder="請選擇國家/地區" />
+                    <SelectValue placeholder={t('請選擇國家/地區', 'Please select country/region', '请选择国家/地区')} />
                   </SelectTrigger>
                   <SelectContent>
                     {idIssuingCountries.map((country) => (
@@ -1052,7 +1050,7 @@ export default function PersonalDetailedInfo() {
               {secondHolder.idIssuingCountry === "OTHER" && (
                 <div className="space-y-2">
                   <Label>
-                    請輸入國家/地區 <span className="text-destructive">*</span>
+                    {t('請輸入國家/地區', 'Please enter country/region', '请输入国家/地区')} <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     value={secondHolder.idIssuingPlaceOther}
@@ -1060,7 +1058,7 @@ export default function PersonalDetailedInfo() {
                       setSecondHolder({ ...secondHolder, idIssuingPlaceOther: e.target.value });
                       if (errors.secondIdIssuingPlaceOther) setErrors({ ...errors, secondIdIssuingPlaceOther: "" });
                     }}
-                    placeholder="請輸入國家/地區"
+                    placeholder={t('請輸入國家/地區', 'Please enter country/region', '请输入国家/地区')}
                     className={errors.secondIdIssuingPlaceOther ? "border-destructive" : ""}
                   />
                   {errors.secondIdIssuingPlaceOther && <p className="text-sm text-destructive">{errors.secondIdIssuingPlaceOther}</p>}
@@ -1077,13 +1075,13 @@ export default function PersonalDetailedInfo() {
                   onCheckedChange={(checked) => setSecondHolder({ ...secondHolder, idIsPermanent: checked as boolean, idExpiryDate: "" })}
                 />
                 <Label htmlFor="secondIdIsPermanent" className="cursor-pointer">
-                  證件長期有效 / Permanent
+                  {t('證件長期有效', 'Permanent', '证件长期有效')}
                 </Label>
               </div>
               {!secondHolder.idIsPermanent && (
                 <>
                   <Label>
-                    證件有效期 / Expiry Date <span className="text-destructive">*</span>
+                    {t('證件有效期', 'Expiry Date', '证件有效期')} <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     type="date"
@@ -1103,7 +1101,7 @@ export default function PersonalDetailedInfo() {
               {/* 婚姻狀況 */}
               <div className="space-y-2">
                 <Label>
-                  婚姻狀況 / Marital Status <span className="text-destructive">*</span>
+                  {t('婚姻狀況', 'Marital Status', '婚姻状况')} <span className="text-destructive">*</span>
                 </Label>
                 <Select
                   value={secondHolder.maritalStatus}
@@ -1113,7 +1111,7 @@ export default function PersonalDetailedInfo() {
                   }}
                 >
                   <SelectTrigger className={errors.secondMaritalStatus ? "border-destructive" : ""}>
-                    <SelectValue placeholder="請選擇婚姻狀況" />
+                    <SelectValue placeholder={t('請選擇婚姻狀況', 'Please select marital status', '请选择婚姻状况')} />
                   </SelectTrigger>
                   <SelectContent>
                     {maritalStatuses.map((status) => (
@@ -1129,7 +1127,7 @@ export default function PersonalDetailedInfo() {
               {/* 學歷 */}
               <div className="space-y-2">
                 <Label>
-                  學歷 / Education Level <span className="text-destructive">*</span>
+                  {t('學歷', 'Education Level', '学历')} <span className="text-destructive">*</span>
                 </Label>
                 <Select
                   value={secondHolder.educationLevel}
@@ -1139,7 +1137,7 @@ export default function PersonalDetailedInfo() {
                   }}
                 >
                   <SelectTrigger className={errors.secondEducationLevel ? "border-destructive" : ""}>
-                    <SelectValue placeholder="請選擇學歷" />
+                    <SelectValue placeholder={t('請選擇學歷', 'Please select education level', '请选择学历')} />
                   </SelectTrigger>
                   <SelectContent>
                     {educationLevels.map((level) => (
@@ -1156,7 +1154,7 @@ export default function PersonalDetailedInfo() {
             {/* 手機號碼 */}
             <div className="space-y-2">
               <Label>
-                手機號碼 / Mobile Number <span className="text-destructive">*</span>
+                {t('手機號碼', 'Mobile Number', '手机号码')} <span className="text-destructive">*</span>
               </Label>
               <div className="flex gap-2">
                 <Select
@@ -1180,7 +1178,7 @@ export default function PersonalDetailedInfo() {
                     setSecondHolder({ ...secondHolder, mobileNumber: e.target.value });
                     if (errors.secondMobileNumber) setErrors({ ...errors, secondMobileNumber: "" });
                   }}
-                  placeholder="請輸入手機號碼"
+                  placeholder={t('請輸入手機號碼', 'Please enter mobile number', '请输入手机号码')}
                   className={`flex-1 ${errors.secondMobileNumber ? "border-destructive" : ""}`}
                 />
               </div>
@@ -1190,7 +1188,7 @@ export default function PersonalDetailedInfo() {
             {/* 住宅地址 */}
             <div className="space-y-2">
               <Label>
-                住宅地址 / Residential Address <span className="text-destructive">*</span>
+                {t('住宅地址', 'Residential Address', '住宅地址')} <span className="text-destructive">*</span>
               </Label>
               <Textarea
                 value={secondHolder.residentialAddress}
@@ -1204,7 +1202,7 @@ export default function PersonalDetailedInfo() {
                     setSecondHolder({ ...secondHolder, residentialAddress: converted });
                   }
                 }}
-                placeholder="請輸入完整住宅地址"
+                placeholder={t('請輸入完整住宅地址', 'Please enter full residential address', '请输入完整住宅地址')}
                 rows={3}
                 className={errors.secondResidentialAddress ? "border-destructive" : ""}
               />
