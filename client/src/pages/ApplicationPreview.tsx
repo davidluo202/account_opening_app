@@ -2049,8 +2049,8 @@ export default function ApplicationPreview() {
         {/* 提示信息 */}
         {!application?.applicationNumber && (
           <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p className=”text-sm text-yellow-800”>
-              <strong>{t('提示', 'Note', '提示')}：</strong>{t('請先點擊「保存並生成申請編號」按鈕，生成申請編號後才能提交申請。', 'Please click “Save & Generate Number” first. You can only submit after generating an application number.', '请先点击”保存并生成申请编号”按钮，生成申请编号后才能提交申请。')}
+            <p className="text-sm text-yellow-800">
+              <strong>{t('提示', 'Note', '提示')}：</strong>{t('請先點擊「保存並生成申請編號」按鈕，生成申請編號後才能提交申請。', 'Please click the "Save & Generate Number" button first. You can only submit after generating an application number.', '请先点击「保存并生成申请编号」按钮，生成申请编号后才能提交申请。')}
             </p>
           </div>
         )}
