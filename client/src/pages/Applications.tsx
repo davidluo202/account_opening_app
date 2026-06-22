@@ -12,24 +12,25 @@ import { TopHeader } from "@/components/TopHeader";
 import { useLang } from '@/lib/i18n';
 import { toast } from "sonner";
 
-const statusLabels: Record<string, { zh: string; en: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  draft: { zh: "草稿", en: "Draft", variant: "secondary" },
-  submitted: { zh: "已提交", en: "Submitted", variant: "default" },
-  under_review: { zh: "審核中", en: "Under Review", variant: "outline" },
-  approved: { zh: "已批准", en: "Approved", variant: "default" },
-  rejected: { zh: "已拒絕", en: "Rejected", variant: "destructive" },
+const statusConfig: Record<string, { tw: string; en: string; cn: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+  draft: { tw: "草稿", en: "Draft", cn: "草稿", variant: "secondary" },
+  submitted: { tw: "已提交", en: "Submitted", cn: "已提交", variant: "default" },
+  under_review: { tw: "審核中", en: "Under Review", cn: "审核中", variant: "outline" },
+  approved: { tw: "已批准", en: "Approved", cn: "已批准", variant: "default" },
+  rejected: { tw: "已拒絕", en: "Rejected", cn: "已拒绝", variant: "destructive" },
+  returned: { tw: "已退回", en: "Returned", cn: "已退回", variant: "outline" },
 };
 
-const accountTypeLabels: Record<string, { zh: string; en: string }> = {
-  individual: { zh: "個人", en: "Individual" },
-  joint: { zh: "聯名", en: "Joint" },
-  corporate: { zh: "機構", en: "Corporate" },
+const accountTypeConfig: Record<string, { tw: string; en: string; cn: string }> = {
+  individual: { tw: "個人", en: "Individual", cn: "个人" },
+  joint: { tw: "聯名", en: "Joint", cn: "联名" },
+  corporate: { tw: "機構", en: "Corporate", cn: "机构" },
 };
 
-const accountSubTypeLabels: Record<string, { zh: string; en: string }> = {
-  cash: { zh: "現金", en: "Cash" },
-  margin: { zh: "保證金", en: "Margin" },
-  derivatives: { zh: "衍生品", en: "Derivatives" },
+const accountSubTypeConfig: Record<string, { tw: string; en: string; cn: string }> = {
+  cash: { tw: "現金", en: "Cash", cn: "现金" },
+  margin: { tw: "保證金", en: "Margin", cn: "保证金" },
+  derivatives: { tw: "衍生品", en: "Derivatives", cn: "衍生品" },
 };
 
 export default function Applications() {
@@ -178,8 +179,8 @@ export default function Applications() {
                     <div>
                       <CardTitle className="flex items-center gap-2">
                         {app.applicationNumber || `${t('申請', 'Application', '申请')} #${app.id}`}
-                        <Badge variant={statusLabels[app.status]?.variant || "secondary"}>
-                          {statusLabels[app.status]?.zh || app.status}
+                        <Badge variant={statusConfig[app.status]?.variant || "secondary"}>
+                          {statusConfig[app.status] ? t(statusConfig[app.status].tw, statusConfig[app.status].en, statusConfig[app.status].cn) : app.status}
                         </Badge>
                       </CardTitle>
                       <CardDescription>
