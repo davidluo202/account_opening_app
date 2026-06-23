@@ -1237,8 +1237,11 @@ export const appRouter = router({
         try {
           const { RekognitionClient, CompareFacesCommand } = await import('@aws-sdk/client-rekognition');
 
+          const akid = (process.env.AWS_ACCESS_KEY_ID || '').trim();
+          const asak = (process.env.AWS_SECRET_ACCESS_KEY || '').trim();
           const rekognitionClient = new RekognitionClient({
-            region: process.env.AWS_REKOGNITION_REGION || process.env.AWS_REGION || 'ap-southeast-1',
+            region: process.env.AWS_REKOGNITION_REGION || (process.env.AWS_REGION || '').trim() || 'ap-southeast-1',
+            ...(akid && asak ? { credentials: { accessKeyId: akid, secretAccessKey: asak } } : {}),
           });
 
           // Selfie: decode base64
@@ -1248,7 +1251,10 @@ export const appRouter = router({
           // ID photo: fetch from S3 using fileKey
           const { GetObjectCommand } = await import('@aws-sdk/client-s3');
           const { S3Client } = await import('@aws-sdk/client-s3');
-          const s3Client = new S3Client({ region: process.env.AWS_REGION || 'ap-southeast-1' });
+          const s3Client = new S3Client({
+            region: (process.env.AWS_REGION || '').trim() || 'ap-southeast-1',
+            ...(akid && asak ? { credentials: { accessKeyId: akid, secretAccessKey: asak } } : {}),
+          });
           const s3Response = await s3Client.send(new GetObjectCommand({
             Bucket: process.env.S3_BUCKET!,
             Key: idFrontDoc.fileKey,
