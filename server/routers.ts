@@ -1251,12 +1251,16 @@ export const appRouter = router({
           // ID photo: fetch from S3 using fileKey
           const { GetObjectCommand } = await import('@aws-sdk/client-s3');
           const { S3Client } = await import('@aws-sdk/client-s3');
+          const bucket = (process.env.S3_BUCKET || '').trim();
+          if (!bucket || !idFrontDoc.fileKey) {
+            throw new Error(`S3配置不完整: bucket=${bucket}, fileKey=${idFrontDoc.fileKey || 'missing'}`);
+          }
           const s3Client = new S3Client({
             region: (process.env.AWS_REGION || '').trim() || 'ap-southeast-1',
             ...(akid && asak ? { credentials: { accessKeyId: akid, secretAccessKey: asak } } : {}),
           });
           const s3Response = await s3Client.send(new GetObjectCommand({
-            Bucket: process.env.S3_BUCKET!,
+            Bucket: bucket,
             Key: idFrontDoc.fileKey,
           }));
           const idPhotoBuffer = Buffer.from(await s3Response.Body!.transformToByteArray());
@@ -1283,8 +1287,11 @@ export const appRouter = router({
               : `人臉比對失敗，相似度：${similarity.toFixed(2)}%（需要≥${threshold}%）`,
           };
         } catch (error: any) {
-          console.error('AWS Rekognition error:', error);
-          throw new Error(`人臉比對失敗: ${error.message}`);
+          const bucket = (process.env.S3_BUCKET || '').trim();
+          const fileKey = idFrontDoc?.fileKey || 'N/A';
+          const selfieLen = selfieBuffer?.length || 0;
+          console.error(`[FaceVerify] Error: ${error.message} | Bucket: ${bucket} | FileKey: ${fileKey} | SelfieSize: ${selfieLen} | Code: ${error.Code || error.name}`);
+          throw new Error(`人臉比對失敗: ${error.message || error.Code || 'Unknown error'}`);
         }
       }),
   }),
