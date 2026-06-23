@@ -125,26 +125,8 @@ export async function storagePut(
     return { key, url };
   }
 
-  // 2) Fallback to legacy storage proxy
-  const proxy = getStorageProxyConfig();
-  if (proxy) {
-    const uploadUrl = buildUploadUrl(proxy.baseUrl, key);
-    const formData = toFormData(data, contentType, key.split("/").pop() ?? key);
-    const response = await fetch(uploadUrl, {
-      method: "POST",
-      headers: buildAuthHeaders(proxy.apiKey),
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const message = await response.text().catch(() => response.statusText);
-      throw new Error(
-        `Storage upload failed (${response.status} ${response.statusText}): ${message}`
-      );
-    }
-    const url = (await response.json()).url;
-    return { key, url };
-  }
+  // Legacy storage proxy disabled - S3 is the only supported storage
+  // The proxy used BUILT_IN_FORGE_API_KEY which is no longer available
 
   throw new Error(
     "Storage is not configured. Please set S3_BUCKET (+AWS credentials) for S3 uploads."
