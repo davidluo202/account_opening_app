@@ -38,10 +38,12 @@ function createS3Client(cfg: { region: string; endpoint?: string }) {
     endpoint: cfg.endpoint || undefined,
   };
   // Explicitly pass credentials for Vercel serverless environment
-  if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
+  const akid = (process.env.AWS_ACCESS_KEY_ID || '').trim();
+  const asak = (process.env.AWS_SECRET_ACCESS_KEY || '').trim();
+  if (akid && asak) {
     clientConfig.credentials = {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      accessKeyId: akid,
+      secretAccessKey: asak,
     };
   }
   return new S3Client(clientConfig);

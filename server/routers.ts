@@ -1118,8 +1118,12 @@ export const appRouter = router({
           const result = await storagePut(fileKey, buffer, mimeType);
           url = result.url;
         } catch (uploadErr: any) {
-          console.error('[Upload] Storage error:', uploadErr.message, 'S3_BUCKET:', process.env.S3_BUCKET ? 'set' : 'NOT SET', 'AWS_KEY:', process.env.AWS_ACCESS_KEY_ID ? 'set' : 'NOT SET');
-          throw new Error(`文件上傳失敗: ${uploadErr.message}`);
+          const s3b = (process.env.S3_BUCKET || '').trim();
+          const akLen = (process.env.AWS_ACCESS_KEY_ID || '').trim().length;
+          const skLen = (process.env.AWS_SECRET_ACCESS_KEY || '').trim().length;
+          const region = (process.env.AWS_REGION || '').trim();
+          console.error(`[Upload] Storage error: ${uploadErr.message} | S3_BUCKET=${s3b} | KEY_LEN=${akLen} | SECRET_LEN=${skLen} | REGION=${region} | STACK=${uploadErr.stack?.slice(0, 200)}`);
+          throw new Error(`文件上傳失敗(S3:${s3b ? 'yes' : 'no'},K:${akLen},R:${region}): ${uploadErr.message}`);
         }
 
         // 保存到数据库
