@@ -1287,10 +1287,9 @@ export const appRouter = router({
               : `人臉比對失敗，相似度：${similarity.toFixed(2)}%（需要≥${threshold}%）`,
           };
         } catch (error: any) {
-          const bucket = (process.env.S3_BUCKET || '').trim();
-          const fileKey = idFrontDoc?.fileKey || 'N/A';
-          const selfieLen = selfieBuffer?.length || 0;
-          console.error(`[FaceVerify] Error: ${error.message} | Bucket: ${bucket} | FileKey: ${fileKey} | SelfieSize: ${selfieLen} | Code: ${error.Code || error.name}`);
+          const fBucket = (process.env.S3_BUCKET || '').trim();
+          const fKey = idFrontDoc?.fileKey || 'N/A';
+          console.error(`[FaceVerify] Error: ${error.message} | Bucket: ${fBucket} | FileKey: ${fKey} | Code: ${error.Code || error.name}`);
           throw new Error(`人臉比對失敗: ${error.message || error.Code || 'Unknown error'}`);
         }
       }),
