@@ -1239,10 +1239,13 @@ export const appRouter = router({
 
           const akid = (process.env.AWS_ACCESS_KEY_ID || '').trim();
           const asak = (process.env.AWS_SECRET_ACCESS_KEY || '').trim();
+          // Use us-east-1 for Rekognition (best support for CompareFaces)
+          const rekRegion = process.env.AWS_REKOGNITION_REGION || 'us-east-1';
           const rekognitionClient = new RekognitionClient({
-            region: process.env.AWS_REKOGNITION_REGION || (process.env.AWS_REGION || '').trim() || 'ap-southeast-1',
+            region: rekRegion,
             ...(akid && asak ? { credentials: { accessKeyId: akid, secretAccessKey: asak } } : {}),
           });
+          console.log(`[FaceVerify] Using Rekognition region: ${rekRegion}`);
 
           // Selfie: decode base64
           const selfieData = selfieBase64.replace(/^data:image\/\w+;base64,/, '');
@@ -1277,13 +1280,20 @@ export const appRouter = router({
           }
 
           // Call Rekognition CompareFaces
-          const command = new CompareFacesCommand({
-            SourceImage: { Bytes: selfieBuffer },
-            TargetImage: { Bytes: idPhotoBuffer },
-            SimilarityThreshold: 70, // minimum threshold to return matches
-          });
-
-          const result = await rekognitionClient.send(command);
+          let result;
+          try {
+            const command = new CompareFacesCommand({
+              SourceImage: { Bytes: selfieBuffer },
+              TargetImage: { Bytes: idPhotoBuffer },
+              SimilarityThreshold: 70,
+            });
+            result = await rekognitionClient.send(command);
+          } catch (rekErr: any) {
+            if (rekErr.name === 'InvalidParameterException') {
+              throw new Error('無法在照片中檢測到人臉，請確保身份證正面照片清晰且自拍時正面面對攝像頭');
+            }
+            throw rekErr;
+          }
 
           const topMatch = result.FaceMatches?.[0];
           const similarity = topMatch?.Similarity ?? 0;
