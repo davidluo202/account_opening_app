@@ -1247,6 +1247,13 @@ export const appRouter = router({
           // Selfie: decode base64
           const selfieData = selfieBase64.replace(/^data:image\/\w+;base64,/, '');
           const selfieBuffer = Buffer.from(selfieData, 'base64');
+          console.log(`[FaceVerify] Selfie size: ${selfieBuffer.length} bytes`);
+          if (selfieBuffer.length > 5 * 1024 * 1024) {
+            throw new Error('自拍照片過大（超過5MB），請重新拍攝');
+          }
+          if (selfieBuffer.length < 1000) {
+            throw new Error('自拍照片無效，請重新拍攝');
+          }
 
           // ID photo: fetch from S3 using fileKey
           const { GetObjectCommand } = await import('@aws-sdk/client-s3');
@@ -1264,6 +1271,10 @@ export const appRouter = router({
             Key: idFrontDoc.fileKey,
           }));
           const idPhotoBuffer = Buffer.from(await s3Response.Body!.transformToByteArray());
+          console.log(`[FaceVerify] ID photo size: ${idPhotoBuffer.length} bytes, key: ${idFrontDoc.fileKey}`);
+          if (idPhotoBuffer.length > 5 * 1024 * 1024) {
+            throw new Error('身份證照片過大（超過5MB）');
+          }
 
           // Call Rekognition CompareFaces
           const command = new CompareFacesCommand({
