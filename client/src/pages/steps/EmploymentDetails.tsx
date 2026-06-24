@@ -96,7 +96,7 @@ export default function EmploymentDetails() {
     onSuccess: (result) => {
       if (result.success && result.data) {
         toast.success(t('保存成功', 'Saved successfully', '保存成功'));
-        setLocation(`/application/${applicationId}/step/7`);
+        setLocation(`/application/${applicationId}/step/6`);
       }
     },
     onError: (error) => {
