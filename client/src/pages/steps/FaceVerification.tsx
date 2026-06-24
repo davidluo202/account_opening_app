@@ -374,6 +374,16 @@ export default function FaceVerification() {
     );
   }
 
+  // Skip verification (test mode)
+  const handleSkipVerification = () => {
+    saveMutation.mutate({
+      applicationId,
+      verified: true,
+      faceImageData: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP/bAEMACAYGBwYFCAcHBwkJCAoMFA0MCwsMGRITDxQdGh8eHRocHCAkLicgIiwjHBwoNyksMDE0NDQfJzk9ODI8LjM0Mv/bAEMBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAAIAAQMBEQACEQEDEQH/xAAVAAEBAAAAAAAAAAAAAAAAAAAACf/EABQQAQAAAAAAAAAAAAAAAAAAAAD/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8AKwA//9k=',
+      confidence: 100,
+    });
+  };
+
   // 如果已驗證通過，允許直接點擊下一步
   const isNextDisabled = isAlreadyVerified ? false : (!selfieImage || !verificationResult?.success || saveMutation.isPending);
 
@@ -395,6 +405,21 @@ export default function FaceVerification() {
             <CheckCircle2 className="h-4 w-4 text-green-600" />
             <AlertDescription className="text-green-800">
               <strong>✓ {t('人臉驗證已通過', 'Face verification passed', '人脸验证已通过')}</strong>{t('，您可以直接點擊"下一步"繼續申請流程。', '. You can click "Next" to continue.', '，您可以直接点击"下一步"继续申请流程。')}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* 跳過驗證按鈕（測試階段） */}
+        {!isAlreadyVerified && (
+          <Alert className="bg-yellow-50 border-yellow-200">
+            <AlertDescription className="text-yellow-800 flex items-center justify-between">
+              <span>{t('測試階段：如人臉識別無法完成，可跳過此步驟', 'Test mode: Skip face verification if unable to complete', '测试阶段：如人脸识别无法完成，可跳过此步骤')}</span>
+              <button
+                onClick={handleSkipVerification}
+                className="ml-4 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm font-medium shrink-0"
+              >
+                {t('跳過驗證', 'Skip Verification', '跳过验证')}
+              </button>
             </AlertDescription>
           </Alert>
         )}
