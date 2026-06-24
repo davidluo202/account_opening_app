@@ -519,7 +519,7 @@ const handleNext = () => {
                   }}
                 />
                 <label htmlFor="objectsDirectMarketing" className="cursor-pointer font-normal text-sm leading-normal" style={{display: 'block'}}>
-                  <span style={{display: 'block'}}>{t("本人（姓名如下）", "The customer named", "本人（姓名如下）")}<span className="font-bold">{t("反對使用個人資料於擬作出的直接促銷", "objects to the proposed use of his/her personal data in direct marketing", "反对使用个人资料于拟作出的直接促销")}</span></span>
+                  <span style={{display: 'block'}}>{t("本人（姓名如下）反對使用個人資料於擬作出的直接促銷。", "The customer named objects to the proposed use of his/her personal data in direct marketing.", "本人（姓名如下）反对使用个人资料于拟作出的直接促销。")}</span>
                 </label>
               </div>
             </div>
@@ -717,7 +717,7 @@ const handleNext = () => {
                       }}
                     />
                     <label htmlFor="second_objectsDirectMarketing" className="cursor-pointer font-normal text-sm leading-normal" style={{display: 'block'}}>
-                      <span style={{display: 'block'}}>{t("本人（姓名如下）", "The customer named", "本人（姓名如下）")}<span className="font-bold">{t("反對使用個人資料於擬作出的直接促銷", "objects to the proposed use of his/her personal data in direct marketing", "反对使用个人资料于拟作出的直接促销")}</span></span>
+                      <span style={{display: 'block'}}>{t("本人（姓名如下）反對使用個人資料於擬作出的直接促銷。", "The customer named objects to the proposed use of his/her personal data in direct marketing.", "本人（姓名如下）反对使用个人资料于拟作出的直接促销。")}</span>
                     </label>
                   </div>
                 </div>
