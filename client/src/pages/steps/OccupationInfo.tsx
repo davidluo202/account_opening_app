@@ -20,12 +20,12 @@ export default function OccupationInfo() {
   const { t } = useLang();
 
   const employmentStatuses = [
-    { value: "employed", label: t('受僱 / Employed', 'Employed', '受雇 / Employed') },
-    { value: "self_employed", label: t('自僱 / Self-Employed', 'Self-Employed', '自雇 / Self-Employed') },
-    { value: "retired", label: t('退休人士 / Retired', 'Retired', '退休人士 / Retired') },
-    { value: "student", label: t('學生 / Student', 'Student', '学生 / Student') },
-    { value: "housewife", label: t('家庭主婦 / Housewife', 'Housewife', '家庭主妇 / Housewife') },
-    { value: "others", label: t('其他 / Others', 'Others', '其他 / Others') },
+    { value: "employed", label: t('受僱', 'Employed', '受雇') },
+    { value: "self_employed", label: t('自僱', 'Self-Employed', '自雇') },
+    { value: "retired", label: t('退休人士', 'Retired', '退休人士') },
+    { value: "student", label: t('學生', 'Student', '学生') },
+    { value: "housewife", label: t('家庭主婦', 'Housewife', '家庭主妇') },
+    { value: "others", label: t('其他', 'Others', '其他') },
   ];
 
   const params = useParams<{ id: string; step?: string }>();
@@ -303,13 +303,13 @@ const handleSave = () => {
         )}
 
         {isJoint && (
-          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">{t('賬戶主要持有人 / Primary Account Holder', 'Primary Account Holder', '账户主要持有人 / Primary Account Holder')}</h3>
+          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">{t('賬戶主要持有人', 'Primary Account Holder', '账户主要持有人')}</h3>
         )}
 
         {/* 就業狀況 */}
         <div className="space-y-2">
           <Label htmlFor="employmentStatus">
-            {t('就業狀況 / Employment Status', 'Employment Status', '就业状况 / Employment Status')} <span className="text-destructive">*</span>
+            {t('就業狀況', 'Employment Status', '就业状况')} <span className="text-destructive">*</span>
           </Label>
           <Select 
             value={formData.employmentStatus} 
@@ -336,14 +336,14 @@ const handleSave = () => {
         {needsEmploymentDetails && (
           <div className="space-y-6 p-6 bg-muted/50 rounded-lg">
             <h4 className="font-semibold text-lg">
-              {formData.employmentStatus === "employed" ? t('僱傭詳情 / Employment Details', 'Employment Details', '雇佣详情 / Employment Details') : t('自僱詳情 / Self-Employment Details', 'Self-Employment Details', '自雇详情 / Self-Employment Details')}
+              {formData.employmentStatus === "employed" ? t('僱傭詳情', 'Employment Details', '雇佣详情') : t('自僱詳情', 'Self-Employment Details', '自雇详情')}
             </h4>
 
             <div className="grid md:grid-cols-2 gap-6">
               {/* 公司名稱 */}
               <div className="space-y-2">
                 <Label htmlFor="companyName">
-                  {formData.employmentStatus === "employed" ? t('公司名稱 / Company Name', 'Company Name', '公司名称 / Company Name') : t('業務名稱 / Business Name', 'Business Name', '业务名称 / Business Name')} <span className="text-destructive">*</span>
+                  {formData.employmentStatus === "employed" ? t('公司名稱', 'Company Name', '公司名称') : t('業務名稱', 'Business Name', '业务名称')} <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="companyName"
@@ -367,7 +367,7 @@ const handleSave = () => {
               {/* 職務名稱 */}
               <div className="space-y-2">
                 <Label htmlFor="position">
-                  {t('職務名稱 / Position', 'Position', '职务名称 / Position')} <span className="text-destructive">*</span>
+                  {t('職務名稱', 'Position', '职务名称')} <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="position"
@@ -393,7 +393,7 @@ const handleSave = () => {
               {/* 從業年限 */}
               <div className="space-y-2">
                 <Label htmlFor="yearsOfService">
-                  {t('從業年限 / Years of Service', 'Years of Service', '从业年限 / Years of Service')} <span className="text-destructive">*</span>
+                  {t('從業年限', 'Years of Service', '从业年限')} <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   type="text"
@@ -411,7 +411,7 @@ const handleSave = () => {
               {/* 行業 */}
               <div className="space-y-2">
                 <Label htmlFor="industry">
-                  {t('行業 / Industry', 'Industry', '行业 / Industry')} <span className="text-destructive">*</span>
+                  {t('行業', 'Industry', '行业')} <span className="text-destructive">*</span>
                 </Label>
                 <Select 
                   value={formData.industry} 
@@ -438,7 +438,7 @@ const handleSave = () => {
             {/* 公司地址 */}
             <div className="space-y-2">
               <Label htmlFor="companyAddress">
-                {formData.employmentStatus === "employed" ? t('公司地址 / Company Address', 'Company Address', '公司地址 / Company Address') : t('業務地址 / Business Address', 'Business Address', '业务地址 / Business Address')} <span className="text-destructive">*</span>
+                {formData.employmentStatus === "employed" ? t('公司地址', 'Company Address', '公司地址') : t('業務地址', 'Business Address', '业务地址')} <span className="text-destructive">*</span>
               </Label>
                 <Textarea
                   id="companyAddress"
@@ -464,7 +464,7 @@ const handleSave = () => {
               {/* 辦公電話 */}
               <div className="space-y-2">
                 <Label htmlFor="officePhone">
-                  {t('辦公電話 / Office Phone (可選)', 'Office Phone (Optional)', '办公电话 / Office Phone (可选)')}
+                  {t('辦公電話', 'Office Phone (Optional)', '办公电话')}
                 </Label>
                 <Input
                   id="officePhone"
@@ -479,7 +479,7 @@ const handleSave = () => {
               {/* 辦公傳真 */}
               <div className="space-y-2">
                 <Label htmlFor="officeFaxNo">
-                  {t('辦公傳真號 / Office Fax No. (可選)', 'Office Fax No. (Optional)', '办公传真号 / Office Fax No. (可选)')}
+                  {t('辦公傳真號', 'Office Fax No. (Optional)', '办公传真号')}
                 </Label>
                 <Input
                   id="officeFaxNo"
@@ -496,13 +496,13 @@ const handleSave = () => {
 
         {(formData.employmentStatus === "student" || formData.employmentStatus === "retired" || formData.employmentStatus === "housewife" || formData.employmentStatus === "others") && (
           <div className="space-y-6 p-6 bg-muted/50 rounded-lg">
-            <h4 className="font-semibold text-lg">{t('聯繫方式 / Contact Information', 'Contact Information', '联系方式 / Contact Information')}</h4>
+            <h4 className="font-semibold text-lg">{t('聯繫方式', 'Contact Information', '联系方式')}</h4>
 
             <div className="grid md:grid-cols-2 gap-6">
               {/* 手提電話 */}
               <div className="space-y-2">
                 <Label htmlFor="mobilePhone">
-                  {t('手提電話 / Mobile Phone No.', 'Mobile Phone No.', '手提电话 / Mobile Phone No.')} <span className="text-destructive">*</span>
+                  {t('手提電話', 'Mobile Phone No.', '手提电话')} <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="mobilePhone"
@@ -521,7 +521,7 @@ const handleSave = () => {
             {/* 通訊地址 */}
             <div className="space-y-2">
               <Label htmlFor="correspondenceAddress">
-                {t('通訊地址 / Correspondence Address', 'Correspondence Address', '通讯地址 / Correspondence Address')} <span className="text-destructive">*</span>
+                {t('通訊地址', 'Correspondence Address', '通讯地址')} <span className="text-destructive">*</span>
               </Label>
               <Textarea
                 id="correspondenceAddress"
@@ -547,10 +547,10 @@ const handleSave = () => {
         {/* 第二持有人 */}
         {isJoint && (
           <>
-            <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2 mt-8">{t('賬戶第二持有人 / Second Account Holder', 'Second Account Holder', '账户第二持有人 / Second Account Holder')}</h3>
+            <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2 mt-8">{t('賬戶第二持有人', 'Second Account Holder', '账户第二持有人')}</h3>
 
             <div className="space-y-2">
-              <Label>{t('就業狀況 / Employment Status', 'Employment Status', '就业状况 / Employment Status')} <span className="text-destructive">*</span></Label>
+              <Label>{t('就業狀況', 'Employment Status', '就业状况')} <span className="text-destructive">*</span></Label>
               <Select value={secondFormData.employmentStatus} onValueChange={(v) => {
                 setSecondFormData({ ...secondFormData, employmentStatus: v as any });
                 if (errors.secondEmploymentStatus) setErrors({ ...errors, secondEmploymentStatus: "" });
@@ -566,11 +566,11 @@ const handleSave = () => {
             {secondNeedsEmploymentDetails && (
               <div className="space-y-6 p-6 bg-muted/50 rounded-lg">
                 <h4 className="font-semibold text-lg">
-                  {secondFormData.employmentStatus === "employed" ? t('僱傭詳情 / Employment Details', 'Employment Details', '雇佣详情 / Employment Details') : t('自僱詳情 / Self-Employment Details', 'Self-Employment Details', '自雇详情 / Self-Employment Details')}
+                  {secondFormData.employmentStatus === "employed" ? t('僱傭詳情', 'Employment Details', '雇佣详情') : t('自僱詳情', 'Self-Employment Details', '自雇详情')}
                 </h4>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label>{secondFormData.employmentStatus === "employed" ? t('公司名稱 / Company Name', 'Company Name', '公司名称 / Company Name') : t('業務名稱 / Business Name', 'Business Name', '业务名称 / Business Name')} <span className="text-destructive">*</span></Label>
+                    <Label>{secondFormData.employmentStatus === "employed" ? t('公司名稱', 'Company Name', '公司名称') : t('業務名稱', 'Business Name', '业务名称')} <span className="text-destructive">*</span></Label>
                     <Input value={secondFormData.companyName} onChange={(e) => {
                       setSecondFormData({ ...secondFormData, companyName: e.target.value });
                       if (errors.secondCompanyName) setErrors({ ...errors, secondCompanyName: "" });
@@ -578,7 +578,7 @@ const handleSave = () => {
                     {errors.secondCompanyName && <p className="text-sm text-destructive">{errors.secondCompanyName}</p>}
                   </div>
                   <div className="space-y-2">
-                    <Label>{t('職務名稱 / Position', 'Position', '职务名称 / Position')} <span className="text-destructive">*</span></Label>
+                    <Label>{t('職務名稱', 'Position', '职务名称')} <span className="text-destructive">*</span></Label>
                     <Input value={secondFormData.position} onChange={(e) => {
                       setSecondFormData({ ...secondFormData, position: e.target.value });
                       if (errors.secondPosition) setErrors({ ...errors, secondPosition: "" });
@@ -588,7 +588,7 @@ const handleSave = () => {
                 </div>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label>{t('從業年限 / Years of Service', 'Years of Service', '从业年限 / Years of Service')} <span className="text-destructive">*</span></Label>
+                    <Label>{t('從業年限', 'Years of Service', '从业年限')} <span className="text-destructive">*</span></Label>
                     <Input type="text" value={secondFormData.yearsOfService} onChange={(e) => {
                       setSecondFormData({ ...secondFormData, yearsOfService: e.target.value });
                       if (errors.secondYearsOfService) setErrors({ ...errors, secondYearsOfService: "" });
@@ -596,7 +596,7 @@ const handleSave = () => {
                     {errors.secondYearsOfService && <p className="text-sm text-destructive">{errors.secondYearsOfService}</p>}
                   </div>
                   <div className="space-y-2">
-                    <Label>{t('行業 / Industry', 'Industry', '行业 / Industry')} <span className="text-destructive">*</span></Label>
+                    <Label>{t('行業', 'Industry', '行业')} <span className="text-destructive">*</span></Label>
                     <Select value={secondFormData.industry} onValueChange={(v) => {
                       setSecondFormData({ ...secondFormData, industry: v });
                       if (errors.secondIndustry) setErrors({ ...errors, secondIndustry: "" });
@@ -610,7 +610,7 @@ const handleSave = () => {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label>{secondFormData.employmentStatus === "employed" ? t('公司地址 / Company Address', 'Company Address', '公司地址 / Company Address') : t('業務地址 / Business Address', 'Business Address', '业务地址 / Business Address')} <span className="text-destructive">*</span></Label>
+                  <Label>{secondFormData.employmentStatus === "employed" ? t('公司地址', 'Company Address', '公司地址') : t('業務地址', 'Business Address', '业务地址')} <span className="text-destructive">*</span></Label>
                   <Textarea value={secondFormData.companyAddress} onChange={(e) => {
                     setSecondFormData({ ...secondFormData, companyAddress: e.target.value });
                     if (errors.secondCompanyAddress) setErrors({ ...errors, secondCompanyAddress: "" });
@@ -619,11 +619,11 @@ const handleSave = () => {
                 </div>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label>{t('辦公電話 / Office Phone (可選)', 'Office Phone (Optional)', '办公电话 / Office Phone (可选)')}</Label>
+                    <Label>{t('辦公電話', 'Office Phone (Optional)', '办公电话')}</Label>
                     <Input value={secondFormData.officePhone} onChange={(e) => setSecondFormData({ ...secondFormData, officePhone: e.target.value.replace(/\D/g, "") })} placeholder={t('請輸入辦公電話', 'Enter office phone', '请输入办公电话')} />
                   </div>
                   <div className="space-y-2">
-                    <Label>{t('辦公傳真號 / Office Fax No. (可選)', 'Office Fax No. (Optional)', '办公传真号 / Office Fax No. (可选)')}</Label>
+                    <Label>{t('辦公傳真號', 'Office Fax No. (Optional)', '办公传真号')}</Label>
                     <Input value={secondFormData.officeFaxNo} onChange={(e) => setSecondFormData({ ...secondFormData, officeFaxNo: e.target.value.replace(/\D/g, "") })} placeholder={t('請輸入辦公傳真號', 'Enter office fax number', '请输入办公传真号')} />
                   </div>
                 </div>
@@ -632,10 +632,10 @@ const handleSave = () => {
 
             {secondNeedsContactInfo && (
               <div className="space-y-6 p-6 bg-muted/50 rounded-lg">
-                <h4 className="font-semibold text-lg">{t('聯繫方式 / Contact Information', 'Contact Information', '联系方式 / Contact Information')}</h4>
+                <h4 className="font-semibold text-lg">{t('聯繫方式', 'Contact Information', '联系方式')}</h4>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label>{t('手提電話 / Mobile Phone No.', 'Mobile Phone No.', '手提电话 / Mobile Phone No.')} <span className="text-destructive">*</span></Label>
+                    <Label>{t('手提電話', 'Mobile Phone No.', '手提电话')} <span className="text-destructive">*</span></Label>
                     <Input value={secondFormData.mobilePhone} onChange={(e) => {
                       setSecondFormData({ ...secondFormData, mobilePhone: e.target.value.replace(/\D/g, "") });
                       if (errors.secondMobilePhone) setErrors({ ...errors, secondMobilePhone: "" });
@@ -644,7 +644,7 @@ const handleSave = () => {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label>{t('通訊地址 / Correspondence Address', 'Correspondence Address', '通讯地址 / Correspondence Address')} <span className="text-destructive">*</span></Label>
+                  <Label>{t('通訊地址', 'Correspondence Address', '通讯地址')} <span className="text-destructive">*</span></Label>
                   <Textarea value={secondFormData.correspondenceAddress} onChange={(e) => {
                     setSecondFormData({ ...secondFormData, correspondenceAddress: e.target.value });
                     if (errors.secondCorrespondenceAddress) setErrors({ ...errors, secondCorrespondenceAddress: "" });
