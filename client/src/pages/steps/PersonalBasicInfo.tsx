@@ -347,25 +347,26 @@ export default function PersonalBasicInfo() {
           </div>
         </div>
 
-        {/* 性別 */}
-        <div className="space-y-2">
-          <Label htmlFor="gender">
-            {t('性別', 'Gender', '性别')} <span className="text-destructive">*</span>
-          </Label>
-          <Select value={formData.gender} onValueChange={(v) => setFormData({ ...formData, gender: v as any })}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="male">{t('男', 'Male', '男')}</SelectItem>
-              <SelectItem value="female">{t('女', 'Female', '女')}</SelectItem>
-              <SelectItem value="other">{t('其他', 'Other', '其他')}</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        {/* 性別 + 出生日期 (左右排列，與第二持有人一致) */}
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label htmlFor="gender">
+              {t('性別', 'Gender', '性别')} <span className="text-destructive">*</span>
+            </Label>
+            <Select value={formData.gender} onValueChange={(v) => setFormData({ ...formData, gender: v as any })}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="male">{t('男', 'Male', '男')}</SelectItem>
+                <SelectItem value="female">{t('女', 'Female', '女')}</SelectItem>
+                <SelectItem value="other">{t('其他', 'Other', '其他')}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-        {/* 出生日期 - 年/月/日下拉选择 */}
-        <div className="space-y-2">
+          {/* 出生日期 */}
+          <div className="space-y-2">
           <Label>
             {t('出生日期', 'Date of Birth', '出生日期')} <span className="text-destructive">*</span>
           </Label>
@@ -428,6 +429,7 @@ export default function PersonalBasicInfo() {
           {errors.dateOfBirth && (
             <p className="text-sm text-destructive">{errors.dateOfBirth}</p>
           )}
+          </div>
         </div>
 
         {/* 出生地 */}
