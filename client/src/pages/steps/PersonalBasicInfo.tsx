@@ -369,7 +369,7 @@ export default function PersonalBasicInfo() {
           <Label>
             {t('出生日期', 'Date of Birth', '出生日期')} <span className="text-destructive">*</span>
           </Label>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2 max-w-md">
             <Select
               value={formData.dateOfBirth ? formData.dateOfBirth.split('-')[0] : ''}
               onValueChange={(year) => {
@@ -552,7 +552,7 @@ export default function PersonalBasicInfo() {
               </div>
               <div className="space-y-2">
                 <Label>{t('出生日期', 'Date of Birth', '出生日期')} <span className="text-destructive">*</span></Label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-2 max-w-md">
                   <Select value={secondHolder.dateOfBirth?.split('-')[0] || ''} onValueChange={(year) => {
                     const parts = (secondHolder.dateOfBirth || '--').split('-');
                     setSecondHolder({ ...secondHolder, dateOfBirth: `${year}-${parts[1] || ''}-${parts[2] || ''}` });
