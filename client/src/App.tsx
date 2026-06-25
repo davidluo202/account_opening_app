@@ -1,13 +1,20 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Route, Switch, useParams } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { LangProvider } from "./lib/i18n";
 import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Applications from "./pages/Applications";
 import AccountSelection from "./pages/steps/AccountSelection";
 import PersonalBasicInfo from "./pages/steps/PersonalBasicInfo";
+import CorporateBasicInfo from "./pages/steps/CorporateBasicInfo";
+import CorporateRelatedParties from "./pages/steps/CorporateRelatedParties";
+import CorporateFinancial from "./pages/steps/CorporateFinancial";
+import CorporateInvestment from "./pages/steps/CorporateInvestment";
 import PersonalDetailedInfo from "./pages/steps/PersonalDetailedInfo";
 import OccupationInfo from "./pages/steps/OccupationInfo";
 import EmploymentDetails from "./pages/steps/EmploymentDetails";
@@ -16,7 +23,9 @@ import BankAccount from "./pages/steps/BankAccount";
 import TaxInfo from "./pages/steps/TaxInfo";
 import DocumentUpload from "./pages/steps/DocumentUpload";
 import FaceVerification from "./pages/steps/FaceVerification";
+import PersonalClientDeclaration from "./pages/steps/PersonalClientDeclaration";
 import RegulatoryDeclaration from "./pages/steps/RegulatoryDeclaration";
+import ClientDeclaration from "./pages/steps/ClientDeclaration";
 import RiskQuestionnaire from "./pages/steps/RiskQuestionnaire";
 import ApplicationPreview from "./pages/ApplicationPreview";
 import ApproverRegister from "./pages/ApproverRegister";
@@ -26,26 +35,109 @@ import ApprovalDetail from "./pages/admin/ApprovalDetail";
 import ApproverManagement from "./pages/admin/ApproverManagement";
 import UserManagement from "./pages/admin/UserManagement";
 import ForgotPassword from "./pages/ForgotPassword";
+import AdminForgotPassword from "./pages/admin/AdminForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import { trpc } from "@/lib/trpc";
+import { Loader2 } from "lucide-react";
+
+// Portal pages
+import PortalDashboard from "./pages/portal/PortalDashboard";
+import PortalFunds from "./pages/portal/PortalFunds";
+import PortalPortfolio from "./pages/portal/PortalPortfolio";
+import PortalMarket from "./pages/portal/PortalMarket";
+import PortalTrading from "./pages/portal/PortalTrading";
+import PortalOrders from "./pages/portal/PortalOrders";
+import PortalReports from "./pages/portal/PortalReports";
+import PortalSettings from "./pages/portal/PortalSettings";
+
+// 动态路由组件，根据客户类型分发步骤
+function StepRouter() {
+  const { id, step } = useParams<{ id: string; step: string }>();
+  const applicationId = parseInt(id || "0");
+  const stepNum = parseInt(step || "1");
+
+  const { data: accountSelection, isLoading, error: accountSelectionError } = trpc.accountSelection.get.useQuery(
+    { applicationId },
+    {
+      enabled: !!applicationId,
+      retry: 1,
+    }
+  );
+
+  // Log error for debugging
+  if (accountSelectionError) {
+    console.error("Error fetching account selection in StepRouter:", accountSelectionError);
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const customerType = accountSelection?.customerType || 'individual';
+
+  // Step 1 始终是账号选择
+  if (stepNum === 1) return <AccountSelection />;
+
+  if (customerType === 'corporate') {
+    switch (stepNum) {
+      case 2: return <CorporateBasicInfo />;
+      case 3: return <CorporateFinancial applicationId={applicationId} stepNum={stepNum} />; // 公司財務狀況
+      case 4: return <CorporateInvestment applicationId={applicationId} stepNum={stepNum} />; // 公司投資經驗與目標
+      case 5: return <CorporateRelatedParties />; // 关联人士
+      case 6: return <BankAccount />;
+      case 7: return <TaxInfo />;
+      case 8: return <DocumentUpload />;
+      case 9: return <ClientDeclaration />;
+      case 10: return <RegulatoryDeclaration />;
+      default: return <NotFound />;
+    }
+  } else {
+    // 个人开户流程 (13步)
+    switch (stepNum) {
+      case 2: return <PersonalBasicInfo />;
+      case 3: return <PersonalDetailedInfo />;
+      case 4: return <OccupationInfo />;
+      case 5: return <EmploymentDetails />;
+      case 6: return <FinancialAndInvestment />;
+      case 7: return <RiskQuestionnaire />;
+      case 8: return <BankAccount />;
+      case 9: return <TaxInfo />;
+      case 10: return <DocumentUpload />;
+      case 11: return <FaceVerification />;
+      case 12: return <PersonalClientDeclaration />;
+      case 13: return <RegulatoryDeclaration />;
+      default: return <NotFound />;
+    }
+  }
+}
 
 function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path={"/login"} component={Login} />
+      <Route path={"/register"} component={Register} />
       <Route path={"/applications"} component={Applications} />
-      <Route path={"/application/:id/step/1"} component={AccountSelection} />
-      <Route path={"/application/:id/step/2"} component={AccountSelection} />
-      <Route path={"/application/:id/step/3"} component={PersonalBasicInfo} />
-      <Route path={"/application/:id/step/4"} component={PersonalDetailedInfo} />
-      <Route path={"/application/:id/step/4b"} component={OccupationInfo} />
-      <Route path={"/application/:id/step/5"} component={EmploymentDetails} />
-      <Route path={"/application/:id/step/6"} component={FinancialAndInvestment} />
-      <Route path={"/application/:id/step/7"} component={RiskQuestionnaire} />
-      <Route path={"/application/:id/step/8"} component={BankAccount} />
-      <Route path={"/application/:id/step/9"} component={TaxInfo} />
-      <Route path={"/application/:id/step/10"} component={DocumentUpload} />
-      <Route path={"/application/:id/step/11"} component={FaceVerification} />
-      <Route path={"/application/:id/step/12"} component={RegulatoryDeclaration} />
+
+      {/* 客户端交易门户路由 */}
+      <Route path={"/portal"} component={PortalDashboard} />
+      <Route path={"/portal/funds"} component={PortalFunds} />
+      <Route path={"/portal/portfolio"} component={PortalPortfolio} />
+      <Route path={"/portal/market"} component={PortalMarket} />
+      <Route path={"/portal/trading"} component={PortalTrading} />
+      <Route path={"/portal/orders"} component={PortalOrders} />
+      <Route path={"/portal/reports"} component={PortalReports} />
+      <Route path={"/portal/settings"} component={PortalSettings} />
+
+      {/* 统一的步骤路由 */}
+      <Route path={"/application/:id/step/:step"}>
+        <StepRouter />
+      </Route>
+
       <Route path={"/application/:id/preview"} component={ApplicationPreview} />
       <Route path={"/register/approver"} component={ApproverRegister} />
       <Route path={"/admin"} component={AdminHome} />
@@ -54,6 +146,7 @@ function Router() {
       <Route path={"/admin/approvers"} component={ApproverManagement} />
       <Route path={"/admin/users"} component={UserManagement} />
       <Route path={"/forgot-password"} component={ForgotPassword} />
+      <Route path={"/admin/forgot-password"} component={AdminForgotPassword} />
       <Route path={"/reset-password"} component={ResetPassword} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
@@ -64,12 +157,14 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="light">
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </ThemeProvider>
+      <LangProvider>
+        <ThemeProvider defaultTheme="light">
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </ThemeProvider>
+      </LangProvider>
     </ErrorBoundary>
   );
 }

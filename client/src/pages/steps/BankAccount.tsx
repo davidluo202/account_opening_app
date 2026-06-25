@@ -11,22 +11,7 @@ import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2, Plus, Trash2, Edit } from "lucide-react";
 import { convertToTraditional } from "@/lib/converter";
-
-const currencies = [
-  { value: "HKD", label: "港幣 / HKD" },
-  { value: "USD", label: "美元 / USD" },
-  { value: "CNY", label: "人民幣 / CNY" },
-  { value: "EUR", label: "歐元 / EUR" },
-  { value: "GBP", label: "英鎊 / GBP" },
-  { value: "JPY", label: "日元 / JPY" },
-];
-
-const accountTypes = [
-  { value: "saving", label: "储蓄账户 / Saving" },
-  { value: "current", label: "活期账户 / Current" },
-  { value: "checking", label: "支票账户 / Checking" },
-  { value: "others", label: "其他 / Others" },
-];
+import { useLang } from '@/lib/i18n';
 
 // 香港銀行列表（含3位代碼）- 完整列表
 const hkBanks = [
@@ -183,30 +168,100 @@ const hkBanks = [
 ];
 
 export default function BankAccount() {
-  const params = useParams<{ id: string }>();
+  const params = useParams<{ id: string; step?: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
+  const stepNum = parseInt(params.step || "9");
   const showReturnToPreview = useReturnToPreview();
+  const { t } = useLang();
+
+  const currencies = [
+    { value: "HKD", label: t('港幣 / HKD', 'HKD', '港币 / HKD') },
+    { value: "USD", label: t('美元 / USD', 'USD', '美元 / USD') },
+    { value: "CNY", label: t('人民幣 / CNY', 'CNY', '人民币 / CNY') },
+    { value: "EUR", label: t('歐元 / EUR', 'EUR', '欧元 / EUR') },
+    { value: "GBP", label: t('英鎊 / GBP', 'GBP', '英镑 / GBP') },
+    { value: "JPY", label: t('日元 / JPY', 'JPY', '日元 / JPY') },
+  ];
+
+  const accountTypes = [
+    { value: "saving", label: t('儲蓄賬戶 / Saving', 'Saving', '储蓄账户 / Saving') },
+    { value: "current", label: t('活期賬戶 / Current', 'Current', '活期账户 / Current') },
+    { value: "checking", label: t('支票賬戶 / Checking', 'Checking', '支票账户 / Checking') },
+    { value: "others", label: t('其他 / Others', 'Others', '其他 / Others') },
+  ];
+
+  // Check if joint account
+  const { data: accountSelection } = trpc.accountSelection.get.useQuery(
+    { applicationId },
+    { enabled: !!applicationId }
+  );
+  const isJoint = accountSelection?.customerType === 'joint';
+
+  // Joint account: second holder bank accounts
+  const [secondHolderAccounts, setSecondHolderAccounts] = useState<Array<{
+    bankName: string;
+    swiftCode: string;
+    accountType: string;
+    accountCurrency: string;
+    accountNumber: string;
+    accountHolderName: string;
+  }>>([]);
+  const [isAddingSecond, setIsAddingSecond] = useState(false);
+  const [secondFormData, setSecondFormData] = useState({
+    bankLocation: "HK",
+    bankName: "",
+    bankCode: "",
+    swiftCode: "",
+    accountType: "saving",
+    accountCurrency: "HKD",
+    accountNumber: "",
+    accountHolderName: "",
+  });
+  const [secondBankSearchQuery, setSecondBankSearchQuery] = useState("");
+
+  // Load existing second holder data
+  const { data: existingSecondHolder } = trpc.secondHolder.get.useQuery(
+    { applicationId, stepName: 'bankAccount' },
+    { enabled: !!applicationId && isJoint }
+  );
+  const saveSecondHolderMutation = trpc.secondHolder.save.useMutation();
+
+  useEffect(() => {
+    if (existingSecondHolder && typeof existingSecondHolder === 'object') {
+      const sh = existingSecondHolder as any;
+      if (sh.secondHolderAccounts) setSecondHolderAccounts(sh.secondHolderAccounts);
+    }
+  }, [existingSecondHolder]);
 
   const [isAdding, setIsAdding] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [bankSearchQuery, setBankSearchQuery] = useState("");
   const [formData, setFormData] = useState({
     bankName: "",
     bankCode: "", // 銀行代碼
+    swiftCode: "", // SWIFT Code
     accountType: "saving", // 默认为Saving
     accountCurrency: "HKD",
     accountNumber: "",
     accountHolderName: "",
+    accountHolderAddress: "", // 持有人地址
     bankLocation: "HK", // 默认香港
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // 获取个人基本信息以自动填充账户持有人姓名
+  // 获取个人/机构基本信息以自动填充账户持有人姓名
   const { data: basicInfo } = trpc.personalBasic.get.useQuery(
     { applicationId },
     { enabled: !!applicationId }
   );
+  const { data: corporateInfo } = trpc.corporateBasic.get.useQuery(
+    { applicationId },
+    { enabled: !!applicationId }
+  );
+  // 機構賬戶名默認為機構英文名
+  const defaultHolderName = corporateInfo?.companyEnglishName || "";
 
   const { data: bankAccounts, isLoading: isLoadingData, refetch } = trpc.bankAccount.list.useQuery(
     { applicationId },
@@ -215,34 +270,57 @@ export default function BankAccount() {
 
   const addMutation = trpc.bankAccount.add.useMutation({
     onSuccess: () => {
-      toast.success("銀行賬戶已添加");
+      toast.success(editingId ? t('銀行賬戶已更新', 'Bank account updated', '银行账户已更新') : t('銀行賬戶已添加', 'Bank account added', '银行账户已添加'));
       setFormData({
         bankName: "",
         bankCode: "",
+        swiftCode: "",
         accountType: "saving",
         accountCurrency: "HKD",
         accountNumber: "",
-        accountHolderName: basicInfo?.englishName || "",
+        accountHolderName: defaultHolderName,
+        accountHolderAddress: "",
         bankLocation: "HK",
       });
       setBankSearchQuery("");
       setIsAdding(false);
+      setEditingId(null);
       refetch();
     },
     onError: (error) => {
-      toast.error(`添加失敗: ${error.message}`);
+      toast.error(`${editingId ? t('更新', 'Update', '更新') : t('添加', 'Add', '添加')}${t('失敗', ' failed', '失败')}: ${error.message}`);
     },
   });
 
   const deleteMutation = trpc.bankAccount.delete.useMutation({
     onSuccess: () => {
-      toast.success("銀行賬戶已刪除");
+      toast.success(t('銀行賬戶已刪除', 'Bank account deleted', '银行账户已删除'));
       refetch();
     },
     onError: (error) => {
-      toast.error(`刪除失敗: ${error.message}`);
+      toast.error(`${t('刪除失敗', 'Delete failed', '删除失败')}: ${error.message}`);
     },
   });
+
+  const handleEdit = (account: any) => {
+    setIsAdding(true);
+    setEditingId(account.id);
+    setErrors({});
+
+    setFormData({
+      bankName: account.bankName || "",
+      bankCode: "", // 暫不回填 HK bankCode（僅作選擇用）
+      swiftCode: account.swiftCode || "",
+      accountType: (account.accountType || "saving") as any,
+      accountCurrency: account.accountCurrency || "HKD",
+      accountNumber: account.accountNumber || "",
+      accountHolderName: account.accountHolderName || defaultHolderName,
+      accountHolderAddress: account.accountHolderAddress || "",
+      bankLocation: (account.bankLocation || "HK") as any,
+    });
+
+    setBankSearchQuery("");
+  };
 
 
 
@@ -266,28 +344,35 @@ export default function BankAccount() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.bankName.trim()) newErrors.bankName = "請輸入銀行名稱";
-    
-    // 验证账号
+    if (!formData.bankName.trim()) newErrors.bankName = t('請輸入銀行名稱', 'Please enter bank name', '请输入银行名称');
+
+    // 驗證賬號
     if (!formData.accountNumber.trim()) {
-      newErrors.accountNumber = "請輸入賬戶號碼";
+      newErrors.accountNumber = t('請輸入賬戶號碼', 'Please enter account number', '请输入账户号码');
     } else {
       const accountNum = formData.accountNumber.replace(/[^0-9]/g, ''); // 只保留数字
-      
+
       if (formData.bankLocation === "CN") {
         // 大陆银行账号：16-19位
         if (accountNum.length < 16 || accountNum.length > 19) {
-          newErrors.accountNumber = "大陸銀行賬戶號碼應為16-19位數字";
+          newErrors.accountNumber = t('大陸銀行賬戶號碼應為16-19位數字', 'Mainland bank account number should be 16-19 digits', '大陆银行账户号码应为16-19位数字');
         }
       } else if (formData.bankLocation === "HK") {
         // 香港银行账号：9-12位
         if (accountNum.length < 9 || accountNum.length > 12) {
-          newErrors.accountNumber = "香港銀行賬戶號碼應為9-12位數字";
+          newErrors.accountNumber = t('香港銀行賬戶號碼應為9-12位數字', 'Hong Kong bank account number should be 9-12 digits', '香港银行账户号码应为9-12位数字');
         }
       }
     }
-    
-    if (!formData.accountHolderName.trim()) newErrors.accountHolderName = "請輸入賬戶持有人姓名";
+
+    if (!formData.accountHolderName.trim()) newErrors.accountHolderName = t('請輸入賬戶持有人姓名', 'Please enter account holder name', '请输入账户持有人姓名');
+
+    // SWIFT Code 驗證：必填，8-11位英文和數字
+    if (!formData.swiftCode.trim()) {
+      newErrors.swiftCode = t('請輸入SWIFT代碼', 'Please enter SWIFT code', '请输入SWIFT代码');
+    } else if (!/^[A-Z0-9]{8,11}$/i.test(formData.swiftCode)) {
+      newErrors.swiftCode = t('SWIFT代碼應為8-11位英文或數字', 'SWIFT code should be 8-11 alphanumeric characters', 'SWIFT代码应为8-11位英文或数字');
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -295,38 +380,62 @@ export default function BankAccount() {
 
   const handleAdd = () => {
     if (!validateForm()) {
-      toast.error("請檢查表單中的錯誤");
+      toast.error(t('請檢查表單中的錯誤', 'Please check form errors', '请检查表单中的错误'));
       return;
     }
 
-    addMutation.mutate({
-      applicationId,
-      bankName: formData.bankName,
-      bankLocation: formData.bankLocation as "HK" | "CN" | "OTHER",
-      accountType: formData.accountType as "saving" | "current" | "checking" | "others",
-      accountCurrency: formData.accountCurrency,
-      accountNumber: formData.accountNumber,
-      accountHolderName: formData.accountHolderName,
-    });
+    // 目前後端未提供 update API；先用「刪除 + 新增」達到可編輯效果
+    // 注意：會生成新 id（如需保留同一條記錄 id，需新增 update 接口）
+    const doAdd = () =>
+      addMutation.mutate({
+        applicationId,
+        bankName: formData.bankName,
+        bankLocation: formData.bankLocation as "HK" | "CN" | "OTHER",
+        accountType: formData.accountType as "saving" | "current" | "checking" | "others",
+        accountCurrency: formData.accountCurrency,
+        accountNumber: formData.accountNumber,
+        accountHolderName: formData.accountHolderName,
+        accountHolderAddress: formData.accountHolderAddress,
+        swiftCode: formData.swiftCode,
+      });
+
+    if (editingId) {
+      deleteMutation.mutate(
+        { id: editingId },
+        {
+          onSuccess: () => doAdd(),
+        }
+      );
+      return;
+    }
+
+    doAdd();
   };
 
   const handleDelete = (id: number) => {
-    if (confirm("確定要刪除此銀行賬戶嗎？")) {
+    if (confirm(t('確定要刪除此銀行賬戶嗎？', 'Are you sure you want to delete this bank account?', '确定要删除此银行账户吗？'))) {
       deleteMutation.mutate({ id });
     }
   };
 
 const handleNext = () => {
     if (!bankAccounts || bankAccounts.length === 0) {
-      toast.error("請至少添加一個銀行賬戶");
+      toast.error(t('請至少添加一個銀行賬戶', 'Please add at least one bank account', '请至少添加一个银行账户'));
       return;
     }
-    setLocation(`/application/${applicationId}/step/9`);
+    if (isJoint && secondHolderAccounts.length === 0) {
+      toast.error(t('請填寫第二持有人的銀行賬戶（至少一個）', 'Please add at least one bank account for the second holder', '请填写第二持有人的银行账户（至少一个）'));
+      return;
+    }
+    if (isJoint) {
+      saveSecondHolderMutation.mutate({ applicationId, stepName: 'bankAccount', data: { secondHolderAccounts } });
+    }
+    setLocation(`/application/${applicationId}/step/${stepNum + 1}`);
   };
 
   if (isLoadingData) {
     return (
-      <ApplicationWizard applicationId={applicationId} currentStep={8}
+      <ApplicationWizard applicationId={applicationId} currentStep={stepNum}
       showReturnToPreview={showReturnToPreview}
     >
         <div className="flex justify-center py-12">
@@ -339,43 +448,67 @@ const handleNext = () => {
   return (
     <ApplicationWizard
       applicationId={applicationId}
-      currentStep={8}
+      currentStep={stepNum}
       onNext={handleNext}
       isNextDisabled={!bankAccounts || bankAccounts.length === 0}
     
       showReturnToPreview={showReturnToPreview}
     >
       <div className="space-y-6">
+        {isJoint && (
+          <h3 className="text-lg font-bold text-primary border-b pb-2 mb-2">{t('賬戶主要持有人', 'Primary Account Holder', '账户主要持有人')}</h3>
+        )}
+
         {/* 已添加的銀行賬戶列表 */}
         {bankAccounts && bankAccounts.length > 0 && (
           <div className="space-y-4">
-            <h4 className="font-semibold">已添加的銀行賬戶</h4>
+            <h4 className="font-semibold">{t('已添加的銀行賬戶', 'Added Bank Accounts', '已添加的银行账户')}</h4>
             {bankAccounts.map((account) => (
               <Card key={account.id} className="p-4">
                 <div className="flex justify-between items-start">
                   <div className="space-y-1">
                     <div className="font-medium">{account.bankName}</div>
                     <div className="text-sm text-muted-foreground">
-                      賬戶號碼: {account.accountNumber}
+                      SWIFT Code: {account.swiftCode || '-'}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      账户类型: {account.accountType === "saving" ? "储蓄" : account.accountType === "current" ? "活期" : account.accountType === "checking" ? "支票" : "其他"}
+                      {t('賬戶號碼', 'Account Number', '账户号码')}: {account.accountNumber}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      币种: {account.accountCurrency}
+                      {t('賬戶類型', 'Account Type', '账户类型')}: {account.accountType === "saving" ? t('儲蓄', 'Saving', '储蓄') : account.accountType === "current" ? t('活期', 'Current', '活期') : account.accountType === "checking" ? t('支票', 'Checking', '支票') : t('其他', 'Others', '其他')}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      持有人: {account.accountHolderName}
+                      {t('幣種', 'Currency', '币种')}: {account.accountCurrency}
                     </div>
+                    <div className="text-sm text-muted-foreground">
+                      {t('持有人', 'Holder', '持有人')}: {account.accountHolderName}
+                    </div>
+                    {account.accountHolderAddress && (
+                      <div className="text-sm text-muted-foreground">
+                        {t('持有人地址', 'Holder Address', '持有人地址')}: {account.accountHolderAddress}
+                      </div>
+                    )}
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDelete(account.id)}
-                    disabled={deleteMutation.isPending}
-                  >
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEdit(account)}
+                      disabled={deleteMutation.isPending || addMutation.isPending}
+                      title={t('編輯', 'Edit', '编辑')}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDelete(account.id)}
+                      disabled={deleteMutation.isPending}
+                      title={t('刪除', 'Delete', '删除')}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
                 </div>
               </Card>
             ))}
@@ -390,35 +523,36 @@ const handleNext = () => {
             onClick={() => setIsAdding(true)}
           >
             <Plus className="h-4 w-4 mr-2" />
-            添加銀行賬戶
+            {t('添加銀行賬戶', 'Add Bank Account', '添加银行账户')}
           </Button>
         ) : (
           <Card className="p-6 space-y-6">
             <div className="flex justify-between items-center">
-              <h4 className="font-semibold">添加新銀行賬戶</h4>
+              <h4 className="font-semibold">{editingId ? t('編輯銀行賬戶', 'Edit Bank Account', '编辑银行账户') : t('添加新銀行賬戶', 'Add New Bank Account', '添加新银行账户')}</h4>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => {
                   setIsAdding(false);
+                  setEditingId(null);
                   setErrors({});
                 }}
               >
-                取消
+                {t('取消', 'Cancel', '取消')}
               </Button>
             </div>
 
             {/* 银行所在地 */}
             <div className="space-y-2">
               <Label htmlFor="bankLocation">
-                银行所在地 / Bank Location <span className="text-destructive">*</span>
+                {t('銀行所在地', 'Bank Location', '银行所在地')} <span className="text-destructive">*</span>
               </Label>
               <Select 
                 value={formData.bankLocation} 
                 onValueChange={(v) => {
                   setFormData({ ...formData, bankLocation: v, bankName: "", bankCode: "" });
                   setBankSearchQuery("");
-                  // 清除账号验证错误，因为所在地改变了
+                  // 清除賬號驗證錯誤，因為所在地改變了
                   if (errors.accountNumber) setErrors({ ...errors, accountNumber: "" });
                   if (errors.bankName) setErrors({ ...errors, bankName: "" });
                 }}
@@ -427,9 +561,9 @@ const handleNext = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="HK">香港 / Hong Kong</SelectItem>
-                  <SelectItem value="CN">大陆 / Mainland China</SelectItem>
-                  <SelectItem value="OTHER">其他 / Other</SelectItem>
+                  <SelectItem value="HK">{t('香港', 'Hong Kong', '香港')}</SelectItem>
+                  <SelectItem value="CN">{t('中國內地', 'Chinese Mainland', '中国内地')}</SelectItem>
+                  <SelectItem value="OTHER">{t('其他', 'Other', '其他')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -437,19 +571,19 @@ const handleNext = () => {
             {/* 银行名称 */}
             <div className="space-y-2">
               <Label htmlFor="bankName">
-                银行名称 / Bank Name <span className="text-destructive">*</span>
+                {t('銀行名稱', 'Bank Name', '银行名称')} <span className="text-destructive">*</span>
               </Label>
               {formData.bankLocation === "HK" ? (
                 <>
-                  {/* 搜索输入框 */}
+                  {/* 搜索輸入框 */}
                   <Input
-                    placeholder="输入银行名称或代码搜索..."
+                    placeholder={t('輸入銀行名稱或代碼搜索...', 'Search by bank name or code...', '输入银行名称或代码搜索...')}
                     value={bankSearchQuery}
                     onChange={(e) => setBankSearchQuery(e.target.value)}
                     className="mb-2"
                   />
-                  {/* 银行下拉选择 */}
-                  <Select 
+                  {/* 銀行下拉選擇 */}
+                  <Select
                     value={formData.bankCode}
                     onValueChange={(code) => {
                       const bank = hkBanks.find(b => b.code === code);
@@ -460,7 +594,7 @@ const handleNext = () => {
                     }}
                   >
                     <SelectTrigger className={errors.bankName ? "border-destructive" : ""}>
-                      <SelectValue placeholder="选择银行" />
+                      <SelectValue placeholder={t('選擇銀行', 'Select Bank', '选择银行')} />
                     </SelectTrigger>
                     <SelectContent className="max-h-[300px]">
                       {hkBanks
@@ -487,17 +621,42 @@ const handleNext = () => {
                     if (errors.bankName) setErrors({ ...errors, bankName: "" });
                   }}
                   onBlur={(e) => handleChineseBlur('bankName', e.target.value)}
-                  placeholder="请输入银行名称"
+                  placeholder={t('請輸入銀行名稱', 'Please enter bank name', '请输入银行名称')}
                   className={errors.bankName ? "border-destructive" : ""}
                 />
               )}
               {errors.bankName && <p className="text-sm text-destructive">{errors.bankName}</p>}
             </div>
 
+            {/* SWIFT Code */}
+            <div className="space-y-2">
+              <Label htmlFor="swiftCode">
+                {t('SWIFT 代碼', 'SWIFT Code', 'SWIFT 代码')} <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="swiftCode"
+                value={formData.swiftCode}
+                onChange={(e) => {
+                  setFormData({ ...formData, swiftCode: e.target.value.toUpperCase() });
+                  if (errors.swiftCode) setErrors({ ...errors, swiftCode: "" });
+                }}
+                onBlur={() => {
+                  // 失焦时转换为大写
+                  if (formData.swiftCode) {
+                    setFormData({ ...formData, swiftCode: formData.swiftCode.toUpperCase() });
+                  }
+                }}
+                placeholder={t('請輸入8-11位SWIFT Code', 'Enter 8-11 digit SWIFT Code', '请输入8-11位SWIFT Code')}
+                className={errors.swiftCode ? "border-destructive" : ""}
+                maxLength={11}
+              />
+              {errors.swiftCode && <p className="text-sm text-destructive">{errors.swiftCode}</p>}
+            </div>
+
             {/* 账户类型 */}
             <div className="space-y-2">
               <Label htmlFor="accountType">
-                账户类型 / Account Type (可选)
+                {t('賬戶類型', 'Account Type', '账户类型')} <span className="text-destructive">*</span>
               </Label>
               <Select 
                 value={formData.accountType} 
@@ -519,7 +678,7 @@ const handleNext = () => {
             {/* 账户币种 */}
             <div className="space-y-2">
               <Label htmlFor="accountCurrency">
-                账户币种 / Currency <span className="text-destructive">*</span>
+                {t('賬戶幣種', 'Currency', '账户币种')} <span className="text-destructive">*</span>
               </Label>
               <Select 
                 value={formData.accountCurrency} 
@@ -541,7 +700,7 @@ const handleNext = () => {
             {/* 賬戶號碼 */}
             <div className="space-y-2">
               <Label htmlFor="accountNumber">
-                賬戶號碼 / Account Number <span className="text-destructive">*</span>
+                {t('賬戶號碼', 'Account Number', '账户号码')} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="accountNumber"
@@ -550,7 +709,7 @@ const handleNext = () => {
                   setFormData({ ...formData, accountNumber: e.target.value });
                   if (errors.accountNumber) setErrors({ ...errors, accountNumber: "" });
                 }}
-                placeholder="請輸入賬戶號碼"
+                placeholder={t('請輸入賬戶號碼', 'Please enter account number', '请输入账户号码')}
                 className={errors.accountNumber ? "border-destructive" : ""}
               />
               {errors.accountNumber && <p className="text-sm text-destructive">{errors.accountNumber}</p>}
@@ -559,20 +718,41 @@ const handleNext = () => {
             {/* 賬戶持有人姓名 */}
             <div className="space-y-2">
               <Label htmlFor="accountHolderName">
-                賬戶持有人姓名 / Account Holder Name <span className="text-destructive">*</span>
+                {t('賬戶持有人姓名', 'Account Holder Name', '账户持有人姓名')} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="accountHolderName"
                 value={formData.accountHolderName}
                 onChange={(e) => {
-                  setFormData({ ...formData, accountHolderName: e.target.value });
-                  if (errors.accountHolderName) setErrors({ ...errors, accountHolderName: "" });
+                  const val = e.target.value;
+                  if (val === "" || /^[A-Za-z\s''\-,.]+$/.test(val)) {
+                    setFormData({ ...formData, accountHolderName: val });
+                    if (errors.accountHolderName) setErrors({ ...errors, accountHolderName: "" });
+                  }
                 }}
-                placeholder="請輸入賬戶持有人姓名"
+                onBlur={() => {
+                  const val = formData.accountHolderName;
+                  if (val && /^[A-Za-z\s''\-,.]+$/.test(val)) {
+                    setFormData({ ...formData, accountHolderName: val.toUpperCase() });
+                  }
+                }}
+                placeholder={t('請輸入賬戶持有人英文姓名', 'Please enter account holder name in English', '请输入账户持有人英文姓名')}
                 className={errors.accountHolderName ? "border-destructive" : ""}
               />
               {errors.accountHolderName && <p className="text-sm text-destructive">{errors.accountHolderName}</p>}
-              <p className="text-sm text-muted-foreground">默認為您的英文姓名</p>
+            </div>
+
+            {/* 持有人地址 */}
+            <div className="space-y-2">
+              <Label htmlFor="accountHolderAddress">
+                {t('持有人地址', 'Holder Address', '持有人地址')}
+              </Label>
+              <Input
+                id="accountHolderAddress"
+                value={formData.accountHolderAddress}
+                onChange={(e) => setFormData({ ...formData, accountHolderAddress: e.target.value })}
+                placeholder={t('請輸入持有人地址', 'Please enter holder address', '请输入持有人地址')}
+              />
             </div>
 
             <Button
@@ -583,10 +763,10 @@ const handleNext = () => {
               {addMutation.isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  保存中...
+                  {t('保存中...', 'Saving...', '保存中...')}
                 </>
               ) : (
-                "保存銀行賬戶"
+                t('保存銀行賬戶', 'Save Bank Account', '保存银行账户')
               )}
             </Button>
           </Card>
@@ -594,8 +774,147 @@ const handleNext = () => {
 
         {bankAccounts && bankAccounts.length === 0 && !isAdding && (
           <div className="text-center py-8 text-muted-foreground">
-            尚未添加銀行賬戶，請點擊上方按鈕添加
+            {t('尚未添加銀行賬戶，請點擊上方按鈕添加', 'No bank accounts added yet. Please click the button above to add one.', '尚未添加银行账户，请点击上方按钮添加')}
           </div>
+        )}
+
+        {/* 聯名賬戶：第二持有人 */}
+        {isJoint && (
+          <>
+            <h3 className="text-lg font-bold text-primary border-b pb-2 mt-8 mb-2">{t('賬戶第二持有人', 'Second Account Holder', '账户第二持有人')}</h3>
+
+            {/* 已添加的第二持有人銀行賬戶 */}
+            {secondHolderAccounts.length > 0 && (
+              <div className="space-y-4">
+                <h4 className="font-semibold">{t('已添加的銀行賬戶', 'Added Bank Accounts', '已添加的银行账户')}</h4>
+                {secondHolderAccounts.map((account, idx) => (
+                  <Card key={idx} className="p-4">
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-1">
+                        <div className="font-medium">{account.bankName}</div>
+                        <div className="text-sm text-muted-foreground">SWIFT Code: {account.swiftCode || '-'}</div>
+                        <div className="text-sm text-muted-foreground">{t('賬戶號碼', 'Account Number', '账户号码')}: {account.accountNumber}</div>
+                        <div className="text-sm text-muted-foreground">{t('幣種', 'Currency', '币种')}: {account.accountCurrency}</div>
+                        <div className="text-sm text-muted-foreground">{t('持有人', 'Holder', '持有人')}: {account.accountHolderName}</div>
+                      </div>
+                      <Button variant="ghost" size="sm" onClick={() => {
+                        setSecondHolderAccounts(prev => prev.filter((_, i) => i !== idx));
+                      }} title={t('刪除', 'Delete', '删除')}>
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            {!isAddingSecond ? (
+              <Button variant="outline" className="w-full" onClick={() => setIsAddingSecond(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                {t('添加第二持有人銀行賬戶', 'Add Second Holder Bank Account', '添加第二持有人银行账户')}
+              </Button>
+            ) : (
+              <Card className="p-6 space-y-6">
+                <div className="flex justify-between items-center">
+                  <h4 className="font-semibold">{t('添加銀行賬戶', 'Add Bank Account', '添加银行账户')}</h4>
+                  <Button variant="ghost" size="sm" onClick={() => setIsAddingSecond(false)}>{t('取消', 'Cancel', '取消')}</Button>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>{t('銀行所在地', 'Bank Location', '银行所在地')} <span className="text-destructive">*</span></Label>
+                  <Select value={secondFormData.bankLocation}
+                    onValueChange={(v) => {
+                      setSecondFormData({ ...secondFormData, bankLocation: v, bankName: "", bankCode: "" });
+                      setSecondBankSearchQuery("");
+                    }}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="HK">{t('香港', 'Hong Kong', '香港')}</SelectItem>
+                      <SelectItem value="OTHER">{t('其他', 'Other', '其他')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>{t('銀行名稱', 'Bank Name', '银行名称')} <span className="text-destructive">*</span></Label>
+                  {secondFormData.bankLocation === "HK" ? (
+                    <>
+                      <Input
+                        placeholder={t('輸入銀行名稱或代碼搜索...', 'Search by bank name or code...', '输入银行名称或代码搜索...')}
+                        value={secondBankSearchQuery}
+                        onChange={(e) => setSecondBankSearchQuery(e.target.value)}
+                        className="mb-2"
+                      />
+                      <Select value={secondFormData.bankCode}
+                        onValueChange={(code) => {
+                          const bank = hkBanks.find(b => b.code === code);
+                          if (bank) setSecondFormData({ ...secondFormData, bankCode: code, bankName: bank.name });
+                        }}>
+                        <SelectTrigger><SelectValue placeholder={t('選擇銀行', 'Select Bank', '选择银行')} /></SelectTrigger>
+                        <SelectContent className="max-h-[300px]">
+                          {hkBanks
+                            .filter(bank => secondBankSearchQuery === "" || bank.name.toLowerCase().includes(secondBankSearchQuery.toLowerCase()) || bank.code.includes(secondBankSearchQuery))
+                            .map((bank) => (<SelectItem key={bank.code} value={bank.code}>{bank.code} - {bank.name}</SelectItem>))
+                          }
+                        </SelectContent>
+                      </Select>
+                    </>
+                  ) : (
+                    <Input value={secondFormData.bankName}
+                      onChange={(e) => setSecondFormData({ ...secondFormData, bankName: e.target.value })}
+                      placeholder={t('請輸入銀行名稱', 'Please enter bank name', '请输入银行名称')} />
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label>{t('SWIFT 代碼', 'SWIFT Code', 'SWIFT 代码')} <span className="text-destructive">*</span></Label>
+                  <Input value={secondFormData.swiftCode}
+                    onChange={(e) => setSecondFormData({ ...secondFormData, swiftCode: e.target.value.toUpperCase() })}
+                    placeholder={t('請輸入SWIFT Code', 'Please enter SWIFT Code', '请输入SWIFT Code')} maxLength={11} />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>{t('賬戶幣種', 'Currency', '账户币种')} <span className="text-destructive">*</span></Label>
+                  <Select value={secondFormData.accountCurrency}
+                    onValueChange={(v) => setSecondFormData({ ...secondFormData, accountCurrency: v })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {currencies.map((currency) => (
+                        <SelectItem key={currency.value} value={currency.value}>{currency.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>{t('賬戶號碼', 'Account Number', '账户号码')} <span className="text-destructive">*</span></Label>
+                  <Input value={secondFormData.accountNumber}
+                    onChange={(e) => setSecondFormData({ ...secondFormData, accountNumber: e.target.value })}
+                    placeholder={t('請輸入賬戶號碼', 'Please enter account number', '请输入账户号码')} />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>{t('賬戶持有人姓名', 'Account Holder Name', '账户持有人姓名')} <span className="text-destructive">*</span></Label>
+                  <Input value={secondFormData.accountHolderName}
+                    onChange={(e) => setSecondFormData({ ...secondFormData, accountHolderName: e.target.value })}
+                    placeholder={t('請輸入賬戶持有人姓名', 'Please enter account holder name', '请输入账户持有人姓名')} />
+                </div>
+
+                <Button className="w-full" onClick={() => {
+                  if (!secondFormData.bankName.trim() || !secondFormData.accountNumber.trim() || !secondFormData.accountHolderName.trim()) {
+                    toast.error(t('請填寫必填項', 'Please fill in required fields', '请填写必填项'));
+                    return;
+                  }
+                  setSecondHolderAccounts(prev => [...prev, { ...secondFormData }]);
+                  setSecondFormData({ bankLocation: "HK", bankName: "", bankCode: "", swiftCode: "", accountType: "saving", accountCurrency: "HKD", accountNumber: "", accountHolderName: "" });
+                  setSecondBankSearchQuery("");
+                  setIsAddingSecond(false);
+                }}>
+                  {t('保存銀行賬戶', 'Save Bank Account', '保存银行账户')}
+                </Button>
+              </Card>
+            )}
+          </>
         )}
       </div>
     </ApplicationWizard>
