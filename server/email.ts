@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import twilio from 'twilio';
 
 // 初始化Resend
 const apiKey = process.env.RESEND_API_KEY;
@@ -10,6 +11,17 @@ if (!apiKey) {
   console.warn('RESEND_API_KEY is not set');
 } else {
   console.log(`Resend initialized with sender: ${senderEmail}`);
+}
+
+// 初始化Twilio
+const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
+const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
+const twilioMessagingServiceSid = process.env.TWILIO_MESSAGING_SERVICE_SID;
+
+const twilioClient = (twilioAccountSid && twilioAuthToken) ? twilio(twilioAccountSid, twilioAuthToken) : null;
+
+if (!twilioAccountSid || !twilioAuthToken) {
+  console.warn('Twilio credentials not set');
 }
 
 /**
@@ -54,6 +66,32 @@ export async function sendVerificationCode(to: string, code: string): Promise<bo
     return true;
   } catch (error: any) {
     console.error('Resend error:', error);
+    return false;
+  }
+}
+
+/**
+ * 发送短信验证码
+ * @param to 收件人手机号（含国际区号，如 +85292902864）
+ * @param code 6位数字验证码
+ * @returns Promise<boolean> 发送成功返回true，失败返回false
+ */
+export async function sendVerificationCodeBySms(to: string, code: string): Promise<boolean> {
+  if (!twilioClient || !twilioMessagingServiceSid) {
+    throw new Error('Twilio未配置');
+  }
+
+  try {
+    const message = await twilioClient.messages.create({
+      messagingServiceSid: twilioMessagingServiceSid,
+      to,
+      body: `【诚港金融】您的验证码为${code}，5分钟内有效。如非本人操作请忽略。`,
+    });
+
+    console.log(`SMS verification code sent to ${to}, sid: ${message.sid}`);
+    return true;
+  } catch (error: any) {
+    console.error('Twilio error:', error);
     return false;
   }
 }

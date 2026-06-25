@@ -7,8 +7,9 @@ import * as db from "./db";
 import { storagePut } from "./storage";
 import { nanoid } from "nanoid";
 import { generateApplicationPDF, type ApplicationPDFData } from "./pdf-generator";
-import { 
-  sendVerificationCode as sendEmail, 
+import {
+  sendVerificationCode as sendEmail,
+  sendVerificationCodeBySms,
   generateVerificationCode,
   sendApprovalNotificationEmail,
   sendRejectionNotificationEmail,
@@ -26,38 +27,53 @@ export const appRouter = router({
       return { success: true } as const;
     }),
     
-    // 发送邮箱验证码
+    // 发送邮箱/短信验证码
     sendVerificationCode: publicProcedure
-      .input(z.object({ 
+      .input(z.object({
         email: z.string().email(),
-        isApprover: z.boolean().optional() // 标记是否为审批人员注册
+        isApprover: z.boolean().optional(), // 标记是否为审批人员注册
+        method: z.enum(['email', 'sms']).optional().default('email'),
+        phone: z.string().optional(), // method=sms时必须提供手机号
       }))
       .mutation(async ({ input }) => {
         // 如果是审批人员注册，验证邮箱域名
         if (input.isApprover && !input.email.endsWith('@cmfinancial.com')) {
           throw new Error('审批人员必须使用@cmfinancial.com邮箱');
         }
+
+        if (input.method === 'sms' && !input.phone) {
+          throw new Error('短信验证需要提供手机号码');
+        }
+
         const code = generateVerificationCode();
         const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5分钟后过期
-        
+
         // 保存验证码到数据库
         await db.saveVerificationCode(input.email, code, expiresAt);
-        
+
         // Bypass email sending (SendGrid quota exhausted)
         const bypassEmail = process.env.BYPASS_EMAIL === 'true';
         if (!bypassEmail) {
-          // 发送邮件
-          const sent = await sendEmail(input.email, code);
-          if (!sent) {
-            throw new Error("邮件发送失败，请稍后重试");
+          if (input.method === 'sms') {
+            // 发送短信
+            const sent = await sendVerificationCodeBySms(input.phone!, code);
+            if (!sent) {
+              throw new Error("短信发送失败，请稍后重试");
+            }
+          } else {
+            // 发送邮件
+            const sent = await sendEmail(input.email, code);
+            if (!sent) {
+              throw new Error("邮件发送失败，请稍后重试");
+            }
           }
         } else {
           console.log(`[BYPASS] Verification code for ${input.email}: ${code}`);
         }
-        
-        console.log(`[Verification Code] Sent to ${input.email}`);
-        
-        return { success: true, message: "验证码已发送至您的邮箱" };
+
+        console.log(`[Verification Code] Sent via ${input.method} to ${input.method === 'sms' ? input.phone : input.email}`);
+
+        return { success: true, message: input.method === 'sms' ? "验证码已发送至您的手机" : "验证码已发送至您的邮箱" };
       }),
     
     // 验证邮箱验证码
