@@ -96,7 +96,7 @@ function StepRouter() {
       default: return <NotFound />;
     }
   } else {
-    // 个人开户流程 (13步)
+    // 个人开户流程 (12步，步骤3含个人详细+职业信息)
     switch (stepNum) {
       case 2: return <PersonalBasicInfo />;
       case 3: return <PersonalDetailedInfo />;

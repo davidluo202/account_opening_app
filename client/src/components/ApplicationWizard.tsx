@@ -16,8 +16,8 @@ interface Step {
 const individualSteps: Step[] = [
   { id: 1, title: "客戶與賬戶類型", description: "選擇客戶與賬戶類型" },
   { id: 2, title: "個人基本信息", description: "填寫基本資料" },
-  { id: 3, title: "個人詳細信息", description: "填寫詳細資料" },
-  { id: 4, title: "職業信息", description: "填寫職業狀況" },
+  { id: 3, title: "個人詳細 & 職業", description: "填寫詳細資料及職業信息" },
+  // step 4 merged into step 3 display (但URL仍然是/step/4)
   { id: 5, title: "就業詳情", description: "填寫收入資產" },
   { id: 6, title: "財務與投資", description: "填寫投資信息" },
   { id: 7, title: "風險評估問卷", description: "完成風險評估" },
@@ -94,8 +94,11 @@ export default function ApplicationWizard({
   // 根據客戶類型選擇步驟列表
   const customerType = customerTypeOverride || accountSelection?.customerType || 'individual';
   const steps = customerType === 'corporate' ? corporateSteps : individualSteps;
-  const progress = (currentStep / steps.length) * 100;
-  const currentStepInfo = steps.find(s => s.id === currentStep);
+  // Step 4 (OccupationInfo) is merged into step 3 display for individual accounts
+  const displayStep = (customerType !== 'corporate' && currentStep === 4) ? 3 : currentStep;
+  const stepIndex = steps.findIndex(s => s.id === displayStep);
+  const progress = ((stepIndex + 1) / steps.length) * 100;
+  const currentStepInfo = steps.find(s => s.id === displayStep);
 
   const handlePrevious = () => {
     if (onPrevious) {
@@ -148,7 +151,7 @@ export default function ApplicationWizard({
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span className="font-medium">
-                步驟 {currentStep} / {steps.length}: {currentStepInfo?.title}
+                步驟 {stepIndex + 1} / {steps.length}: {currentStepInfo?.title}
               </span>
               <span className="text-muted-foreground">{Math.round(progress)}% 完成</span>
             </div>
@@ -242,20 +245,20 @@ export default function ApplicationWizard({
               <div
                 key={step.id}
                 className={`p-2 rounded text-sm cursor-pointer transition-colors ${
-                  step.id === currentStep
+                  step.id === displayStep
                     ? "bg-primary text-primary-foreground"
-                    : step.id < currentStep
+                    : step.id < displayStep
                     ? "bg-muted text-muted-foreground hover:bg-muted/80"
                     : "text-muted-foreground"
                 }`}
                 onClick={() => {
-                  if (step.id <= currentStep) {
+                  if (step.id <= displayStep) {
                     setLocation(`/application/${applicationId}/step/${step.id}`);
                   }
                 }}
               >
                 <div className="flex items-center gap-2">
-                  <span className="font-medium">{step.id}.</span>
+                  <span className="font-medium">{steps.indexOf(step) + 1}.</span>
                   <span>{step.title}</span>
                 </div>
               </div>
