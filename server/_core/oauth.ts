@@ -5,19 +5,72 @@ import { getSessionCookieOptions } from "./cookies";
 import { sdk } from "./sdk";
 import bcrypt from "bcryptjs";
 import { nanoid } from "nanoid";
+import crypto from "crypto";
+import { Pool } from "pg";
+
+const SSO_DATABASE_URL = process.env.SSO_DATABASE_URL || 'postgresql://postgres:XCBgJFsPbtJgiaCGaKgQXxnnhTJzyusL@switchyard.proxy.rlwy.net:45054/railway';
+
+let ssoPool: Pool;
+function getSSOPool(): Pool {
+  if (!ssoPool) {
+    ssoPool = new Pool({ connectionString: SSO_DATABASE_URL, ssl: false });
+  }
+  return ssoPool;
+}
+
+async function ensureAdminUsersTable(): Promise<void> {
+  const p = getSSOPool();
+  await p.query(`
+    CREATE TABLE IF NOT EXISTS admin_users (
+      id SERIAL PRIMARY KEY,
+      email VARCHAR(200) UNIQUE NOT NULL,
+      name VARCHAR(100),
+      password_hash VARCHAR(200) NOT NULL,
+      role VARCHAR(50) DEFAULT 'staff',
+      created_at TIMESTAMP DEFAULT NOW(),
+      last_login TIMESTAMP
+    )
+  `);
+}
+
+function ssoHashPassword(password: string): string {
+  return crypto.createHash('sha256').update(password).digest('hex');
+}
 
 export function registerOAuthRoutes(app: Express) {
   app.post("/api/auth/register", async (req: Request, res: Response) => {
     try {
       const { email, password, name } = req.body;
-      
+
       if (!email || !password) {
         return res.status(400).json({ error: "Email and password are required" });
+      }
+
+      if (!email.toLowerCase().endsWith('@cmfinancial.com')) {
+        return res.status(400).json({ error: "僅限 @cmfinancial.com 郵箱註冊" });
       }
 
       const existingUser = await db.getUserByEmail(email);
       if (existingUser) {
         return res.status(400).json({ error: "User already exists" });
+      }
+
+      // Insert into SSO admin_users table
+      try {
+        await ensureAdminUsersTable();
+        const p = getSSOPool();
+        const emailLower = email.toLowerCase();
+        const ssoHash = ssoHashPassword(password);
+        const existing = await p.query('SELECT id FROM admin_users WHERE email = $1', [emailLower]);
+        if (existing.rows.length === 0) {
+          await p.query(
+            'INSERT INTO admin_users (email, name, password_hash, role) VALUES ($1, $2, $3, $4)',
+            [emailLower, (name || email.split("@")[0]).trim(), ssoHash, 'staff']
+          );
+        }
+      } catch (ssoErr) {
+        console.error("[SSO] Failed to insert into admin_users:", ssoErr);
+        // Continue with local registration even if SSO insert fails
       }
 
       const salt = await bcrypt.genSalt(10);
@@ -34,7 +87,7 @@ export function registerOAuthRoutes(app: Express) {
       });
 
       const user = await db.getUserByOpenId(openId);
-      
+
       if (!user) {
         return res.status(500).json({ error: "Failed to create user" });
       }
@@ -57,28 +110,75 @@ export function registerOAuthRoutes(app: Express) {
   app.post("/api/auth/login", async (req: Request, res: Response) => {
     try {
       const { email, password } = req.body;
-      
+
       if (!email || !password) {
         return res.status(400).json({ error: "Email and password are required" });
       }
 
-      let user = await db.getUserByEmail(email);
-      
-      if (!user) {
-        return res.status(401).json({ error: "Invalid credentials" });
+      if (!email.toLowerCase().endsWith('@cmfinancial.com')) {
+        return res.status(400).json({ error: "僅限 @cmfinancial.com 郵箱登入" });
       }
 
-      if (user.password) {
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-          return res.status(401).json({ error: "電郵地址或密碼錯誤" });
+      // SSO: try admin_users table first
+      let ssoAuthenticated = false;
+      let ssoUser: { email: string; name: string; role: string } | null = null;
+      try {
+        await ensureAdminUsersTable();
+        const p = getSSOPool();
+        const ssoResult = await p.query('SELECT * FROM admin_users WHERE email = $1', [email.toLowerCase()]);
+        if (ssoResult.rows.length > 0) {
+          const row = ssoResult.rows[0];
+          const inputHash = ssoHashPassword(password);
+          if (inputHash === row.password_hash) {
+            ssoAuthenticated = true;
+            ssoUser = { email: row.email, name: row.name, role: row.role };
+            // Update last_login
+            await p.query('UPDATE admin_users SET last_login = NOW() WHERE id = $1', [row.id]);
+          } else {
+            return res.status(401).json({ error: "電郵地址或密碼錯誤" });
+          }
         }
-      } else {
-        // Allow legacy auto-created test users to login with any password temporarily,
-        // but it's better to force them to reset. Given the prompt "my password is correct but system says no",
-        // maybe David has a password but there was an issue, or he didn't have one and login failed?
-        // Actually, let's enforce password check. If they don't have a password, they MUST reset it or re-register.
-        return res.status(401).json({ error: "該賬號為驗證碼註冊，尚未設置密碼，請點擊下方「忘記密碼」設置新密碼。" });
+      } catch (ssoErr) {
+        console.error("[SSO] PostgreSQL check failed, falling back to MySQL:", ssoErr);
+      }
+
+      // Get or create local user record for session management
+      let user = await db.getUserByEmail(email);
+
+      if (ssoAuthenticated && ssoUser) {
+        // SSO auth succeeded - ensure local user exists for session
+        if (!user) {
+          const openId = nanoid();
+          const salt = await bcrypt.genSalt(10);
+          const hashedPassword = await bcrypt.hash(password, salt);
+          await db.upsertUser({
+            openId,
+            email: ssoUser.email,
+            name: ssoUser.name || email.split("@")[0],
+            password: hashedPassword,
+            loginMethod: "local",
+            lastSignedIn: new Date()
+          });
+          user = await db.getUserByOpenId(openId);
+        }
+      } else if (!ssoAuthenticated) {
+        // Fallback: MySQL auth
+        if (!user) {
+          return res.status(401).json({ error: "Invalid credentials" });
+        }
+
+        if (user.password) {
+          const isMatch = await bcrypt.compare(password, user.password);
+          if (!isMatch) {
+            return res.status(401).json({ error: "電郵地址或密碼錯誤" });
+          }
+        } else {
+          return res.status(401).json({ error: "該賬號為驗證碼註冊，尚未設置密碼，請點擊下方「忘記密碼」設置新密碼。" });
+        }
+      }
+
+      if (!user) {
+        return res.status(500).json({ error: "Failed to resolve user" });
       }
 
       const sessionToken = await sdk.createSessionToken(user.openId, {
