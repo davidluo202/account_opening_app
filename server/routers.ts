@@ -148,6 +148,11 @@ export const appRouter = router({
     // 创建新申请
     create: protectedProcedure.mutation(async ({ ctx }) => {
       const applicationId = await db.createApplication(ctx.user.id);
+      // Auto-generate application code APP-YYYYMMDD-NNNN
+      try {
+        const code = await db.generateApplicationCode();
+        await db.setApplicationCode(applicationId, code);
+      } catch (e) { console.error('Failed to generate application code:', e); }
       return { applicationId };
     }),
     

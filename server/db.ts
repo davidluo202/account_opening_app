@@ -1805,3 +1805,34 @@ export async function getBcanMappingData() {
   return results;
 }
 
+
+// --- Application Code Generation (v260710) ---
+export async function generateApplicationCode(): Promise<string> {
+  const today = new Date();
+  const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');
+  const prefix = `APP-${dateStr}-`;
+  
+  try {
+    const result = await getDb().execute(
+      sql`SELECT COUNT(*) as cnt FROM applications WHERE application_code LIKE ${prefix + '%'}`
+    );
+    const count = Number((result as any).rows?.[0]?.cnt || 0);
+    const seq = String(count + 1).padStart(4, '0');
+    return `${prefix}${seq}`;
+  } catch {
+    return `${prefix}0001`;
+  }
+}
+
+export async function setApplicationCode(appId: number, code: string): Promise<void> {
+  await getDb().execute(
+    sql`UPDATE applications SET application_code = ${code} WHERE id = ${appId}`
+  );
+}
+
+export async function getApplicationCode(appId: number): Promise<string | null> {
+  const result = await getDb().execute(
+    sql`SELECT application_code FROM applications WHERE id = ${appId}`
+  );
+  return (result as any).rows?.[0]?.application_code || null;
+}
