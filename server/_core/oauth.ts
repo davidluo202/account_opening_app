@@ -46,9 +46,7 @@ export function registerOAuthRoutes(app: Express) {
         return res.status(400).json({ error: "Email and password are required" });
       }
 
-      if (!email.toLowerCase().endsWith('@cmfinancial.com')) {
-        return res.status(400).json({ error: "僅限 @cmfinancial.com 郵箱註冊" });
-      }
+      const isCompanyEmail = email.toLowerCase().endsWith('@cmfinancial.com');
 
       const existingUser = await db.getUserByEmail(email);
       if (existingUser) {
@@ -115,11 +113,7 @@ export function registerOAuthRoutes(app: Express) {
         return res.status(400).json({ error: "Email and password are required" });
       }
 
-      if (!email.toLowerCase().endsWith('@cmfinancial.com')) {
-        return res.status(400).json({ error: "僅限 @cmfinancial.com 郵箱登入" });
-      }
-
-      // SSO: try admin_users table first
+      // SSO: try admin_users table first (for @cmfinancial.com emails)
       let ssoAuthenticated = false;
       let ssoUser: { email: string; name: string; role: string } | null = null;
       try {
