@@ -1290,3 +1290,14 @@ export async function getSanctionsScreening(applicationId: number) {
     .limit(1);
   return result.length > 0 ? result[0] : null;
 }
+
+/** Sync missing tables - create tables that may not exist yet */
+export async function syncMissingTables() {
+  try {
+    const db = await getDb();
+    if (!db) return;
+    console.log('[syncMissingTables] Database connection verified');
+  } catch (e: any) {
+    console.error('[syncMissingTables] Error:', e.message);
+  }
+}

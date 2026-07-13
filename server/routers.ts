@@ -7,14 +7,15 @@ import * as db from "./db";
 import { storagePut } from "./storage";
 import { nanoid } from "nanoid";
 import { generateApplicationPDF, type ApplicationPDFData } from "./pdf-generator";
-import {
-  sendVerificationCode as sendEmail,
-  sendVerificationCodeBySms,
+import { 
+  sendVerificationCode as sendEmail, 
   generateVerificationCode,
   sendApprovalNotificationEmail,
   sendRejectionNotificationEmail,
   sendReturnNotificationEmail
 } from "./email";
+
+import { screenPerson } from "./sanctions";
 
 export const appRouter = router({
   system: systemRouter,
@@ -27,53 +28,32 @@ export const appRouter = router({
       return { success: true } as const;
     }),
     
-    // 发送邮箱/短信验证码
+    // 发送邮箱验证码
     sendVerificationCode: publicProcedure
-      .input(z.object({
+      .input(z.object({ 
         email: z.string().email(),
-        isApprover: z.boolean().optional(), // 标记是否为审批人员注册
-        method: z.enum(['email', 'sms']).optional().default('email'),
-        phone: z.string().optional(), // method=sms时必须提供手机号
+        isApprover: z.boolean().optional() // 标记是否为审批人员注册
       }))
       .mutation(async ({ input }) => {
         // 如果是审批人员注册，验证邮箱域名
         if (input.isApprover && !input.email.endsWith('@cmfinancial.com')) {
           throw new Error('审批人员必须使用@cmfinancial.com邮箱');
         }
-
-        if (input.method === 'sms' && !input.phone) {
-          throw new Error('短信验证需要提供手机号码');
-        }
-
         const code = generateVerificationCode();
         const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5分钟后过期
-
+        
         // 保存验证码到数据库
         await db.saveVerificationCode(input.email, code, expiresAt);
-
-        // Bypass email sending (SendGrid quota exhausted)
-        const bypassEmail = process.env.BYPASS_EMAIL === 'true';
-        if (!bypassEmail) {
-          if (input.method === 'sms') {
-            // 发送短信
-            const sent = await sendVerificationCodeBySms(input.phone!, code);
-            if (!sent) {
-              throw new Error("短信发送失败，请稍后重试");
-            }
-          } else {
-            // 发送邮件
-            const sent = await sendEmail(input.email, code);
-            if (!sent) {
-              throw new Error("邮件发送失败，请稍后重试");
-            }
-          }
-        } else {
-          console.log(`[BYPASS] Verification code for ${input.email}: ${code}`);
+        
+        // 发送邮件
+        const sent = await sendEmail(input.email, code);
+        if (!sent) {
+          throw new Error("邮件发送失败，请稍后重试");
         }
-
-        console.log(`[Verification Code] Sent via ${input.method} to ${input.method === 'sms' ? input.phone : input.email}`);
-
-        return { success: true, message: input.method === 'sms' ? "验证码已发送至您的手机" : "验证码已发送至您的邮箱" };
+        
+        console.log(`[Verification Code] Sent to ${input.email}`);
+        
+        return { success: true, message: "验证码已发送至您的邮箱" };
       }),
     
     // 验证邮箱验证码
@@ -108,26 +88,6 @@ export const appRouter = router({
         
         // 更新emailVerified状态
         await db.updateUserEmailVerified(user.id, true);
-
-        const isCompanyEmail = input.email.endsWith('@cmfinancial.com');
-
-        // 公司邮箱默认赋予管理员权限（便于后台用户管理）
-        if (isCompanyEmail && user.role !== 'admin') {
-          await db.updateUserRole(user.id, 'admin');
-        }
-
-        // 自动创建审批人员记录（若不存在）
-        if (isCompanyEmail) {
-          const approver = await db.getApproverByUserId(user.id);
-          if (!approver) {
-            await db.addApprover({
-              userId: user.id,
-              employeeName: user.name || input.email.split('@')[0],
-              ceNumber: 'TBD',
-              role: 'manager',
-            });
-          }
-        }
         
         // 创建session token
         const { sdk } = await import('./_core/sdk');
@@ -148,11 +108,6 @@ export const appRouter = router({
     // 创建新申请
     create: protectedProcedure.mutation(async ({ ctx }) => {
       const applicationId = await db.createApplication(ctx.user.id);
-      // Auto-generate application code APP-YYYYMMDD-NNNN
-      try {
-        const code = await db.generateApplicationCode();
-        await db.setApplicationCode(applicationId, code);
-      } catch (e) { console.error('Failed to generate application code:', e); }
       return { applicationId };
     }),
     
@@ -226,7 +181,7 @@ export const appRouter = router({
         });
         
         // 生成PDF
-        const { generateApplicationPDF } = await import('./pdf-generator');
+        const { generateApplicationPDF } = await import('./pdf-generator-v7');
         let pdfBuffer: Buffer | undefined;
         
         // 获取申请数据用于邮件发送
@@ -248,22 +203,6 @@ export const appRouter = router({
           signatureMethod: 'typed',
           signatureTimestamp: new Date(),
           submittedAt: new Date(),
-          // 添加风险评估问卷数据
-          riskQuestionnaire: completeData.riskQuestionnaire ? {
-            q1_current_investments: completeData.riskQuestionnaire.q1_current_investments,
-            q2_investment_period: completeData.riskQuestionnaire.q2_investment_period,
-            q3_price_volatility: completeData.riskQuestionnaire.q3_price_volatility,
-            q4_investment_percentage: completeData.riskQuestionnaire.q4_investment_percentage,
-            q5_investment_attitude: completeData.riskQuestionnaire.q5_investment_attitude,
-            q6_derivatives_knowledge: completeData.riskQuestionnaire.q6_derivatives_knowledge,
-            q7_age_group: completeData.riskQuestionnaire.q7_age_group,
-            q8_education_level: completeData.riskQuestionnaire.q8_education_level,
-            q9_investment_knowledge_sources: completeData.riskQuestionnaire.q9_investment_knowledge_sources,
-            q10_liquidity_needs: completeData.riskQuestionnaire.q10_liquidity_needs,
-            totalScore: completeData.riskQuestionnaire.totalScore,
-            riskLevel: completeData.riskQuestionnaire.riskLevel,
-            riskDescription: completeData.riskQuestionnaire.riskDescription,
-          } : undefined,
         };
         
         // 发送客户确认邮件
@@ -298,19 +237,13 @@ export const appRouter = router({
         if (pdfBuffer) {
           try {
             const { storagePut } = await import('./storage');
-            const { buildSignedDownloadLink } = await import('./_core/files');
-
-            const fileKey = `applications/${applicationNumber}/application.pdf`;
-            const result = await storagePut(fileKey, pdfBuffer, 'application/pdf');
-
-            // Store a signed link in emails (points back to our system). It will mint short-lived presigned S3 urls.
-            const proto = (ctx.req.headers['x-forwarded-proto'] as string) || 'https';
-            const host = ctx.req.headers['x-forwarded-host'] || ctx.req.headers.host;
-            const baseUrl = `${proto}://${host}`;
-            pdfUrl = buildSignedDownloadLink(baseUrl, fileKey, 60 * 60 * 24 * 30); // link valid for 30 days
-
-            console.log(`PDF uploaded to storage: ${result.url}`);
-            console.log(`PDF email link (signed): ${pdfUrl}`);
+            const result = await storagePut(
+              `applications/${applicationNumber}/application.pdf`,
+              pdfBuffer,
+              'application/pdf'
+            );
+            pdfUrl = result.url;
+            console.log(`PDF uploaded to S3: ${pdfUrl}`);
           } catch (error) {
             console.error('Failed to upload PDF to S3:', error);
           }
@@ -377,69 +310,49 @@ export const appRouter = router({
         // 构造PDF数据
         const pdfData: ApplicationPDFData = {
           applicationNumber: application.applicationNumber || 'DRAFT',
-          accountSelection: completeData.accountSelection ? {
-            customerType: completeData.accountSelection.customerType || '',
-            accountType: completeData.accountSelection.accountType || 'cash',
-          } : undefined,
-          basicInfo: completeData.basicInfo ? {
-            chineseName: completeData.basicInfo.chineseName || '',
-            englishName: completeData.basicInfo.englishName || '',
-            gender: completeData.basicInfo.gender || '',
-            dateOfBirth: completeData.basicInfo.dateOfBirth || '',
-            placeOfBirth: completeData.basicInfo.placeOfBirth || '',
-            nationality: completeData.basicInfo.nationality || '',
-          } : undefined,
-          detailedInfo: completeData.detailedInfo ? {
-            idType: completeData.detailedInfo.idType || '',
-            idNumber: completeData.detailedInfo.idNumber || '',
-            idIssuingPlace: completeData.detailedInfo.idIssuingPlace || '',
-            idExpiryDate: completeData.detailedInfo.idExpiryDate || undefined,
-            idIsPermanent: completeData.detailedInfo.idIsPermanent || false,
-            maritalStatus: completeData.detailedInfo.maritalStatus || '',
-            educationLevel: completeData.detailedInfo.educationLevel || '',
-            residentialAddress: completeData.detailedInfo.residentialAddress || '',
-            phoneCountryCode: completeData.detailedInfo.phoneCountryCode || '',
-            phoneNumber: completeData.detailedInfo.phoneNumber || '',
-            mobileCountryCode: completeData.detailedInfo.mobileCountryCode || '',
-            mobileNumber: completeData.detailedInfo.mobileNumber || '',
-            faxNo: completeData.detailedInfo.faxNo || undefined,
-            email: completeData.detailedInfo.email || '',
-            billingAddressType: completeData.detailedInfo.billingAddressType || 'residential',
-            billingAddressOther: completeData.detailedInfo.billingAddressOther || undefined,
-            preferredLanguage: completeData.detailedInfo.preferredLanguage || 'chinese',
-          } : undefined,
-          occupation: completeData.occupation ? {
-            employmentStatus: completeData.occupation.employmentStatus || '',
-            companyName: completeData.occupation.companyName || undefined,
-            companyAddress: completeData.occupation.companyAddress || undefined,
-            position: completeData.occupation.position || undefined,
-            industry: completeData.occupation.industry || undefined,
-            yearsOfService: completeData.occupation.yearsOfService?.toString() || undefined,
-            officePhone: completeData.occupation.officePhone || undefined,
-            officeFaxNo: completeData.occupation.officeFaxNo || undefined,
-          } : undefined,
-          financial: completeData.employment || completeData.financial ? {
-            incomeSource: completeData.employment?.incomeSource || undefined,
-            annualIncome: completeData.employment?.annualIncome || '',
-            netWorth: completeData.employment?.netWorth || '',
-            liquidAsset: completeData.employment?.liquidAsset || '',
-          } : undefined,
-          investment: completeData.financial ? {
-            investmentObjectives: completeData.financial.investmentObjectives || '',
-            investmentExperience: completeData.financial.investmentExperience || '',
-            riskTolerance: completeData.financial.riskTolerance || undefined,
-          } : undefined,
+          customerType: completeData.accountSelection?.customerType || '',
+          accountType: completeData.accountSelection?.accountType || 'cash',
+          chineseName: completeData.basicInfo?.chineseName || '',
+          englishName: completeData.basicInfo?.englishName || '',
+          gender: completeData.basicInfo?.gender || '',
+          dateOfBirth: completeData.basicInfo?.dateOfBirth || '',
+          placeOfBirth: completeData.basicInfo?.placeOfBirth || '',
+          nationality: completeData.basicInfo?.nationality || '',
+          idType: completeData.detailedInfo?.idType || '',
+          idNumber: completeData.detailedInfo?.idNumber || '',
+          idIssuingPlace: completeData.detailedInfo?.idIssuingPlace || '',
+          idExpiryDate: completeData.detailedInfo?.idExpiryDate || undefined,
+          idIsPermanent: completeData.detailedInfo?.idIsPermanent || false,
+          maritalStatus: completeData.detailedInfo?.maritalStatus || '',
+          educationLevel: completeData.detailedInfo?.educationLevel || '',
+          email: completeData.detailedInfo?.email || '',
+          phoneCountryCode: completeData.detailedInfo?.phoneCountryCode || '',
+          phoneNumber: completeData.detailedInfo?.phoneNumber || '',
+          mobileCountryCode: completeData.detailedInfo?.mobileCountryCode || '',
+          mobileNumber: completeData.detailedInfo?.mobileNumber || '',
+          faxNo: completeData.detailedInfo?.faxNo || undefined,
+          residentialAddress: completeData.detailedInfo?.residentialAddress || '',
+          billingAddressType: completeData.detailedInfo?.billingAddressType || 'residential',
+          billingAddressOther: completeData.detailedInfo?.billingAddressOther || undefined,
+          preferredLanguage: completeData.detailedInfo?.preferredLanguage || 'chinese',
+          employmentStatus: completeData.occupation?.employmentStatus || '',
+          employerName: completeData.occupation?.companyName || undefined,
+          employerAddress: completeData.occupation?.companyAddress || undefined,
+          occupation: completeData.occupation?.position || undefined,
+          officePhone: completeData.occupation?.officePhone || undefined,
+          officeFaxNo: completeData.occupation?.officeFaxNo || undefined,
+          annualIncome: completeData.employment?.annualIncome || '',
+          netWorth: completeData.employment?.netWorth || '',
+          liquidAsset: completeData.employment?.liquidAsset || '',
+          investmentObjective: completeData.financial?.investmentObjectives || '',
+          investmentExperience: completeData.financial?.investmentExperience || '',
           bankAccounts: (completeData.bankAccounts || []).map(account => ({
             bankName: account.bankName,
             accountNumber: account.accountNumber,
             accountType: account.accountType || 'saving',
-            currency: account.accountCurrency || undefined,
-            accountHolderName: account.accountHolderName || undefined,
           })),
-          taxInfo: completeData.taxInfo ? {
-            taxResidency: completeData.taxInfo.taxResidency || '',
-            taxIdNumber: completeData.taxInfo.taxIdNumber || '',
-          } : undefined,
+          taxCountry: completeData.taxInfo?.taxResidency || '',
+          taxIdNumber: completeData.taxInfo?.taxIdNumber || '',
           riskQuestionnaire: completeData.riskQuestionnaire ? {
             q1_current_investments: completeData.riskQuestionnaire.q1_current_investments || '',
             q2_investment_period: completeData.riskQuestionnaire.q2_investment_period || '',
@@ -456,16 +369,11 @@ export const appRouter = router({
             riskDescription: completeData.riskQuestionnaire.riskDescription || '',
           } : undefined,
           uploadedDocuments: completeData.uploadedDocuments || [],
+          faceVerificationStatus: completeData.face?.verified ? 'verified' : 'pending',
           isPEP: completeData.regulatory?.isPEP || false,
           isUSPerson: completeData.regulatory?.isUSPerson || false,
-          agreementRead: completeData.regulatory?.agreementRead || false,
-          agreementAccepted: completeData.regulatory?.agreementAccepted || false,
-          electronicSignatureConsent: completeData.regulatory?.electronicSignatureConsent || false,
-          amlComplianceConsent: completeData.regulatory?.amlComplianceConsent || false,
-          riskAssessmentConsent: completeData.regulatory?.riskAssessmentConsent || false,
-          signatureName: completeData.regulatory?.signatureName || '',
-          signatureMethod: 'typed', // 默认签名方式
-          signatureTimestamp: completeData.regulatory?.signedAt || '',
+          agreementSigned: completeData.regulatory?.agreementAccepted || false,
+          signatureDate: completeData.regulatory?.signedAt ? new Date(completeData.regulatory.signedAt).toLocaleDateString() : '',
         };
         
         // 生成PDF
@@ -521,8 +429,6 @@ export const appRouter = router({
           uploadedDocuments: completeData.uploadedDocuments?.map((doc: any) => ({
             documentType: doc.documentType,
             fileUrl: doc.fileUrl,
-            fileKey: doc.fileKey,
-            fileName: doc.fileName,
           })) || [],
           // 添加簽名信息（如果已提交）
           signatureName: application.signatureName,
@@ -535,28 +441,10 @@ export const appRouter = router({
           agreementRead: completeData.regulatory?.agreementRead ?? false,
           agreementAccepted: completeData.regulatory?.agreementAccepted ?? false,
           amlComplianceConsent: completeData.regulatory?.amlComplianceConsent ?? false,
-          electronicSignatureConsent: completeData.regulatory?.electronicSignatureConsent ?? false,
-          riskAssessmentConsent: completeData.regulatory?.riskAssessmentConsent ?? false,
-          // 添加风险评估问卷数据
-          riskQuestionnaire: completeData.riskQuestionnaire ? {
-            q1_current_investments: completeData.riskQuestionnaire.q1_current_investments,
-            q2_investment_period: completeData.riskQuestionnaire.q2_investment_period,
-            q3_price_volatility: completeData.riskQuestionnaire.q3_price_volatility,
-            q4_investment_percentage: completeData.riskQuestionnaire.q4_investment_percentage,
-            q5_investment_attitude: completeData.riskQuestionnaire.q5_investment_attitude,
-            q6_derivatives_knowledge: completeData.riskQuestionnaire.q6_derivatives_knowledge,
-            q7_age_group: completeData.riskQuestionnaire.q7_age_group,
-            q8_education_level: completeData.riskQuestionnaire.q8_education_level,
-            q9_investment_knowledge_sources: completeData.riskQuestionnaire.q9_investment_knowledge_sources,
-            q10_liquidity_needs: completeData.riskQuestionnaire.q10_liquidity_needs,
-            totalScore: completeData.riskQuestionnaire.totalScore,
-            riskLevel: completeData.riskQuestionnaire.riskLevel,
-            riskDescription: completeData.riskQuestionnaire.riskDescription,
-          } : undefined,
         };
         
         // 生成PDF
-        const { generateApplicationPDF } = await import('./pdf-generator');
+        const { generateApplicationPDF } = await import('./pdf-generator-v7');
         let pdfBuffer: Buffer;
         
         try {
@@ -582,7 +470,6 @@ export const appRouter = router({
         applicationId: z.number(),
         customerType: z.enum(["individual", "joint", "corporate"]),
         accountType: z.enum(["cash", "margin", "derivatives"]),
-        corporateSubType: z.enum(["corporate_pi", "institutional_pi"]).optional(),
       }))
       .mutation(async ({ input, ctx }) => {
         const { applicationId, ...data } = input;
@@ -590,7 +477,7 @@ export const appRouter = router({
         if (!application || application.userId !== ctx.user.id) {
           throw new Error("申请不存在或无权访问");
         }
-
+        
         await db.saveAccountSelection(applicationId, data);
         await db.updateApplicationStep(applicationId, 2);
         
@@ -630,7 +517,7 @@ export const appRouter = router({
         }
         
         await db.savePersonalBasicInfo(applicationId, data);
-        await db.updateApplicationStep(applicationId, 2);
+        await db.updateApplicationStep(applicationId, 3);
         
         const saved = await db.getPersonalBasicInfo(applicationId);
         return { success: true, data: saved };
@@ -646,73 +533,6 @@ export const appRouter = router({
         return await db.getPersonalBasicInfo(input.applicationId);
       }),
   }),
-
-  // Case 2: 机构基本信息
-  corporateBasic: router({
-    save: protectedProcedure
-      .input(z.object({
-        applicationId: z.number(),
-        companyEnglishName: z.string().min(1),
-        companyChineseName: z.string().optional(),
-        natureOfEntity: z.string().min(1),
-        natureOfEntityOther: z.string().optional(),
-        natureOfBusiness: z.string().min(1),
-        natureOfBusinessOther: z.string().optional(),
-        countryOfIncorporation: z.string().min(1),
-        countryOfIncorporationOther: z.string().optional(),
-        dateOfIncorporation: z.string(),
-        certificateOfIncorporationNo: z.string().min(1),
-        jurisdictionOfResidence: z.string().optional(),
-        businessRegistrationNo: z.string().optional(),
-        registeredAddress: z.string().min(1),
-        businessAddress: z.string().min(1),
-        officeNo: z.string().min(1),
-        officeCountryCode: z.string().optional(),
-        facsimileNo: z.string().optional(),
-        contactName: z.string().min(1),
-        contactTitle: z.string().min(1),
-        contactPhone: z.string().min(1),
-        contactCountryCode: z.string().optional(),
-        contactEmail: z.string().email(),
-        contactEmailVerified: z.boolean().optional().default(false),
-        // 機構專業投資者專用
-        website: z.string().optional(),
-        isRegulated: z.string().optional().default("no"),
-        regulatorName: z.string().optional(),
-      }))
-      .mutation(async ({ input, ctx }) => {
-        const { applicationId, officeCountryCode, contactCountryCode, jurisdictionOfResidence: _jor, natureOfEntityOther: _neo, natureOfBusinessOther: _nbo, countryOfIncorporationOther: _cio, ...data } = input;
-        
-        // 合并国家区号与电话号码
-        const officeNo = officeCountryCode ? `${officeCountryCode} ${data.officeNo}` : data.officeNo;
-        const contactPhone = contactCountryCode ? `${contactCountryCode} ${data.contactPhone}` : data.contactPhone;
-        
-        const application = await db.getApplicationById(applicationId);
-        if (!application || application.userId !== ctx.user.id) {
-          throw new Error("申请不存在或无权访问");
-        }
-        
-        await db.saveCorporateBasicInfo(applicationId, {
-          ...data,
-          officeNo,
-          contactPhone,
-        });
-        await db.updateApplicationStep(applicationId, 2);
-        
-        const saved = await db.getCorporateBasicInfo(applicationId);
-        return { success: true, data: saved };
-      }),
-    
-    get: protectedProcedure
-      .input(z.object({ applicationId: z.number() }))
-      .query(async ({ input, ctx }) => {
-        const application = await db.getApplicationById(input.applicationId);
-        if (!application || application.userId !== ctx.user.id) {
-          throw new Error("申请不存在或无权访问");
-        }
-        return await db.getCorporateBasicInfo(input.applicationId);
-      }),
-  }),
   
   // Case 4: 个人详细信息
   personalDetailed: router({
@@ -721,9 +541,7 @@ export const appRouter = router({
         applicationId: z.number(),
         idType: z.string(),
         idNumber: z.string(),
-        idIssuingCountry: z.string().optional(),
         idIssuingPlace: z.string(),
-        idIssuingPlaceOther: z.string().optional(),
         idExpiryDate: z.string().optional(),
         idIsPermanent: z.boolean(),
         maritalStatus: z.string(),
@@ -774,7 +592,7 @@ export const appRouter = router({
     save: protectedProcedure
       .input(z.object({
         applicationId: z.number(),
-        employmentStatus: z.enum(["employed", "self_employed", "retired", "student", "housewife", "others"]),
+        employmentStatus: z.enum(["employed", "self_employed", "student", "unemployed"]),
         companyName: z.string().optional(),
         position: z.string().optional(),
         yearsOfService: z.number().optional(),
@@ -782,8 +600,6 @@ export const appRouter = router({
         companyAddress: z.string().optional(),
         officePhone: z.string().optional(),
         officeFaxNo: z.string().optional(), // 办公传真（可选）
-        mobilePhone: z.string().optional(),
-        correspondenceAddress: z.string().optional(),
       }))
       .mutation(async ({ input, ctx }) => {
         const { applicationId, ...data } = input;
@@ -884,154 +700,6 @@ export const appRouter = router({
       }),
   }),
   
-  corporateFinancial: router({
-    save: protectedProcedure
-      .input(z.object({
-        applicationId: z.number(),
-        authorizedShareCapital: z.string(),
-        issuedShareCapital: z.string(),
-        initialSourceOfWealth: z.array(z.string()),
-        netAssetValue: z.string(),
-        netAssetAuditDate: z.string().optional(),
-        profitAfterTax: z.string(),
-        profitAuditDate: z.string().optional(),
-        assetItems: z.array(z.string()),
-        assetItemsOther: z.string().optional(),
-        experiencedProducts: z.array(z.string()),
-        experiencedProductsOther: z.string().optional(),
-      }))
-      .mutation(async ({ input, ctx }) => {
-        const {
-          applicationId,
-          initialSourceOfWealth,
-          assetItems,
-          experiencedProducts,
-          assetItemsOther,
-          experiencedProductsOther,
-          ...rest
-        } = input;
-        const application = await db.getApplicationById(applicationId);
-        if (!application || application.userId !== ctx.user.id) {
-          throw new Error("申请不存在或无权访问");
-        }
-        
-        const data = {
-          ...rest,
-          initialSourceOfWealth: JSON.stringify(initialSourceOfWealth),
-          assetItems: JSON.stringify(assetItems),
-          assetItemsOther: assetItemsOther || null,
-          experiencedProducts: JSON.stringify(experiencedProducts),
-          experiencedProductsOther: experiencedProductsOther || null,
-        };
-        
-        await db.saveCorporateFinancialInfo(applicationId, data);
-        await db.updateApplicationStep(applicationId, 3);
-        
-        const saved = await db.getCorporateFinancialInfo(applicationId);
-        return { success: true, data: saved };
-      }),
-    
-    get: protectedProcedure
-      .input(z.object({ applicationId: z.number() }))
-      .query(async ({ input, ctx }) => {
-        const application = await db.getApplicationById(input.applicationId);
-        if (!application || application.userId !== ctx.user.id) {
-          throw new Error("申请不存在或无权访问");
-        }
-        return await db.getCorporateFinancialInfo(input.applicationId);
-      }),
-  }),
-
-  corporateInvestment: router({
-    save: protectedProcedure
-      .input(z.object({
-        applicationId: z.number(),
-        investmentObjectives: z.array(z.string()),
-        investmentObjectivesOther: z.string().optional(),
-        estimatedInvestmentAmount: z.string(),
-        riskVolatility: z.string(),
-        investmentExperience: z.string(),
-        knowledgeOfDerivatives: z.string(),
-        experiencedProducts: z.array(z.string()),
-        experiencedProductsOther: z.string().optional(),
-        assetItems: z.array(z.string()),
-        assetItemsOther: z.string().optional(),
-      }))
-      .mutation(async ({ input, ctx }) => {
-        const {
-          applicationId,
-          investmentObjectives,
-          investmentObjectivesOther,
-          experiencedProducts,
-          experiencedProductsOther,
-          assetItems,
-          assetItemsOther,
-          ...rest
-        } = input;
-        const application = await db.getApplicationById(applicationId);
-        if (!application || application.userId !== ctx.user.id) {
-          throw new Error("申请不存在或无权访问");
-        }
-
-        const data = {
-          ...rest,
-          investmentObjectives: JSON.stringify(investmentObjectives),
-          investmentObjectivesOther: investmentObjectivesOther || null,
-          experiencedProducts: JSON.stringify(experiencedProducts),
-          experiencedProductsOther: experiencedProductsOther || null,
-          assetItems: JSON.stringify(assetItems),
-          assetItemsOther: assetItemsOther || null,
-        };
-
-        await db.saveCorporateInvestmentInfo(applicationId, data);
-        await db.updateApplicationStep(applicationId, 4);
-
-        const saved = await db.getCorporateInvestmentInfo(applicationId);
-        return { success: true, data: saved };
-      }),
-
-    get: protectedProcedure
-      .input(z.object({ applicationId: z.number() }))
-      .query(async ({ input, ctx }) => {
-        const application = await db.getApplicationById(input.applicationId);
-        if (!application || application.userId !== ctx.user.id) {
-          throw new Error("申请不存在或无权访问");
-        }
-        return await db.getCorporateInvestmentInfo(input.applicationId);
-      }),
-  }),
-
-  corporateRelatedParties: router({
-    save: protectedProcedure
-      .input(z.object({
-        applicationId: z.number(),
-        relatedParties: z.array(z.any()),
-      }))
-      .mutation(async ({ input, ctx }) => {
-        const { applicationId, relatedParties } = input;
-        const application = await db.getApplicationById(applicationId);
-        if (!application || application.userId !== ctx.user.id) {
-          throw new Error("申请不存在或无权访问");
-        }
-        
-        await db.saveCorporateRelatedParties(applicationId, { relatedParties });
-        await db.updateApplicationStep(applicationId, 5);
-        
-        const saved = await db.getCorporateRelatedParties(applicationId);
-        return { success: true, data: saved };
-      }),
-    
-    get: protectedProcedure
-      .input(z.object({ applicationId: z.number() }))
-      .query(async ({ input, ctx }) => {
-        const application = await db.getApplicationById(input.applicationId);
-        if (!application || application.userId !== ctx.user.id) {
-          throw new Error("申请不存在或无权访问");
-        }
-        return await db.getCorporateRelatedParties(input.applicationId);
-      }),
-  }),
-  
   // Case 8: 银行账户
   bankAccount: router({
     add: protectedProcedure
@@ -1043,8 +711,6 @@ export const appRouter = router({
         accountCurrency: z.string(),
         accountNumber: z.string(),
         accountHolderName: z.string(),
-        accountHolderAddress: z.string().optional(), // 持有人地址
-        swiftCode: z.string().optional(), // SWIFT Code
       }))
       .mutation(async ({ input, ctx }) => {
         const { applicationId, ...data } = input;
@@ -1084,8 +750,6 @@ export const appRouter = router({
         applicationId: z.number(),
         taxResidency: z.string(),
         taxIdNumber: z.string(),
-        noTaxId: z.boolean().optional().default(false),
-        noTaxIdReason: z.string().nullish(),
       }))
       .mutation(async ({ input, ctx }) => {
         const { applicationId, ...data } = input;
@@ -1132,21 +796,10 @@ export const appRouter = router({
         // 将base64转换为Buffer
         const buffer = Buffer.from(fileData, 'base64');
         const fileKey = `applications/${applicationId}/${documentType}/${nanoid()}-${fileName}`;
-
+        
         // 上传到S3
-        let url: string;
-        try {
-          const result = await storagePut(fileKey, buffer, mimeType);
-          url = result.url;
-        } catch (uploadErr: any) {
-          const s3b = (process.env.S3_BUCKET || '').trim();
-          const akLen = (process.env.AWS_ACCESS_KEY_ID || '').trim().length;
-          const skLen = (process.env.AWS_SECRET_ACCESS_KEY || '').trim().length;
-          const region = (process.env.AWS_REGION || '').trim();
-          console.error(`[Upload] Storage error: ${uploadErr.message} | S3_BUCKET=${s3b} | KEY_LEN=${akLen} | SECRET_LEN=${skLen} | REGION=${region} | STACK=${uploadErr.stack?.slice(0, 200)}`);
-          throw new Error(`文件上傳失敗(S3:${s3b ? 'yes' : 'no'},K:${akLen},R:${region}): ${uploadErr.message}`);
-        }
-
+        const { url } = await storagePut(fileKey, buffer, mimeType);
+        
         // 保存到数据库
         const id = await db.saveUploadedDocument(applicationId, {
           documentType,
@@ -1156,9 +809,9 @@ export const appRouter = router({
           mimeType,
           fileSize: buffer.length,
         });
-
+        
         await db.updateApplicationStep(applicationId, 10);
-
+        
         return { success: true, id, url };
       }),
     
@@ -1170,17 +823,6 @@ export const appRouter = router({
           throw new Error("申请不存在或无权访问");
         }
         return await db.getUploadedDocuments(input.applicationId);
-      }),
-    getViewUrl: protectedProcedure
-      .input(z.object({ applicationId: z.number(), fileKey: z.string() }))
-      .query(async ({ input, ctx }) => {
-        const application = await db.getApplicationById(input.applicationId);
-        if (!application || application.userId !== ctx.user.id) {
-          throw new Error("申请不存在或无权访问");
-        }
-        const { storagePresignGet } = await import('./storage');
-        const url = await storagePresignGet(input.fileKey, 600); // 10 minutes
-        return { url };
       }),
   }),
   
@@ -1234,300 +876,66 @@ export const appRouter = router({
         return await db.getFaceVerification(input.applicationId);
       }),
     
-    // AWS Rekognition 人脸比对API
+    // Face++人脸比对API
     compareFaces: protectedProcedure
       .input(z.object({
-        applicationId: z.number(),
-        selfieBase64: z.string(), // base64 encoded selfie image
-      }))
-      .mutation(async ({ input, ctx }) => {
-        const { applicationId, selfieBase64 } = input;
-
-        const application = await db.getApplicationById(applicationId);
-        if (!application || application.userId !== ctx.user.id) {
-          throw new Error("申请不存在或无权访问");
-        }
-
-        // 获取已上传的身份证正面照片
-        const documents = await db.getUploadedDocuments(applicationId);
-        const idFrontDoc = documents.find((doc: any) => doc.documentType === 'id_front');
-        if (!idFrontDoc) {
-          throw new Error('請先上傳身份證正面照片');
-        }
-
-        try {
-          const { RekognitionClient, CompareFacesCommand } = await import('@aws-sdk/client-rekognition');
-
-          const akid = (process.env.AWS_ACCESS_KEY_ID || '').trim();
-          const asak = (process.env.AWS_SECRET_ACCESS_KEY || '').trim();
-          // Use us-east-1 for Rekognition (best support for CompareFaces)
-          const rekRegion = process.env.AWS_REKOGNITION_REGION || 'us-east-1';
-          const rekognitionClient = new RekognitionClient({
-            region: rekRegion,
-            ...(akid && asak ? { credentials: { accessKeyId: akid, secretAccessKey: asak } } : {}),
-          });
-          console.log(`[FaceVerify] Using Rekognition region: ${rekRegion}`);
-
-          // Selfie: decode base64
-          const selfieData = selfieBase64.replace(/^data:image\/\w+;base64,/, '');
-          const selfieBuffer = Buffer.from(selfieData, 'base64');
-          console.log(`[FaceVerify] Selfie size: ${selfieBuffer.length} bytes`);
-          if (selfieBuffer.length > 5 * 1024 * 1024) {
-            throw new Error('自拍照片過大（超過5MB），請重新拍攝');
-          }
-          if (selfieBuffer.length < 1000) {
-            throw new Error('自拍照片無效，請重新拍攝');
-          }
-
-          // ID photo: fetch from S3 using fileKey
-          const { GetObjectCommand } = await import('@aws-sdk/client-s3');
-          const { S3Client } = await import('@aws-sdk/client-s3');
-          const bucket = (process.env.S3_BUCKET || '').trim();
-          if (!bucket || !idFrontDoc.fileKey) {
-            throw new Error(`S3配置不完整: bucket=${bucket}, fileKey=${idFrontDoc.fileKey || 'missing'}`);
-          }
-          const s3Client = new S3Client({
-            region: (process.env.AWS_REGION || '').trim() || 'ap-southeast-1',
-            ...(akid && asak ? { credentials: { accessKeyId: akid, secretAccessKey: asak } } : {}),
-          });
-          const s3Response = await s3Client.send(new GetObjectCommand({
-            Bucket: bucket,
-            Key: idFrontDoc.fileKey,
-          }));
-          const idPhotoBuffer = Buffer.from(await s3Response.Body!.transformToByteArray());
-          console.log(`[FaceVerify] ID photo size: ${idPhotoBuffer.length} bytes, key: ${idFrontDoc.fileKey}`);
-          if (idPhotoBuffer.length > 5 * 1024 * 1024) {
-            throw new Error('身份證照片過大（超過5MB）');
-          }
-
-          // Call Rekognition CompareFaces
-          let result;
-          try {
-            const command = new CompareFacesCommand({
-              SourceImage: { Bytes: selfieBuffer },
-              TargetImage: { Bytes: idPhotoBuffer },
-              SimilarityThreshold: 70,
-            });
-            result = await rekognitionClient.send(command);
-          } catch (rekErr: any) {
-            if (rekErr.name === 'InvalidParameterException') {
-              throw new Error('無法在照片中檢測到人臉，請確保身份證正面照片清晰且自拍時正面面對攝像頭');
-            }
-            throw rekErr;
-          }
-
-          const topMatch = result.FaceMatches?.[0];
-          const similarity = topMatch?.Similarity ?? 0;
-          const threshold = 90;
-          const success = similarity >= threshold;
-
-          return {
-            success,
-            confidence: similarity,
-            message: success
-              ? `人臉比對成功，相似度：${similarity.toFixed(2)}%`
-              : `人臉比對失敗，相似度：${similarity.toFixed(2)}%（需要≥${threshold}%）`,
-          };
-        } catch (error: any) {
-          const fBucket = (process.env.S3_BUCKET || '').trim();
-          const fKey = idFrontDoc?.fileKey || 'N/A';
-          console.error(`[FaceVerify] Error: ${error.message} | Bucket: ${fBucket} | FileKey: ${fKey} | Code: ${error.Code || error.name}`);
-          throw new Error(`人臉比對失敗: ${error.message || error.Code || 'Unknown error'}`);
-        }
-      }),
-  }),
-
-  // SMS短信验证 (Twilio Verify)
-  sms: router({
-    sendVerification: protectedProcedure
-      .input(z.object({
-        phoneNumber: z.string().min(8), // E.164 format or local number
+        selfieImageUrl: z.string(),
+        idCardImageUrl: z.string(),
       }))
       .mutation(async ({ input }) => {
-        const accountSid = process.env.TWILIO_ACCOUNT_SID;
-        const authToken = process.env.TWILIO_AUTH_TOKEN;
-        let serviceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
-
-        if (!accountSid || !authToken) {
-          throw new Error('Twilio credentials not configured');
+        const { selfieImageUrl, idCardImageUrl } = input;
+        
+        // 检查Face++ API密钥是否配置
+        const apiKey = process.env.FACEPP_API_KEY;
+        const apiSecret = process.env.FACEPP_API_SECRET;
+        
+        if (!apiKey || !apiSecret) {
+          throw new Error('Face++ API密鑰未配置');
         }
-
-        const twilio = (await import('twilio')).default;
-        const client = twilio(accountSid, authToken);
-
-        // Create Verify Service if not exists
-        if (!serviceSid) {
-          const service = await client.verify.v2.services.create({
-            friendlyName: 'CMF Account Opening',
+        
+        try {
+          // 调用Face++ Compare API
+          const formData = new FormData();
+          formData.append('api_key', apiKey);
+          formData.append('api_secret', apiSecret);
+          formData.append('image_url1', selfieImageUrl);
+          formData.append('image_url2', idCardImageUrl);
+          
+          const response = await fetch('https://api-us.faceplusplus.com/facepp/v3/compare', {
+            method: 'POST',
+            body: formData,
           });
-          serviceSid = service.sid;
-          console.log(`[Twilio] Created Verify Service: ${serviceSid}`);
-          // Note: In production, store this in env. For now log it.
-        }
-
-        // Send verification code
-        const verification = await client.verify.v2
-          .services(serviceSid)
-          .verifications.create({
-            to: input.phoneNumber,
-            channel: 'sms',
-          });
-
-        console.log(`[SMS] Verification sent to ${input.phoneNumber}, status: ${verification.status}`);
-
-        return { success: true, status: verification.status };
-      }),
-
-    checkVerification: protectedProcedure
-      .input(z.object({
-        phoneNumber: z.string().min(8),
-        code: z.string().length(6),
-        applicationId: z.number(),
-      }))
-      .mutation(async ({ input, ctx }) => {
-        const accountSid = process.env.TWILIO_ACCOUNT_SID;
-        const authToken = process.env.TWILIO_AUTH_TOKEN;
-        let serviceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
-
-        if (!accountSid || !authToken) {
-          throw new Error('Twilio credentials not configured');
-        }
-
-        const application = await db.getApplicationById(input.applicationId);
-        if (!application || application.userId !== ctx.user.id) {
-          throw new Error("申请不存在或无权访问");
-        }
-
-        const twilio = (await import('twilio')).default;
-        const client = twilio(accountSid, authToken);
-
-        // Auto-find or create Verify Service (Serverless instances don't share memory)
-        if (!serviceSid) {
-          const services = await client.verify.v2.services.list({ limit: 10 });
-          const existing = services.find((s: any) => s.friendlyName === 'CMF Account Opening');
-          if (existing) {
-            serviceSid = existing.sid;
-          } else {
-            const service = await client.verify.v2.services.create({ friendlyName: 'CMF Account Opening' });
-            serviceSid = service.sid;
+          
+          if (!response.ok) {
+            throw new Error(`Face++ API請求失敗: ${response.statusText}`);
           }
+          
+          const result = await response.json();
+          
+          // 检查是否有错误
+          if (result.error_message) {
+            throw new Error(`Face++ API錯誤: ${result.error_message}`);
+          }
+          
+          // 获取置信度（0-100）
+          const confidence = result.confidence || 0;
+          const threshold = 90; // 90%置信度阈值
+          const success = confidence >= threshold;
+          
+          return {
+            success,
+            confidence,
+            message: success 
+              ? `人臉比對成功，置信度：${confidence.toFixed(2)}%`
+              : `人臉比對失敗，置信度：${confidence.toFixed(2)}%（需要≥${threshold}%）`,
+          };
+        } catch (error: any) {
+          console.error('Face++ API error:', error);
+          throw new Error(`人臉比對失敗: ${error.message}`);
         }
-
-        const verificationCheck = await client.verify.v2
-          .services(serviceSid)
-          .verificationChecks.create({
-            to: input.phoneNumber,
-            code: input.code,
-          });
-
-        const approved = verificationCheck.status === 'approved';
-
-        if (approved) {
-          // Update phoneVerified status in personalDetailedInfo
-          await db.updatePhoneVerified(input.applicationId, true);
-          // Save SMS verification record
-          await db.saveSmsVerificationRecord(input.applicationId, input.phoneNumber);
-        }
-
-        return {
-          success: approved,
-          status: verificationCheck.status,
-          message: approved ? '手機號碼驗證成功' : '驗證碼錯誤或已過期',
-        };
       }),
   }),
   
-  // 客戶聲明 (公司開戶)
-  clientDeclaration: router({
-    save: protectedProcedure
-      .input(z.object({
-        applicationId: z.number(),
-        q1Licensed: z.string(),
-        q1CeNo: z.string().optional().default(""),
-        q2Intermediary: z.string(),
-        q2Name: z.string().optional().default(""),
-        q2IdPassport: z.string().optional().default(""),
-        q2Address: z.string().optional().default(""),
-        q3ClientOfCmf: z.string(),
-        q3Details: z.string().optional().default(""),
-        q4StaffOfCmf: z.string(),
-        q4Details: z.string().optional().default(""),
-        q5RelationshipWithStaff: z.string(),
-        q5Details: z.string().optional().default(""),
-        q6ExchangeParticipant: z.string(),
-        q6DirectorName: z.string().optional().default(""),
-        q6InstitutionName: z.string().optional().default(""),
-        q6ParticipateNo: z.string().optional().default(""),
-        q6StaffNamePosition: z.string().optional().default(""),
-      }))
-      .mutation(async ({ input, ctx }) => {
-        const { applicationId, ...data } = input;
-        const application = await db.getApplicationById(applicationId);
-        if (!application || application.userId !== ctx.user.id) {
-          throw new Error("申请不存在或无权访问");
-        }
-        try {
-          await db.saveClientDeclaration(applicationId, data);
-          return { success: true };
-        } catch (e: any) {
-          throw new Error(`保存失败: ${e?.sqlMessage || e?.message || String(e)}`);
-        }
-      }),
-
-    get: protectedProcedure
-      .input(z.object({ applicationId: z.number() }))
-      .query(async ({ input, ctx }) => {
-        const application = await db.getApplicationById(input.applicationId);
-        if (!application || application.userId !== ctx.user.id) {
-          throw new Error("申请不存在或无权访问");
-        }
-        return await db.getClientDeclaration(input.applicationId);
-      }),
-  }),
-
-  // 個人客戶聲明 (Personal Client Declaration)
-  personalDeclaration: router({
-    save: protectedProcedure
-      .input(z.object({
-        applicationId: z.number(),
-        declaration_a_is_beneficial_owner: z.boolean(),
-        declaration_a_owner_name: z.string().optional().default(""),
-        declaration_a_owner_id: z.string().optional().default(""),
-        declaration_a_owner_country: z.string().optional().default(""),
-        declaration_a_owner_address: z.string().optional().default(""),
-        declaration_b_is_employee: z.boolean(),
-        declaration_b_institution_name: z.string().optional().default(""),
-        declaration_c_is_cmf_employee: z.boolean(),
-        declaration_d_is_relative: z.boolean(),
-        declaration_d_employee_name: z.string().optional().default(""),
-        declaration_d_relationship: z.string().optional().default(""),
-      }))
-      .mutation(async ({ input, ctx }) => {
-        const { applicationId, ...data } = input;
-        const application = await db.getApplicationById(applicationId);
-        if (!application || application.userId !== ctx.user.id) {
-          throw new Error("申请不存在或无权访问");
-        }
-        try {
-          await db.savePersonalClientDeclaration(applicationId, data);
-          await db.updateApplicationStep(applicationId, 12);
-          return { success: true };
-        } catch (e: any) {
-          throw new Error(`保存失败: ${e?.sqlMessage || e?.message || String(e)}`);
-        }
-      }),
-
-    get: protectedProcedure
-      .input(z.object({ applicationId: z.number() }))
-      .query(async ({ input, ctx }) => {
-        const application = await db.getApplicationById(input.applicationId);
-        if (!application || application.userId !== ctx.user.id) {
-          throw new Error("申请不存在或无权访问");
-        }
-        return await db.getPersonalClientDeclaration(input.applicationId);
-      }),
-  }),
-
   // Case 12: 监管声明
   regulatory: router({
     save: protectedProcedure
@@ -1542,8 +950,6 @@ export const appRouter = router({
         amlComplianceConsent: z.boolean(),
         riskAssessmentConsent: z.boolean(),
         bcanConsentAccepted: z.boolean().optional(),
-        confirmationRead: z.boolean().optional(),
-        objectsDirectMarketing: z.boolean().optional(),
       }))
       .mutation(async ({ input, ctx }) => {
         const { applicationId, ...data } = input;
@@ -1551,14 +957,15 @@ export const appRouter = router({
         if (!application || application.userId !== ctx.user.id) {
           throw new Error("申请不存在或无权访问");
         }
-        
+
         const saveData = {
           ...data,
+          bcanConsentAccepted: data.bcanConsentAccepted ?? false,
           signedAt: new Date(),
         };
         
         await db.saveRegulatoryDeclarations(applicationId, saveData);
-        await db.updateApplicationStep(applicationId, 13);
+        await db.updateApplicationStep(applicationId, 12);
         
         return { success: true };
       }),
@@ -1775,7 +1182,7 @@ export const appRouter = router({
       .input(z.object({
         applicationId: z.number(),
         isProfessionalInvestor: z.boolean(),
-        approvedRiskProfile: z.enum(['Lowest', 'Low', 'Low to Medium', 'Medium', 'Medium to High', 'High']),
+        approvedRiskProfile: z.enum(['R1', 'R2', 'R3', 'R4', 'R5']),
         comments: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -1800,7 +1207,38 @@ export const appRouter = router({
         if (existingApplication?.application?.firstApprovalStatus === 'approved') {
           throw new Error('该申请已经完成初审，无法重复审批');
         }
-        
+
+        // 自动进行制裁/AML筛查（如果尚未筛查）
+        const existingScreening = await db.getSanctionsScreening(input.applicationId);
+        if (!existingScreening) {
+          const applicantName = existingApplication?.basicInfo?.englishName
+            || existingApplication?.basicInfo?.chineseName
+            || '';
+          if (applicantName) {
+            try {
+              const screenResult = await screenPerson({
+                name: applicantName,
+                dateOfBirth: existingApplication?.basicInfo?.dateOfBirth || undefined,
+                nationality: existingApplication?.basicInfo?.nationality || undefined,
+              });
+              await db.saveSanctionsScreening(input.applicationId, {
+                searchId: screenResult.searchId,
+                screenedName: applicantName,
+                hitCount: screenResult.hitCount,
+                hits: screenResult.hits,
+                rawResponse: JSON.stringify(screenResult),
+                flaggedForReview: screenResult.hitCount > 0,
+              });
+              if (screenResult.hitCount > 0) {
+                console.log(`[Sanctions] Application ${input.applicationId} has ${screenResult.hitCount} hit(s) - flagged for review`);
+              }
+            } catch (sanctionsError) {
+              console.error('[Sanctions] Screening failed, continuing with approval:', sanctionsError);
+              // 筛查失败不阻止审批流程
+            }
+          }
+        }
+
         // 更新第一级审批信息（包含PI認定和風險評級）
         await db.updateFirstApproval(input.applicationId, {
           status: 'approved',
@@ -1847,7 +1285,7 @@ export const appRouter = router({
       .input(z.object({
         applicationId: z.number(),
         isProfessionalInvestor: z.boolean(),
-        riskProfile: z.enum(['Lowest', 'Low', 'Low to Medium', 'Medium', 'Medium to High', 'High']),
+        riskProfile: z.string(),
         comments: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -1873,11 +1311,15 @@ export const appRouter = router({
           throw new Error('该申请已经完成终审，无法重复审批');
         }
         
-        // 测试阶段暂时允许同一人完成初审和终审
-        // TODO: 正式上线时恢复同一人限制
-        // if (applicationData?.application?.firstApprovalBy === ctx.user.email) {
-        //   throw new Error('初审和终审不能是同一人，请联系其他审批人员进行终审');
-        // }
+        // 检查初审和终审是否为同一人（通过userId比较）
+        // firstApprovalBy存储的是初审人员的邮箱
+        if (applicationData?.application?.firstApprovalBy) {
+          const firstApprover = await db.getApproverByUserId(ctx.user.id);
+          // 通过邮箱比较是否为同一人
+          if (firstApprover && applicationData.application.firstApprovalBy === ctx.user.email) {
+            throw new Error('初审和终审不能是同一人，请联系其他审批人员进行终审');
+          }
+        }
         
         // 更新第二级审批信息
         await db.updateSecondApproval(input.applicationId, {
@@ -1897,7 +1339,7 @@ export const appRouter = router({
         // 更新申请状态为最终批准
         await db.updateApplicationStatus(input.applicationId, 'approved');
 
-        // 生成账户号和BCAN（账户流水号部分）
+        // 生成BCAN码（BSU667 + 6位序号）
         let bcanCode = '';
         try {
           bcanCode = await db.generateBcan(input.applicationId) || '';
@@ -1917,7 +1359,7 @@ export const appRouter = router({
         // 生成終審版PDF（包含客戶提交、初審和終審的完整信息）
         let finalPdfUrl = '';
         try {
-          const { generateApplicationPDF } = await import('./pdf-generator');
+          const { generateApplicationPDF } = await import('./pdf-generator-v7');
           const pdfData = {
             applicationNumber: applicationData.application?.applicationNumber,
             status: applicationData.application?.status,
@@ -2028,7 +1470,7 @@ export const appRouter = router({
           // PDF生成失败不影响审批流程
         }
         
-        // 发送最终批准邮件到operation@cmfinancial.com，抄送onboard@cmfinancial.com
+        // 发送最终批准邮件到operation@cmfinancial.com，抄送customer-services@cmfinancial.com
         try {
           const { sendFinalApprovalNotificationEmail } = await import('./email');
           if (applicationData) {
@@ -2083,7 +1525,7 @@ export const appRouter = router({
           rejectReason: input.rejectReason,
         });
         
-        // 发送拒绝通知邮件到onboard@cmfinancial.com
+        // 发送拒绝通知邮件到Customer-services@cmfinancial.com
         try {
           const applicationData = await db.getCompleteApplicationData(input.applicationId);
           if (applicationData) {
@@ -2134,7 +1576,7 @@ export const appRouter = router({
           returnReason: input.returnReason,
         });
         
-        // 发送退回通知邮件到onboard@cmfinancial.com
+        // 发送退回通知邮件到Customer-services@cmfinancial.com
         try {
           const applicationData = await db.getCompleteApplicationData(input.applicationId);
           if (applicationData) {
@@ -2256,206 +1698,75 @@ export const appRouter = router({
         return await db.getRiskQuestionnaire(input.applicationId);
       }),
   }),
-  // 個人客戶聲明 (在人臉識別之後)
-  personalClientDeclaration: router({
-    save: protectedProcedure
-      .input(z.object({
-        applicationId: z.number(),
-        declaration_a_is_beneficial_owner: z.boolean(),
-        declaration_a_owner_name: z.string().optional(),
-        declaration_a_owner_id: z.string().optional(),
-        declaration_a_owner_country: z.string().optional(),
-        declaration_a_owner_address: z.string().optional(),
-        declaration_b_is_employee: z.boolean(),
-        declaration_b_institution_name: z.string().optional(),
-        declaration_c_is_cmf_employee: z.boolean(),
-        declaration_d_is_relative: z.boolean(),
-        declaration_d_employee_name: z.string().optional(),
-        declaration_d_relationship: z.string().optional(),
-      }))
-      .mutation(async ({ input, ctx }) => {
-        const { applicationId, ...data } = input;
-        const application = await db.getApplicationById(applicationId);
-        if (!application || application.userId !== ctx.user.id) {
-          throw new Error("申请不存在或无权访问");
-        }
-        try {
-          await db.savePersonalClientDeclaration(applicationId, data);
-          return { success: true };
-        } catch (e: any) {
-          throw new Error(`保存失败: ${e?.sqlMessage || e?.message || String(e)}`);
-        }
-      }),
 
-    get: protectedProcedure
-      .input(z.object({ applicationId: z.number() }))
-      .query(async ({ input, ctx }) => {
-        const application = await db.getApplicationById(input.applicationId);
-        if (!application || application.userId !== ctx.user.id) {
-          throw new Error("申请不存在或无权访问");
-        }
-        return await db.getPersonalClientDeclaration(input.applicationId);
-      }),
-  }),
-
-  // 聯名賬戶第二持有人數據（通用JSON存儲）
-  secondHolder: router({
-    save: protectedProcedure
-      .input(z.object({
-        applicationId: z.number(),
-        stepName: z.string(),
-        data: z.record(z.string(), z.any()),
-      }))
-      .mutation(async ({ input, ctx }) => {
-        const application = await db.getApplicationById(input.applicationId);
-        if (!application || application.userId !== ctx.user.id) {
-          throw new Error("申请不存在或无权访问");
-        }
-        await db.saveSecondHolderData(input.applicationId, input.stepName, input.data);
-        return { success: true };
-      }),
-
-    get: protectedProcedure
-      .input(z.object({
-        applicationId: z.number(),
-        stepName: z.string().optional(),
-      }))
-      .query(async ({ input, ctx }) => {
-        const application = await db.getApplicationById(input.applicationId);
-        if (!application || application.userId !== ctx.user.id) {
-          throw new Error("申请不存在或无权访问");
-        }
-        return await db.getSecondHolderData(input.applicationId, input.stepName);
-      }),
-  }),
-
-  // 制裁/PEP筛查
+  // 制裁/AML筛查
   sanctions: router({
-    // 执行制裁筛查
+    // 手动触发筛查
     screen: protectedProcedure
-      .input(z.object({ applicationId: z.number() }))
+      .input(z.object({
+        name: z.string().min(1),
+        dateOfBirth: z.string().optional(),
+        nationality: z.string().optional(),
+        applicationId: z.number().optional(),
+      }))
       .mutation(async ({ ctx, input }) => {
-        // 检查用户是否为审批人员或管理员
+        // 只有审批人员或管理员可以触发筛查
         if (ctx.user.role !== 'admin' && !ctx.user.email?.endsWith('@cmfinancial.com')) {
-          throw new Error('没有权限执行制裁筛查');
+          throw new Error('没有权限进行制裁筛查');
         }
 
-        // 获取申请人信息
-        const applicationData = await db.getCompleteApplicationData(input.applicationId);
-        if (!applicationData?.application) {
-          throw new Error('申请不存在');
-        }
+        const result = await screenPerson({
+          name: input.name,
+          dateOfBirth: input.dateOfBirth,
+          nationality: input.nationality,
+        });
 
-        const basicInfo = applicationData.basicInfo;
-        if (!basicInfo) {
-          throw new Error('申请人基本信息不存在，无法执行筛查');
-        }
-
-        const fullName = basicInfo.englishName || basicInfo.chineseName;
-        const dateOfBirth = basicInfo.dateOfBirth || undefined;
-        const nationality = basicInfo.nationality || undefined;
-
-        const apiKey = process.env.SANCTIONS_IO_API_KEY;
-
-        // If no API key, return mock clean result
-        if (!apiKey) {
-          const record = await db.saveSanctionsScreeningRecord({
-            applicationId: input.applicationId,
-            fullName,
-            dateOfBirth,
-            nationality,
-            screeningResult: 'clean',
-            matchCount: 0,
-            matchDetails: JSON.stringify({ testMode: true, message: 'SANCTIONS_IO_API_KEY not configured - test mode' }),
-            screenedBy: ctx.user.email || undefined,
+        // 如果提供了applicationId，保存筛查结果
+        if (input.applicationId) {
+          await db.saveSanctionsScreening(input.applicationId, {
+            searchId: result.searchId,
+            screenedName: input.name,
+            hitCount: result.hitCount,
+            hits: result.hits,
+            rawResponse: JSON.stringify(result),
+            flaggedForReview: result.hitCount > 0,
           });
-
-          return {
-            testMode: true,
-            screeningResult: 'clean' as const,
-            matchCount: 0,
-            matchDetails: [],
-            recordId: record.id,
-          };
         }
 
-        // Call Sanctions.io API
-        try {
-          const response = await fetch('https://api.sanctions.io/search/v2.3', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify({
-              name: fullName,
-              ...(dateOfBirth ? { dateOfBirth } : {}),
-              ...(nationality ? { nationality } : {}),
-              type: 'person',
-            }),
-          });
-
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Sanctions.io API error: ${response.status} ${errorText}`);
-          }
-
-          const apiResult = await response.json();
-          const matches = apiResult.results || apiResult.matches || [];
-          const matchCount = matches.length;
-          const screeningResult = matchCount === 0 ? 'clean' : 'potential_match';
-
-          const record = await db.saveSanctionsScreeningRecord({
-            applicationId: input.applicationId,
-            fullName,
-            dateOfBirth,
-            nationality,
-            screeningResult,
-            matchCount,
-            matchDetails: JSON.stringify(matches),
-            screenedBy: ctx.user.email || undefined,
-          });
-
-          return {
-            testMode: false,
-            screeningResult,
-            matchCount,
-            matchDetails: matches,
-            recordId: record.id,
-          };
-        } catch (error: any) {
-          console.error('Sanctions.io API call failed:', error);
-          throw new Error(`制裁筛查失败: ${error.message}`);
-        }
+        return {
+          searchId: result.searchId,
+          hitCount: result.hitCount,
+          hits: result.hits,
+          timestamp: result.timestamp,
+        };
       }),
 
-    // 获取筛查结果
-    getResults: protectedProcedure
+    // 获取申请的筛查结果
+    getResult: protectedProcedure
       .input(z.object({ applicationId: z.number() }))
       .query(async ({ ctx, input }) => {
-        // 检查用户是否为审批人员或管理员
         if (ctx.user.role !== 'admin' && !ctx.user.email?.endsWith('@cmfinancial.com')) {
-          throw new Error('没有权限查看制裁筛查结果');
+          throw new Error('没有权限查看筛查结果');
         }
-
-        return await db.getSanctionsScreeningRecords(input.applicationId);
+        return await db.getSanctionsScreening(input.applicationId);
       }),
   }),
 
   // BCAN管理
   bcan: router({
+    // 导出BCAN-CID Mapping数据（用��上报港交所SFTP）
     exportMapping: protectedProcedure
       .query(async ({ ctx }) => {
         if (ctx.user.role !== 'admin' && !ctx.user.email?.endsWith('@cmfinancial.com')) {
           throw new Error('没有权限导出BCAN数据');
         }
         const data = await db.getBcanMappingData();
+        // 格式化为港交所要求的结构
         return {
           institutionCode: 'BSU667',
           generatedAt: new Date().toISOString(),
           records: data.map(r => ({
             bcanCode: r.bcanCode,
-            clientId: r.clientId,
             englishName: r.englishName,
             chineseName: r.chineseName,
             idType: r.idType,
@@ -2466,7 +1777,6 @@ export const appRouter = router({
         };
       }),
   }),
-
 });
 
 export type AppRouter = typeof appRouter;

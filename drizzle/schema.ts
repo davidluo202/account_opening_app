@@ -43,24 +43,13 @@ export const emailVerificationCodes = mysqlTable("email_verification_codes", {
 });
 
 /**
- * 短信验证记录表
- */
-export const smsVerificationRecords = mysqlTable("sms_verification_records", {
-  id: int("id").autoincrement().primaryKey(),
-  applicationId: int("applicationId").notNull(),
-  phoneNumber: varchar("phoneNumber", { length: 50 }).notNull(),
-  verified: boolean("verified").default(false).notNull(),
-  verifiedAt: timestamp("verifiedAt"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
-
-/**
  * 开户申请主表
  */
 export const applications = mysqlTable("applications", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
   applicationNumber: varchar("applicationNumber", { length: 50 }).unique(),
+  applicationCode: varchar("applicationCode", { length: 20 }).unique(), // 自动编号 APP-YYYYMMDD-NNNN
   status: mysqlEnum("status", ["draft", "submitted", "under_review", "approved", "rejected", "returned"]).default("draft").notNull(),
   currentStep: int("currentStep").default(1).notNull(),
   completedSteps: text("completedSteps"), // JSON array of completed step numbers
@@ -73,7 +62,7 @@ export const applications = mysqlTable("applications", {
   signatureMethod: mysqlEnum("signatureMethod", ["typed", "iamsmart"]), // 签署方式：输入姓名或iAM Smart
   // 审批相关字段
   isProfessionalInvestor: boolean("isProfessionalInvestor").default(false), // 是否为专业投资者（PI）
-  approvedRiskProfile: mysqlEnum("approvedRiskProfile", ["Lowest", "Low", "Low to Medium", "Medium", "Medium to High", "High"]), // 审批人员评估的风险等级（新6级评分系统）
+  approvedRiskProfile: mysqlEnum("approvedRiskProfile", ["R1", "R2", "R3", "R4", "R5"]), // 审批人员评估的风险等级：R1(低风险) R2(中低风险) R3(中风险) R4(中高风险) R5(高风险)
   // 第一级审批字段
   firstApprovalStatus: mysqlEnum("firstApprovalStatus", ["pending", "approved", "rejected"]).default("pending"), // 第一级审批状态
   firstApprovalBy: varchar("firstApprovalBy", { length: 200 }), // 第一级审批人员ID
@@ -82,7 +71,7 @@ export const applications = mysqlTable("applications", {
   firstApprovalAt: timestamp("firstApprovalAt"), // 第一级审批时间
   firstApprovalComments: text("firstApprovalComments"), // 第一级审批意见
   firstApprovalIsProfessionalInvestor: boolean("firstApprovalIsProfessionalInvestor"), // 初审人员认定的PI状态
-  firstApprovalRiskProfile: mysqlEnum("firstApprovalRiskProfile", ["Lowest", "Low", "Low to Medium", "Medium", "Medium to High", "High"]), // 初审人员评估的风险等级（新6级评分系统）
+  firstApprovalRiskProfile: mysqlEnum("firstApprovalRiskProfile", ["R1", "R2", "R3", "R4", "R5"]), // 初审人员评估的风险等级
   // 第二级审批字段（合规部终审）
   secondApprovalStatus: mysqlEnum("secondApprovalStatus", ["pending", "approved", "rejected"]).default("pending"), // 第二级审批状态
   secondApprovalBy: varchar("secondApprovalBy", { length: 200 }), // 第二级审批人员ID
@@ -95,8 +84,8 @@ export const applications = mysqlTable("applications", {
   firstReviewPdfUrl: varchar("firstReviewPdfUrl", { length: 500 }), // 初审版PDF URL（包含初审信息）
   finalReviewPdfUrl: varchar("finalReviewPdfUrl", { length: 500 }), // 终审版PDF URL（包含初审+终审信息）
   // 客户号与BCAN相关字段
-  clientId: varchar("clientId", { length: 20 }), // 客户账户号（14位：AA-B-C-YYYY-SSSSSS）
-  bcanCode: varchar("bcanCode", { length: 30 }), // BCAN = 账户流水号（6位）
+  clientId: varchar("clientId", { length: 20 }), // 客户CID号码（如668001）
+  bcanCode: varchar("bcanCode", { length: 30 }), // 投资者识别码 BCAN = BSU667 + CID
   bcanGeneratedAt: timestamp("bcanGeneratedAt"), // BCAN生成时间
 });
 
@@ -108,38 +97,6 @@ export const accountSelections = mysqlTable("account_selections", {
   applicationId: int("applicationId").notNull().unique(),
   customerType: mysqlEnum("customerType", ["individual", "joint", "corporate"]).notNull(), // 个人/联名/机构
   accountType: mysqlEnum("accountType", ["cash", "margin", "derivatives"]).notNull(), // 现金/保证金/衍生品
-  corporateSubType: varchar("corporateSubType", { length: 50 }), // corporate_pi / institutional_pi
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-/**
- * Case 2: 机构基本信息
- */
-export const corporateBasicInfo = mysqlTable("corporate_basic_info", {
-  id: int("id").autoincrement().primaryKey(),
-  applicationId: int("applicationId").notNull().unique(),
-  companyEnglishName: varchar("companyEnglishName", { length: 255 }).notNull(),
-  companyChineseName: varchar("companyChineseName", { length: 255 }),
-  natureOfEntity: varchar("natureOfEntity", { length: 100 }).notNull(),
-  natureOfBusiness: varchar("natureOfBusiness", { length: 100 }).notNull(),
-  countryOfIncorporation: varchar("countryOfIncorporation", { length: 100 }).notNull(),
-  dateOfIncorporation: varchar("dateOfIncorporation", { length: 10 }).notNull(), // YYYY-MM-DD
-  certificateOfIncorporationNo: varchar("certificateOfIncorporationNo", { length: 100 }).notNull(),
-  businessRegistrationNo: varchar("businessRegistrationNo", { length: 100 }),
-  registeredAddress: text("registeredAddress").notNull(),
-  businessAddress: text("businessAddress").notNull(),
-  officeNo: varchar("officeNo", { length: 50 }).notNull(),
-  facsimileNo: varchar("facsimileNo", { length: 50 }),
-  contactName: varchar("contactName", { length: 100 }).notNull(),
-  contactTitle: varchar("contactTitle", { length: 100 }).notNull(),
-  contactPhone: varchar("contactPhone", { length: 50 }).notNull(),
-  contactEmail: varchar("contactEmail", { length: 320 }).notNull(),
-  contactEmailVerified: boolean("contactEmailVerified").default(false).notNull(),
-  // 機構專業投資者專用
-  website: varchar("website", { length: 500 }),
-  isRegulated: varchar("isRegulated", { length: 10 }).default("no"),
-  regulatorName: varchar("regulatorName", { length: 255 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -168,9 +125,7 @@ export const personalDetailedInfo = mysqlTable("personal_detailed_info", {
   applicationId: int("applicationId").notNull().unique(),
   idType: varchar("idType", { length: 50 }).notNull(), // 身份证件类型
   idNumber: varchar("idNumber", { length: 100 }).notNull(),
-  idIssuingCountry: varchar("idIssuingCountry", { length: 10 }), // 证件签发国家
   idIssuingPlace: varchar("idIssuingPlace", { length: 200 }).notNull(),
-  idIssuingPlaceOther: varchar("idIssuingPlaceOther", { length: 200 }), // 当选择"其他"时填写
   idExpiryDate: varchar("idExpiryDate", { length: 10 }), // YYYY-MM-DD or null if permanent
   idIsPermanent: boolean("idIsPermanent").default(false).notNull(),
   maritalStatus: varchar("maritalStatus", { length: 50 }).notNull(),
@@ -184,7 +139,6 @@ export const personalDetailedInfo = mysqlTable("personal_detailed_info", {
   mobileNumber: varchar("mobileNumber", { length: 50 }).notNull(),
   faxNo: varchar("faxNo", { length: 50 }), // 传真号码
   emailVerified: boolean("emailVerified").default(false).notNull(), // 邮箱验证状态
-  phoneVerified: boolean("phoneVerified").default(false).notNull(), // 手机验证状态
   residentialAddress: text("residentialAddress").notNull(),
   // 账单通讯地址
   billingAddressType: mysqlEnum("billingAddressType", ["residential", "office", "other"]).notNull(),
@@ -201,7 +155,7 @@ export const personalDetailedInfo = mysqlTable("personal_detailed_info", {
 export const occupationInfo = mysqlTable("occupation_info", {
   id: int("id").autoincrement().primaryKey(),
   applicationId: int("applicationId").notNull().unique(),
-  employmentStatus: mysqlEnum("employmentStatus", ["employed", "self_employed", "retired", "student", "housewife", "others"]).notNull(),
+  employmentStatus: mysqlEnum("employmentStatus", ["employed", "self_employed", "student", "unemployed"]).notNull(),
   // 以下字段仅当 employed 或 self_employed 时填写
   companyName: varchar("companyName", { length: 200 }),
   position: varchar("position", { length: 100 }),
@@ -209,10 +163,7 @@ export const occupationInfo = mysqlTable("occupation_info", {
   industry: varchar("industry", { length: 100 }),
   companyAddress: text("companyAddress"),
   officePhone: varchar("officePhone", { length: 50 }),
-  officeFaxNo: varchar("officeFaxNo", { length: 50 }),
-  // 以下字段仅当 retired/student/housewife/others 时填写
-  mobilePhone: varchar("mobilePhone", { length: 50 }),
-  correspondenceAddress: text("correspondenceAddress"),
+  officeFaxNo: varchar("officeFaxNo", { length: 50 }), // 办公传真
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -256,8 +207,6 @@ export const bankAccounts = mysqlTable("bank_accounts", {
   accountCurrency: varchar("accountCurrency", { length: 10 }).notNull(),
   accountNumber: varchar("accountNumber", { length: 100 }).notNull(),
   accountHolderName: varchar("accountHolderName", { length: 200 }).notNull(),
-  accountHolderAddress: varchar("accountHolderAddress", { length: 500 }), // 持有人地址
-  swiftCode: varchar("swiftCode", { length: 20 }), // SWIFT Code
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -270,8 +219,6 @@ export const taxInfo = mysqlTable("tax_info", {
   applicationId: int("applicationId").notNull().unique(),
   taxResidency: varchar("taxResidency", { length: 100 }).notNull(),
   taxIdNumber: varchar("taxIdNumber", { length: 100 }).notNull(),
-  noTaxId: boolean("noTaxId").default(false), // 沒有稅務編號
-  noTaxIdReason: text("noTaxIdReason"), // 沒有稅務編號的理由
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -317,48 +264,17 @@ export const regulatoryDeclarations = mysqlTable("regulatory_declarations", {
   amlComplianceConsent: boolean("amlComplianceConsent").default(false).notNull(),
   riskAssessmentConsent: boolean("riskAssessmentConsent").default(false).notNull(),
   bcanConsentAccepted: boolean("bcanConsentAccepted").default(false).notNull(), // 投资者识别码制度同意书
-  confirmationRead: boolean("confirmationRead").default(false),
-  objectsDirectMarketing: boolean("objectsDirectMarketing").default(false),
   signedAt: timestamp("signedAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
 /**
- * 客戶聲明表 (公司開戶)
- */
-export const clientDeclarations = mysqlTable("client_declarations", {
-  id: int("id").autoincrement().primaryKey(),
-  applicationId: int("applicationId").notNull().unique(),
-  q1Licensed: varchar("q1Licensed", { length: 10 }).default("").notNull(),
-  q1CeNo: varchar("q1CeNo", { length: 100 }).default("").notNull(),
-  q2Intermediary: varchar("q2Intermediary", { length: 10 }).default("").notNull(),
-  q2Name: varchar("q2Name", { length: 200 }).default("").notNull(),
-  q2IdPassport: varchar("q2IdPassport", { length: 100 }).default("").notNull(),
-  q2Address: text("q2Address"),
-  q3ClientOfCmf: varchar("q3ClientOfCmf", { length: 10 }).default("").notNull(),
-  q3Details: text("q3Details"),
-  q4StaffOfCmf: varchar("q4StaffOfCmf", { length: 10 }).default("").notNull(),
-  q4Details: text("q4Details"),
-  q5RelationshipWithStaff: varchar("q5RelationshipWithStaff", { length: 10 }).default("").notNull(),
-  q5Details: text("q5Details"),
-  q6ExchangeParticipant: varchar("q6ExchangeParticipant", { length: 10 }).default("").notNull(),
-  q6DirectorName: varchar("q6DirectorName", { length: 200 }).default("").notNull(),
-  q6InstitutionName: varchar("q6InstitutionName", { length: 200 }).default("").notNull(),
-  q6ParticipateNo: varchar("q6ParticipateNo", { length: 100 }).default("").notNull(),
-  q6StaffNamePosition: varchar("q6StaffNamePosition", { length: 200 }).default("").notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type ClientDeclaration = typeof clientDeclarations.$inferSelect;
-
-/**
- * 客户CID序号表 - 用于生成账户号流水号
+ * 客户CID序号表 - 用于生成668+序号的客户号
  */
 export const bcanSequences = mysqlTable("bcan_sequences", {
   id: int("id").autoincrement().primaryKey(),
-  lastSequence: int("lastSequence").default(0).notNull(),
+  lastSequence: int("lastSequence").default(0).notNull(), // 当前最大序号（668前缀后的数字）
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
@@ -444,25 +360,6 @@ export const customerDeclarations = mysqlTable("customer_declarations", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
-/**
- * 制裁/PEP筛查记录表
- */
-export const sanctionsScreeningRecords = mysqlTable("sanctions_screening_records", {
-  id: int("id").autoincrement().primaryKey(),
-  applicationId: int("applicationId").notNull(),
-  fullName: varchar("fullName", { length: 500 }).notNull(),
-  dateOfBirth: varchar("dateOfBirth", { length: 10 }), // YYYY-MM-DD
-  nationality: varchar("nationality", { length: 100 }),
-  screeningResult: mysqlEnum("screeningResult", ["clean", "potential_match", "confirmed_match"]).notNull(),
-  matchCount: int("matchCount").default(0).notNull(),
-  matchDetails: text("matchDetails"), // JSON text
-  screenedAt: timestamp("screenedAt").defaultNow().notNull(),
-  screenedBy: varchar("screenedBy", { length: 320 }), // approver email
-});
-
-export type SanctionsScreeningRecord = typeof sanctionsScreeningRecords.$inferSelect;
-export type InsertSanctionsScreeningRecord = typeof sanctionsScreeningRecords.$inferInsert;
-
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type Application = typeof applications.$inferSelect;
@@ -473,7 +370,6 @@ export type PersonalDetailedInfo = typeof personalDetailedInfo.$inferSelect;
 export type OccupationInfo = typeof occupationInfo.$inferSelect;
 export type EmploymentDetails = typeof employmentDetails.$inferSelect;
 export type FinancialAndInvestment = typeof financialAndInvestment.$inferSelect;
-export type CorporateBasicInfo = typeof corporateBasicInfo.$inferSelect;
 export type BankAccount = typeof bankAccounts.$inferSelect;
 export type TaxInfo = typeof taxInfo.$inferSelect;
 export type UploadedDocument = typeof uploadedDocuments.$inferSelect;
@@ -489,83 +385,19 @@ export type CustomerDeclaration = typeof customerDeclarations.$inferSelect;
 export type InsertCustomerDeclaration = typeof customerDeclarations.$inferInsert;
 
 /**
- * Case 3 (Corporate): 机构财务信息
+ * 制裁/AML筛查记录表
  */
-export const corporateFinancialInfo = mysqlTable("corporate_financial_info", {
+export const sanctionsScreening = mysqlTable("sanctions_screening", {
   id: int("id").autoincrement().primaryKey(),
-  applicationId: int("applicationId").notNull().unique(),
-  authorizedShareCapital: text("authorizedShareCapital").notNull(),
-  issuedShareCapital: text("issuedShareCapital").notNull(),
-  initialSourceOfWealth: text("initialSourceOfWealth").notNull(), // JSON array
-  netAssetValue: varchar("netAssetValue", { length: 100 }).notNull(),
-  netAssetAuditDate: varchar("netAssetAuditDate", { length: 20 }),
-  profitAfterTax: varchar("profitAfterTax", { length: 100 }).notNull(),
-  profitAuditDate: varchar("profitAuditDate", { length: 20 }),
-  assetItems: text("assetItems").notNull(), // JSON array
-  assetItemsOther: text("assetItemsOther"),
-  experiencedProducts: text("experiencedProducts"), // JSON array
-  experiencedProductsOther: text("experiencedProductsOther"),
+  applicationId: int("applicationId").notNull(),
+  searchId: varchar("searchId", { length: 100 }), // sanctions.io search ID
+  screenedName: varchar("screenedName", { length: 300 }).notNull(), // 筛查的姓名
+  hitCount: int("hitCount").default(0).notNull(), // 命中数量
+  hits: text("hits"), // JSON array of hit details
+  rawResponse: text("rawResponse"), // 完整API响应JSON
+  flaggedForReview: boolean("flaggedForReview").default(false).notNull(), // 是否标记需人工复核
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
-/**
- * Case 4 (Corporate): 公司投資經驗與目標
- */
-export const corporateInvestmentInfo = mysqlTable("corporate_investment_info", {
-  id: int("id").autoincrement().primaryKey(),
-  applicationId: int("applicationId").notNull().unique(),
-  investmentObjectives: text("investmentObjectives").notNull(), // JSON array
-  investmentObjectivesOther: text("investmentObjectivesOther"),
-  estimatedInvestmentAmount: varchar("estimatedInvestmentAmount", { length: 100 }).notNull(),
-  riskVolatility: varchar("riskVolatility", { length: 50 }).notNull(),
-  investmentExperience: varchar("investmentExperience", { length: 100 }).notNull(),
-  knowledgeOfDerivatives: varchar("knowledgeOfDerivatives", { length: 10 }).notNull(),
-  experiencedProducts: text("experiencedProducts").notNull(), // JSON array
-  experiencedProductsOther: text("experiencedProductsOther"),
-  assetItems: text("assetItems").notNull(), // JSON array
-  assetItemsOther: text("assetItemsOther"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-/**
- * Case 5 (Corporate): 机构关联方
- */
-export const corporateRelatedParties = mysqlTable("corporate_related_parties", {
-  id: int("id").autoincrement().primaryKey(),
-  applicationId: int("applicationId").notNull().unique(),
-  relatedParties: text("relatedParties").notNull(), // JSON array of party objects
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type CorporateFinancialInfo = typeof corporateFinancialInfo.$inferSelect;
-export type InsertCorporateFinancialInfo = typeof corporateFinancialInfo.$inferInsert;
-export type CorporateInvestmentInfo = typeof corporateInvestmentInfo.$inferSelect;
-export type InsertCorporateInvestmentInfo = typeof corporateInvestmentInfo.$inferInsert;
-export type CorporateRelatedParties = typeof corporateRelatedParties.$inferSelect;
-export type InsertCorporateRelatedParties = typeof corporateRelatedParties.$inferInsert;
-
-/**
- * 個人客戶聲明表 (在人臉識別後)
- */
-export const personalClientDeclarations = mysqlTable("personal_client_declarations", {
-  id: int("id").autoincrement().primaryKey(),
-  applicationId: int("applicationId").notNull().unique(),
-  qAUltimateBeneficialOwner: varchar("qAUltimateBeneficialOwner", { length: 10 }).default("").notNull(),
-  qAOwnerName: varchar("qAOwnerName", { length: 200 }).default(""),
-  qAIdPassportNo: varchar("qAIdPassportNo", { length: 100 }).default(""),
-  qACountryOfIssue: varchar("qACountryOfIssue", { length: 100 }).default(""),
-  qAAddress: text("qAAddress"),
-  qBSfcRegistration: varchar("qBSfcRegistration", { length: 10 }).default("").notNull(),
-  qBInstitutionName: varchar("qBInstitutionName", { length: 200 }).default(""),
-  nationality: varchar("nationality", { length: 100 }).default(""),
-  birthCountry: varchar("birthCountry", { length: 100 }).default(""),
-  taxCountry: varchar("taxCountry", { length: 100 }).default(""),
-  qDPEP: varchar("qDPEP", { length: 10 }).default(""),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type PersonalClientDeclaration = typeof personalClientDeclarations.$inferSelect;
+export type SanctionsScreening = typeof sanctionsScreening.$inferSelect;
+export type InsertSanctionsScreening = typeof sanctionsScreening.$inferInsert;
