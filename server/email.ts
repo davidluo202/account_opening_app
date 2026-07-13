@@ -36,8 +36,9 @@ export async function sendVerificationCode(to: string, code: string): Promise<bo
   }
 
   try {
+    console.log(`[Email] Sending verification code to ${to} from ${senderEmail}`);
     const { data, error } = await resend.emails.send({
-      from: senderEmail,
+      from: `誠港金融 <${senderEmail}>`,
       to,
       subject: "誠港金融 - 郵箱驗證碼",
       text: `您的驗證碼是：${code}，有效期為5分鐘。請勿將此驗證碼告訴他人。`,
@@ -58,15 +59,15 @@ export async function sendVerificationCode(to: string, code: string): Promise<bo
     });
 
     if (error) {
-      console.error('Resend error:', error);
-      return false;
+      console.error('[Email] Resend error:', JSON.stringify(error));
+      throw new Error(`邮件发送失败: ${error.message || JSON.stringify(error)}`);
     }
 
-    console.log(`Verification code sent to ${to}, id: ${data?.id}`);
+    console.log(`[Email] Verification code sent to ${to}, id: ${data?.id}`);
     return true;
   } catch (error: any) {
-    console.error('Resend error:', error);
-    return false;
+    console.error('[Email] Send error:', error.message || error);
+    throw new Error(`邮件发送失败: ${error.message || '未知错误'}`);
   }
 }
 
