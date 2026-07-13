@@ -178,6 +178,7 @@ export default function ApprovalList() {
               <TableHeader>
                 <TableRow>
                   <TableHead>申請編號</TableHead>
+                  <TableHead>系統編碼</TableHead>
                   <TableHead>客戶姓名</TableHead>
                   <TableHead>提交時間</TableHead>
                   <TableHead>狀態</TableHead>
@@ -188,6 +189,7 @@ export default function ApprovalList() {
                 {filteredApplications.map((app) => (
                   <TableRow key={app.id}>
                     <TableCell className="font-medium">{app.applicationNumber}</TableCell>
+                    <TableCell className="font-mono text-xs text-muted-foreground">{app.applicationCode || '-'}</TableCell>
                     <TableCell>{app.customerName || '-'}</TableCell>
                     <TableCell>{formatDateTime(app.submittedAt)}</TableCell>
                     <TableCell>{getStatusBadge(app.status, app.firstApprovalStatus, app.secondApprovalStatus)}</TableCell>

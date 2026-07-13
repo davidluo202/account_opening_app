@@ -1,4 +1,4 @@
-import { eq, and, desc, gt, sql } from "drizzle-orm";
+import { eq, and, desc, gt, like, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   InsertUser,
@@ -7,7 +7,6 @@ import {
   applicationNumberSequences,
   accountSelections,
   personalBasicInfo,
-  corporateBasicInfo,
   personalDetailedInfo,
   occupationInfo,
   employmentDetails,
@@ -17,207 +16,15 @@ import {
   uploadedDocuments,
   faceVerification,
   regulatoryDeclarations,
-  clientDeclarations,
-  personalClientDeclarations,
   emailVerificationCodes,
   approvers,
   approvalRecords,
-  sanctionsScreeningRecords,
   bcanSequences,
+  sanctionsScreening
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
-
-/**
- * Generic helper: raw mysql2 INSERT ... ON DUPLICATE KEY UPDATE
- * Avoids Drizzle's DEFAULT keyword issue with auto-increment / timestamp columns.
- */
-async function safeInsert(tableName: string, data: Record<string, any>, applicationId: number) {
-  const mysql2 = await import("mysql2/promise");
-  const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
-  try {
-    const fields = Object.keys(data).filter(k => data[k] !== undefined);
-    const vals: any[] = [applicationId, ...fields.map(f => data[f] ?? '')];
-    const cols = fields.map(f => '`' + f + '`').join(', ');
-    const placeholders = fields.map(() => '?').join(', ');
-    const updates = fields.map(f => '`' + f + '`=VALUES(`' + f + '`)').join(', ');
-    await conn.execute(
-      `INSERT INTO \`${tableName}\` (\`applicationId\`, ${cols}) VALUES (?, ${placeholders}) ON DUPLICATE KEY UPDATE ${updates}`,
-      vals
-    );
-  } finally {
-    await conn.end();
-  }
-}
-
-export async function syncMissingTables() {
-  const db = await getDb();
-  if (!db) return;
-  try {
-    const { sql } = await import("drizzle-orm");
-    console.log("[Database] Running schema sync for new corporate tables...");
-    
-    await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS \`corporate_financial_info\` (
-        \`id\` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        \`applicationId\` int NOT NULL UNIQUE,
-        \`authorizedShareCapital\` text NOT NULL,
-        \`issuedShareCapital\` text NOT NULL,
-        \`initialSourceOfWealth\` text NOT NULL,
-        \`netAssetValue\` varchar(100) NOT NULL,
-        \`netAssetAuditDate\` varchar(20) DEFAULT NULL,
-        \`profitAfterTax\` varchar(100) NOT NULL,
-        \`profitAuditDate\` varchar(20) DEFAULT NULL,
-        \`assetItems\` text NOT NULL,
-        \`assetItemsOther\` text DEFAULT NULL,
-        \`experiencedProducts\` text DEFAULT NULL,
-        \`experiencedProductsOther\` text DEFAULT NULL,
-        \`createdAt\` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-        \`updatedAt\` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
-        INDEX \`idx_applicationId\` (\`applicationId\`)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    `);
-
-    // Use sql.raw() — drizzle's sql`` template escapes backticks incorrectly for ALTER TABLE
-    try { await db.execute(sql.raw("ALTER TABLE `corporate_financial_info` ADD COLUMN `assetItemsOther` text DEFAULT NULL")); } catch (e) { /* column may already exist */ }
-    try { await db.execute(sql.raw("ALTER TABLE `corporate_financial_info` ADD COLUMN `experiencedProducts` text DEFAULT NULL")); } catch (e) { /* column may already exist */ }
-    try { await db.execute(sql.raw("ALTER TABLE `corporate_financial_info` ADD COLUMN `experiencedProductsOther` text DEFAULT NULL")); } catch (e) { /* column may already exist */ }
-
-    // 機構專業投資者專用字段
-    try { await db.execute(sql.raw("ALTER TABLE `corporate_basic_info` ADD COLUMN `website` varchar(500) DEFAULT NULL")); } catch (e) { /* column may already exist */ }
-    try { await db.execute(sql.raw("ALTER TABLE `corporate_basic_info` ADD COLUMN `isRegulated` varchar(10) DEFAULT 'no'")); } catch (e) { /* column may already exist */ }
-    try { await db.execute(sql.raw("ALTER TABLE `corporate_basic_info` ADD COLUMN `regulatorName` varchar(255) DEFAULT NULL")); } catch (e) { /* column may already exist */ }
-
-    await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS \`corporate_investment_info\` (
-        \`id\` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        \`applicationId\` int NOT NULL UNIQUE,
-        \`investmentObjectives\` text NOT NULL,
-        \`investmentObjectivesOther\` text DEFAULT NULL,
-        \`estimatedInvestmentAmount\` varchar(100) NOT NULL,
-        \`riskVolatility\` varchar(50) NOT NULL,
-        \`investmentExperience\` varchar(100) NOT NULL,
-        \`knowledgeOfDerivatives\` varchar(10) NOT NULL,
-        \`experiencedProducts\` text NOT NULL,
-        \`experiencedProductsOther\` text DEFAULT NULL,
-        \`assetItems\` text NOT NULL,
-        \`assetItemsOther\` text DEFAULT NULL,
-        \`createdAt\` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-        \`updatedAt\` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
-        INDEX \`idx_ci_applicationId\` (\`applicationId\`)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    `);
-
-    await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS \`corporate_related_parties\` (
-        \`id\` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        \`applicationId\` int NOT NULL UNIQUE,
-        \`relatedParties\` text NOT NULL,
-        \`createdAt\` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-        \`updatedAt\` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
-        INDEX \`idx_applicationId\` (\`applicationId\`)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    `);
-
-    await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS \`client_declarations\` (
-        \`id\` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        \`applicationId\` int NOT NULL UNIQUE,
-        \`q1Licensed\` varchar(10) NOT NULL DEFAULT '',
-        \`q1CeNo\` varchar(100) NOT NULL DEFAULT '',
-        \`q2Intermediary\` varchar(10) NOT NULL DEFAULT '',
-        \`q2Name\` varchar(200) NOT NULL DEFAULT '',
-        \`q2IdPassport\` varchar(100) NOT NULL DEFAULT '',
-        \`q2Address\` text DEFAULT NULL,
-        \`q3ClientOfCmf\` varchar(10) NOT NULL DEFAULT '',
-        \`q3Details\` text DEFAULT NULL,
-        \`q4StaffOfCmf\` varchar(10) NOT NULL DEFAULT '',
-        \`q4Details\` text DEFAULT NULL,
-        \`q5RelationshipWithStaff\` varchar(10) NOT NULL DEFAULT '',
-        \`q5Details\` text DEFAULT NULL,
-        \`q6ExchangeParticipant\` varchar(10) NOT NULL DEFAULT '',
-        \`q6DirectorName\` varchar(200) NOT NULL DEFAULT '',
-        \`q6InstitutionName\` varchar(200) NOT NULL DEFAULT '',
-        \`q6ParticipateNo\` varchar(100) NOT NULL DEFAULT '',
-        \`q6StaffNamePosition\` varchar(200) NOT NULL DEFAULT '',
-        \`createdAt\` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-        \`updatedAt\` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    `);
-
-    // Ensure password and reset token columns exist in users table
-    try {
-      await db.execute(sql`ALTER TABLE \`users\` ADD COLUMN \`password\` varchar(255) DEFAULT NULL`);
-    } catch (e: any) {
-      // Ignore if column already exists (Duplicate column name)
-      if (e?.code !== 'ER_DUP_FIELDNAME') console.error('Add password column error:', e);
-    }
-    
-    try {
-      await db.execute(sql`ALTER TABLE \`users\` ADD COLUMN \`passwordResetToken\` varchar(255) DEFAULT NULL`);
-    } catch (e: any) {
-      if (e?.code !== 'ER_DUP_FIELDNAME') console.error('Add passwordResetToken column error:', e);
-    }
-
-    try {
-      await db.execute(sql`ALTER TABLE \`users\` ADD COLUMN \`passwordResetExpires\` timestamp DEFAULT NULL`);
-    } catch (e: any) {
-      if (e?.code !== 'ER_DUP_FIELDNAME') console.error('Add passwordResetExpires column error:', e);
-    }
-    
-    // Second holder data table (JSON blob per application, keyed by step)
-    await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS \`second_holder_data\` (
-        \`id\` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        \`applicationId\` int NOT NULL UNIQUE,
-        \`data\` text NOT NULL,
-        \`createdAt\` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-        \`updatedAt\` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    `);
-
-    // SMS verification records table
-    await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS \`sms_verification_records\` (
-        \`id\` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        \`applicationId\` int NOT NULL,
-        \`phoneNumber\` varchar(50) NOT NULL,
-        \`verified\` boolean DEFAULT false NOT NULL,
-        \`verifiedAt\` timestamp DEFAULT NULL,
-        \`createdAt\` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    `);
-
-    // Sanctions screening records table
-    await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS \`sanctions_screening_records\` (
-        \`id\` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        \`applicationId\` int NOT NULL,
-        \`fullName\` varchar(500) NOT NULL,
-        \`dateOfBirth\` varchar(10) DEFAULT NULL,
-        \`nationality\` varchar(100) DEFAULT NULL,
-        \`screeningResult\` enum('clean','potential_match','confirmed_match') NOT NULL,
-        \`matchCount\` int NOT NULL DEFAULT 0,
-        \`matchDetails\` text DEFAULT NULL,
-        \`screenedAt\` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-        \`screenedBy\` varchar(320) DEFAULT NULL,
-        INDEX \`idx_sanctions_applicationId\` (\`applicationId\`)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    `);
-
-    // Add phoneVerified column to personal_detailed_info
-    try {
-      await db.execute(sql.raw("ALTER TABLE `personal_detailed_info` ADD COLUMN `phoneVerified` boolean NOT NULL DEFAULT false"));
-    } catch (e: any) {
-      if (e?.code !== 'ER_DUP_FIELDNAME') console.error('Add phoneVerified column error:', e);
-    }
-
-    console.log("[Database] Schema sync completed successfully.");
-  } catch (error) {
-    console.error("[Database] Schema sync failed:", error);
-  }
-}
 
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
@@ -445,17 +252,43 @@ export async function verifyEmailCode(email: string, code: string) {
 }
 
 // ==================== 申请相关 ====================
+export async function generateApplicationCode(): Promise<string> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const now = new Date();
+  const yyyy = now.getFullYear().toString();
+  const mm = (now.getMonth() + 1).toString().padStart(2, '0');
+  const dd = now.getDate().toString().padStart(2, '0');
+  const dateStr = `${yyyy}${mm}${dd}`;
+  const prefix = `APP-${dateStr}-`;
+
+  // Count existing applications with today's prefix
+  const countResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(applications)
+    .where(like(applications.applicationCode, `${prefix}%`));
+
+  const nextSeq = (countResult[0]?.count || 0) + 1;
+  const seqStr = nextSeq.toString().padStart(4, '0');
+
+  return `${prefix}${seqStr}`;
+}
+
 export async function createApplication(userId: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
+
+  const applicationCode = await generateApplicationCode();
+
   const result = await db.insert(applications).values({
     userId,
     status: "draft",
     currentStep: 1,
     completedSteps: JSON.stringify([]),
+    applicationCode,
   });
-  
+
   return result[0].insertId;
 }
 
@@ -537,7 +370,13 @@ export async function submitApplication(
 
 // ==================== Case数据查询和保存 ====================
 export async function saveAccountSelection(applicationId: number, data: any) {
-  await safeInsert('account_selections', data, applicationId);
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.insert(accountSelections).values({
+    applicationId,
+    ...data
+  }).onDuplicateKeyUpdate({ set: data });
 }
 
 export async function getAccountSelection(applicationId: number) {
@@ -548,7 +387,13 @@ export async function getAccountSelection(applicationId: number) {
 }
 
 export async function savePersonalBasicInfo(applicationId: number, data: any) {
-  await safeInsert('personal_basic_info', data, applicationId);
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.insert(personalBasicInfo).values({
+    applicationId,
+    ...data
+  }).onDuplicateKeyUpdate({ set: data });
 }
 
 export async function getPersonalBasicInfo(applicationId: number) {
@@ -558,83 +403,31 @@ export async function getPersonalBasicInfo(applicationId: number) {
   return result.length > 0 ? result[0] : null;
 }
 
-export async function saveCorporateBasicInfo(applicationId: number, data: any) {
-  await safeInsert('corporate_basic_info', data, applicationId);
-}
-
-export async function getCorporateBasicInfo(applicationId: number) {
-  const db = await getDb();
-  if (!db) return null;
-  const result = await db.select().from(corporateBasicInfo).where(eq(corporateBasicInfo.applicationId, applicationId)).limit(1);
-  return result.length > 0 ? result[0] : null;
-}
-
 export async function savePersonalDetailedInfo(applicationId: number, data: any) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-
-  // Use mysql2 directly to avoid Drizzle DEFAULT keyword issue
-  const mysql2 = await import("mysql2/promise");
-  const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
-
-  // Match actual DB columns (no idIssuingCountry or idIssuingPlaceOther)
-  // Map idIssuingCountry → idIssuingPlace for backward compatibility
-  if (data.idIssuingCountry && !data.idIssuingPlace) {
-    data.idIssuingPlace = data.idIssuingCountry;
-  }
-  // Convert boolean to 0/1 for MySQL
-  if (typeof data.idIsPermanent === 'boolean') {
-    data.idIsPermanent = data.idIsPermanent ? 1 : 0;
-  }
-  const fields = ['idType','idNumber','idIssuingPlace',
-    'idExpiryDate','idIsPermanent','maritalStatus','educationLevel','email',
-    'phoneCountryCode','phoneNumber','mobileCountryCode','mobileNumber',
-    'faxNo','emailVerified','residentialAddress','billingAddressType','billingAddressOther',
-    'preferredLanguage'];
-
-  const vals = [applicationId, ...fields.map(f => data[f] ?? '')];
-  const placeholders = fields.map(() => '?').join(', ');
-  const colNames = fields.map(f => '`' + f + '`').join(', ');
-  const updateClauses = fields.map(f => '`' + f + '`=VALUES(`' + f + '`)').join(', ');
-
-  try {
-    await conn.execute(
-      `INSERT INTO personal_detailed_info (\`applicationId\`, ${colNames}) VALUES (?, ${placeholders}) ON DUPLICATE KEY UPDATE ${updateClauses}`,
-      vals
-    );
-  } finally {
-    await conn.end();
-  }
+  
+  await db.insert(personalDetailedInfo).values({
+    applicationId,
+    ...data
+  }).onDuplicateKeyUpdate({ set: data });
 }
 
 export async function getPersonalDetailedInfo(applicationId: number) {
   const db = await getDb();
   if (!db) return null;
-  // Use raw SQL to avoid Drizzle schema mismatch with actual DB columns
-  const mysql2 = await import("mysql2/promise");
-  const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
-  try {
-    const [rows]: any = await conn.execute(
-      'SELECT * FROM personal_detailed_info WHERE applicationId = ? LIMIT 1',
-      [applicationId]
-    );
-    if (rows && rows.length > 0) {
-      const row = rows[0];
-      // Map DB column idIssuingPlace → idIssuingCountry for frontend compatibility
-      row.idIssuingCountry = row.idIssuingPlace || '';
-      row.idIssuingPlaceOther = '';
-      // Convert 0/1 to boolean
-      row.idIsPermanent = row.idIsPermanent === 1;
-      return row;
-    }
-    return null;
-  } finally {
-    await conn.end();
-  }
+  const result = await db.select().from(personalDetailedInfo).where(eq(personalDetailedInfo.applicationId, applicationId)).limit(1);
+  return result.length > 0 ? result[0] : null;
 }
 
 export async function saveOccupationInfo(applicationId: number, data: any) {
-  await safeInsert('occupation_info', data, applicationId);
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.insert(occupationInfo).values({
+    applicationId,
+    ...data
+  }).onDuplicateKeyUpdate({ set: data });
 }
 
 export async function getOccupationInfo(applicationId: number) {
@@ -645,7 +438,13 @@ export async function getOccupationInfo(applicationId: number) {
 }
 
 export async function saveEmploymentDetails(applicationId: number, data: any) {
-  await safeInsert('employment_details', data, applicationId);
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.insert(employmentDetails).values({
+    applicationId,
+    ...data
+  }).onDuplicateKeyUpdate({ set: data });
 }
 
 export async function getEmploymentDetails(applicationId: number) {
@@ -656,7 +455,13 @@ export async function getEmploymentDetails(applicationId: number) {
 }
 
 export async function saveFinancialAndInvestment(applicationId: number, data: any) {
-  await safeInsert('financial_and_investment', data, applicationId);
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.insert(financialAndInvestment).values({
+    applicationId,
+    ...data
+  }).onDuplicateKeyUpdate({ set: data });
 }
 
 export async function getFinancialAndInvestment(applicationId: number) {
@@ -691,7 +496,13 @@ export async function deleteBankAccount(id: number) {
 }
 
 export async function saveTaxInfo(applicationId: number, data: any) {
-  await safeInsert('tax_info', data, applicationId);
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.insert(taxInfo).values({
+    applicationId,
+    ...data
+  }).onDuplicateKeyUpdate({ set: data });
 }
 
 export async function getTaxInfo(applicationId: number) {
@@ -720,7 +531,13 @@ export async function getUploadedDocuments(applicationId: number) {
 }
 
 export async function saveFaceVerification(applicationId: number, data: any) {
-  await safeInsert('face_verification', data, applicationId);
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.insert(faceVerification).values({
+    applicationId,
+    ...data
+  }).onDuplicateKeyUpdate({ set: data });
 }
 
 export async function getFaceVerification(applicationId: number) {
@@ -730,29 +547,14 @@ export async function getFaceVerification(applicationId: number) {
   return result.length > 0 ? result[0] : null;
 }
 
-export async function updatePhoneVerified(applicationId: number, verified: boolean) {
-  const db = await getDb();
-  if (!db) return;
-  await db.update(personalDetailedInfo)
-    .set({ phoneVerified: verified })
-    .where(eq(personalDetailedInfo.applicationId, applicationId));
-}
-
-export async function saveSmsVerificationRecord(applicationId: number, phoneNumber: string) {
-  const mysql2 = await import("mysql2/promise");
-  const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
-  try {
-    await conn.execute(
-      `INSERT INTO \`sms_verification_records\` (\`applicationId\`, \`phoneNumber\`, \`verified\`, \`verifiedAt\`) VALUES (?, ?, true, NOW())`,
-      [applicationId, phoneNumber]
-    );
-  } finally {
-    await conn.end();
-  }
-}
-
 export async function saveRegulatoryDeclarations(applicationId: number, data: any) {
-  await safeInsert('regulatory_declarations', data, applicationId);
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.insert(regulatoryDeclarations).values({
+    applicationId,
+    ...data
+  }).onDuplicateKeyUpdate({ set: data });
 }
 
 export async function getRegulatoryDeclarations(applicationId: number) {
@@ -762,193 +564,55 @@ export async function getRegulatoryDeclarations(applicationId: number) {
   return result.length > 0 ? result[0] : null;
 }
 
-// ==================== 客戶聲明 ====================
-export async function saveClientDeclaration(applicationId: number, data: any) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-
-  // Ensure table exists before insert
-  const { sql } = await import("drizzle-orm");
-  await db.execute(sql`
-    CREATE TABLE IF NOT EXISTS \`client_declarations\` (
-      \`id\` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-      \`applicationId\` int NOT NULL UNIQUE,
-      \`q1Licensed\` varchar(10) NOT NULL DEFAULT '',
-      \`q1CeNo\` varchar(100) NOT NULL DEFAULT '',
-      \`q2Intermediary\` varchar(10) NOT NULL DEFAULT '',
-      \`q2Name\` varchar(200) NOT NULL DEFAULT '',
-      \`q2IdPassport\` varchar(100) NOT NULL DEFAULT '',
-      \`q2Address\` text DEFAULT NULL,
-      \`q3ClientOfCmf\` varchar(10) NOT NULL DEFAULT '',
-      \`q3Details\` text DEFAULT NULL,
-      \`q4StaffOfCmf\` varchar(10) NOT NULL DEFAULT '',
-      \`q4Details\` text DEFAULT NULL,
-      \`q5RelationshipWithStaff\` varchar(10) NOT NULL DEFAULT '',
-      \`q5Details\` text DEFAULT NULL,
-      \`q6ExchangeParticipant\` varchar(10) NOT NULL DEFAULT '',
-      \`q6DirectorName\` varchar(200) NOT NULL DEFAULT '',
-      \`q6InstitutionName\` varchar(200) NOT NULL DEFAULT '',
-      \`q6ParticipateNo\` varchar(100) NOT NULL DEFAULT '',
-      \`q6StaffNamePosition\` varchar(200) NOT NULL DEFAULT '',
-      \`createdAt\` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-      \`updatedAt\` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-  `);
-
-  // Use mysql2 directly to avoid Drizzle query issues
-  const mysql2 = await import("mysql2/promise");
-  const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
-
-  const vals = [
-    applicationId,
-    data.q1Licensed || '', data.q1CeNo || '',
-    data.q2Intermediary || '', data.q2Name || '',
-    data.q2IdPassport || '', data.q2Address || '',
-    data.q3ClientOfCmf || '', data.q3Details || '',
-    data.q4StaffOfCmf || '', data.q4Details || '',
-    data.q5RelationshipWithStaff || '', data.q5Details || '',
-    data.q6ExchangeParticipant || '',
-    data.q6DirectorName || '', data.q6InstitutionName || '',
-    data.q6ParticipateNo || '', data.q6StaffNamePosition || '',
-  ];
-
-  try {
-    await conn.execute(
-      `INSERT INTO client_declarations (applicationId, q1Licensed, q1CeNo, q2Intermediary, q2Name, q2IdPassport, q2Address, q3ClientOfCmf, q3Details, q4StaffOfCmf, q4Details, q5RelationshipWithStaff, q5Details, q6ExchangeParticipant, q6DirectorName, q6InstitutionName, q6ParticipateNo, q6StaffNamePosition)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-       ON DUPLICATE KEY UPDATE q1Licensed=VALUES(q1Licensed), q1CeNo=VALUES(q1CeNo), q2Intermediary=VALUES(q2Intermediary), q2Name=VALUES(q2Name), q2IdPassport=VALUES(q2IdPassport), q2Address=VALUES(q2Address), q3ClientOfCmf=VALUES(q3ClientOfCmf), q3Details=VALUES(q3Details), q4StaffOfCmf=VALUES(q4StaffOfCmf), q4Details=VALUES(q4Details), q5RelationshipWithStaff=VALUES(q5RelationshipWithStaff), q5Details=VALUES(q5Details), q6ExchangeParticipant=VALUES(q6ExchangeParticipant), q6DirectorName=VALUES(q6DirectorName), q6InstitutionName=VALUES(q6InstitutionName), q6ParticipateNo=VALUES(q6ParticipateNo), q6StaffNamePosition=VALUES(q6StaffNamePosition)`,
-      vals
-    );
-  } finally {
-    await conn.end();
-  }
-}
-
-export async function getClientDeclaration(applicationId: number) {
-  const db = await getDb();
-  if (!db) return null;
-  const result = await db.select().from(clientDeclarations).where(eq(clientDeclarations.applicationId, applicationId)).limit(1);
-  return result.length > 0 ? result[0] : null;
-}
-
-// ==================== 個人客戶聲明 ====================
-export async function savePersonalClientDeclaration(applicationId: number, data: any) {
-  const { customerDeclarations } = await import("../drizzle/schema");
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-
-  const existing = await db.select().from(customerDeclarations).where(eq(customerDeclarations.applicationId, applicationId)).limit(1);
-
-  if (existing.length > 0) {
-    await db.update(customerDeclarations).set({
-      declaration_a_is_beneficial_owner: data.declaration_a_is_beneficial_owner,
-      declaration_a_owner_name: data.declaration_a_owner_name || null,
-      declaration_a_owner_id: data.declaration_a_owner_id || null,
-      declaration_a_owner_country: data.declaration_a_owner_country || null,
-      declaration_a_owner_address: data.declaration_a_owner_address || null,
-      declaration_b_is_employee: data.declaration_b_is_employee,
-      declaration_b_institution_name: data.declaration_b_institution_name || null,
-      declaration_c_is_cmf_employee: data.declaration_c_is_cmf_employee,
-      declaration_d_is_relative: data.declaration_d_is_relative,
-      declaration_d_employee_name: data.declaration_d_employee_name || null,
-      declaration_d_relationship: data.declaration_d_relationship || null,
-    }).where(eq(customerDeclarations.applicationId, applicationId));
-  } else {
-    await db.insert(customerDeclarations).values({
-      applicationId,
-      declaration_a_is_beneficial_owner: data.declaration_a_is_beneficial_owner,
-      declaration_a_owner_name: data.declaration_a_owner_name || null,
-      declaration_a_owner_id: data.declaration_a_owner_id || null,
-      declaration_a_owner_country: data.declaration_a_owner_country || null,
-      declaration_a_owner_address: data.declaration_a_owner_address || null,
-      declaration_b_is_employee: data.declaration_b_is_employee,
-      declaration_b_institution_name: data.declaration_b_institution_name || null,
-      declaration_c_is_cmf_employee: data.declaration_c_is_cmf_employee,
-      declaration_d_is_relative: data.declaration_d_is_relative,
-      declaration_d_employee_name: data.declaration_d_employee_name || null,
-      declaration_d_relationship: data.declaration_d_relationship || null,
-    });
-  }
-}
-
-export async function getPersonalClientDeclaration(applicationId: number) {
-  const { customerDeclarations } = await import("../drizzle/schema");
-  const db = await getDb();
-  if (!db) return null;
-  const result = await db.select().from(customerDeclarations).where(eq(customerDeclarations.applicationId, applicationId)).limit(1);
-  return result.length > 0 ? result[0] : null;
-}
-
 // ==================== 获取完整申请数据 ====================
 export async function getCompleteApplicationData(applicationId: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-
-  // Safely query each table - catch errors for tables that may not exist yet
-  const safe = <T>(fn: () => Promise<T>): Promise<T | null> => fn().catch(() => null);
-
+  
   const [
     application,
     accountSelection,
     basicInfo,
-    corporateBasic,
     detailedInfo,
     occupation,
     employment,
     financial,
-    corporateFinancial,
-    corporateInvestment,
     bankAccountsList,
     tax,
     riskQuestionnaireData,
     documents,
     face,
-    regulatory,
-    relatedPartiesData,
-    personalClientDeclarationData,
-    secondHolderAllData
+    regulatory
   ] = await Promise.all([
     getApplicationById(applicationId),
-    safe(() => getAccountSelection(applicationId)),
-    safe(() => getPersonalBasicInfo(applicationId)),
-    safe(() => getCorporateBasicInfo(applicationId)),
-    safe(() => getPersonalDetailedInfo(applicationId)),
-    safe(() => getOccupationInfo(applicationId)),
-    safe(() => getEmploymentDetails(applicationId)),
-    safe(() => getFinancialAndInvestment(applicationId)),
-    safe(() => getCorporateFinancialInfo(applicationId)),
-    safe(() => getCorporateInvestmentInfo(applicationId)),
-    safe(() => getBankAccounts(applicationId)),
-    safe(() => getTaxInfo(applicationId)),
-    safe(() => getRiskQuestionnaire(applicationId)),
-    safe(() => getUploadedDocuments(applicationId)),
-    safe(() => getFaceVerification(applicationId)),
-    safe(() => getRegulatoryDeclarations(applicationId)),
-    safe(() => getCorporateRelatedParties(applicationId)),
-    safe(() => getPersonalClientDeclaration(applicationId)),
-    safe(() => getSecondHolderData(applicationId))
+    getAccountSelection(applicationId),
+    getPersonalBasicInfo(applicationId),
+    getPersonalDetailedInfo(applicationId),
+    getOccupationInfo(applicationId),
+    getEmploymentDetails(applicationId),
+    getFinancialAndInvestment(applicationId),
+    getBankAccounts(applicationId),
+    getTaxInfo(applicationId),
+    getRiskQuestionnaire(applicationId),
+    getUploadedDocuments(applicationId),
+    getFaceVerification(applicationId),
+    getRegulatoryDeclarations(applicationId)
   ]);
-
+  
   return {
     application,
     accountSelection,
     basicInfo,
-    corporateBasic,
     detailedInfo,
     occupation,
     employment,
     financial,
-    corporateFinancial,
-    corporateInvestment,
     bankAccounts: bankAccountsList,
     taxInfo: tax,
     riskQuestionnaire: riskQuestionnaireData,
     uploadedDocuments: documents,
     face,
-    regulatory,
-    relatedParties: relatedPartiesData,
-    personalClientDeclaration: personalClientDeclarationData,
-    secondHolderData: secondHolderAllData
+    regulatory
   };
 }
 
@@ -1126,6 +790,7 @@ export async function getSubmittedApplications() {
     .select({
       id: applications.id,
       applicationNumber: applications.applicationNumber,
+      applicationCode: applications.applicationCode,
       status: applications.status,
       submittedAt: applications.submittedAt,
       customerName: personalBasicInfo.englishName,
@@ -1166,7 +831,7 @@ export async function updateApplicationStatus(applicationId: number, status: 'su
  */
 export async function updateApplicationApprovalInfo(
   applicationId: number,
-  info: { isProfessionalInvestor: boolean; approvedRiskProfile: 'Lowest' | 'Low' | 'Low to Medium' | 'Medium' | 'Medium to High' | 'High' }
+  info: { isProfessionalInvestor: boolean; approvedRiskProfile: 'R1' | 'R2' | 'R3' | 'R4' | 'R5' }
 ) {
   const db = await getDb();
   if (!db) return null;
@@ -1466,7 +1131,7 @@ export async function saveRiskQuestionnaire(data: {
       riskLevel: data.riskLevel,
       riskDescription: data.riskDescription,
     });
-    return { success: true, id: Number((result as any).insertId) };
+    return { success: true, id: Number(result.insertId) };
   }
 }
 
@@ -1485,234 +1150,6 @@ export async function getRiskQuestionnaire(applicationId: number) {
   return result[0] || null;
 }
 
-export async function saveCorporateFinancialInfo(applicationId: number, data: any) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-
-  await db.execute(sql`
-    INSERT INTO \
-      \`corporate_financial_info\` (
-        \`applicationId\`,
-        \`authorizedShareCapital\`,
-        \`issuedShareCapital\`,
-        \`initialSourceOfWealth\`,
-        \`netAssetValue\`,
-        \`netAssetAuditDate\`,
-        \`profitAfterTax\`,
-        \`profitAuditDate\`,
-        \`assetItems\`,
-        \`assetItemsOther\`,
-        \`experiencedProducts\`,
-        \`experiencedProductsOther\`
-      )
-    VALUES (
-      ${applicationId},
-      ${data.authorizedShareCapital},
-      ${data.issuedShareCapital},
-      ${data.initialSourceOfWealth},
-      ${data.netAssetValue},
-      ${data.netAssetAuditDate ?? null},
-      ${data.profitAfterTax},
-      ${data.profitAuditDate ?? null},
-      ${data.assetItems},
-      ${data.assetItemsOther ?? null},
-      ${data.experiencedProducts ?? null},
-      ${data.experiencedProductsOther ?? null}
-    )
-    ON DUPLICATE KEY UPDATE
-      \`authorizedShareCapital\` = ${data.authorizedShareCapital},
-      \`issuedShareCapital\` = ${data.issuedShareCapital},
-      \`initialSourceOfWealth\` = ${data.initialSourceOfWealth},
-      \`netAssetValue\` = ${data.netAssetValue},
-      \`netAssetAuditDate\` = ${data.netAssetAuditDate ?? null},
-      \`profitAfterTax\` = ${data.profitAfterTax},
-      \`profitAuditDate\` = ${data.profitAuditDate ?? null},
-      \`assetItems\` = ${data.assetItems},
-      \`assetItemsOther\` = ${data.assetItemsOther ?? null},
-      \`experiencedProducts\` = ${data.experiencedProducts ?? null},
-      \`experiencedProductsOther\` = ${data.experiencedProductsOther ?? null}
-  `);
-}
-
-export async function getCorporateFinancialInfo(applicationId: number) {
-  const db = await getDb();
-  if (!db) return null;
-  const { corporateFinancialInfo } = require("../drizzle/schema");
-  const result = await db.select().from(corporateFinancialInfo).where(eq(corporateFinancialInfo.applicationId, applicationId)).limit(1);
-  return result.length > 0 ? result[0] : null;
-}
-
-export async function saveCorporateInvestmentInfo(applicationId: number, data: any) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  const { sql } = await import("drizzle-orm");
-
-  await db.execute(sql`
-    INSERT INTO \
-      \`corporate_investment_info\` (
-        \`applicationId\`,
-        \`investmentObjectives\`,
-        \`investmentObjectivesOther\`,
-        \`estimatedInvestmentAmount\`,
-        \`riskVolatility\`,
-        \`investmentExperience\`,
-        \`knowledgeOfDerivatives\`,
-        \`experiencedProducts\`,
-        \`experiencedProductsOther\`,
-        \`assetItems\`,
-        \`assetItemsOther\`
-      )
-    VALUES (
-      ${applicationId},
-      ${data.investmentObjectives},
-      ${data.investmentObjectivesOther ?? null},
-      ${data.estimatedInvestmentAmount},
-      ${data.riskVolatility},
-      ${data.investmentExperience},
-      ${data.knowledgeOfDerivatives},
-      ${data.experiencedProducts},
-      ${data.experiencedProductsOther ?? null},
-      ${data.assetItems},
-      ${data.assetItemsOther ?? null}
-    )
-    ON DUPLICATE KEY UPDATE
-      \`investmentObjectives\` = ${data.investmentObjectives},
-      \`investmentObjectivesOther\` = ${data.investmentObjectivesOther ?? null},
-      \`estimatedInvestmentAmount\` = ${data.estimatedInvestmentAmount},
-      \`riskVolatility\` = ${data.riskVolatility},
-      \`investmentExperience\` = ${data.investmentExperience},
-      \`knowledgeOfDerivatives\` = ${data.knowledgeOfDerivatives},
-      \`experiencedProducts\` = ${data.experiencedProducts},
-      \`experiencedProductsOther\` = ${data.experiencedProductsOther ?? null},
-      \`assetItems\` = ${data.assetItems},
-      \`assetItemsOther\` = ${data.assetItemsOther ?? null}
-  `);
-}
-
-export async function getCorporateInvestmentInfo(applicationId: number) {
-  const db = await getDb();
-  if (!db) return null;
-  const { corporateInvestmentInfo } = require("../drizzle/schema");
-  const result = await db.select().from(corporateInvestmentInfo).where(eq(corporateInvestmentInfo.applicationId, applicationId)).limit(1);
-  return result.length > 0 ? result[0] : null;
-}
-
-export async function saveCorporateRelatedParties(applicationId: number, data: any) {
-  await safeInsert('corporate_related_parties', { relatedParties: JSON.stringify(data.relatedParties) }, applicationId);
-}
-
-export async function getCorporateRelatedParties(applicationId: number) {
-  const db = await getDb();
-  if (!db) return null;
-  const { corporateRelatedParties } = require("../drizzle/schema");
-  const result = await db.select().from(corporateRelatedParties).where(eq(corporateRelatedParties.applicationId, applicationId)).limit(1);
-  // Return just the related parties array, not the whole object
-  if (result.length === 0) return [];
-  const data = result[0];
-  return JSON.parse(data.relatedParties || '[]');
-}
-
-// ==================== 聯名賬戶第二持有人數據 ====================
-
-/**
- * 保存第二持有人數據（JSON blob，按step分區）
- * stepName: e.g. "personalBasic", "personalDetailed", "occupation", etc.
- * stepData: the second holder's form data for that step
- */
-export async function saveSecondHolderData(applicationId: number, stepName: string, stepData: any) {
-  const mysql2 = await import("mysql2/promise");
-  const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
-  try {
-    // Get existing data first
-    const [rows]: any = await conn.execute(
-      'SELECT `data` FROM `second_holder_data` WHERE `applicationId` = ? LIMIT 1',
-      [applicationId]
-    );
-    let existing: Record<string, any> = {};
-    if (rows && rows.length > 0) {
-      try { existing = JSON.parse(rows[0].data); } catch { existing = {}; }
-    }
-    // Merge step data
-    existing[stepName] = stepData;
-    const jsonStr = JSON.stringify(existing);
-
-    await conn.execute(
-      `INSERT INTO \`second_holder_data\` (\`applicationId\`, \`data\`) VALUES (?, ?)
-       ON DUPLICATE KEY UPDATE \`data\` = VALUES(\`data\`)`,
-      [applicationId, jsonStr]
-    );
-  } finally {
-    await conn.end();
-  }
-}
-
-/**
- * 獲取第二持有人數據
- * 返回整個JSON對象（所有step的數據），或指定step的數據
- */
-export async function getSecondHolderData(applicationId: number, stepName?: string) {
-  const mysql2 = await import("mysql2/promise");
-  const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
-  try {
-    const [rows]: any = await conn.execute(
-      'SELECT `data` FROM `second_holder_data` WHERE `applicationId` = ? LIMIT 1',
-      [applicationId]
-    );
-    if (!rows || rows.length === 0) return stepName ? null : {};
-    let parsed: Record<string, any> = {};
-    try { parsed = JSON.parse(rows[0].data); } catch { parsed = {}; }
-    return stepName ? (parsed[stepName] ?? null) : parsed;
-  } finally {
-    await conn.end();
-  }
-}
-
-// ==================== 制裁/PEP筛查 ====================
-
-/**
- * 保存制裁筛查记录
- */
-export async function saveSanctionsScreeningRecord(data: {
-  applicationId: number;
-  fullName: string;
-  dateOfBirth?: string;
-  nationality?: string;
-  screeningResult: 'clean' | 'potential_match' | 'confirmed_match';
-  matchCount: number;
-  matchDetails?: string;
-  screenedBy?: string;
-}) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-
-  const [result] = await db.insert(sanctionsScreeningRecords).values({
-    applicationId: data.applicationId,
-    fullName: data.fullName,
-    dateOfBirth: data.dateOfBirth || null,
-    nationality: data.nationality || null,
-    screeningResult: data.screeningResult,
-    matchCount: data.matchCount,
-    matchDetails: data.matchDetails || null,
-    screenedBy: data.screenedBy || null,
-  });
-
-  return { id: result.insertId };
-}
-
-/**
- * 获取申请的制裁筛查记录
- */
-export async function getSanctionsScreeningRecords(applicationId: number) {
-  const db = await getDb();
-  if (!db) return [];
-
-  return await db
-    .select()
-    .from(sanctionsScreeningRecords)
-    .where(eq(sanctionsScreeningRecords.applicationId, applicationId))
-    .orderBy(desc(sanctionsScreeningRecords.screenedAt));
-}
-
 
 // ==================== 账户号 & BCAN 生成 ====================
 
@@ -1727,6 +1164,8 @@ export async function getSanctionsScreeningRecords(applicationId: number) {
  *   SSSSSS = 全局递增流水号
  *
  * BCAN = 流水号部分（6位），港交所端以 CE号BSU667 + BCAN 组合唯一标识
+ *
+ * 在终审通过后调用
  */
 export async function generateBcan(applicationId: number): Promise<string | null> {
   const db = await getDb();
@@ -1740,21 +1179,28 @@ export async function generateBcan(applicationId: number): Promise<string | null
     .limit(1);
   if (existing[0]?.bcanCode) return existing[0].bcanCode;
 
-  // 获取账户选择信息
+  // 获取账户选择信息（用于确定AA和B字段）
   const acctSel = await db
     .select()
     .from(accountSelections)
     .where(eq(accountSelections.applicationId, applicationId))
     .limit(1);
 
+  // AA: 客户类型
   const customerType = acctSel[0]?.customerType || 'individual';
   const aa = customerType === 'corporate' ? '20' : customerType === 'joint' ? '30' : '10';
+
+  // B: 账户类型
   const accountType = acctSel[0]?.accountType || 'cash';
   const b = accountType === 'margin' ? '2' : accountType === 'derivatives' ? '5' : '1';
+
+  // C: 渠道（线上开户 = 0）
   const c = '0';
+
+  // YYYY: 当前年份
   const yyyy = new Date().getFullYear().toString();
 
-  // 全局递增流水号
+  // SSSSSS: 全局递增流水号
   const seqRows = await db.select().from(bcanSequences).limit(1);
   const currentSeq = seqRows[0]?.lastSequence || 0;
   const nextSeq = currentSeq + 1;
@@ -1765,9 +1211,13 @@ export async function generateBcan(applicationId: number): Promise<string | null
     .where(eq(bcanSequences.id, seqRows[0]?.id || 1));
 
   const seqStr = String(nextSeq).padStart(6, '0');
+
+  // 完整账户号（14位）
   const clientId = `${aa}${b}${c}${yyyy}${seqStr}`;
+  // BCAN = 流水号部分
   const bcanCode = seqStr;
 
+  // 写入applications表
   await db
     .update(applications)
     .set({ clientId, bcanCode, bcanGeneratedAt: new Date() })
@@ -1805,34 +1255,38 @@ export async function getBcanMappingData() {
   return results;
 }
 
+// ==================== 制裁筛查相关 ====================
 
-// --- Application Code Generation (v260710) ---
-export async function generateApplicationCode(): Promise<string> {
-  const today = new Date();
-  const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');
-  const prefix = `APP-${dateStr}-`;
-  
-  try {
-    const result = await getDb().execute(
-      sql`SELECT COUNT(*) as cnt FROM applications WHERE application_code LIKE ${prefix + '%'}`
-    );
-    const count = Number((result as any).rows?.[0]?.cnt || 0);
-    const seq = String(count + 1).padStart(4, '0');
-    return `${prefix}${seq}`;
-  } catch {
-    return `${prefix}0001`;
-  }
+export async function saveSanctionsScreening(applicationId: number, data: {
+  searchId: string;
+  screenedName: string;
+  hitCount: number;
+  hits: any[];
+  rawResponse: string;
+  flaggedForReview: boolean;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(sanctionsScreening).values({
+    applicationId,
+    searchId: data.searchId,
+    screenedName: data.screenedName,
+    hitCount: data.hitCount,
+    hits: JSON.stringify(data.hits),
+    rawResponse: data.rawResponse,
+    flaggedForReview: data.flaggedForReview,
+  });
+
+  return result[0].insertId;
 }
 
-export async function setApplicationCode(appId: number, code: string): Promise<void> {
-  await getDb().execute(
-    sql`UPDATE applications SET application_code = ${code} WHERE id = ${appId}`
-  );
-}
-
-export async function getApplicationCode(appId: number): Promise<string | null> {
-  const result = await getDb().execute(
-    sql`SELECT application_code FROM applications WHERE id = ${appId}`
-  );
-  return (result as any).rows?.[0]?.application_code || null;
+export async function getSanctionsScreening(applicationId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(sanctionsScreening)
+    .where(eq(sanctionsScreening.applicationId, applicationId))
+    .orderBy(desc(sanctionsScreening.createdAt))
+    .limit(1);
+  return result.length > 0 ? result[0] : null;
 }
