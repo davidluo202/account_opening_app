@@ -327,6 +327,19 @@ const handleSave = () => {
           {errors.employmentStatus && <p className="text-sm text-destructive">{errors.employmentStatus}</p>}
         </div>
 
+        {/* 其他：請註明 */}
+        {formData.employmentStatus === "others" && (
+          <div className="space-y-2 p-6 bg-muted/50 rounded-lg">
+            <Label htmlFor="othersNote">{t('請註明', 'Please specify', '请注明')}</Label>
+            <Input
+              id="othersNote"
+              value={formData.companyName || ''}
+              onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+              placeholder={t('請註明您的就業情況', 'Please specify your employment status', '请注明您的就业情况')}
+            />
+          </div>
+        )}
+
         {/* 受僱/自僱詳情 */}
         {needsEmploymentDetails && (
           <div className="space-y-6 p-6 bg-muted/50 rounded-lg">
