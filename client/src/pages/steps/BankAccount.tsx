@@ -638,7 +638,7 @@ const handleNext = () => {
                   setFormData({ ...formData, swiftCode: e.target.value.toUpperCase() });
                   if (errors.swiftCode) setErrors({ ...errors, swiftCode: "" });
                 }}
-                placeholder=""
+                placeholder={t('請輸入SWIFT Code', 'Enter SWIFT Code', '请输入SWIFT Code')}
                 className={errors.swiftCode ? "border-destructive" : ""}
                 maxLength={11}
               />
