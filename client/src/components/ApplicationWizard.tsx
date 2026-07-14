@@ -17,8 +17,8 @@ const individualSteps: Step[] = [
   { id: 1, title: "客戶與賬戶類型", description: "選擇客戶與賬戶類型" },
   { id: 2, title: "個人基本信息", description: "填寫基本資料" },
   { id: 3, title: "個人詳細信息", description: "填寫詳細資料" },
-  // step 4 merged into step 3 display (但URL仍然是/step/4)
-  { id: 5, title: "就業詳情", description: "填寫收入資產" },
+  { id: 4, title: "就業詳情", description: "填寫就業及聯繫信息" },
+  { id: 5, title: "財務與投資", description: "填寫收入資產" },
   { id: 6, title: "財務與投資", description: "填寫投資信息" },
   { id: 7, title: "風險評估問卷", description: "完成風險評估" },
   { id: 8, title: "銀行賬戶", description: "銀行賬戶紀錄（只作存款用途）" },
@@ -94,8 +94,8 @@ export default function ApplicationWizard({
   // 根據客戶類型選擇步驟列表
   const customerType = customerTypeOverride || accountSelection?.customerType || 'individual';
   const steps = customerType === 'corporate' ? corporateSteps : individualSteps;
-  // Step 4 (OccupationInfo) is merged into step 3 display for individual accounts
-  const displayStep = (customerType !== 'corporate' && currentStep === 4) ? 3 : currentStep;
+  // Step 4 (OccupationInfo) now displays as its own step
+  const displayStep = currentStep;
   const stepIndex = steps.findIndex(s => s.id === displayStep);
   const progress = ((stepIndex + 1) / steps.length) * 100;
   const currentStepInfo = steps.find(s => s.id === displayStep);
