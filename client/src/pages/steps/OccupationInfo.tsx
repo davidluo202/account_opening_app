@@ -44,6 +44,7 @@ export default function OccupationInfo() {
     officePhone: "",
     officeFaxNo: "", // 辦公傳真（可選）
     mobilePhone: "",
+    phoneCountryCode: "+852",
     correspondenceAddress: "",
   });
 
@@ -512,16 +513,38 @@ const handleSave = () => {
                 <Label htmlFor="mobilePhone">
                   {t('手提電話', 'Mobile Phone No.', '手提电话')} <span className="text-destructive">*</span>
                 </Label>
-                <Input
-                  id="mobilePhone"
-                  value={formData.mobilePhone}
-                  onChange={(e) => {
-                    setFormData({ ...formData, mobilePhone: e.target.value.replace(/\D/g, "") });
-                    if (errors.mobilePhone) setErrors({ ...errors, mobilePhone: "" });
-                  }}
-                  placeholder={t('請輸入手提電話', 'Enter mobile phone', '请输入手提电话')}
-                  className={errors.mobilePhone ? "border-destructive" : ""}
-                />
+                <div className="flex gap-2">
+                  <Select
+                    value={formData.phoneCountryCode || '+852'}
+                    onValueChange={(v) => setFormData({ ...formData, phoneCountryCode: v })}
+                  >
+                    <SelectTrigger className="w-[120px] shrink-0">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="+852">+852 HK</SelectItem>
+                      <SelectItem value="+86">+86 CN</SelectItem>
+                      <SelectItem value="+853">+853 MO</SelectItem>
+                      <SelectItem value="+886">+886 TW</SelectItem>
+                      <SelectItem value="+65">+65 SG</SelectItem>
+                      <SelectItem value="+1">+1 US</SelectItem>
+                      <SelectItem value="+44">+44 UK</SelectItem>
+                      <SelectItem value="+81">+81 JP</SelectItem>
+                      <SelectItem value="+61">+61 AU</SelectItem>
+                      <SelectItem value="+60">+60 MY</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    id="mobilePhone"
+                    value={formData.mobilePhone}
+                    onChange={(e) => {
+                      setFormData({ ...formData, mobilePhone: e.target.value.replace(/\D/g, "") });
+                      if (errors.mobilePhone) setErrors({ ...errors, mobilePhone: "" });
+                    }}
+                    placeholder={t('請輸入手提電話', 'Enter mobile phone', '请输入手提电话')}
+                    className={errors.mobilePhone ? "border-destructive" : ""}
+                  />
+                </div>
                 {errors.mobilePhone && <p className="text-sm text-destructive">{errors.mobilePhone}</p>}
               </div>
             </div>
