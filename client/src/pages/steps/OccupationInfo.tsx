@@ -130,7 +130,7 @@ export default function OccupationInfo() {
     }
   }, [existingData]);
 
-  const needsEmploymentDetails = formData.employmentStatus === "employed" || formData.employmentStatus === "self_employed" || formData.employmentStatus === "others";
+  const needsEmploymentDetails = formData.employmentStatus === "employed" || formData.employmentStatus === "self_employed";
   const needsContactInfo = formData.employmentStatus === "retired" || formData.employmentStatus === "student" || formData.employmentStatus === "housewife" || formData.employmentStatus === "others";
 
   const validateForm = () => {

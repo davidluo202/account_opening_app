@@ -16,7 +16,7 @@ interface Step {
 const individualSteps: Step[] = [
   { id: 1, title: "客戶與賬戶類型", description: "選擇客戶與賬戶類型" },
   { id: 2, title: "個人基本信息", description: "填寫基本資料" },
-  { id: 3, title: "個人詳細 & 職業", description: "填寫詳細資料及職業信息" },
+  { id: 3, title: "個人詳細信息", description: "填寫詳細資料" },
   // step 4 merged into step 3 display (但URL仍然是/step/4)
   { id: 5, title: "就業詳情", description: "填寫收入資產" },
   { id: 6, title: "財務與投資", description: "填寫投資信息" },
