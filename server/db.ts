@@ -1331,6 +1331,10 @@ export async function syncMissingTables() {
       await db.execute(sql`ALTER TABLE personal_detailed_info ADD COLUMN idIssuingPlaceOther VARCHAR(200)`);
       console.log('[syncMissingTables] Added idIssuingPlaceOther column');
     } catch { /* already exists */ }
+    // Add mobilePhone/correspondenceAddress to occupation_info
+    try { await db.execute(sql`ALTER TABLE occupation_info ADD COLUMN mobilePhone VARCHAR(50)`); } catch {}
+    try { await db.execute(sql`ALTER TABLE occupation_info ADD COLUMN phoneCountryCode VARCHAR(10)`); } catch {}
+    try { await db.execute(sql`ALTER TABLE occupation_info ADD COLUMN correspondenceAddress TEXT`); } catch {}
     // Expand employmentStatus enum to include retired/housewife/others
     try {
       await db.execute(sql`ALTER TABLE occupation_info MODIFY COLUMN employmentStatus ENUM('employed','self_employed','retired','student','housewife','others','unemployed') NOT NULL`);

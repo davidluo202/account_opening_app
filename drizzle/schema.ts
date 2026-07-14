@@ -166,6 +166,9 @@ export const occupationInfo = mysqlTable("occupation_info", {
   companyAddress: text("companyAddress"),
   officePhone: varchar("officePhone", { length: 50 }),
   officeFaxNo: varchar("officeFaxNo", { length: 50 }), // 办公传真
+  mobilePhone: varchar("mobilePhone", { length: 50 }),
+  phoneCountryCode: varchar("phoneCountryCode", { length: 10 }),
+  correspondenceAddress: text("correspondenceAddress"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
