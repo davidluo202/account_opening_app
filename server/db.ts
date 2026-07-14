@@ -20,7 +20,8 @@ import {
   approvers,
   approvalRecords,
   bcanSequences,
-  sanctionsScreening
+  sanctionsScreening,
+  customerDeclarations
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -1288,6 +1289,26 @@ export async function getSanctionsScreening(applicationId: number) {
     .where(eq(sanctionsScreening.applicationId, applicationId))
     .orderBy(desc(sanctionsScreening.createdAt))
     .limit(1);
+  return result.length > 0 ? result[0] : null;
+}
+
+// ===== Customer Declarations =====
+
+export async function saveCustomerDeclaration(applicationId: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const existing = await db.select().from(customerDeclarations).where(eq(customerDeclarations.applicationId, applicationId)).limit(1);
+  if (existing.length > 0) {
+    await db.update(customerDeclarations).set({ ...data, updatedAt: new Date() }).where(eq(customerDeclarations.applicationId, applicationId));
+  } else {
+    await db.insert(customerDeclarations).values({ applicationId, ...data });
+  }
+}
+
+export async function getCustomerDeclaration(applicationId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(customerDeclarations).where(eq(customerDeclarations.applicationId, applicationId)).limit(1);
   return result.length > 0 ? result[0] : null;
 }
 

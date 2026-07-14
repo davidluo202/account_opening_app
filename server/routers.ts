@@ -1710,6 +1710,34 @@ export const appRouter = router({
   }),
 
   // 制裁/AML筛查
+  personalClientDeclaration: router({
+    save: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+        declaration_a_is_beneficial_owner: z.boolean(),
+        declaration_a_owner_name: z.string().optional(),
+        declaration_a_owner_id: z.string().optional(),
+        declaration_a_owner_country: z.string().optional(),
+        declaration_a_owner_address: z.string().optional(),
+        declaration_b_is_employee: z.boolean(),
+        declaration_b_institution_name: z.string().optional(),
+        declaration_c_is_cmf_employee: z.boolean(),
+        declaration_d_is_relative: z.boolean(),
+        declaration_d_employee_name: z.string().optional(),
+        declaration_d_relationship: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { applicationId, ...data } = input;
+        await db.saveCustomerDeclaration(applicationId, data);
+        return { success: true };
+      }),
+    get: protectedProcedure
+      .input(z.object({ applicationId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getCustomerDeclaration(input.applicationId);
+      }),
+  }),
+
   sanctions: router({
     // 手动触发筛查
     screen: protectedProcedure
