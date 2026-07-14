@@ -69,7 +69,7 @@ export default function OccupationInfo() {
     mobilePhone: "",
     correspondenceAddress: "",
   });
-  const secondNeedsEmploymentDetails = secondFormData.employmentStatus === "employed" || secondFormData.employmentStatus === "self_employed" || secondFormData.employmentStatus === "others";
+  const secondNeedsEmploymentDetails = secondFormData.employmentStatus === "employed" || secondFormData.employmentStatus === "self_employed";
   const secondNeedsContactInfo = secondFormData.employmentStatus === "retired" || secondFormData.employmentStatus === "student" || secondFormData.employmentStatus === "housewife" || secondFormData.employmentStatus === "others";
 
   // Load existing second holder data
@@ -183,12 +183,7 @@ export default function OccupationInfo() {
       }
     }
 
-    // 其他：需要填寫說明
-    if (formData.employmentStatus === "others") {
-      if (!formData.companyName?.trim()) {
-        newErrors.companyName = t('請註明就業情況', 'Please specify employment status', '请注明就业情况');
-      }
-    }
+    // 其他：不需要额外填写就业详情，联系方式已在上方验证
 
     // 聯名賬戶：驗證第二持有人
     if (isJoint) {
