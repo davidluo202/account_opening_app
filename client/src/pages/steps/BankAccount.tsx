@@ -367,10 +367,8 @@ export default function BankAccount() {
 
     if (!formData.accountHolderName.trim()) newErrors.accountHolderName = t('請輸入賬戶持有人姓名', 'Please enter account holder name', '请输入账户持有人姓名');
 
-    // SWIFT Code 驗證：必填，8-11位英文和數字
-    if (!formData.swiftCode.trim()) {
-      newErrors.swiftCode = t('請輸入SWIFT代碼', 'Please enter SWIFT code', '请输入SWIFT代码');
-    } else if (!/^[A-Z0-9]{8,11}$/i.test(formData.swiftCode)) {
+    // SWIFT Code 驗證：非必填，如有填写需符合格式
+    if (formData.swiftCode?.trim() && !/^[A-Z0-9]{8,11}$/i.test(formData.swiftCode)) {
       newErrors.swiftCode = t('SWIFT代碼應為8-11位英文或數字', 'SWIFT code should be 8-11 alphanumeric characters', 'SWIFT代码应为8-11位英文或数字');
     }
 
@@ -469,7 +467,7 @@ const handleNext = () => {
                   <div className="space-y-1">
                     <div className="font-medium">{account.bankName}</div>
                     <div className="text-sm text-muted-foreground">
-                      SWIFT Code: {account.swiftCode || '-'}
+                      {/* SWIFT Code hidden */}
                     </div>
                     <div className="text-sm text-muted-foreground">
                       {t('賬戶號碼', 'Account Number', '账户号码')}: {account.accountNumber}
@@ -628,30 +626,7 @@ const handleNext = () => {
               {errors.bankName && <p className="text-sm text-destructive">{errors.bankName}</p>}
             </div>
 
-            {/* SWIFT Code */}
-            <div className="space-y-2">
-              <Label htmlFor="swiftCode">
-                {t('SWIFT 代碼', 'SWIFT Code', 'SWIFT 代码')} <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="swiftCode"
-                value={formData.swiftCode}
-                onChange={(e) => {
-                  setFormData({ ...formData, swiftCode: e.target.value.toUpperCase() });
-                  if (errors.swiftCode) setErrors({ ...errors, swiftCode: "" });
-                }}
-                onBlur={() => {
-                  // 失焦时转换为大写
-                  if (formData.swiftCode) {
-                    setFormData({ ...formData, swiftCode: formData.swiftCode.toUpperCase() });
-                  }
-                }}
-                placeholder={t('請輸入8-11位SWIFT Code', 'Enter 8-11 digit SWIFT Code', '请输入8-11位SWIFT Code')}
-                className={errors.swiftCode ? "border-destructive" : ""}
-                maxLength={11}
-              />
-              {errors.swiftCode && <p className="text-sm text-destructive">{errors.swiftCode}</p>}
-            </div>
+            {/* SWIFT Code - 隐藏，非必填 */}
 
             {/* 账户类型 */}
             <div className="space-y-2">
