@@ -1301,6 +1301,15 @@ export async function syncMissingTables() {
       await db.execute(sql`ALTER TABLE applications ADD COLUMN applicationCode VARCHAR(20) UNIQUE`);
       console.log('[syncMissingTables] Added applicationCode column');
     } catch { /* column already exists */ }
+    // Add idIssuingCountry and idIssuingPlaceOther columns if missing
+    try {
+      await db.execute(sql`ALTER TABLE personal_detailed_info ADD COLUMN idIssuingCountry VARCHAR(100)`);
+      console.log('[syncMissingTables] Added idIssuingCountry column');
+    } catch { /* already exists */ }
+    try {
+      await db.execute(sql`ALTER TABLE personal_detailed_info ADD COLUMN idIssuingPlaceOther VARCHAR(200)`);
+      console.log('[syncMissingTables] Added idIssuingPlaceOther column');
+    } catch { /* already exists */ }
     // Expand employmentStatus enum to include retired/housewife/others
     try {
       await db.execute(sql`ALTER TABLE occupation_info MODIFY COLUMN employmentStatus ENUM('employed','self_employed','retired','student','housewife','others','unemployed') NOT NULL`);
