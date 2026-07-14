@@ -1301,6 +1301,11 @@ export async function syncMissingTables() {
       await db.execute(sql`ALTER TABLE applications ADD COLUMN applicationCode VARCHAR(20) UNIQUE`);
       console.log('[syncMissingTables] Added applicationCode column');
     } catch { /* column already exists */ }
+    // Expand employmentStatus enum to include retired/housewife/others
+    try {
+      await db.execute(sql`ALTER TABLE occupation_info MODIFY COLUMN employmentStatus ENUM('employed','self_employed','retired','student','housewife','others','unemployed') NOT NULL`);
+      console.log('[syncMissingTables] Updated employmentStatus enum');
+    } catch (e) { /* may already be updated or different error */ }
     // Create sanctions_screening table if missing
     try {
       await db.execute(sql`CREATE TABLE IF NOT EXISTS sanctions_screening (

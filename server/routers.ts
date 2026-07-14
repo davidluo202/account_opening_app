@@ -600,7 +600,7 @@ export const appRouter = router({
     save: protectedProcedure
       .input(z.object({
         applicationId: z.number(),
-        employmentStatus: z.enum(["employed", "self_employed", "student", "unemployed"]),
+        employmentStatus: z.enum(["employed", "self_employed", "retired", "student", "housewife", "others", "unemployed"]),
         companyName: z.string().optional(),
         position: z.string().optional(),
         yearsOfService: z.number().optional(),

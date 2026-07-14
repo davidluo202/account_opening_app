@@ -155,7 +155,7 @@ export const personalDetailedInfo = mysqlTable("personal_detailed_info", {
 export const occupationInfo = mysqlTable("occupation_info", {
   id: int("id").autoincrement().primaryKey(),
   applicationId: int("applicationId").notNull().unique(),
-  employmentStatus: mysqlEnum("employmentStatus", ["employed", "self_employed", "student", "unemployed"]).notNull(),
+  employmentStatus: mysqlEnum("employmentStatus", ["employed", "self_employed", "retired", "student", "housewife", "others", "unemployed"]).notNull(),
   // 以下字段仅当 employed 或 self_employed 时填写
   companyName: varchar("companyName", { length: 200 }),
   position: varchar("position", { length: 100 }),
