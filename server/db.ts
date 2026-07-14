@@ -1291,12 +1291,32 @@ export async function getSanctionsScreening(applicationId: number) {
   return result.length > 0 ? result[0] : null;
 }
 
-/** Sync missing tables - create tables that may not exist yet */
+/** Sync missing columns/tables */
 export async function syncMissingTables() {
   try {
     const db = await getDb();
     if (!db) return;
-    console.log('[syncMissingTables] Database connection verified');
+    // Add applicationCode column if missing
+    try {
+      await db.execute(sql`ALTER TABLE applications ADD COLUMN applicationCode VARCHAR(20) UNIQUE`);
+      console.log('[syncMissingTables] Added applicationCode column');
+    } catch { /* column already exists */ }
+    // Create sanctions_screening table if missing
+    try {
+      await db.execute(sql`CREATE TABLE IF NOT EXISTS sanctions_screening (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        applicationId INT NOT NULL,
+        searchId VARCHAR(100),
+        screenedName VARCHAR(200),
+        hitCount INT DEFAULT 0,
+        hits JSON,
+        rawResponse JSON,
+        flaggedForReview BOOLEAN DEFAULT FALSE,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`);
+      console.log('[syncMissingTables] sanctions_screening table ensured');
+    } catch { /* table already exists */ }
+    console.log('[syncMissingTables] Database sync completed');
   } catch (e: any) {
     console.error('[syncMissingTables] Error:', e.message);
   }
