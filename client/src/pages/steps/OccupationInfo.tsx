@@ -184,7 +184,12 @@ export default function OccupationInfo() {
       }
     }
 
-    // 其他：不需要额外填写就业详情，联系方式已在上方验证
+    // 其他：請註明为必填
+    if (formData.employmentStatus === "others") {
+      if (!formData.companyName?.trim()) {
+        newErrors.companyName = t('請註明您的就業情況', 'Please specify your employment status', '请注明您的就业情况');
+      }
+    }
 
     // 聯名賬戶：驗證第二持有人
     if (isJoint) {
@@ -331,13 +336,18 @@ const handleSave = () => {
         {/* 其他：請註明 */}
         {formData.employmentStatus === "others" && (
           <div className="space-y-2 p-6 bg-muted/50 rounded-lg">
-            <Label htmlFor="othersNote">{t('請註明', 'Please specify', '请注明')}</Label>
+            <Label htmlFor="othersNote">{t('請註明', 'Please specify', '请注明')} <span className="text-destructive">*</span></Label>
             <Input
               id="othersNote"
               value={formData.companyName || ''}
-              onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, companyName: e.target.value });
+                if (errors.companyName) setErrors({ ...errors, companyName: "" });
+              }}
               placeholder={t('請註明您的就業情況', 'Please specify your employment status', '请注明您的就业情况')}
+              className={errors.companyName ? "border-destructive" : ""}
             />
+            {errors.companyName && <p className="text-sm text-destructive">{errors.companyName}</p>}
           </div>
         )}
 
