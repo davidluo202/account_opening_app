@@ -467,7 +467,7 @@ const handleNext = () => {
                   <div className="space-y-1">
                     <div className="font-medium">{account.bankName}</div>
                     <div className="text-sm text-muted-foreground">
-                      {/* SWIFT Code hidden */}
+                      SWIFT Code: {account.swiftCode || '-'}
                     </div>
                     <div className="text-sm text-muted-foreground">
                       {t('賬戶號碼', 'Account Number', '账户号码')}: {account.accountNumber}
@@ -626,7 +626,24 @@ const handleNext = () => {
               {errors.bankName && <p className="text-sm text-destructive">{errors.bankName}</p>}
             </div>
 
-            {/* SWIFT Code - 隐藏，非必填 */}
+            {/* SWIFT Code - 非必填 */}
+            <div className="space-y-2">
+              <Label htmlFor="swiftCode">
+                {t('SWIFT 代碼', 'SWIFT Code', 'SWIFT 代码')}
+              </Label>
+              <Input
+                id="swiftCode"
+                value={formData.swiftCode}
+                onChange={(e) => {
+                  setFormData({ ...formData, swiftCode: e.target.value.toUpperCase() });
+                  if (errors.swiftCode) setErrors({ ...errors, swiftCode: "" });
+                }}
+                placeholder={t('選填', 'Optional', '选填')}
+                className={errors.swiftCode ? "border-destructive" : ""}
+                maxLength={11}
+              />
+              {errors.swiftCode && <p className="text-sm text-destructive">{errors.swiftCode}</p>}
+            </div>
 
             {/* 账户类型 */}
             <div className="space-y-2">
