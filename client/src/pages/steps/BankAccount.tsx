@@ -638,7 +638,7 @@ const handleNext = () => {
                   setFormData({ ...formData, swiftCode: e.target.value.toUpperCase() });
                   if (errors.swiftCode) setErrors({ ...errors, swiftCode: "" });
                 }}
-                placeholder={t('選填', 'Optional', '选填')}
+                placeholder=""
                 className={errors.swiftCode ? "border-destructive" : ""}
                 maxLength={11}
               />
