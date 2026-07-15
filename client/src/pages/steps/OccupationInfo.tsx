@@ -250,7 +250,7 @@ const handleSave = () => {
     saveMutation.mutate({
       applicationId,
       employmentStatus: formData.employmentStatus as any,
-      companyName: needsEmploymentDetails ? formData.companyName : undefined,
+      companyName: (needsEmploymentDetails || formData.employmentStatus === 'others') ? formData.companyName : undefined,
       position: needsEmploymentDetails ? formData.position : undefined,
       yearsOfService: needsEmploymentDetails ? parseInt(formData.yearsOfService) : undefined,
       industry: needsEmploymentDetails ? formData.industry : undefined,
