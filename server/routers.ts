@@ -963,9 +963,11 @@ export const appRouter = router({
         amlComplianceConsent: z.boolean(),
         riskAssessmentConsent: z.boolean(),
         bcanConsentAccepted: z.boolean().optional(),
+        confirmationRead: z.boolean().optional(),
+        objectsDirectMarketing: z.boolean().optional(),
       }))
       .mutation(async ({ input, ctx }) => {
-        const { applicationId, ...data } = input;
+        const { applicationId, confirmationRead, objectsDirectMarketing, ...data } = input;
         const application = await db.getApplicationById(applicationId);
         if (!application || application.userId !== ctx.user.id) {
           throw new Error("申请不存在或无权访问");
@@ -973,6 +975,8 @@ export const appRouter = router({
 
         const saveData = {
           ...data,
+          // Map confirmationRead to agreementAccepted (frontend uses confirmationRead, DB uses agreementAccepted)
+          agreementAccepted: confirmationRead ?? data.agreementAccepted ?? false,
           bcanConsentAccepted: data.bcanConsentAccepted ?? false,
           signedAt: new Date(),
         };
@@ -990,7 +994,12 @@ export const appRouter = router({
         if (!application || application.userId !== ctx.user.id) {
           throw new Error("申请不存在或无权访问");
         }
-        return await db.getRegulatoryDeclarations(input.applicationId);
+        const data = await db.getRegulatoryDeclarations(input.applicationId);
+        if (data) {
+          // Map agreementAccepted back to confirmationRead for frontend compatibility
+          return { ...data, confirmationRead: data.agreementAccepted };
+        }
+        return data;
       }),
   }),
   
