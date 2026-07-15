@@ -156,6 +156,51 @@ async function startServer() {
         results.push(`personal_detailed_info ERROR: ${e?.message || e}`);
       }
 
+      // Add occupation_info columns for mobile/address
+      for (const col of ['mobilePhone VARCHAR(50)', 'phoneCountryCode VARCHAR(10)', 'correspondenceAddress TEXT']) {
+        const colName = col.split(' ')[0];
+        try {
+          await db.execute(sql.raw(`ALTER TABLE \`occupation_info\` ADD COLUMN \`${colName}\` ${col.slice(colName.length + 1)}`));
+          results.push(`occupation_info: added ${colName}`);
+        } catch { results.push(`occupation_info: ${colName} exists`); }
+      }
+
+      // Expand employmentStatus enum
+      try {
+        await db.execute(sql.raw(`ALTER TABLE \`occupation_info\` MODIFY COLUMN \`employmentStatus\` ENUM('employed','self_employed','retired','student','housewife','others','unemployed') NOT NULL`));
+        results.push('occupation_info: employmentStatus enum updated');
+      } catch (e: any) { results.push(`occupation_info enum: ${e?.message}`); }
+
+      // Create customer_declarations table (for personalClientDeclaration)
+      try {
+        await db.execute(sql`
+          CREATE TABLE IF NOT EXISTS \`customer_declarations\` (
+            \`id\` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            \`applicationId\` int NOT NULL UNIQUE,
+            \`declaration_a_is_beneficial_owner\` tinyint(1) NOT NULL DEFAULT 0,
+            \`declaration_a_owner_name\` varchar(200) DEFAULT NULL,
+            \`declaration_a_owner_id\` varchar(100) DEFAULT NULL,
+            \`declaration_a_owner_country\` varchar(100) DEFAULT NULL,
+            \`declaration_a_owner_address\` text DEFAULT NULL,
+            \`declaration_b_is_employee\` tinyint(1) NOT NULL DEFAULT 0,
+            \`declaration_b_institution_name\` varchar(300) DEFAULT NULL,
+            \`declaration_c_is_cmf_employee\` tinyint(1) NOT NULL DEFAULT 0,
+            \`declaration_d_is_relative\` tinyint(1) NOT NULL DEFAULT 0,
+            \`declaration_d_employee_name\` varchar(200) DEFAULT NULL,
+            \`declaration_d_relationship\` varchar(100) DEFAULT NULL,
+            \`createdAt\` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            \`updatedAt\` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+          )
+        `);
+        results.push('customer_declarations: CREATE OK');
+      } catch (e: any) { results.push(`customer_declarations: ${e?.message}`); }
+
+      // Show occupation_info columns
+      try {
+        const [oiCols]: any = await db.execute(sql`SHOW COLUMNS FROM \`occupation_info\``);
+        results.push(`occupation_info columns: ${JSON.stringify(Array.isArray(oiCols) ? oiCols.map((c: any) => c.Field) : [])}`);
+      } catch {}
+
       res.json({ ok: true, results });
     } catch (e: any) {
       res.json({ error: e?.message || String(e) });
