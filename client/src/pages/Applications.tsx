@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import { useLocation } from "wouter";
-import { Plus, FileText, Loader2, LogOut, LayoutDashboard } from "lucide-react";
+import { Plus, FileText, Loader2, LogOut } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
@@ -81,15 +81,6 @@ export default function Applications() {
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       <TopHeader>
         <span className="text-sm text-muted-foreground">{t('歡迎', 'Welcome', '欢迎')}, {user?.name || user?.email}</span>
-        <Button
-          variant="default"
-          size="sm"
-          onClick={() => setLocation("/portal")}
-          className="bg-blue-600 hover:bg-blue-700 text-white"
-        >
-          <LayoutDashboard className="h-4 w-4 mr-2" />
-          {t('進入客戶端', 'Enter Portal', '进入客户端')}
-        </Button>
         <Button variant="ghost" size="sm" onClick={handleLogout}>
           <LogOut className="h-4 w-4 mr-2" />
           {t('登出', 'Logout', '登出')}
