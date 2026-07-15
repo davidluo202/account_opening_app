@@ -222,6 +222,21 @@ async function startServer() {
     }
   });
 
+  // User/application debug
+  app.get("/api/db-users", async (_req, res) => {
+    try {
+      const { getDb } = await import("../db");
+      const { sql } = await import("drizzle-orm");
+      const db = await getDb();
+      if (!db) return res.json({ error: "no db" });
+      const [users]: any = await db.execute(sql`SELECT id, email, name, createdAt FROM users ORDER BY id DESC LIMIT 20`);
+      const [apps]: any = await db.execute(sql`SELECT id, userId, applicationNumber, status, submittedAt FROM applications ORDER BY id DESC LIMIT 20`);
+      res.json({ users, applications: apps });
+    } catch (e: any) {
+      res.json({ error: e?.message || String(e) });
+    }
+  });
+
   // Auth routes
   registerOAuthRoutes(app);
   // File download (signed link → presigned S3 url)
