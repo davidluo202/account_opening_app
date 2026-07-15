@@ -993,6 +993,12 @@ export default function ApplicationPreview() {
                     </tr>
                   </>
                 ) : null}
+                {occupation?.employmentStatus === 'others' && occupation?.companyName && (
+                  <tr className="border-b">
+                    <td className="p-3 bg-gray-50 font-semibold border-r">請註明 Please Specify</td>
+                    <td className="p-3" colSpan={3}>{occupation?.companyName}</td>
+                  </tr>
+                )}
                 {(occupation?.employmentStatus === 'retired' || occupation?.employmentStatus === 'student' || occupation?.employmentStatus === 'housewife' || occupation?.employmentStatus === 'others') && (
                   <>
                     <tr className="border-b">
