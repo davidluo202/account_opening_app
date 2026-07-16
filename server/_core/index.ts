@@ -203,9 +203,16 @@ async function startServer() {
 
       // Add objectsDirectMarketing to regulatory_declarations
       try {
-        await db.execute(sql.raw("ALTER TABLE `regulatory_declarations` ADD COLUMN `objectsDirectMarketing` tinyint(1) NOT NULL DEFAULT 0"));
-        results.push('regulatory_declarations: added objectsDirectMarketing');
-      } catch (e: any) { results.push(`regulatory_declarations: objectsDirectMarketing ${e?.message?.includes('Duplicate') ? 'exists' : e?.message}`); }
+        const [rdCols]: any = await db.execute(sql.raw("SHOW COLUMNS FROM `regulatory_declarations`"));
+        const rdColNames = Array.isArray(rdCols) ? rdCols.map((c: any) => c.Field || c.field) : [];
+        results.push(`regulatory_declarations columns: ${JSON.stringify(rdColNames)}`);
+        if (!rdColNames.includes('objectsDirectMarketing')) {
+          await db.execute(sql.raw("ALTER TABLE `regulatory_declarations` ADD COLUMN `objectsDirectMarketing` tinyint(1) NOT NULL DEFAULT 0"));
+          results.push('regulatory_declarations: added objectsDirectMarketing');
+        } else {
+          results.push('regulatory_declarations: objectsDirectMarketing exists');
+        }
+      } catch (e: any) { results.push(`regulatory_declarations: ${e?.message}`); }
 
       res.json({ ok: true, results });
     } catch (e: any) {
