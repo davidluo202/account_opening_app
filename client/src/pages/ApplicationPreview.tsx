@@ -825,7 +825,7 @@ export default function ApplicationPreview() {
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
                 <span>2. 個人詳細信息 Personal Detailed Information</span>
-                <Button variant="ghost" size="sm" onClick={() => handleEdit(4)}>
+                <Button variant="ghost" size="sm" onClick={() => handleEdit(3)}>
                   {t('編輯', 'Edit', '编辑')}
                 </Button>
               </h3>
@@ -953,7 +953,7 @@ export default function ApplicationPreview() {
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
                 <span>3. 職業信息 Occupation Information</span>
-                <Button variant="ghost" size="sm" onClick={() => handleEdit(5)}>
+                <Button variant="ghost" size="sm" onClick={() => handleEdit(4)}>
                   {t('編輯', 'Edit', '编辑')}
                 </Button>
               </h3>
@@ -1053,7 +1053,7 @@ export default function ApplicationPreview() {
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
                 <span>4. 財務狀況 Financial Status</span>
-                <Button variant="ghost" size="sm" onClick={() => handleEdit(6)}>
+                <Button variant="ghost" size="sm" onClick={() => handleEdit(5)}>
                   {t('編輯', 'Edit', '编辑')}
                 </Button>
               </h3>
@@ -1107,7 +1107,7 @@ export default function ApplicationPreview() {
               <div className="bg-blue-50 p-3 border-b">
                 <h3 className="font-bold flex items-center justify-between">
                   <span>5. 投資信息 Investment Information</span>
-                  <Button variant="ghost" size="sm" onClick={() => handleEdit(7)}>
+                  <Button variant="ghost" size="sm" onClick={() => handleEdit(6)}>
                     編輯
                   </Button>
                 </h3>
@@ -1181,7 +1181,7 @@ export default function ApplicationPreview() {
             <div className="bg-blue-50 p-3 border-b">
               <h3 className="font-bold flex items-center justify-between">
                 <span>{isCorporate ? '5. 風險評估問卷 Risk Assessment Questionnaire' : '6. 風險評估問卷 Risk Assessment Questionnaire'}</span>
-                <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 5 : 8)}>
+                <Button variant="ghost" size="sm" onClick={() => handleEdit(isCorporate ? 5 : 7)}>
                   {t('編輯', 'Edit', '编辑')}
                 </Button>
               </h3>

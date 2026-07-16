@@ -269,6 +269,7 @@ export const regulatoryDeclarations = mysqlTable("regulatory_declarations", {
   amlComplianceConsent: boolean("amlComplianceConsent").default(false).notNull(),
   riskAssessmentConsent: boolean("riskAssessmentConsent").default(false).notNull(),
   bcanConsentAccepted: boolean("bcanConsentAccepted").default(false).notNull(), // 投资者识别码制度同意书
+  objectsDirectMarketing: boolean("objectsDirectMarketing").default(false).notNull(), // 反對直接促銷
   signedAt: timestamp("signedAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

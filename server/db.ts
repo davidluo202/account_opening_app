@@ -1343,6 +1343,8 @@ export async function syncMissingTables() {
       await db.execute(sql`ALTER TABLE occupation_info MODIFY COLUMN employmentStatus ENUM('employed','self_employed','retired','student','housewife','others','unemployed') NOT NULL`);
       console.log('[syncMissingTables] Updated employmentStatus enum');
     } catch (e) { /* may already be updated or different error */ }
+    // Add objectsDirectMarketing to regulatory_declarations
+    try { await db.execute(sql`ALTER TABLE regulatory_declarations ADD COLUMN objectsDirectMarketing tinyint(1) NOT NULL DEFAULT 0`); } catch {}
     // Create sanctions_screening table if missing
     try {
       await db.execute(sql`CREATE TABLE IF NOT EXISTS sanctions_screening (

@@ -978,6 +978,7 @@ export const appRouter = router({
           // Map confirmationRead to agreementAccepted (frontend uses confirmationRead, DB uses agreementAccepted)
           agreementAccepted: confirmationRead ?? data.agreementAccepted ?? false,
           bcanConsentAccepted: data.bcanConsentAccepted ?? false,
+          objectsDirectMarketing: objectsDirectMarketing ?? false,
           signedAt: new Date(),
         };
         
