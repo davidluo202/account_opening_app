@@ -201,6 +201,12 @@ async function startServer() {
         results.push(`occupation_info columns: ${JSON.stringify(Array.isArray(oiCols) ? oiCols.map((c: any) => c.Field) : [])}`);
       } catch {}
 
+      // Add objectsDirectMarketing to regulatory_declarations
+      try {
+        await db.execute(sql.raw(`ALTER TABLE \`regulatory_declarations\` ADD COLUMN \`objectsDirectMarketing\` tinyint(1) NOT NULL DEFAULT 0`));
+        results.push('regulatory_declarations: added objectsDirectMarketing');
+      } catch (e: any) { results.push(`regulatory_declarations: objectsDirectMarketing ${e?.message?.includes('Duplicate') ? 'exists' : e?.message}`); }
+
       res.json({ ok: true, results });
     } catch (e: any) {
       res.json({ error: e?.message || String(e) });
