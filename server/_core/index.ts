@@ -203,7 +203,7 @@ async function startServer() {
 
       // Add objectsDirectMarketing to regulatory_declarations
       try {
-        await db.execute(sql.raw(`ALTER TABLE \`regulatory_declarations\` ADD COLUMN \`objectsDirectMarketing\` tinyint(1) NOT NULL DEFAULT 0`));
+        await db.execute(sql`ALTER TABLE regulatory_declarations ADD COLUMN objectsDirectMarketing tinyint(1) NOT NULL DEFAULT 0`);
         results.push('regulatory_declarations: added objectsDirectMarketing');
       } catch (e: any) { results.push(`regulatory_declarations: objectsDirectMarketing ${e?.message?.includes('Duplicate') ? 'exists' : e?.message}`); }
 
