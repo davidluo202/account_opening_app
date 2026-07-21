@@ -120,11 +120,10 @@ export async function storagePut(
       })
     );
 
-    const url = s3.publicBaseUrl
-      ? `${s3.publicBaseUrl.replace(/\/+$/, "")}/${encodeURI(key)}`
-      : `https://${s3.bucket}.s3.${s3.region}.amazonaws.com/${encodeURI(key)}`;
+    // Generate presigned URL for download (direct S3 URL requires public access)
+    const presignedUrl = await getSignedUrl(client, new GetObjectCommand({ Bucket: s3.bucket, Key: key }), { expiresIn: 86400 }); // 24 hours
 
-    return { key, url };
+    return { key, url: presignedUrl };
   }
 
   // Legacy storage proxy disabled - S3 is the only supported storage
