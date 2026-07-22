@@ -31,7 +31,7 @@ export default function OccupationInfo() {
   const params = useParams<{ id: string; step?: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
-  const stepNum = parseInt(params.step || "5");
+  const stepNum = parseInt(params.step || "4");
   const showReturnToPreview = useReturnToPreview();
 
   const [formData, setFormData] = useState({
