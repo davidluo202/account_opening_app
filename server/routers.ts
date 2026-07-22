@@ -446,9 +446,13 @@ export const appRouter = router({
           // 添加合規聲明字段（從regulatory對象中獲取）
           isPEP: completeData.regulatory?.isPEP ?? false,
           isUSPerson: completeData.regulatory?.isUSPerson ?? false,
-          agreementRead: completeData.regulatory?.agreementRead ?? false,
-          agreementAccepted: completeData.regulatory?.agreementAccepted ?? false,
+          agreementRead: completeData.regulatory?.agreementRead ?? completeData.regulatory?.confirmationRead ?? false,
+          agreementAccepted: completeData.regulatory?.agreementAccepted ?? completeData.regulatory?.confirmationRead ?? false,
           amlComplianceConsent: completeData.regulatory?.amlComplianceConsent ?? false,
+          etoConsent: completeData.regulatory?.etoConsent ?? false,
+          riskAssessmentConsent: completeData.regulatory?.riskAssessmentConsent ?? false,
+          clientConfirmationRead: completeData.regulatory?.clientConfirmationRead ?? completeData.regulatory?.confirmationRead ?? false,
+          objectsDirectMarketing: completeData.regulatory?.objectsDirectMarketing ?? false,
         };
         
         // 生成PDF

@@ -274,6 +274,7 @@ export interface ApplicationPDFData {
     idType?: string | null;
     idNumber?: string | null;
     idIssuingPlace?: string | null;
+    idIssuingCountry?: string | null;
     idExpiryDate?: string | Date | null;
     idIsPermanent?: boolean | null;
     maritalStatus?: string | null;
@@ -330,6 +331,10 @@ export interface ApplicationPDFData {
   agreementRead?: boolean | null;
   agreementAccepted?: boolean | null;
   amlComplianceConsent?: boolean | null;
+  etoConsent?: boolean | null;
+  riskAssessmentConsent?: boolean | null;
+  clientConfirmationRead?: boolean | null;
+  objectsDirectMarketing?: boolean | null;
   // 審批信息字段
   firstApproval?: {
     approverName?: string | null;
@@ -460,7 +465,7 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
         const di = data.detailedInfo;
         doc.text(`证件类型 ID Type: ${translate(di.idType)}`);
         doc.text(`证件号码 ID Number: ${di.idNumber || 'N/A'}`);
-        doc.text(`签发地 Issuing Place: ${di.idIssuingPlace || 'N/A'}`);
+        doc.text(`签发国家/地区 Issuing Country: ${di.idIssuingCountry || di.idIssuingPlace || 'N/A'}`);
         doc.text(`有效期 Expiry Date: ${di.idIsPermanent ? '长期有效 Permanent' : formatDate(di.idExpiryDate)}`);
         doc.text(`婚姻状况 Marital Status: ${translate(di.maritalStatus)}`);
         doc.text(`学历 Education: ${translate(di.educationLevel)}`);
@@ -636,6 +641,34 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
         doc.text('本人確認已詳細閱讀開戶協議，清楚了解協議內容，並願意接受協議條款約束。');
         doc.text('I confirm that I have read the account opening agreement in detail, clearly understand the content of the agreement, and am willing to accept the terms and conditions of the agreement.');
       }
+      doc.moveDown(0.5);
+
+      // 電子交易條例
+      doc.fontSize(9);
+      doc.text('接受電子交易條例 ETO Consent:');
+      doc.fontSize(8);
+      doc.text(`${data.etoConsent ? '已接受 Accepted' : '未接受 Not Accepted'}`);
+      doc.moveDown(0.3);
+
+      // 風險評估確認
+      doc.fontSize(9);
+      doc.text('風險評估確認 Risk Assessment Consent:');
+      doc.fontSize(8);
+      doc.text(`${data.riskAssessmentConsent ? '已確認 Confirmed' : '未確認 Not Confirmed'}`);
+      doc.moveDown(0.3);
+
+      // 客戶確認
+      doc.fontSize(9);
+      doc.text('客戶確認 Client Confirmation:');
+      doc.fontSize(8);
+      doc.text(`${data.clientConfirmationRead ? '已閱讀並同意 Read and Agreed' : '未完成 Not Completed'}`);
+      doc.moveDown(0.3);
+
+      // 直接促銷
+      doc.fontSize(9);
+      doc.text('直接促銷 Direct Marketing:');
+      doc.fontSize(8);
+      doc.text(`${data.objectsDirectMarketing ? '反對 — 反對使用個人資料於直接促銷 / Objects' : '同意 — 同意使用個人資料於直接促銷 / Agrees'}`);
       doc.moveDown(1);
 
       // 签名声明
