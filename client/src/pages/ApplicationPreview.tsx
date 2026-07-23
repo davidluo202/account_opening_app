@@ -1596,36 +1596,10 @@ export default function ApplicationPreview() {
             )}
           </div>
 
-          {/* 人脸识别（只限個人流程） */}
-          {!isCorporate && (
-          <div className="border-b">
-            <div className="bg-blue-50 p-3 border-b">
-              <h3 className="font-bold flex items-center justify-between">
-                <span>{isCorporate ? '' : '11. '}人臉識別 Face Verification</span>
-                <Button variant="ghost" size="sm" onClick={() => handleEdit(11)}>
-                  {t('編輯', 'Edit', '编辑')}
-                </Button>
-              </h3>
-            </div>
-            <table className="w-full min-w-[800px]">
-              <tbody>
-                <tr className="border-b">
-                  <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">驗證狀態 Verification Status</td>
-                  <td className="p-3" colSpan={3}>
-                    {faceVerification?.verified ? (
-                      <span className="text-green-600 flex items-center">
-                        <Check className="h-4 w-4 mr-2" />
-                        {t('已完成', 'Completed', '已完成')}
-                      </span>
-                    ) : (
-                      <span className="text-gray-500">{t('未完成', 'Not Completed', '未完成')}</span>
-                    )}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          )}
+          {/* 人脸识别 — 暫時隱藏，數據保留 */}
+          {/* {!isCorporate && (
+          <div className="border-b">...</div>
+          )} */}
 
           {/* 客戶聲明（個人第12步；機構第10步） */}
           <div>
