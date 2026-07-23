@@ -16,6 +16,7 @@ const getDocumentTypes = (t: (tw: string, en: string, cn?: string) => string) =>
   { value: "bank_statement", label: t("銀行月結單", "Bank Statement", "银行月结单"), required: true, singleFile: true },
   { value: "address_proof", label: t("住址證明", "Address Proof", "住址证明"), required: true, singleFile: true },
   { value: "w8ben", label: t("美國稅務申報表", "W8BEN", "美国税务申报表"), required: true, singleFile: true },
+  { value: "other_docs", label: t("其他證明文件（如有）", "Other Supporting Documents (if any)", "其他证明文件（如有）"), required: false, singleFile: false },
 ];
 
 const getCorporateDocumentTypes = (t: (tw: string, en: string, cn?: string) => string) => [
