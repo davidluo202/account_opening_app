@@ -626,16 +626,62 @@ export default function PersonalDetailedInfo() {
               <Label htmlFor="idExpiryDate">
                 {t('證件有效期', 'Expiry Date', '证件有效期')} <span className="text-destructive">*</span>
               </Label>
-              <Input
-                id="idExpiryDate"
-                type="date"
-                value={formData.idExpiryDate}
-                onChange={(e) => {
-                  setFormData({ ...formData, idExpiryDate: e.target.value });
-                  if (errors.idExpiryDate) setErrors({ ...errors, idExpiryDate: "" });
-                }}
-                className={errors.idExpiryDate ? "border-destructive" : ""}
-              />
+              <div className="grid grid-cols-3 gap-2 max-w-md">
+                <Select
+                  value={formData.idExpiryDate ? formData.idExpiryDate.split('-')[0] : ''}
+                  onValueChange={(year) => {
+                    const parts = (formData.idExpiryDate || '--').split('-');
+                    const newDate = `${year}-${parts[1] || ''}-${parts[2] || ''}`;
+                    setFormData({ ...formData, idExpiryDate: newDate });
+                    if (errors.idExpiryDate) setErrors({ ...errors, idExpiryDate: '' });
+                  }}
+                >
+                  <SelectTrigger className={errors.idExpiryDate ? "border-destructive" : ""}>
+                    <SelectValue placeholder={t('年份', 'Year', '年份')} />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() + i).map(y => (
+                      <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={formData.idExpiryDate?.split('-')[1] || ''}
+                  onValueChange={(month) => {
+                    const parts = (formData.idExpiryDate || '--').split('-');
+                    const newDate = `${parts[0] || ''}-${month}-${parts[2] || ''}`;
+                    setFormData({ ...formData, idExpiryDate: newDate });
+                    if (errors.idExpiryDate) setErrors({ ...errors, idExpiryDate: '' });
+                  }}
+                >
+                  <SelectTrigger className={errors.idExpiryDate ? "border-destructive" : ""}>
+                    <SelectValue placeholder={t('月份', 'Month', '月份')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0')).map(m => (
+                      <SelectItem key={m} value={m}>{m}{t('月', '', '月')}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={formData.idExpiryDate?.split('-')[2] || ''}
+                  onValueChange={(day) => {
+                    const parts = (formData.idExpiryDate || '--').split('-');
+                    const newDate = `${parts[0] || ''}-${parts[1] || ''}-${day}`;
+                    setFormData({ ...formData, idExpiryDate: newDate });
+                    if (errors.idExpiryDate) setErrors({ ...errors, idExpiryDate: '' });
+                  }}
+                >
+                  <SelectTrigger className={errors.idExpiryDate ? "border-destructive" : ""}>
+                    <SelectValue placeholder={t('日期', 'Day', '日期')} />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    {Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0')).map(d => (
+                      <SelectItem key={d} value={d}>{d}{t('日', '', '日')}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               {errors.idExpiryDate && <p className="text-sm text-destructive">{errors.idExpiryDate}</p>}
             </>
           )}
@@ -1083,15 +1129,59 @@ export default function PersonalDetailedInfo() {
                   <Label>
                     {t('證件有效期', 'Expiry Date', '证件有效期')} <span className="text-destructive">*</span>
                   </Label>
-                  <Input
-                    type="date"
-                    value={secondHolder.idExpiryDate}
-                    onChange={(e) => {
-                      setSecondHolder({ ...secondHolder, idExpiryDate: e.target.value });
-                      if (errors.secondIdExpiryDate) setErrors({ ...errors, secondIdExpiryDate: "" });
-                    }}
-                    className={errors.secondIdExpiryDate ? "border-destructive" : ""}
-                  />
+                  <div className="grid grid-cols-3 gap-2 max-w-md">
+                    <Select
+                      value={secondHolder.idExpiryDate ? secondHolder.idExpiryDate.split('-')[0] : ''}
+                      onValueChange={(year) => {
+                        const parts = (secondHolder.idExpiryDate || '--').split('-');
+                        setSecondHolder({ ...secondHolder, idExpiryDate: `${year}-${parts[1] || ''}-${parts[2] || ''}` });
+                        if (errors.secondIdExpiryDate) setErrors({ ...errors, secondIdExpiryDate: '' });
+                      }}
+                    >
+                      <SelectTrigger className={errors.secondIdExpiryDate ? "border-destructive" : ""}>
+                        <SelectValue placeholder={t('年份', 'Year', '年份')} />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-60">
+                        {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() + i).map(y => (
+                          <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Select
+                      value={secondHolder.idExpiryDate?.split('-')[1] || ''}
+                      onValueChange={(month) => {
+                        const parts = (secondHolder.idExpiryDate || '--').split('-');
+                        setSecondHolder({ ...secondHolder, idExpiryDate: `${parts[0] || ''}-${month}-${parts[2] || ''}` });
+                        if (errors.secondIdExpiryDate) setErrors({ ...errors, secondIdExpiryDate: '' });
+                      }}
+                    >
+                      <SelectTrigger className={errors.secondIdExpiryDate ? "border-destructive" : ""}>
+                        <SelectValue placeholder={t('月份', 'Month', '月份')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0')).map(m => (
+                          <SelectItem key={m} value={m}>{m}{t('月', '', '月')}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Select
+                      value={secondHolder.idExpiryDate?.split('-')[2] || ''}
+                      onValueChange={(day) => {
+                        const parts = (secondHolder.idExpiryDate || '--').split('-');
+                        setSecondHolder({ ...secondHolder, idExpiryDate: `${parts[0] || ''}-${parts[1] || ''}-${day}` });
+                        if (errors.secondIdExpiryDate) setErrors({ ...errors, secondIdExpiryDate: '' });
+                      }}
+                    >
+                      <SelectTrigger className={errors.secondIdExpiryDate ? "border-destructive" : ""}>
+                        <SelectValue placeholder={t('日期', 'Day', '日期')} />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-60">
+                        {Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0')).map(d => (
+                          <SelectItem key={d} value={d}>{d}{t('日', '', '日')}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                   {errors.secondIdExpiryDate && <p className="text-sm text-destructive">{errors.secondIdExpiryDate}</p>}
                 </>
               )}

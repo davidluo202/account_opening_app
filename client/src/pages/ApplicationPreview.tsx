@@ -1429,40 +1429,44 @@ export default function ApplicationPreview() {
               <div className="bg-yellow-50 p-2 px-3 border-b font-semibold text-sm">賬戶主要持有人 / Primary Account Holder</div>
             )}
             {bankAccounts && bankAccounts.length > 0 ? (
-              <table className="w-full min-w-[800px]">
-                <tbody>
-                  {bankAccounts.map((account, index) => (
-                    <Fragment key={index}>
-                      <tr className="border-b bg-gray-50">
-                        <td className="p-3 font-semibold border-r" style={{width: '33%'}}>銀行名稱<br/>Bank Name</td>
-                        <td className="p-3 font-semibold border-r" style={{width: '33%'}}>SWIFT Code</td>
-                        <td className="p-3 font-semibold" style={{width: '33%'}}>賬戶类型<br/>Account Type</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="p-3 border-r">{account.bankName}</td>
-                        <td className="p-3 border-r">{account.swiftCode || '-'}</td>
-                        <td className="p-3">{translateBankAccountType(account.accountType)}</td>
-                      </tr>
-                      <tr className="border-b bg-gray-50">
-                        <td className="p-3 font-semibold border-r">币种<br/>Currency</td>
-                        <td className="p-3 font-semibold border-r">账号<br/>Account Number</td>
-                        <td className="p-3 font-semibold">持有人<br/>Holder Name</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="p-3 border-r">{account.accountCurrency}</td>
-                        <td className="p-3 border-r">{account.accountNumber}</td>
-                        <td className="p-3">{account.accountHolderName}</td>
-                      </tr>
-                      <tr className="border-b bg-gray-50">
-                        <td className="p-3 font-semibold" colSpan={3}>持有人地址 Holder Address</td>
-                      </tr>
-                      <tr className={index < bankAccounts.length - 1 ? "border-b-2 border-gray-300" : "border-b"}>
-                        <td className="p-3" colSpan={3}>{account.accountHolderAddress || '-'}</td>
-                      </tr>
-                    </Fragment>
-                  ))}
-                </tbody>
-              </table>
+              <div>
+                {bankAccounts.map((account, index) => (
+                  <div key={index} className={index < bankAccounts.length - 1 ? "border-b-2 border-gray-300" : ""}>
+                    <table className="w-full">
+                      <tbody>
+                        <tr className="border-b">
+                          <td className="p-3 font-semibold bg-gray-50 border-r w-1/2">銀行名稱 Bank Name</td>
+                          <td className="p-3">{account.bankName || '-'}</td>
+                        </tr>
+                        <tr className="border-b">
+                          <td className="p-3 font-semibold bg-gray-50 border-r">SWIFT Code</td>
+                          <td className="p-3">{account.swiftCode || '-'}</td>
+                        </tr>
+                        <tr className="border-b">
+                          <td className="p-3 font-semibold bg-gray-50 border-r">賬戶類型 Account Type</td>
+                          <td className="p-3">{translateBankAccountType(account.accountType)}</td>
+                        </tr>
+                        <tr className="border-b">
+                          <td className="p-3 font-semibold bg-gray-50 border-r">幣種 Currency</td>
+                          <td className="p-3">{account.accountCurrency || '-'}</td>
+                        </tr>
+                        <tr className="border-b">
+                          <td className="p-3 font-semibold bg-gray-50 border-r">賬號 Account Number</td>
+                          <td className="p-3">{account.accountNumber || '-'}</td>
+                        </tr>
+                        <tr className="border-b">
+                          <td className="p-3 font-semibold bg-gray-50 border-r">持有人 Holder Name</td>
+                          <td className="p-3">{account.accountHolderName || '-'}</td>
+                        </tr>
+                        <tr className="border-b">
+                          <td className="p-3 font-semibold bg-gray-50 border-r">持有人地址 Holder Address</td>
+                          <td className="p-3">{account.accountHolderAddress || '-'}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                ))}
+              </div>
             ) : (
               <div className="p-6 text-center text-gray-500">{t('未添加銀行賬戶', 'No bank accounts added', '未添加银行账户')}</div>
             )}
@@ -1470,34 +1474,40 @@ export default function ApplicationPreview() {
               <>
                 <div className="bg-orange-50 p-2 px-3 border-b border-t font-semibold text-sm">賬戶第二持有人 / Second Account Holder</div>
                 {sh?.bankAccount?.secondHolderAccounts && sh.bankAccount.secondHolderAccounts.length > 0 ? (
-                  <table className="w-full min-w-[800px]">
-                    <tbody>
-                      {sh.bankAccount.secondHolderAccounts.map((account: any, index: number) => (
-                        <Fragment key={index}>
-                          <tr className="border-b bg-gray-50">
-                            <td className="p-3 font-semibold border-r" style={{width: '33%'}}>銀行名稱<br/>Bank Name</td>
-                            <td className="p-3 font-semibold border-r" style={{width: '33%'}}>SWIFT Code</td>
-                            <td className="p-3 font-semibold" style={{width: '33%'}}>賬戶类型<br/>Account Type</td>
-                          </tr>
-                          <tr className="border-b">
-                            <td className="p-3 border-r">{account.bankName}</td>
-                            <td className="p-3 border-r">{account.swiftCode || '-'}</td>
-                            <td className="p-3">{translateBankAccountType(account.accountType)}</td>
-                          </tr>
-                          <tr className="border-b bg-gray-50">
-                            <td className="p-3 font-semibold border-r">币种<br/>Currency</td>
-                            <td className="p-3 font-semibold border-r">账号<br/>Account Number</td>
-                            <td className="p-3 font-semibold">持有人<br/>Holder Name</td>
-                          </tr>
-                          <tr className="border-b">
-                            <td className="p-3 border-r">{account.accountCurrency}</td>
-                            <td className="p-3 border-r">{account.accountNumber}</td>
-                            <td className="p-3">{account.accountHolderName}</td>
-                          </tr>
-                        </Fragment>
-                      ))}
-                    </tbody>
-                  </table>
+                  <div>
+                    {sh.bankAccount.secondHolderAccounts.map((account: any, index: number) => (
+                      <div key={index} className={index < sh.bankAccount.secondHolderAccounts.length - 1 ? "border-b-2 border-gray-300" : ""}>
+                        <table className="w-full">
+                          <tbody>
+                            <tr className="border-b">
+                              <td className="p-3 font-semibold bg-gray-50 border-r w-1/2">銀行名稱 Bank Name</td>
+                              <td className="p-3">{account.bankName || '-'}</td>
+                            </tr>
+                            <tr className="border-b">
+                              <td className="p-3 font-semibold bg-gray-50 border-r">SWIFT Code</td>
+                              <td className="p-3">{account.swiftCode || '-'}</td>
+                            </tr>
+                            <tr className="border-b">
+                              <td className="p-3 font-semibold bg-gray-50 border-r">賬戶類型 Account Type</td>
+                              <td className="p-3">{translateBankAccountType(account.accountType)}</td>
+                            </tr>
+                            <tr className="border-b">
+                              <td className="p-3 font-semibold bg-gray-50 border-r">幣種 Currency</td>
+                              <td className="p-3">{account.accountCurrency || '-'}</td>
+                            </tr>
+                            <tr className="border-b">
+                              <td className="p-3 font-semibold bg-gray-50 border-r">賬號 Account Number</td>
+                              <td className="p-3">{account.accountNumber || '-'}</td>
+                            </tr>
+                            <tr className="border-b">
+                              <td className="p-3 font-semibold bg-gray-50 border-r">持有人 Holder Name</td>
+                              <td className="p-3">{account.accountHolderName || '-'}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    ))}
+                  </div>
                 ) : (
                   <div className="p-6 text-center text-gray-500">{t('未添加銀行賬戶', 'No bank accounts added', '未添加银行账户')}</div>
                 )}
