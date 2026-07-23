@@ -150,7 +150,9 @@ const handleNext = () => {
       toast.error(t("請上傳所有必需的文件", "Please upload all required documents", "请上传所有必需的文件"));
       return;
     }
-    setLocation(`/application/${applicationId}/step/${stepNum + 1}`);
+    // Skip step 11 (人臉識別 - temporarily hidden)
+    const nextStep = stepNum === 10 ? 12 : stepNum + 1;
+    setLocation(`/application/${applicationId}/step/${nextStep}`);
   };
 
   if (isLoadingData) {
