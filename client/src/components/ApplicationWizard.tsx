@@ -24,7 +24,7 @@ const individualSteps: Step[] = [
   { id: 8, title: "銀行賬戶", description: "銀行賬戶紀錄（只作存款用途）" },
   { id: 9, title: "稅務信息", description: "填寫稅務資料" },
   { id: 10, title: "文件上傳", description: "上傳證明文件" },
-  { id: 11, title: "人臉識別", description: "進行人臉驗證" },
+  // { id: 11, title: "人臉識別", description: "進行人臉驗證" }, // 暫時隱藏，數據保留
   { id: 12, title: "客戶聲明", description: "填寫客戶聲明" },
   { id: 13, title: "監管聲明", description: "簽署協議" },
 ];
@@ -104,15 +104,21 @@ export default function ApplicationWizard({
     if (onPrevious) {
       onPrevious();
     } else if (currentStep > 1) {
-      setLocation(`/application/${applicationId}/step/${currentStep - 1}`);
+      // Skip step 11 (人臉識別 - temporarily hidden)
+      const prevStep = currentStep === 12 ? 10 : currentStep - 1;
+      setLocation(`/application/${applicationId}/step/${prevStep}`);
     }
   };
 
   const handleNext = () => {
     if (onNext) {
       onNext();
-    } else if (currentStep < steps.length) {
-      setLocation(`/application/${applicationId}/step/${currentStep + 1}`);
+    } else {
+      // Skip step 11 (人臉識別 - temporarily hidden)
+      const nextStep = currentStep === 10 ? 12 : currentStep + 1;
+      if (nextStep <= 13) {
+        setLocation(`/application/${applicationId}/step/${nextStep}`);
+      }
     }
   };
 

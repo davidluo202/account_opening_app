@@ -40,7 +40,7 @@ export default function DocumentUpload() {
   const params = useParams<{ id: string; step?: string }>();
   const [, setLocation] = useLocation();
   const applicationId = parseInt(params.id || "0");
-  const stepNum = parseInt(params.step || "11");
+  const stepNum = parseInt(params.step || "10");
   const showReturnToPreview = useReturnToPreview();
   const documentTypes = getDocumentTypes(t);
   const corporateDocumentTypes = getCorporateDocumentTypes(t);
