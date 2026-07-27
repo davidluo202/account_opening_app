@@ -52,6 +52,7 @@ export default function RegulatoryDeclaration() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [agreementOpen, setAgreementOpen] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [bcanConsentOpen, setBcanConsentOpen] = useState(false);
 
   // 獲取客戶類型
   const { data: accountSelection } = trpc.accountSelection.get.useQuery(
@@ -348,6 +349,75 @@ const handleNext = () => {
           </div>
         </Card>
 
+        {/* BCAN 投資者識別碼同意書 */}
+        <Card className="p-6 space-y-4 border-amber-200 bg-amber-50/30">
+          <h4 className="font-semibold text-lg">{t("投資者識別碼同意書 / BCAN Consent", "BCAN Consent (Investor Identification)", "投资者识别码同意书 / BCAN Consent")}</h4>
+          <p className="text-sm text-muted-foreground">
+            {t("根據香港聯合交易所及證監會的投資者識別碼制度（HKIDR），所有客戶須同意券商為其分配BCAN碼並上報港交所。", "Under the HKEX and SFC's Investor Identification Regime (HKIDR), all clients must consent to their broker assigning a BCAN and reporting it to HKEX.", "根据香港联合交易所及证监会的投资者识别码制度（HKIDR），所有客户须同意券商为其分配BCAN码并上报港交所。")}
+          </p>
+
+          <Dialog open={bcanConsentOpen} onOpenChange={setBcanConsentOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="w-full border-amber-300 hover:bg-amber-50">
+                <FileText className="h-4 w-4 mr-2" />
+                {t("點擊閱讀BCAN同意書全文", "Click to read full BCAN Consent", "点击阅读BCAN同意书全文")}
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl max-h-[80vh]">
+              <DialogHeader>
+                <DialogTitle className="text-center">
+                  {t("客戶BCAN碼分配及上報同意書", "Client Consent for BCAN Assignment and Reporting", "客户BCAN码分配及上报同意书")}
+                </DialogTitle>
+              </DialogHeader>
+              <ScrollArea className="h-[60vh] pr-4">
+                <div className="space-y-4 text-sm leading-relaxed">
+                  <p className="font-semibold">{t("一、同意聲明", "I. Consent Statement", "一、同意声明")}</p>
+                  <p>{t("本人確認並同意，Canton Mutual Financial Limited（「誠港金融」，證監會中央編號：BSU667）可按以下目的收集、儲存、處理、使用、披露及轉移與本人有關的個人資料（包括本人的客戶識別信息（「CID」）及券商客戶編碼（「BCAN」））：", "I acknowledge and agree that Canton Mutual Financial Limited (\"CMF\", SFC CE No.: BSU667) may collect, store, process, use, disclose and transfer personal data relating to me (including my Client Identification Data (\"CID\") and Broker-to-Client Assigned Number(s) (\"BCAN(s)\")) as required for CMF to provide services to me in relation to securities listed or traded on The Stock Exchange of Hong Kong Limited (\"SEHK\") and for complying with the rules and requirements of SEHK and the Securities and Futures Commission (\"SFC\") in effect from time to time. Without limiting the foregoing, this includes:", "本人确认并同意，Canton Mutual Financial Limited（「诚港金融」，证监会中央编号：BSU667）可按以下目的收集、储存、处理、使用、披露及转移与本人有关的个人资料（包括本人的客户识别信息（「CID」）及券商客户编码（「BCAN」））：")}</p>
+                  <p className="ml-4">{t("(a) 按照香港聯合交易所有限公司（「聯交所」）及證券及期貨事務監察委員會（「證監會」）不時生效的規則及規定，向聯交所及/或證監會披露及轉移本人的個人資料（包括CID、BCAN及BCAN-CID映射文件）；", "(a) disclosing and transferring my personal data (including CID, BCANs and BCAN-CID Mapping Files) to SEHK and/or the SFC in accordance with the rules and requirements of SEHK and the SFC in effect from time to time;", "(a) 按照香港联合交易所有限公司（「联交所」）及证券及期货事务监察委员会（「证监会」）不时生效的规则及规定，向联交所及/或证监会披露及转移本人的个人资料（包括CID、BCAN及BCAN-CID映射文件）；")}</p>
+                  <p className="ml-4">{t("(b) 允許聯交所：(i) 為市場監察及監控目的以及執行《聯交所規則》而收集、儲存、處理及使用本人的個人資料（包括CID、BCAN及BCAN-CID映射文件）；(ii) 向香港有關監管機構及執法機構（包括但不限於證監會）披露及轉移該等信息，以便其履行與香港金融市場相關的法定職能；及 (iii) 將該等信息用於進行市場監督分析；及", "(b) allowing SEHK to: (i) collect, store, process and use my personal data (including CID, BCANs and BCAN-CID Mapping Files) for market surveillance and monitoring purposes and enforcement of the Rules of the Exchange; (ii) disclose and transfer such information to the relevant regulators and law enforcement agencies in Hong Kong (including, but not limited to, the SFC) so as to facilitate the performance of their statutory functions with respect to the Hong Kong financial markets; and (iii) use such information for conducting analysis for the purposes of market oversight; and", "(b) 允许联交所：(i) 为市场监察及监控目的以及执行《联交所规则》而收集、储存、处理及使用本人的个人资料（包括CID、BCAN及BCAN-CID映射文件）；(ii) 向香港有关监管机构及执法机构（包括但不限于证监会）披露及转移该等信息，以便其履行与香港金融市场相关的法定职能；及 (iii) 将该等信息用于进行市场监督分析；及")}</p>
+                  <p className="ml-4">{t("(c) 允許證監會：(i) 為履行其法定職能（包括與香港金融市場相關的監控、監察及執法職能）而收集、儲存、處理及使用本人的個人資料（包括CID、BCAN及BCAN-CID映射文件）；及 (ii) 根據適用法律或監管規定，向香港有關監管機構及執法機構披露及轉移該等信息。", "(c) allowing the SFC to: (i) collect, store, process and use my personal data (including CID, BCANs and BCAN-CID Mapping Files) for the performance of its statutory functions including monitoring, surveillance and enforcement functions with respect to the Hong Kong financial markets; and (ii) disclose and transfer such information to the relevant regulators and law enforcement agencies in Hong Kong in accordance with applicable laws or regulatory requirements.", "(c) 允许证监会：(i) 为履行其法定职能（包括与香港金融市场相关的监控、监察及执法职能）而收集、储存、处理及使用本人的个人资料（包括CID、BCAN及BCAN-CID映射文件）；及 (ii) 根据适用法律或监管规定，向香港有关监管机构及执法机构披露及转移该等信息。")}</p>
+                  <p>{t("本人亦同意，即使本人其後聲稱撤回同意，本人的個人資料仍可繼續按上述目的被儲存、處理、使用、披露或轉移。", "I also agree that despite any subsequent purported withdrawal of consent by me, my personal data may continue to be stored, processed, used, disclosed or transferred for the above purposes after such purported withdrawal of consent.", "本人亦同意，即使本人其后声称撤回同意，本人的个人资料仍可继续按上述目的被储存、处理、使用、披露或转移。")}</p>
+                  <p>{t("如本人未能向誠港金融提供上述個人資料或同意，誠港金融可能無法或不再能夠（視情況而定）執行本人的交易指令或向本人提供證券相關服務（除出售、轉出或提取本人現有的證券持倉（如有）外）。", "Failure to provide CMF with my personal data or consent as described above may mean that CMF will not, or will no longer be able to, as the case may be, carry out my trading instructions or provide me with securities related services (other than to sell, transfer out or withdraw my existing holdings of securities, if any).", "如本人未能向诚港金融提供上述个人资料或同意，诚港金融可能无法或不再能够（视情况而定）执行本人的交易指令或向本人提供证券相关服务（除出售、转出或提取本人现有的证券持仓（如有）外）。")}</p>
+                  <p className="text-xs text-muted-foreground italic mt-4 border-t pt-2">{t("註：本同意書中使用的「BCAN」、「CID」及「BCAN-CID映射文件」等術語的含義以證監會《操守準則》第5.6段及《聯交所規則》中的定義為準。", "Note: The terms \"BCAN\", \"CID\" and \"BCAN-CID Mapping File\" used herein shall bear the meanings as defined in paragraph 5.6 of the Code of Conduct for Persons Licensed by or Registered with the Securities and Futures Commission, and the Rules of the Exchange of The Stock Exchange of Hong Kong Limited.", "注：本同意书中使用的「BCAN」、「CID」及「BCAN-CID映射文件」等术语的含义以证监会《操守准则》第5.6段及《联交所规则》中的定义为准。")}</p>
+                </div>
+                <div className="mt-6 p-4 bg-muted rounded-lg">
+                  <p className="text-sm font-semibold text-center">
+                    {t("請仔細閱讀以上同意書內容。關閉此對話框後，請勾選下方的同意選項。", "Please read the above consent carefully. After closing this dialog, please check the consent box below.", "请仔细阅读以上同意书内容。关闭此对话框后，请勾选下方的同意选项。")}
+                  </p>
+                </div>
+              </ScrollArea>
+              <Button onClick={() => {
+                setBcanConsentOpen(false);
+                setFormData({ ...formData, acceptsBcanConsent: true });
+                if (errors.acceptsBcanConsent) {
+                  setErrors({ ...errors, acceptsBcanConsent: "" });
+                }
+              }}>
+                {t("我已閱讀並理解", "I have read and understood", "我已阅读并理解")}
+              </Button>
+            </DialogContent>
+          </Dialog>
+
+          <div className="flex items-start space-x-2">
+            <Checkbox
+              id="acceptsBcanConsent"
+              checked={formData.acceptsBcanConsent}
+              onCheckedChange={(checked) => {
+                setFormData({ ...formData, acceptsBcanConsent: checked as boolean });
+                if (errors.acceptsBcanConsent) {
+                  setErrors({ ...errors, acceptsBcanConsent: "" });
+                }
+              }}
+            />
+            <Label htmlFor="acceptsBcanConsent" className="cursor-pointer font-normal">
+              {t("我已閱讀並同意上述BCAN同意書的全部內容，同意誠港金融為本人分配BCAN碼並向港交所及證監會上報。", "I have read and agree to all contents of the above BCAN Consent, and consent to CMF assigning a BCAN to me and reporting it to HKEX and the SFC.", "我已阅读并同意上述BCAN同意书的全部内容，同意诚港金融为本人分配BCAN码并向港交所及证监会上报。")} <span className="text-destructive">*</span>
+            </Label>
+          </div>
+          {errors.acceptsBcanConsent && (
+            <p className="text-sm text-destructive">{errors.acceptsBcanConsent}</p>
+          )}
+        </Card>
+
         {/* 电子签署和监管确认 */}
         <Card className="p-6 space-y-6">
           <h4 className="font-semibold text-lg">{t("電子簽署與監管確認 / E-Signature & Regulatory Confirmation", "E-Signature & Regulatory Confirmation", "电子签署与监管确认 / E-Signature & Regulatory Confirmation")}</h4>
@@ -410,24 +480,7 @@ const handleNext = () => {
               <p className="text-sm text-destructive">{errors.acceptsRiskAssessment}</p>
             )}
 
-            <div className="flex items-start space-x-2">
-              <Checkbox
-                id="acceptsBcanConsent"
-                checked={formData.acceptsBcanConsent}
-                onCheckedChange={(checked) => {
-                  setFormData({ ...formData, acceptsBcanConsent: checked as boolean });
-                  if (errors.acceptsBcanConsent) {
-                    setErrors({ ...errors, acceptsBcanConsent: "" });
-                  }
-                }}
-              />
-              <Label htmlFor="acceptsBcanConsent" className="cursor-pointer font-normal">
-                {t("我同意並授權誠港金融股份有限公司（Canton Mutual Financial Limited，CE號：BSU667）根據香港聯合交易所有限公司及香港證券及期貨事務監察委員會的投資者識別碼制度（Investor Identification Regime），為本人分配券商客戶編碼（BCAN），並將該編碼連同本人的客戶識別信息（CID）提交予香港交易所及證監會作交易實名制登記之用。本人理解此BCAN將附加於本人透過誠港金融提交的每一筆港股交易訂單中。", "I agree and authorise Canton Mutual Financial Limited (CE No.: BSU667) to assign a Broker-to-Client Assigned Number (BCAN) to me pursuant to the Investor Identification Regime of The Stock Exchange of Hong Kong Limited and the Securities and Futures Commission, and to submit such BCAN together with my Client Identification Data (CID) to HKEX and the SFC for real-name trading registration purposes. I understand that this BCAN will be tagged to every Hong Kong stock trading order submitted through Canton Mutual Financial.", "我同意并授权诚港金融股份有限公司（Canton Mutual Financial Limited，CE号：BSU667）根据香港联合交易所有限公司及香港证券及期货事务监察委员会的投资者识别码制度（Investor Identification Regime），为本人分配券商客户编码（BCAN），并将该编码连同本人的客户识别信息（CID）提交予香港交易所及证监会作交易实名制登记之用。本人理解此BCAN将附加于本人通过诚港金融提交的每一笔港股交易订单中。")} <span className="text-destructive">*</span>
-              </Label>
-            </div>
-            {errors.acceptsBcanConsent && (
-              <p className="text-sm text-destructive">{errors.acceptsBcanConsent}</p>
-            )}
+            {/* BCAN consent moved to standalone Card below */}
           </div>
 
           {/* 确认书 */}
