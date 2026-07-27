@@ -102,7 +102,7 @@ const translations: Record<string, string> = {
   // 账户类型
   cash: '现金账户 Cash',
   margin: '保证金账户 Margin',
-  derivatives_account: '衡生品账户 Derivatives',
+  derivatives_account: '衍生品账户 Derivatives',
   
   // 性别
   male: '男 Male',
@@ -154,7 +154,7 @@ const translations: Record<string, string> = {
   stocks: '股票 Stocks',
   bonds: '债券 Bonds',
   funds: '基金 Funds',
-  derivatives: '衡生品 Derivatives',
+  derivatives: '衍生品 Derivatives',
   forex: '外汇 Forex',
   commodities: '商品 Commodities',
   

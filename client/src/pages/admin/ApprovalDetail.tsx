@@ -429,7 +429,7 @@ export default function ApprovalDetail() {
                             'stocks': '股票',
                             'bonds': '债券',
                             'funds': '基金',
-                            'derivatives': '衡生品',
+                            'derivatives': '衍生品',
                             'forex': '外汇',
                             'commodities': '商品'
                           };
