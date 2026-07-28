@@ -370,61 +370,17 @@ export default function PersonalBasicInfo() {
           <Label>
             {t('出生日期', 'Date of Birth', '出生日期')} <span className="text-destructive">*</span>
           </Label>
-          <div className="grid grid-cols-3 gap-2 max-w-md">
-            <Select
-              value={formData.dateOfBirth ? formData.dateOfBirth.split('-')[0] : ''}
-              onValueChange={(year) => {
-                const parts = (formData.dateOfBirth || '--').split('-');
-                const newDate = `${year}-${parts[1] || ''}-${parts[2] || ''}`;
-                setFormData({ ...formData, dateOfBirth: newDate });
+          <div className="max-w-md">
+            <Input
+              type="date"
+              value={formData.dateOfBirth || ''}
+              onChange={(e) => {
+                setFormData({ ...formData, dateOfBirth: e.target.value });
                 if (errors.dateOfBirth) setErrors({ ...errors, dateOfBirth: '' });
               }}
-            >
-              <SelectTrigger className={errors.dateOfBirth ? "border-destructive" : ""}>
-                <SelectValue placeholder={t('年份', 'Year', '年份')} />
-              </SelectTrigger>
-              <SelectContent className="max-h-60">
-                {Array.from({ length: 80 }, (_, i) => new Date().getFullYear() - 18 - i).map(y => (
-                  <SelectItem key={y} value={String(y)}>{y}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select
-              value={formData.dateOfBirth?.split('-')[1] || ''}
-              onValueChange={(month) => {
-                const parts = (formData.dateOfBirth || '--').split('-');
-                const newDate = `${parts[0] || ''}-${month}-${parts[2] || ''}`;
-                setFormData({ ...formData, dateOfBirth: newDate });
-                if (errors.dateOfBirth) setErrors({ ...errors, dateOfBirth: '' });
-              }}
-            >
-              <SelectTrigger className={errors.dateOfBirth ? "border-destructive" : ""}>
-                <SelectValue placeholder={t('月份', 'Month', '月份')} />
-              </SelectTrigger>
-              <SelectContent>
-                {Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0')).map(m => (
-                  <SelectItem key={m} value={m}>{m}{t('月', '', '月')}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select
-              value={formData.dateOfBirth?.split('-')[2] || ''}
-              onValueChange={(day) => {
-                const parts = (formData.dateOfBirth || '--').split('-');
-                const newDate = `${parts[0] || ''}-${parts[1] || ''}-${day}`;
-                setFormData({ ...formData, dateOfBirth: newDate });
-                if (errors.dateOfBirth) setErrors({ ...errors, dateOfBirth: '' });
-              }}
-            >
-              <SelectTrigger className={errors.dateOfBirth ? "border-destructive" : ""}>
-                <SelectValue placeholder={t('日期', 'Day', '日期')} />
-              </SelectTrigger>
-              <SelectContent className="max-h-60">
-                {Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0')).map(d => (
-                  <SelectItem key={d} value={d}>{d}{t('日', '', '日')}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              className={errors.dateOfBirth ? "border-destructive" : ""}
+              placeholder={t('年/月/日', 'YYYY-MM-DD', '年/月/日')}
+            />
           </div>
           {errors.dateOfBirth && (
             <p className="text-sm text-destructive">{errors.dateOfBirth}</p>
@@ -554,28 +510,13 @@ export default function PersonalBasicInfo() {
               </div>
               <div className="space-y-2">
                 <Label>{t('出生日期', 'Date of Birth', '出生日期')} <span className="text-destructive">*</span></Label>
-                <div className="grid grid-cols-3 gap-2 max-w-md">
-                  <Select value={secondHolder.dateOfBirth?.split('-')[0] || ''} onValueChange={(year) => {
-                    const parts = (secondHolder.dateOfBirth || '--').split('-');
-                    setSecondHolder({ ...secondHolder, dateOfBirth: `${year}-${parts[1] || ''}-${parts[2] || ''}` });
-                  }}>
-                    <SelectTrigger className={errors.secondDateOfBirth ? "border-destructive" : ""}><SelectValue placeholder={t('年份', 'Year', '年份')} /></SelectTrigger>
-                    <SelectContent className="max-h-60">{Array.from({ length: 80 }, (_, i) => new Date().getFullYear() - 18 - i).map(y => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}</SelectContent>
-                  </Select>
-                  <Select value={secondHolder.dateOfBirth?.split('-')[1] || ''} onValueChange={(month) => {
-                    const parts = (secondHolder.dateOfBirth || '--').split('-');
-                    setSecondHolder({ ...secondHolder, dateOfBirth: `${parts[0] || ''}-${month}-${parts[2] || ''}` });
-                  }}>
-                    <SelectTrigger className={errors.secondDateOfBirth ? "border-destructive" : ""}><SelectValue placeholder={t('月份', 'Month', '月份')} /></SelectTrigger>
-                    <SelectContent>{Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0')).map(m => <SelectItem key={m} value={m}>{m}{t('月', '', '月')}</SelectItem>)}</SelectContent>
-                  </Select>
-                  <Select value={secondHolder.dateOfBirth?.split('-')[2] || ''} onValueChange={(day) => {
-                    const parts = (secondHolder.dateOfBirth || '--').split('-');
-                    setSecondHolder({ ...secondHolder, dateOfBirth: `${parts[0] || ''}-${parts[1] || ''}-${day}` });
-                  }}>
-                    <SelectTrigger className={errors.secondDateOfBirth ? "border-destructive" : ""}><SelectValue placeholder={t('日期', 'Day', '日期')} /></SelectTrigger>
-                    <SelectContent className="max-h-60">{Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0')).map(d => <SelectItem key={d} value={d}>{d}{t('日', '', '日')}</SelectItem>)}</SelectContent>
-                  </Select>
+                <div className="max-w-md">
+                  <Input
+                    type="date"
+                    value={secondHolder.dateOfBirth || ''}
+                    onChange={(e) => setSecondHolder({ ...secondHolder, dateOfBirth: e.target.value })}
+                    className={errors.secondDateOfBirth ? "border-destructive" : ""}
+                  />
                 </div>
                 {errors.secondDateOfBirth && <p className="text-sm text-destructive">{errors.secondDateOfBirth}</p>}
               </div>
