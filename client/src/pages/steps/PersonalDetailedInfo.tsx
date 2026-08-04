@@ -784,57 +784,8 @@ export default function PersonalDetailedInfo() {
           </div>
           {errors.mobileNumber && <p className="text-sm text-destructive">{errors.mobileNumber}</p>}
 
-          {/* SMS Verification */}
-          {phoneVerified ? (
-            <div className="flex items-center gap-2 text-sm text-green-600">
-              <CheckCircle2 className="h-4 w-4" />
-              {t('手機號碼已驗證', 'Phone number verified', '手机号码已验证')}
-            </div>
-          ) : (
-            <div className="space-y-2">
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  disabled={isSendingSms || smsCountdown > 0 || !formData.mobileNumber.trim()}
-                  onClick={handleSendSmsCode}
-                >
-                  {isSendingSms ? (
-                    <><Loader2 className="mr-1 h-3 w-3 animate-spin" />{t('發送中...', 'Sending...', '发送中...')}</>
-                  ) : smsCountdown > 0 ? (
-                    `${smsCountdown}s ${t('後重發', 'to resend', '后重发')}`
-                  ) : (
-                    t('發送短信驗證碼', 'Send SMS code', '发送短信验证码')
-                  )}
-                </Button>
-              </div>
-              {showSmsInput && (
-                <div className="flex gap-2 items-center">
-                  <Input
-                    id="smsCode"
-                    value={smsCode}
-                    onChange={(e) => setSmsCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    placeholder={t('請輸入6位驗證碼', 'Enter 6-digit code', '请输入6位验证码')}
-                    className="w-[200px]"
-                    maxLength={6}
-                  />
-                  <Button
-                    type="button"
-                    size="sm"
-                    disabled={smsCode.length !== 6 || checkSmsMutation.isPending}
-                    onClick={handleVerifySmsCode}
-                  >
-                    {checkSmsMutation.isPending ? (
-                      <><Loader2 className="mr-1 h-3 w-3 animate-spin" />{t('驗證中...', 'Verifying...', '验证中...')}</>
-                    ) : (
-                      t('驗證', 'Verify', '验证')
-                    )}
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
+          {/* SMS Verification — hidden but data preserved */}
+          {/* phoneVerified state and smsCode state are retained in component for data preservation */}
         </div>
 
         {/* 傳真號碼 */}
