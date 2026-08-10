@@ -398,7 +398,7 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
 
       // ── Utility: check space and add page if needed ───
       const ensureSpace = (needed: number) => {
-        if (doc.y + needed > PAGE_H - M_BOTTOM - 10) {
+        if (doc.y + needed > PAGE_H - M_BOTTOM) {
           doc.addPage();
           doc.y = M_TOP;
         }
@@ -883,7 +883,7 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       doc.moveDown(1.5);
 
       // ── Approval Records (if present) ─────────────────
-      if (data.firstApproval || data.secondApproval) {
+      if ((data.firstApproval && data.firstApproval.approverName) || (data.secondApproval && data.secondApproval.approverName)) {
         doc.addPage();
         doc.y = M_TOP;
         drawSectionHeader('審批記錄 Approval Records');
