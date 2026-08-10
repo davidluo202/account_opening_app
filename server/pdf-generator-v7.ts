@@ -914,20 +914,30 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
 
       // ── Footer on all pages ───────────────────────────
       const footerText = '誠港金融股份有限公司 CMF Securities Ltd. | Rm 308, 3/F, 308 Des Voeux Road Central, HK | Tel: 2598-1700 | info@cmfinancial.com | CE No. BSU667';
-      const pages = doc.bufferedPageRange();
-      for (let i = 0; i < pages.count; i++) {
+      const pageRange = doc.bufferedPageRange();
+      const totalPages = pageRange.count;
+      for (let i = 0; i < totalPages; i++) {
         doc.switchToPage(i);
 
-        // Footer line
+        // Save state to prevent side effects
+        const savedY = doc.y;
         doc.save();
+
+        // Footer line
         doc.moveTo(M_LEFT, FOOTER_Y - 4).lineTo(M_LEFT + CONTENT_W, FOOTER_Y - 4).lineWidth(0.3).strokeColor(BORDER).stroke();
+
+        // Footer text — use explicit x,y positioning
         doc.font(F).fontSize(6).fillColor(GRAY_TEXT);
-        doc.text(footerText, M_LEFT, FOOTER_Y, { width: CONTENT_W, align: 'center', lineBreak: false });
+        const ftWidth = doc.widthOfString(footerText);
+        doc.text(footerText, M_LEFT + (CONTENT_W - ftWidth) / 2, FOOTER_Y, { lineBreak: false });
 
         // Page number
-        const pageText = `${i + 1} / ${pages.count}`;
-        doc.text(pageText, M_LEFT, FOOTER_Y + 10, { width: CONTENT_W, align: 'center', lineBreak: false });
+        const pageText = `${i + 1} / ${totalPages}`;
+        const ptWidth = doc.widthOfString(pageText);
+        doc.text(pageText, M_LEFT + (CONTENT_W - ptWidth) / 2, FOOTER_Y + 10, { lineBreak: false });
+
         doc.restore();
+        doc.y = savedY; // Restore y position
       }
 
       doc.end();
