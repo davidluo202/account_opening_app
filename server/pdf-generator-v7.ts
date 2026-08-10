@@ -924,7 +924,7 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       }
 
       // ── Footer on all pages ───────────────────────────
-      const footerText = '誠港金融股份有限公司 CMF Securities Ltd. | Rm 308, 3/F, 308 Des Voeux Road Central, HK | Tel: 2598-1700 | info@cmfinancial.com | CE No. BSU667';
+      const footerText = '誠港金融股份有限公司 Canton Mutual Financial Limited | Units 2304-05, 23/F, 308 Des Voeux Road Central, Hong Kong | Tel: +852 2598 1700 | info@cmfinancial.com | CE No. BSU667';
       const pageRange = doc.bufferedPageRange();
       const totalPages = pageRange.count;
       for (let i = 0; i < totalPages; i++) {
