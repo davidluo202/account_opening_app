@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, LogOut, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
+import { Loader2, LogOut, CheckCircle, XCircle, ArrowLeft, FileDown } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
 import { translate, formatInvestmentObjectives, getRiskToleranceDescription } from "@/lib/translations";
@@ -101,6 +101,30 @@ export default function ApprovalDetail() {
     },
     onError: (error: any) => {
       toast.error(error.message || "退回失败");
+    },
+  });
+
+  const downloadPDFMutation = trpc.application.generatePreviewPDF.useMutation({
+    onSuccess: (data: any) => {
+      if (data.pdfData && data.fileName) {
+        const byteCharacters = atob(data.pdfData);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = data.fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        toast.success("PDF已下载");
+      }
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "PDF生成失败");
     },
   });
 
@@ -231,6 +255,15 @@ export default function ApprovalDetail() {
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           返回列表
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => id && downloadPDFMutation.mutate({ applicationId: Number(id) })}
+          disabled={downloadPDFMutation.isPending}
+          className="mb-4 ml-2"
+        >
+          <FileDown className="h-4 w-4 mr-2" />
+          {downloadPDFMutation.isPending ? '生成中...' : '导出PDF'}
         </Button>
 
         {/* Application Info */}
