@@ -128,6 +128,23 @@ export default function ApprovalDetail() {
     },
   });
 
+  const utils = trpc.useUtils();
+  const handleViewDocument = async (doc: any) => {
+    try {
+      if (doc.fileKey) {
+        const result = await utils.document.getViewUrl.fetch({
+          applicationId: id,
+          fileKey: doc.fileKey,
+        });
+        window.open(result.url, '_blank');
+      } else {
+        window.open(doc.fileUrl, '_blank');
+      }
+    } catch {
+      window.open(doc.fileUrl, '_blank');
+    }
+  };
+
   const handleLogout = async () => {
     await logout();
     toast.success("已登出");
@@ -608,7 +625,7 @@ export default function ApprovalDetail() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => window.open(doc.fileUrl, "_blank")}
+                        onClick={() => handleViewDocument(doc)}
                       >
                         查看
                       </Button>
