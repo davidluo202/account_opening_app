@@ -114,6 +114,17 @@ const translate = (key: string | null | undefined): string => {
   return translations[key] || key;
 };
 
+const countryMap: Record<string, string> = {
+  HK: '香港 Hong Kong', CN: '中國內地 Chinese Mainland', MO: '澳門 Macau',
+  TW: '台灣 Taiwan', US: '美國 United States', GB: '英國 United Kingdom',
+  SG: '新加坡 Singapore', AU: '澳洲 Australia', CA: '加拿大 Canada',
+  JP: '日本 Japan', OTHER: '其他 Other',
+};
+const translateCountry = (code: string | null | undefined): string => {
+  if (!code) return '-';
+  return countryMap[code] || code;
+};
+
 function formatDate(date: string | Date | null | undefined): string {
   if (!date) return '-';
   try {
@@ -566,7 +577,7 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       const di = data.detailedInfo;
       row4('證件類型 ID Type', translate(di?.idType),
            '證件號碼 ID Number', di?.idNumber || '-');
-      row4('簽發國家/地區 Issuing Country', di?.idIssuingCountry || di?.idIssuingPlace || '-',
+      row4('簽發國家/地區 Issuing Country', translateCountry(di?.idIssuingCountry) || di?.idIssuingPlace || '-',
            '有效期 Expiry Date', di?.idIsPermanent ? '長期有效 Permanent' : formatDate(di?.idExpiryDate));
       row4('婚姻狀況 Marital Status', translate(di?.maritalStatus),
            '學歷 Education', translate(di?.educationLevel));
