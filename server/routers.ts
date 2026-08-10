@@ -1224,7 +1224,7 @@ export const appRouter = router({
       .input(z.object({
         applicationId: z.number(),
         isProfessionalInvestor: z.boolean(),
-        approvedRiskProfile: z.enum(['R1', 'R2', 'R3', 'R4', 'R5']),
+        approvedRiskProfile: z.enum(['R1', 'R2', 'R3', 'R4', 'R5', 'R6']),
         comments: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -1809,6 +1809,30 @@ export const appRouter = router({
           hits: result.hits,
           timestamp: result.timestamp,
         };
+      }),
+
+    // 按applicationId自动执行筛查
+    runScreening: publicProcedure
+      .input(z.object({ applicationId: z.number() }))
+      .query(async ({ input }) => {
+        const appData = await db.getCompleteApplicationData(input.applicationId);
+        if (!appData) throw new Error('申请不存在');
+        const name = appData.basicInfo?.englishName || appData.basicInfo?.chineseName || '';
+        if (!name) throw new Error('申请人姓名为空');
+        const result = await screenPerson({
+          name,
+          dateOfBirth: appData.basicInfo?.dateOfBirth || undefined,
+          nationality: appData.basicInfo?.nationality || undefined,
+        });
+        await db.saveSanctionsScreening(input.applicationId, {
+          searchId: result.searchId,
+          screenedName: name,
+          hitCount: result.hitCount,
+          hits: result.hits,
+          rawResponse: JSON.stringify(result),
+          flaggedForReview: result.hitCount > 0,
+        });
+        return { success: true, hitCount: result.hitCount };
       }),
 
     // 获取申请的筛查结果

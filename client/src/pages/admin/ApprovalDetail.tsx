@@ -177,7 +177,7 @@ export default function ApprovalDetail() {
       firstApproveMutation.mutate({
         applicationId: Number(id),
         isProfessionalInvestor: isProfessionalInvestor === "yes",
-        approvedRiskProfile: approvedRiskProfile as 'R1' | 'R2' | 'R3' | 'R4' | 'R5',
+        approvedRiskProfile: approvedRiskProfile as 'R1' | 'R2' | 'R3' | 'R4' | 'R5' | 'R6',
       });
     } else {
       // 終審
@@ -305,7 +305,26 @@ export default function ApprovalDetail() {
                   <span className="px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">无命中</span>
                 )
               ) : (
-                <span className="px-2 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-500">未筛查</span>
+                <>
+                  <span className="px-2 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-500">未筛查</span>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={async () => {
+                      try {
+                        toast.info('正在执行AML/KYC筛查...');
+                        await utils.sanctions.runScreening.fetch({ applicationId: Number(id) });
+                        toast.success('筛查完成');
+                        window.location.reload();
+                      } catch (e: any) {
+                        toast.error('筛查失败: ' + (e.message || ''));
+                      }
+                    }}
+                    className="ml-2"
+                  >
+                    执行筛查
+                  </Button>
+                </>
               )}
             </CardTitle>
           </CardHeader>
@@ -904,11 +923,12 @@ export default function ApprovalDetail() {
                     <SelectValue placeholder="請選擇風險等級" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="R1">R1 - 低風險（本金安全的不穩定性很低，基金淨值會有輕度波動）</SelectItem>
-                    <SelectItem value="R2">R2 - 中低風險（本金安全的不穩定性相對較低，基金淨值會有較低波動）</SelectItem>
-                    <SelectItem value="R3">R3 - 中風險（本金安全具有一定的不穩定性，基金淨值會有適度波動）</SelectItem>
-                    <SelectItem value="R4">R4 - 中高風險（本金安全的不穩定性相對較高，基金淨值會有較高波動）</SelectItem>
-                    <SelectItem value="R5">R5 - 高風險（本金安全的不穩定性很高，基金淨值會有高度波動）</SelectItem>
+                    <SelectItem value="R1">R1 - 最低風險 Lowest</SelectItem>
+                    <SelectItem value="R2">R2 - 低風險 Low</SelectItem>
+                    <SelectItem value="R3">R3 - 低至中等風險 Low to Medium</SelectItem>
+                    <SelectItem value="R4">R4 - 中等風險 Medium</SelectItem>
+                    <SelectItem value="R5">R5 - 中等至高風險 Medium to High</SelectItem>
+                    <SelectItem value="R6">R6 - 高風險 High</SelectItem>
                   </SelectContent>
                 </Select>
                 
@@ -994,11 +1014,12 @@ export default function ApprovalDetail() {
                   <SelectValue placeholder="请选择风险等级" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="R1">R1 - 低风险（本金安全的不稳定性很低，基金净值会有轻度波动）</SelectItem>
-                  <SelectItem value="R2">R2 - 中低风险（本金安全的不稳定性相对较低，基金净值会有较低波动）</SelectItem>
-                  <SelectItem value="R3">R3 - 中风险（本金安全具有一定的不稳定性，基金净值会有适度波动）</SelectItem>
-                  <SelectItem value="R4">R4 - 中高风险（本金安全的不稳定性相对较高，基金净值会有较高波动）</SelectItem>
-                  <SelectItem value="R5">R5 - 高风险（本金安全的不稳定性很高，基金净值会有高度波动）</SelectItem>
+                  <SelectItem value="R1">R1 - 最低风险 Lowest</SelectItem>
+                  <SelectItem value="R2">R2 - 低风险 Low</SelectItem>
+                  <SelectItem value="R3">R3 - 低至中等风险 Low to Medium</SelectItem>
+                  <SelectItem value="R4">R4 - 中等风险 Medium</SelectItem>
+                  <SelectItem value="R5">R5 - 中等至高风险 Medium to High</SelectItem>
+                  <SelectItem value="R6">R6 - 高风险 High</SelectItem>
                 </SelectContent>
               </Select>
               
