@@ -678,18 +678,21 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       doc.text('本人聲明以上所填寫的資料均屬真實、準確和完整，並同意遵守貴公司的條款及細則。');
       doc.moveDown(0.5);
 
-      doc.fontSize(9);
-      doc.text('電子簽署聲明 Electronic Signature Declaration:');
-      doc.fontSize(8);
-      doc.text('I agree to use electronic signature to sign this application form and understand that this electronic signature has the same legal effect as a handwritten signature.');
-      doc.text('本人同意使用電子簽署方式簽署本申請表，並明白此電子簽署具有與手寫簽名同等的法律效力。');
       doc.moveDown(0.5);
 
-      doc.fontSize(9).font('NotoSansCJK');
-      doc.text(`簽名 Signature: ${data.signatureName || 'N/A'}`);
-      doc.text(`簽署方式 Signature Method: Typed / 輸入`);
-      doc.text(`簽署時間 Signature Timestamp: ${formatTimestamp(data.signatureTimestamp)}`);
+      // 留白簽署區域（供客戶到場手寫簽署）
       doc.moveDown(1);
+      doc.fontSize(9).font('NotoSansCJK');
+      doc.text('客戶簽署 Client Signature:');
+      doc.moveDown(0.3);
+      const sigY = doc.y;
+      doc.moveTo(72, sigY).lineTo(350, sigY).stroke();
+      doc.moveDown(1.5);
+      doc.text('簽署日期 Date:');
+      doc.moveDown(0.3);
+      const dateY = doc.y;
+      doc.moveTo(72, dateY).lineTo(250, dateY).stroke();
+      doc.moveDown(1.5);
 
       // 審批信息（如果存在）
       if (data.firstApproval || data.secondApproval) {
