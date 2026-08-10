@@ -591,11 +591,7 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
 
         data.uploadedDocuments.forEach((doc_item, index) => {
           const docTypeTranslated = translate(doc_item.documentType);
-          doc.text(`  ${index + 1}. ${docTypeTranslated}`);
-          if (doc_item.fileUrl) {
-            doc.fontSize(8).fillColor('blue').text(`     下載鏈接 Download: ${doc_item.fileUrl}`);
-            doc.fillColor('black').fontSize(10);
-          }
+          doc.text(`  ${index + 1}. ${docTypeTranslated} — 已遞交 Submitted`);
         });
         doc.moveDown(0.5);
       }
