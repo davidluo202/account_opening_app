@@ -333,7 +333,7 @@ export default function ApprovalDetail() {
                   </div>
                   <div>
                     <Label>证件签发地</Label>
-                    <p>{personalDetailedInfo.idIssuingPlace || "-"}</p>
+                    <p>{personalDetailedInfo.idIssuingCountry || personalDetailedInfo.idIssuingPlace || "-"}</p>
                   </div>
                   <div>
                     <Label>证件有效期</Label>

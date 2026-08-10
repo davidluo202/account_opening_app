@@ -220,7 +220,7 @@ export function formatInvestmentExperience(experience: string | Record<string, s
   // 如果是對象，格式化為列表
   if (typeof experience === 'object' && experience !== null) {
     const items = Object.entries(experience)
-      .filter(([_, value]) => value && value !== 'none')
+      .filter(([_, value]) => value)
       .map(([key, value]) => {
         const productName = translate(key);
         const experienceLevel = translate(value as string);
