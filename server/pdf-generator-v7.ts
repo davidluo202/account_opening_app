@@ -681,18 +681,18 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       doc.moveDown(0.5);
 
       // 留白簽署區域（供客戶到場手寫簽署）
-      doc.moveDown(1);
+      doc.moveDown(2);
       doc.fontSize(9).font('NotoSansCJK');
-      doc.text('客戶簽署 Client Signature:');
-      doc.moveDown(0.3);
+      doc.text('客戶簽署 Client Signature:', 72);
+      doc.moveDown(2);
       const sigY = doc.y;
       doc.moveTo(72, sigY).lineTo(350, sigY).stroke();
-      doc.moveDown(1.5);
-      doc.text('簽署日期 Date:');
-      doc.moveDown(0.3);
+      doc.moveDown(3);
+      doc.text('簽署日期 Date:', 72);
+      doc.moveDown(2);
       const dateY = doc.y;
-      doc.moveTo(72, dateY).lineTo(250, dateY).stroke();
-      doc.moveDown(1.5);
+      doc.moveTo(72, dateY).lineTo(280, dateY).stroke();
+      doc.moveDown(2);
 
       // 審批信息（如果存在）
       if (data.firstApproval || data.secondApproval) {
