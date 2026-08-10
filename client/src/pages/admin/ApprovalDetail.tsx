@@ -508,9 +508,20 @@ export default function ApprovalDetail() {
                     </div>
                   </div>
                   <div>
-                    <Label className="font-medium">客户自评风险承受能力</Label>
+                    <Label className="font-medium">風險承受能力 Risk Tolerance</Label>
                     <div className="mt-1 p-3 bg-gray-50 rounded-md">
-                      {getRiskToleranceDescription(financialAndInvestment.riskTolerance)}
+                      {(() => {
+                        const rq = applicationData?.riskQuestionnaire;
+                        if (rq?.riskLevel) {
+                          return `${rq.riskLevel}（總分：${rq.totalScore || 0}分）`;
+                        }
+                        const score = rq?.totalScore || 0;
+                        if (score > 0) {
+                          const level = score <= 99 ? '最低風險 Lowest (R1)' : score <= 199 ? '低風險 Low (R2)' : score <= 299 ? '低至中等風險 Low to Medium (R3)' : score <= 399 ? '中等風險 Medium (R4)' : score <= 599 ? '中等至高風險 Medium to High (R5)' : '高風險 High (R6)';
+                          return `${level}（總分：${score}分）`;
+                        }
+                        return getRiskToleranceDescription(financialAndInvestment.riskTolerance);
+                      })()}
                     </div>
                   </div>
                 </div>
