@@ -515,7 +515,7 @@ export default function ApprovalDetail() {
                         const score = rq?.totalScore || 0;
                         if (score > 0) {
                           const level = score <= 99 ? '最低風險 Lowest (R1)' : score <= 199 ? '低風險 Low (R2)' : score <= 299 ? '低至中等風險 Low to Medium (R3)' : score <= 399 ? '中等風險 Medium (R4)' : score <= 599 ? '中等至高風險 Medium to High (R5)' : '高風險 High (R6)';
-                          return level;
+                          return `${level}（總分：${score}分）`;
                         }
                         return getRiskToleranceDescription(financialAndInvestment.riskTolerance);
                       })()}

@@ -452,9 +452,9 @@ export const appRouter = router({
           agreementRead: completeData.regulatory?.agreementRead ?? completeData.regulatory?.confirmationRead ?? false,
           agreementAccepted: completeData.regulatory?.agreementAccepted ?? completeData.regulatory?.confirmationRead ?? false,
           amlComplianceConsent: completeData.regulatory?.amlComplianceConsent ?? false,
-          etoConsent: completeData.regulatory?.etoConsent ?? false,
+          etoConsent: completeData.regulatory?.electronicSignatureConsent ?? completeData.regulatory?.etoConsent ?? false,
           riskAssessmentConsent: completeData.regulatory?.riskAssessmentConsent ?? false,
-          clientConfirmationRead: completeData.regulatory?.clientConfirmationRead ?? completeData.regulatory?.confirmationRead ?? false,
+          clientConfirmationRead: completeData.regulatory?.agreementAccepted ?? completeData.regulatory?.agreementRead ?? completeData.regulatory?.clientConfirmationRead ?? false,
           objectsDirectMarketing: completeData.regulatory?.objectsDirectMarketing ?? false,
         };
         
