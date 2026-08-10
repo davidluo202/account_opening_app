@@ -4,7 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import * as db from "./db";
-import { storagePut } from "./storage";
+import { storagePut, storagePresignGet } from "./storage";
 import { nanoid } from "nanoid";
 import { generateApplicationPDF, type ApplicationPDFData } from "./pdf-generator";
 import {
@@ -435,7 +435,10 @@ export const appRouter = router({
           } : undefined,
           // 添加上傳文件清單
           uploadedDocuments: completeData.uploadedDocuments?.map((doc: any) => ({
+            id: doc.id,
             documentType: doc.documentType,
+            fileName: doc.fileName,
+            fileKey: doc.fileKey,
             fileUrl: doc.fileUrl,
           })) || [],
           // 添加簽名信息（如果已提交）
@@ -840,6 +843,18 @@ export const appRouter = router({
           throw new Error("申请不存在或无权访问");
         }
         return await db.getUploadedDocuments(input.applicationId);
+      }),
+
+    getViewUrl: publicProcedure
+      .input(z.object({
+        applicationId: z.union([z.number(), z.string()]),
+        fileKey: z.string(),
+      }))
+      .query(async ({ input }) => {
+        const { fileKey } = input;
+        if (!fileKey) throw new Error("fileKey is required");
+        const url = await storagePresignGet(fileKey, 3600); // 1 hour expiry
+        return { url };
       }),
   }),
   
