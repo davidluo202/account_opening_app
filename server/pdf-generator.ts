@@ -710,21 +710,9 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
         for (let idx = 0; idx < docs.length; idx++) {
           const docItem = docs[idx];
           const docLabel = `${idx + 1}. ${translate(docItem.documentType)}`;
-          // Extract filename from URL (no raw S3 URLs)
-          let fileName = 'N/A';
-          if (docItem.fileUrl) {
-            try {
-              const urlObj = new URL(docItem.fileUrl);
-              const pathParts = urlObj.pathname.split('/');
-              fileName = decodeURIComponent(pathParts[pathParts.length - 1]) || 'N/A';
-            } catch {
-              // not a valid URL, use as-is but strip query
-              fileName = docItem.fileUrl.split('?')[0].split('/').pop() || 'N/A';
-            }
-          }
           y = ensureSpace(doc, y, ROW_HEIGHT);
           y = drawRow(doc, y, [
-            { label: docLabel, value: fileName, labelWidth: 180, colWidth: CONTENT_WIDTH },
+            { label: docLabel, value: '已递交 Submitted', labelWidth: 180, colWidth: CONTENT_WIDTH },
           ]);
         }
       }
