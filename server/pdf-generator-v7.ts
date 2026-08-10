@@ -622,7 +622,12 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       const inv = data.investment;
       row4wide('投資目的 Investment Objective', formatInvestmentObjectives(inv?.investmentObjectives));
       row4wide('投資經驗 Investment Experience', formatInvestmentExperience(inv?.investmentExperience));
-      if (inv?.riskTolerance) {
+      // Risk Tolerance: use questionnaire totalScore to calculate R level
+      const rqScore = data.riskQuestionnaire?.totalScore || 0;
+      if (rqScore > 0) {
+        const rLevel = rqScore <= 99 ? '最低風險 Lowest (R1)' : rqScore <= 199 ? '低風險 Low (R2)' : rqScore <= 299 ? '低至中等風險 Low to Medium (R3)' : rqScore <= 399 ? '中等風險 Medium (R4)' : rqScore <= 599 ? '中等至高風險 Medium to High (R5)' : '高風險 High (R6)';
+        row4wide('風險承受能力 Risk Tolerance', rLevel);
+      } else if (inv?.riskTolerance) {
         row4wide('風險承受能力 Risk Tolerance', formatRiskTolerance(inv.riskTolerance));
       }
 
