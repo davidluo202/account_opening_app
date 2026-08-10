@@ -372,22 +372,22 @@ export default function RiskQuestionnaire() {
     let riskDescription = "";
 
     if (score <= 99) {
-      riskLevel = "Lowest / 最低";
-      riskDescription = "You tend to prefer investments with a lowest risk of a decline in value. You are much more interested in preserving the value of your investment than receiving a return on your capital. 您倾向投資跌下降風險最低的投資。您對保存您投資值的興趣遠大於獲取您的資本回報。";
+      riskLevel = "最低風險 Lowest (R1)";
+      riskDescription = "You tend to prefer investments with a lowest risk of a decline in value. You are much more interested in preserving the value of your investment than receiving a return on your capital. 您傾向投資下跌風險最低的投資。您對保存您投資值的興趣遠大於獲取您的資本回報。";
     } else if (score <= 199) {
-      riskLevel = "Low / 低";
-      riskDescription = "You tend to prefer investments with a low risk of a decline in value. You are more interested in preserving the value of your investment than receiving a return on your capital. 您倾向投資跌下降風險低的投資。您對保存您投資值的興趣大於獲取您的資本回報。";
+      riskLevel = "低風險 Low (R2)";
+      riskDescription = "You tend to prefer investments with a low risk of a decline in value. You are more interested in preserving the value of your investment than receiving a return on your capital. 您傾向投資下跌風險低的投資。您對保存您投資值的興趣大於獲取您的資本回報。";
     } else if (score <= 299) {
-      riskLevel = "Low to Medium / 低至中等";
-      riskDescription = "You tend to prefer investments with lower risk of a decline in value. However, you do recognize that in order to achieve higher returns, some risks must be incurred and you are prepared to tolerate some fluctuations and volatility in your investment. 您倾向投資跌下降風險較低的投資。然而您亦明白在您達到較高投資回報的過程中必須使一些風險，而您亦已準備接受一些投資上的波動及波幅。";
+      riskLevel = "低至中等風險 Low to Medium (R3)";
+      riskDescription = "You tend to prefer investments with lower risk of a decline in value. However, you do recognize that in order to achieve higher returns, some risks must be incurred and you are prepared to tolerate some fluctuations and volatility in your investment. 您傾向投資下跌風險較低的投資。然而您亦明白在您達到較高投資回報的過程中必須承受一些風險，而您亦已準備接受一些投資上的波動及波幅。";
     } else if (score <= 399) {
-      riskLevel = "Medium / 中等";
-      riskDescription = "You are willing to place reasonable emphasis on growth investments and are aware that these are liable to fluctuate in value. You can tolerate some fluctuations and volatility, but you tend to stay away from the possibility of dramatic or frequent changes in value. 您著重投資增長的投資值的波動。您雖可以承受一些波動和變動，但您不希望看到有大波動或頁繁變動。";
+      riskLevel = "中等風險 Medium (R4)";
+      riskDescription = "You are willing to place reasonable emphasis on growth investments and are aware that these are liable to fluctuate in value. You can tolerate some fluctuations and volatility, but you tend to stay away from the possibility of dramatic or frequent changes in value. 您著重投資增長並明白投資值的波動。您雖可以承受一些波動和變動，但您不希望看到有大波動或頻繁變動。";
     } else if (score <= 599) {
-      riskLevel = "Medium to High / 中等至高";
+      riskLevel = "中等至高風險 Medium to High (R5)";
       riskDescription = "You have an above-average tolerance to risk and are willing to accept a greater chance of decline in value for the potentially higher returns. 您對風險的承受程度較平均高並願意接受大機會的投資跌值去賺取較高的潛在回報。";
     } else {
-      riskLevel = "High / 高";
+      riskLevel = "高風險 High (R6)";
       riskDescription = "You are willing, and usually eager, to accept a greater chance of a decline in value for potentially higher returns. 您願意並通常渴望接受大機會的投資跌值去賺取較高的潛在回報。";
     }
 
