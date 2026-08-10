@@ -456,6 +456,8 @@ export const appRouter = router({
           riskAssessmentConsent: completeData.regulatory?.riskAssessmentConsent ?? false,
           clientConfirmationRead: completeData.regulatory?.agreementAccepted ?? completeData.regulatory?.agreementRead ?? completeData.regulatory?.clientConfirmationRead ?? false,
           objectsDirectMarketing: completeData.regulatory?.objectsDirectMarketing ?? false,
+          // 風險評估問卷
+          riskQuestionnaire: completeData.riskQuestionnaire || undefined,
         };
         
         // 生成PDF
