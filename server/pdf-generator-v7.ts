@@ -391,15 +391,11 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
       // First page logo
       addLogo();
 
-      // Subsequent pages via event
-      doc.on('pageAdded', () => {
-        addLogo();
-      });
-
       // ── Utility: check space and add page if needed ───
       const ensureSpace = (needed: number) => {
         if (doc.y + needed > PAGE_H - M_BOTTOM) {
           doc.addPage();
+          addLogo();
           doc.y = M_TOP;
         }
       };
