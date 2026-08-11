@@ -810,13 +810,30 @@ export const appRouter = router({
       }))
       .mutation(async ({ input, ctx }) => {
         const { applicationId, documentType, fileName, fileData, mimeType } = input;
+
+        // File security validation
+        const ALLOWED_MIME = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        const ALLOWED_EXT = ['.pdf', '.jpg', '.jpeg', '.png', '.doc', '.docx'];
+        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+        if (!ALLOWED_MIME.includes(mimeType)) {
+          throw new Error(`不支持的文件类型: ${mimeType}。支持: PDF, JPG, PNG, DOC, DOCX`);
+        }
+        const ext = fileName.toLowerCase().slice(fileName.lastIndexOf('.'));
+        if (!ALLOWED_EXT.includes(ext)) {
+          throw new Error(`不支持的文件扩展名: ${ext}。支持: ${ALLOWED_EXT.join(', ')}`);
+        }
+
         const application = await db.getApplicationById(applicationId);
         if (!application || application.userId !== ctx.user.id) {
           throw new Error("申请不存在或无权访问");
         }
-        
+
         // 将base64转换为Buffer
         const buffer = Buffer.from(fileData, 'base64');
+        if (buffer.length > MAX_FILE_SIZE) {
+          throw new Error(`文件大小超过限制（最大10MB），当前: ${(buffer.length / 1024 / 1024).toFixed(1)}MB`);
+        }
         const fileKey = `applications/${applicationId}/${documentType}/${nanoid()}-${fileName}`;
         
         // 上传到S3
