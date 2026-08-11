@@ -8,9 +8,9 @@ import { nanoid } from "nanoid";
 import crypto from "crypto";
 import { Pool } from "pg";
 
-const SSO_DATABASE_URL = process.env.SSO_DATABASE_URL;
+const SSO_DATABASE_URL = process.env.SSO_DATABASE_URL || '';
 if (!SSO_DATABASE_URL) {
-  console.error('[SECURITY] SSO_DATABASE_URL environment variable is not set');
+  console.warn('[SECURITY] SSO_DATABASE_URL not set — SSO login will not work');
 }
 
 let ssoPool: Pool;

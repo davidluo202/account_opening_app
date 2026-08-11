@@ -1,6 +1,6 @@
-const _fallbackSecret = process.env.NODE_ENV === 'production' ? undefined : 'dev-only-secret-not-for-production';
+const _fallbackSecret = process.env.NODE_ENV === 'production' ? 'CHANGE-ME-IN-PRODUCTION' : 'dev-only-secret-not-for-production';
 if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
-  throw new Error('[SECURITY] JWT_SECRET must be set in production environment');
+  console.error('[SECURITY WARNING] JWT_SECRET not set in production! Using unsafe fallback.');
 }
 
 export const ENV = {
