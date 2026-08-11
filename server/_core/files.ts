@@ -9,7 +9,8 @@ function hmacSha256Hex(secret: string, payload: string): string {
 
 function getSecret(): string {
   // use the same secret used for sessions (fallback still ok for UAT)
-  return ENV.cookieSecret || "fallback-secret-change-in-production";
+  if (!ENV.cookieSecret) throw new Error('[SECURITY] Cookie secret not configured');
+  return ENV.cookieSecret;
 }
 
 /**

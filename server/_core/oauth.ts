@@ -8,12 +8,15 @@ import { nanoid } from "nanoid";
 import crypto from "crypto";
 import { Pool } from "pg";
 
-const SSO_DATABASE_URL = process.env.SSO_DATABASE_URL || 'postgresql://postgres:XCBgJFsPbtJgiaCGaKgQXxnnhTJzyusL@switchyard.proxy.rlwy.net:45054/railway';
+const SSO_DATABASE_URL = process.env.SSO_DATABASE_URL;
+if (!SSO_DATABASE_URL) {
+  console.error('[SECURITY] SSO_DATABASE_URL environment variable is not set');
+}
 
 let ssoPool: Pool;
 function getSSOPool(): Pool {
   if (!ssoPool) {
-    ssoPool = new Pool({ connectionString: SSO_DATABASE_URL, ssl: false });
+    ssoPool = new Pool({ connectionString: SSO_DATABASE_URL, ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false });
   }
   return ssoPool;
 }
