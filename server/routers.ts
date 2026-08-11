@@ -58,7 +58,7 @@ export const appRouter = router({
             if (!sent) throw new Error("邮件发送失败，请稍后重试");
           }
         } else {
-          console.log(`[BYPASS_EMAIL] Code for ${input.email}: ${code}`);
+          // console.log(`[BYPASS_EMAIL] Code for ${input.email}: ${code}`);
         }
 
         return { success: true, message: "验证码已发送至您的邮箱" };
@@ -166,10 +166,10 @@ export const appRouter = router({
         signatureData: z.string(),
       }))
       .mutation(async ({ input, ctx }) => {
-        console.log('\n========== SUBMIT API CALLED ==========');
-        console.log('[Submit] Application ID:', input.id);
-        console.log('[Submit] Signature Name:', input.signatureName);
-        console.log('[Submit] User:', ctx.user.openId);
+        // console.log('\n========== SUBMIT API CALLED ==========');
+        // console.log('[Submit] Application ID:', input.id);
+        // console.log('[Submit] Signature Name:', input.signatureName);
+        // console.log('[Submit] User:', ctx.user.openId);
         const application = await db.getApplicationById(input.id);
         if (!application || application.userId !== ctx.user.id) {
           throw new Error("申请不存在或无权访问");
@@ -219,21 +219,14 @@ export const appRouter = router({
         const customerName = completeData.basicInfo?.chineseName || completeData.basicInfo?.englishName || '客户';
         const customerGender = completeData.basicInfo?.gender; // 获取客户性别
         
-        console.log(`Preparing to send emails for application ${applicationNumber}`);
-        console.log(`Customer email: ${customerEmail}`);
-        console.log(`Customer name: ${customerName}`);
+        // console.log(`Preparing to send emails for application ${applicationNumber}`);
+        // console.log(`Customer email: ${customerEmail}`);
+        // console.log(`Customer name: ${customerName}`);
         
         // 生成PDF
         try {
-          console.log('[PDF Generation] Starting PDF generation...');
-          console.log('[PDF Generation] Application data:', JSON.stringify({
-            applicationNumber: application.applicationNumber,
-            hasBasicInfo: !!completeData.basicInfo,
-            hasDetailedInfo: !!completeData.detailedInfo,
-            hasOccupation: !!completeData.occupation,
-          }));
           pdfBuffer = await generateApplicationPDF(dataForPDF as any);
-          console.log(`[PDF Generation] PDF generated successfully, size: ${pdfBuffer.length} bytes`);
+          // console.log(`[PDF Generation] PDF generated successfully, size: ${pdfBuffer.length} bytes`);
         } catch (error) {
           console.error('[PDF Generation] Failed to generate PDF:', error);
           console.error('[PDF Generation] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
@@ -251,7 +244,7 @@ export const appRouter = router({
               'application/pdf'
             );
             pdfUrl = result.url;
-            console.log(`PDF uploaded to S3: ${pdfUrl}`);
+            // console.log(`PDF uploaded to S3: ${pdfUrl}`);
           } catch (error) {
             console.error('Failed to upload PDF to S3:', error);
           }
@@ -259,9 +252,9 @@ export const appRouter = router({
         
         // 发送邮件（使用PDF下载链接）
         if (customerEmail && applicationNumber) {
-          console.log(`Condition met: customerEmail=${customerEmail}, applicationNumber=${applicationNumber}`);
+          // console.log(`Condition met: customerEmail=${customerEmail}, applicationNumber=${applicationNumber}`);
           try {
-            console.log(`Calling sendCustomerConfirmationEmail...`);
+            // console.log(`Calling sendCustomerConfirmationEmail...`);
             const result = await sendCustomerConfirmationEmail(
               customerEmail,
               applicationNumber,
@@ -269,9 +262,9 @@ export const appRouter = router({
               customerGender, // 传递性别
               pdfUrl // PDF下载链接
             );
-            console.log(`sendCustomerConfirmationEmail result: ${result}`);
+            // console.log(`sendCustomerConfirmationEmail result: ${result}`);
             if (result) {
-              console.log(`Customer confirmation email sent to ${customerEmail}`);
+              // console.log(`Customer confirmation email sent to ${customerEmail}`);
             } else {
               console.error(`Failed to send customer confirmation email to ${customerEmail}`);
             }
@@ -280,16 +273,16 @@ export const appRouter = router({
           }
           
           try {
-            console.log(`Calling sendInternalNotificationEmail...`);
+            // console.log(`Calling sendInternalNotificationEmail...`);
             const result = await sendInternalNotificationEmail(
               applicationNumber,
               customerName,
               customerEmail,
               pdfUrl // PDF下载链接
             );
-            console.log(`sendInternalNotificationEmail result: ${result}`);
+            // console.log(`sendInternalNotificationEmail result: ${result}`);
             if (result) {
-              console.log(`Internal notification email sent for application ${applicationNumber}`);
+              // console.log(`Internal notification email sent for application ${applicationNumber}`);
             } else {
               console.error(`Failed to send internal notification email for application ${applicationNumber}`);
             }
@@ -297,7 +290,7 @@ export const appRouter = router({
             console.error('Failed to send internal notification email:', error);
           }
         } else {
-          console.log(`Email sending skipped: customerEmail=${customerEmail}, applicationNumber=${applicationNumber}`);
+          // console.log(`Email sending skipped: customerEmail=${customerEmail}, applicationNumber=${applicationNumber}`);
         }
         
         return { success: true, pdfUrl };
@@ -465,9 +458,9 @@ export const appRouter = router({
         let pdfBuffer: Buffer;
         
         try {
-          console.log('[Preview PDF] Starting PDF generation...');
+          // console.log('[Preview PDF] Starting PDF generation...');
           pdfBuffer = await generateApplicationPDF(dataForPDF as any);
-          console.log(`[Preview PDF] PDF generated successfully, size: ${pdfBuffer.length} bytes`);
+          // console.log(`[Preview PDF] PDF generated successfully, size: ${pdfBuffer.length} bytes`);
         } catch (error) {
           console.error('[Preview PDF] Failed to generate PDF:', error);
           throw new Error(`PDF生成失败: ${error instanceof Error ? error.message : '未知错误'}`);
@@ -1291,7 +1284,7 @@ export const appRouter = router({
                 flaggedForReview: screenResult.hitCount > 0,
               });
               if (screenResult.hitCount > 0) {
-                console.log(`[Sanctions] Application ${input.applicationId} has ${screenResult.hitCount} hit(s) - flagged for review`);
+                // console.log(`[Sanctions] Application ${input.applicationId} has ${screenResult.hitCount} hit(s) - flagged for review`);
               }
             } catch (sanctionsError) {
               console.error('[Sanctions] Screening failed, continuing with approval:', sanctionsError);
@@ -1404,7 +1397,7 @@ export const appRouter = router({
         let bcanCode = '';
         try {
           bcanCode = await db.generateBcan(input.applicationId) || '';
-          console.log(`[BCAN] Generated for application ${input.applicationId}: ${bcanCode}`);
+          // console.log(`[BCAN] Generated for application ${input.applicationId}: ${bcanCode}`);
         } catch (bcanError) {
           console.error('Failed to generate BCAN:', bcanError);
         }
@@ -1525,7 +1518,7 @@ export const appRouter = router({
           // 更新数据库中的finalReviewPdfUrl字段
           await db.updateApplicationPdfUrl(input.applicationId, 'finalReviewPdfUrl', url);
           
-          console.log(`[PDF] Final approval PDF generated and uploaded: ${url}`);
+          // console.log(`[PDF] Final approval PDF generated and uploaded: ${url}`);
         } catch (pdfError) {
           console.error('Failed to generate or upload final approval PDF:', pdfError);
           // PDF生成失败不影响审批流程
