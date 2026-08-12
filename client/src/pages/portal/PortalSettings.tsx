@@ -2,7 +2,7 @@ import { useState } from "react";
 import PortalLayout from "./PortalLayout";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from "wouter";
-import { User, Lock, Bell, ExternalLink, Eye, EyeOff } from "lucide-react";
+import { User, Lock, Bell, ExternalLink, Eye, EyeOff, DollarSign } from "lucide-react";
 
 export default function PortalSettings() {
   const { user } = useAuth();
@@ -139,6 +139,40 @@ export default function PortalSettings() {
           <button className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-6 rounded-lg text-sm transition-colors">
             保存设置 / Save Settings
           </button>
+        </div>
+
+        {/* Fee Schedule */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <DollarSign className="h-5 w-5 text-blue-600" />
+            <h2 className="text-base font-semibold text-gray-800">费率表 / Fee Schedule</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-gray-500 border-b border-gray-200 text-xs uppercase tracking-wide">
+                  <th className="pb-3 font-medium">费用项目 / Fee Item</th>
+                  <th className="pb-3 font-medium text-right">费率 / Rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { item: "期权费（权利金）/ Option Premium", rate: "按询价报价确定 / Per RFQ quote" },
+                  { item: "管理费 / Management Fee", rate: "无 / Nil" },
+                  { item: "提前平仓费 / Early Close Fee", rate: "无 / Nil" },
+                  { item: "行权结算费 / Exercise Settlement Fee", rate: "无 / Nil" },
+                  { item: "出金手续费 / Withdrawal Fee", rate: "HKD 50 / 笔" },
+                  { item: "换汇手续费 / FX Conversion Fee", rate: "按市场汇率 + 0.3% / Market rate + 0.3%" },
+                ].map((row) => (
+                  <tr key={row.item} className="border-b border-gray-50 last:border-0">
+                    <td className="py-3 text-gray-700">{row.item}</td>
+                    <td className="py-3 text-right font-medium text-gray-900">{row.rate}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-xs text-gray-400 mt-3">* 以上费率仅供参考，最终以合同约定为准 / Rates are indicative only, subject to agreement terms.</p>
         </div>
       </div>
     </PortalLayout>
