@@ -15,10 +15,10 @@ interface NavItem {
 const navItems: NavItem[] = [
   { label: "账户总览", labelEn: "Dashboard", icon: <LayoutDashboard className="h-5 w-5" />, path: "/portal" },
   {
-    label: "资金管理", labelEn: "Funds", icon: <DollarSign className="h-5 w-5" />, path: "/portal/funds",
+    label: "抵押品管理", labelEn: "Collateral", icon: <DollarSign className="h-5 w-5" />, path: "/portal/funds",
     children: [
-      { label: "入金", labelEn: "Deposit", path: "/portal/funds?tab=deposit" },
-      { label: "出金", labelEn: "Withdrawal", path: "/portal/funds?tab=withdrawal" },
+      { label: "存入抵押品", labelEn: "Deposit", path: "/portal/funds?tab=deposit" },
+      { label: "提取抵押品", labelEn: "Withdraw", path: "/portal/funds?tab=withdrawal" },
     ],
   },
   { label: "持仓", labelEn: "Portfolio", icon: <TrendingUp className="h-5 w-5" />, path: "/portal/portfolio" },

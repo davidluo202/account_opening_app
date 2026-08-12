@@ -5,11 +5,13 @@ import { Upload, Banknote, Clock, CheckCircle, AlertCircle, RefreshCw, Wallet } 
 const API_BASE = "https://backoffice.cmf-otc.com";
 
 const BANK_TRANSFER_INFO = [
-  { label: "收款银行 / Bank", value: "中国银行（香港）BANK OF CHINA (HK)" },
-  { label: "收款账户名 / Account Name", value: "诚港金融有限公司 CMFinancial Limited" },
-  { label: "收款账号 / Account No.", value: "012-345-6789012" },
-  { label: "SWIFT Code", value: "BKCHHKHHXXX" },
-  { label: "银行代码 / Bank Code", value: "012" },
+  { label: "收款銀行 / Bank", value: "China CITIC Bank International Limited / 中信銀行（國際）有限公司" },
+  { label: "銀行編號 / Bank Code", value: "018" },
+  { label: "收款戶名 / Beneficiary", value: "CANTON MUTUAL FINANCIAL LIMITED - CLIENT ACCOUNT" },
+  { label: "港幣賬號 / HKD Account", value: "744-1-81145700" },
+  { label: "美元賬號 / USD Account", value: "744-1-81145701" },
+  { label: "人民幣賬號 / RMB Account", value: "744-1-81145718" },
+  { label: "SWIFT Code", value: "KWHKHKHH" },
 ];
 
 const CURRENCIES = ["HKD", "USD", "CNY"] as const;
@@ -54,7 +56,7 @@ function StatusBadge({ status }: { status: string }) {
   return <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">{status}</span>;
 }
 
-export default function PortalFunds() {
+export default function PortalCollateral() {
   const [activeTab, setActiveTab] = useState<"deposit" | "withdrawal">("deposit");
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [selectedBank, setSelectedBank] = useState("");
@@ -143,7 +145,7 @@ export default function PortalFunds() {
 
   const handleWithdraw = async () => {
     if (!withdrawAmount || parseFloat(withdrawAmount) <= 0) {
-      setError("请输入有效的出金金额");
+      setError("请输入有效的提取金額");
       return;
     }
     setSubmitting(true);
@@ -167,7 +169,7 @@ export default function PortalFunds() {
         const errData = await res.json().catch(() => ({}));
         throw new Error(errData.error || `Request failed (${res.status})`);
       }
-      setSuccessMsg("出金申请已提交 / Withdrawal request submitted");
+      setSuccessMsg("提取抵押品申請已提交 / Withdrawal request submitted");
       setWithdrawAmount("");
       setWithdrawRemarks("");
       fetchData();
@@ -183,8 +185,8 @@ export default function PortalFunds() {
       <div className="p-6 max-w-5xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">资金管理 <span className="text-gray-400 font-normal text-lg">/ Funds</span></h1>
-            <p className="text-sm text-gray-500 mt-1">管理您的入金与出金操作</p>
+            <h1 className="text-2xl font-bold text-gray-900">抵押品管理 <span className="text-gray-400 font-normal text-lg">/ Collateral</span></h1>
+            <p className="text-sm text-gray-500 mt-1">管理您的抵押品存入與提取</p>
           </div>
           <button onClick={fetchData} disabled={loading} className="flex items-center gap-1 text-sm text-gray-500 hover:text-blue-600 transition-colors">
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
@@ -247,7 +249,7 @@ export default function PortalFunds() {
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
-              {tab === "deposit" ? "入金 / Deposit" : "出金 / Withdrawal"}
+              {tab === "deposit" ? "存入抵押品 / Deposit Collateral" : "提取抵押品 / Withdraw Collateral"}
             </button>
           ))}
         </div>
@@ -258,7 +260,7 @@ export default function PortalFunds() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Banknote className="h-5 w-5 text-blue-600" />
-                <h2 className="text-base font-semibold text-gray-800">银行转账入金 / Bank Transfer</h2>
+                <h2 className="text-base font-semibold text-gray-800">銀行轉賬存入抵押品 / Bank Transfer (Collateral Deposit)</h2>
               </div>
               <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 space-y-2 mb-4">
                 {BANK_TRANSFER_INFO.map((item) => (
@@ -278,7 +280,7 @@ export default function PortalFunds() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Upload className="h-5 w-5 text-blue-600" />
-                <h2 className="text-base font-semibold text-gray-800">提交入金申请 / Submit Deposit Request</h2>
+                <h2 className="text-base font-semibold text-gray-800">提交存入申請 / Submit Collateral Deposit Request</h2>
               </div>
               <div className="space-y-4 max-w-md">
                 <div className="flex gap-3">
@@ -326,13 +328,13 @@ export default function PortalFunds() {
                 disabled={submitting}
                 className="mt-4 w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-2.5 rounded-lg text-sm transition-colors"
               >
-                {submitting ? "提交中..." : "提交入金申请 / Submit Deposit"}
+                {submitting ? "提交中..." : "提交存入申請 / Submit Collateral Deposit"}
               </button>
             </div>
 
             {/* Pending deposits */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <h2 className="text-base font-semibold text-gray-800 mb-4">待处理入金 / Pending Deposits</h2>
+              <h2 className="text-base font-semibold text-gray-800 mb-4">待處理存入 / Pending Collateral Deposits</h2>
               {deposits.length > 0 ? (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
@@ -357,7 +359,7 @@ export default function PortalFunds() {
                   </table>
                 </div>
               ) : (
-                <div className="text-center py-8 text-gray-400 text-sm">暂无待处理入金记录</div>
+                <div className="text-center py-8 text-gray-400 text-sm">暂无待處理存入记录</div>
               )}
             </div>
           </div>
@@ -367,16 +369,16 @@ export default function PortalFunds() {
           <div className="space-y-6">
             {/* Withdrawal form */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <h2 className="text-base font-semibold text-gray-800 mb-4">出金申请 / Withdrawal Request</h2>
+              <h2 className="text-base font-semibold text-gray-800 mb-4">提取抵押品申請 / Collateral Withdrawal Request</h2>
               <div className="space-y-4 max-w-md">
                 <div className="flex gap-3">
                   <div className="flex-1">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">出金金额 / Amount</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">提取金額 / Amount</label>
                     <input
                       type="number"
                       value={withdrawAmount}
                       onChange={(e) => setWithdrawAmount(e.target.value)}
-                      placeholder="请输入出金金额"
+                      placeholder="请输入提取金額"
                       className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
@@ -421,14 +423,14 @@ export default function PortalFunds() {
                   disabled={submitting}
                   className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-2.5 rounded-lg text-sm transition-colors"
                 >
-                  {submitting ? "提交中..." : "提交出金申请 / Submit Withdrawal"}
+                  {submitting ? "提交中..." : "提交提取抵押品申請 / Submit Collateral Withdrawal"}
                 </button>
               </div>
             </div>
 
             {/* Pending withdrawals */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <h2 className="text-base font-semibold text-gray-800 mb-4">待处理出金 / Pending Withdrawals</h2>
+              <h2 className="text-base font-semibold text-gray-800 mb-4">待處理提取 / Pending Withdrawals</h2>
               {withdrawals.length > 0 ? (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
@@ -455,7 +457,7 @@ export default function PortalFunds() {
                   </table>
                 </div>
               ) : (
-                <div className="text-center py-8 text-gray-400 text-sm">暂无待处理出金记录</div>
+                <div className="text-center py-8 text-gray-400 text-sm">暂无待處理提取记录</div>
               )}
             </div>
           </div>
@@ -463,7 +465,7 @@ export default function PortalFunds() {
 
         {/* Transaction history */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h2 className="text-base font-semibold text-gray-800 mb-4">交易历史 <span className="text-gray-400 font-normal text-sm">/ Transaction History</span></h2>
+          <h2 className="text-base font-semibold text-gray-800 mb-4">抵押品變動記錄 <span className="text-gray-400 font-normal text-sm">/ Collateral History</span></h2>
           {history.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -492,7 +494,7 @@ export default function PortalFunds() {
               </table>
             </div>
           ) : (
-            <div className="text-center py-8 text-gray-400 text-sm">暂无交易记录 / No history yet</div>
+            <div className="text-center py-8 text-gray-400 text-sm">暫無變動記錄 / No history yet</div>
           )}
         </div>
       </div>
