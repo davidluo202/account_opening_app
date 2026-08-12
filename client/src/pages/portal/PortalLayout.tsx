@@ -2,7 +2,7 @@ import { ReactNode, useState } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Loader2, Menu, X, LayoutDashboard, DollarSign, TrendingUp, Search, BarChart2, ClipboardList, FileText, Settings, ExternalLink, ChevronDown, ChevronRight, LogOut } from "lucide-react";
-import { getLoginUrl } from "@/const";
+import { getLoginUrl, APP_VERSION } from "@/const";
 
 interface NavItem {
   label: string;
@@ -167,6 +167,7 @@ export default function PortalLayout({ children }: PortalLayoutProps) {
           <LogOut className="h-5 w-5" />
           <span>登出 / Logout</span>
         </button>
+        <div className="mt-2 text-center text-xs text-slate-600">{APP_VERSION}</div>
       </div>
     </div>
   );
