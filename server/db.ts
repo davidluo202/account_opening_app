@@ -7,6 +7,7 @@ import {
   applicationNumberSequences,
   accountSelections,
   personalBasicInfo,
+  corporateBasicInfo,
   personalDetailedInfo,
   occupationInfo,
   employmentDetails,
@@ -401,6 +402,23 @@ export async function getPersonalBasicInfo(applicationId: number) {
   const db = await getDb();
   if (!db) return null;
   const result = await db.select().from(personalBasicInfo).where(eq(personalBasicInfo.applicationId, applicationId)).limit(1);
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function saveCorporateBasicInfo(applicationId: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.insert(corporateBasicInfo).values({
+    applicationId,
+    ...data
+  }).onDuplicateKeyUpdate({ set: data });
+}
+
+export async function getCorporateBasicInfo(applicationId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(corporateBasicInfo).where(eq(corporateBasicInfo.applicationId, applicationId)).limit(1);
   return result.length > 0 ? result[0] : null;
 }
 

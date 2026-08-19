@@ -118,6 +118,38 @@ export const personalBasicInfo = mysqlTable("personal_basic_info", {
 });
 
 /**
+ * Case 3b: 机构基本信息
+ */
+export const corporateBasicInfo = mysqlTable("corporate_basic_info", {
+  id: int("id").autoincrement().primaryKey(),
+  applicationId: int("applicationId").notNull().unique(),
+  companyEnglishName: varchar("companyEnglishName", { length: 300 }),
+  companyChineseName: varchar("companyChineseName", { length: 200 }),
+  natureOfEntity: varchar("natureOfEntity", { length: 100 }),
+  natureOfEntityOther: varchar("natureOfEntityOther", { length: 200 }),
+  natureOfBusiness: varchar("natureOfBusiness", { length: 100 }),
+  natureOfBusinessOther: varchar("natureOfBusinessOther", { length: 200 }),
+  countryOfIncorporation: varchar("countryOfIncorporation", { length: 100 }),
+  countryOfIncorporationOther: varchar("countryOfIncorporationOther", { length: 200 }),
+  dateOfIncorporation: varchar("dateOfIncorporation", { length: 10 }), // YYYY-MM-DD
+  certificateOfIncorporationNo: varchar("certificateOfIncorporationNo", { length: 100 }),
+  jurisdictionOfResidence: varchar("jurisdictionOfResidence", { length: 100 }),
+  businessRegistrationNo: varchar("businessRegistrationNo", { length: 100 }),
+  registeredAddress: text("registeredAddress"),
+  businessAddress: text("businessAddress"),
+  officeNo: varchar("officeNo", { length: 50 }),
+  facsimileNo: varchar("facsimileNo", { length: 50 }),
+  contactName: varchar("contactName", { length: 200 }),
+  contactTitle: varchar("contactTitle", { length: 100 }),
+  contactPhone: varchar("contactPhone", { length: 50 }),
+  contactEmail: varchar("contactEmail", { length: 320 }),
+  contactEmailVerified: boolean("contactEmailVerified").default(false).notNull(),
+  website: varchar("website", { length: 500 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+/**
  * Case 4: 个人详细信息
  */
 export const personalDetailedInfo = mysqlTable("personal_detailed_info", {
@@ -372,6 +404,7 @@ export type Application = typeof applications.$inferSelect;
 export type InsertApplication = typeof applications.$inferInsert;
 export type AccountSelection = typeof accountSelections.$inferSelect;
 export type PersonalBasicInfo = typeof personalBasicInfo.$inferSelect;
+export type CorporateBasicInfo = typeof corporateBasicInfo.$inferSelect;
 export type PersonalDetailedInfo = typeof personalDetailedInfo.$inferSelect;
 export type OccupationInfo = typeof occupationInfo.$inferSelect;
 export type EmploymentDetails = typeof employmentDetails.$inferSelect;

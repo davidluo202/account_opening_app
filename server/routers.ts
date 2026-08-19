@@ -544,6 +544,59 @@ export const appRouter = router({
       }),
   }),
   
+  // Case 3b: 机构基本信息
+  corporateBasic: router({
+    save: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+        companyEnglishName: z.string().optional(),
+        companyChineseName: z.string().optional(),
+        natureOfEntity: z.string().optional(),
+        natureOfEntityOther: z.string().optional(),
+        natureOfBusiness: z.string().optional(),
+        natureOfBusinessOther: z.string().optional(),
+        countryOfIncorporation: z.string().optional(),
+        countryOfIncorporationOther: z.string().optional(),
+        dateOfIncorporation: z.string().optional(),
+        certificateOfIncorporationNo: z.string().optional(),
+        jurisdictionOfResidence: z.string().optional(),
+        businessRegistrationNo: z.string().optional(),
+        registeredAddress: z.string().optional(),
+        businessAddress: z.string().optional(),
+        officeNo: z.string().optional(),
+        facsimileNo: z.string().optional(),
+        contactName: z.string().optional(),
+        contactTitle: z.string().optional(),
+        contactPhone: z.string().optional(),
+        contactEmail: z.string().optional(),
+        contactEmailVerified: z.boolean().optional(),
+        website: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { applicationId, ...data } = input;
+        const application = await db.getApplicationById(applicationId);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
+        }
+
+        await db.saveCorporateBasicInfo(applicationId, data);
+        await db.updateApplicationStep(applicationId, 3);
+
+        const saved = await db.getCorporateBasicInfo(applicationId);
+        return { success: true, data: saved };
+      }),
+
+    get: protectedProcedure
+      .input(z.object({ applicationId: z.number() }))
+      .query(async ({ input, ctx }) => {
+        const application = await db.getApplicationById(input.applicationId);
+        if (!application || application.userId !== ctx.user.id) {
+          throw new Error("申请不存在或无权访问");
+        }
+        return await db.getCorporateBasicInfo(input.applicationId);
+      }),
+  }),
+
   // Case 4: 个人详细信息
   personalDetailed: router({
     save: protectedProcedure
