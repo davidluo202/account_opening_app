@@ -415,8 +415,10 @@ export async function saveCorporateBasicInfo(applicationId: number, data: any) {
     try {
       const mysql2 = await import('mysql2/promise');
       const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+      // Drop and recreate to ensure all columns exist
+      await conn.execute(`DROP TABLE IF EXISTS corporate_basic_info`);
       await conn.execute(`
-        CREATE TABLE IF NOT EXISTS corporate_basic_info (
+        CREATE TABLE corporate_basic_info (
           id INT AUTO_INCREMENT PRIMARY KEY,
           applicationId INT NOT NULL UNIQUE,
           companyEnglishName VARCHAR(300),
