@@ -405,43 +405,53 @@ export async function getPersonalBasicInfo(applicationId: number) {
   return result.length > 0 ? result[0] : null;
 }
 
+let _corporateTableCreated = false;
 export async function saveCorporateBasicInfo(applicationId: number, data: any) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
-  // Auto-create table if not exists
-  try {
-    await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS corporate_basic_info (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        applicationId INT NOT NULL UNIQUE,
-        companyEnglishName VARCHAR(300),
-        companyChineseName VARCHAR(200),
-        natureOfEntity VARCHAR(100),
-        natureOfEntityOther VARCHAR(200),
-        natureOfBusiness VARCHAR(100),
-        natureOfBusinessOther VARCHAR(200),
-        countryOfIncorporation VARCHAR(100),
-        countryOfIncorporationOther VARCHAR(200),
-        dateOfIncorporation VARCHAR(10),
-        certificateOfIncorporationNo VARCHAR(100),
-        jurisdictionOfResidence VARCHAR(100),
-        businessRegistrationNo VARCHAR(100),
-        registeredAddress TEXT,
-        businessAddress TEXT,
-        officeNo VARCHAR(50),
-        facsimileNo VARCHAR(50),
-        contactName VARCHAR(200),
-        contactTitle VARCHAR(100),
-        contactPhone VARCHAR(50),
-        contactEmail VARCHAR(320),
-        contactEmailVerified BOOLEAN NOT NULL DEFAULT FALSE,
-        website VARCHAR(500),
-        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
-      )
-    `);
-  } catch { /* table already exists */ }
+  // Auto-create table on first call using raw mysql2
+  if (!_corporateTableCreated) {
+    try {
+      const mysql2 = await import('mysql2/promise');
+      const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+      await conn.execute(`
+        CREATE TABLE IF NOT EXISTS corporate_basic_info (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          applicationId INT NOT NULL UNIQUE,
+          companyEnglishName VARCHAR(300),
+          companyChineseName VARCHAR(200),
+          natureOfEntity VARCHAR(100),
+          natureOfEntityOther VARCHAR(200),
+          natureOfBusiness VARCHAR(100),
+          natureOfBusinessOther VARCHAR(200),
+          countryOfIncorporation VARCHAR(100),
+          countryOfIncorporationOther VARCHAR(200),
+          dateOfIncorporation VARCHAR(10),
+          certificateOfIncorporationNo VARCHAR(100),
+          jurisdictionOfResidence VARCHAR(100),
+          businessRegistrationNo VARCHAR(100),
+          registeredAddress TEXT,
+          businessAddress TEXT,
+          officeNo VARCHAR(50),
+          facsimileNo VARCHAR(50),
+          contactName VARCHAR(200),
+          contactTitle VARCHAR(100),
+          contactPhone VARCHAR(50),
+          contactEmail VARCHAR(320),
+          contactEmailVerified BOOLEAN NOT NULL DEFAULT FALSE,
+          website VARCHAR(500),
+          createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+          updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+        )
+      `);
+      await conn.end();
+      _corporateTableCreated = true;
+    } catch (e: any) {
+      console.warn('[db] corporate_basic_info create table warning:', e.message);
+      _corporateTableCreated = true; // Don't retry
+    }
+  }
 
   await db.insert(corporateBasicInfo).values({
     applicationId,
