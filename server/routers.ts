@@ -597,6 +597,102 @@ export const appRouter = router({
       }),
   }),
 
+  // Case 3c: 公司财务状况
+  corporateFinancial: router({
+    save: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+        authorizedShareCapital: z.string().optional(),
+        issuedShareCapital: z.string().optional(),
+        initialSourceOfWealth: z.array(z.string()).optional(),
+        netAssetValue: z.string().optional(),
+        netAssetAuditDate: z.string().optional(),
+        profitAfterTax: z.string().optional(),
+        profitAuditDate: z.string().optional(),
+        assetItems: z.array(z.string()).optional(),
+        assetItemsOther: z.string().optional(),
+        experiencedProducts: z.array(z.string()).optional(),
+        experiencedProductsOther: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { applicationId, initialSourceOfWealth, assetItems, experiencedProducts, ...rest } = input;
+        const application = await db.getApplicationById(applicationId);
+        if (!application || application.userId !== ctx.user.id) throw new Error("申请不存在或无权访问");
+        const data = { ...rest, initialSourceOfWealth: JSON.stringify(initialSourceOfWealth || []), assetItems: JSON.stringify(assetItems || []), experiencedProducts: JSON.stringify(experiencedProducts || []) };
+        await db.saveCorporateFinancialInfo(applicationId, data);
+        await db.updateApplicationStep(applicationId, 4);
+        const saved = await db.getCorporateFinancialInfo(applicationId);
+        return { success: true, data: saved };
+      }),
+    get: protectedProcedure
+      .input(z.object({ applicationId: z.number() }))
+      .query(async ({ input, ctx }) => {
+        const application = await db.getApplicationById(input.applicationId);
+        if (!application || application.userId !== ctx.user.id) throw new Error("申请不存在或无权访问");
+        return await db.getCorporateFinancialInfo(input.applicationId);
+      }),
+  }),
+
+  // Case 3d: 公司投资经验与目标
+  corporateInvestment: router({
+    save: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+        investmentObjectives: z.array(z.string()).optional(),
+        investmentObjectivesOther: z.string().optional(),
+        estimatedInvestmentAmount: z.string().optional(),
+        riskVolatility: z.string().optional(),
+        investmentExperience: z.string().optional(),
+        knowledgeOfDerivatives: z.string().optional(),
+        experiencedProducts: z.array(z.string()).optional(),
+        experiencedProductsOther: z.string().optional(),
+        assetItems: z.array(z.string()).optional(),
+        assetItemsOther: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { applicationId, investmentObjectives, experiencedProducts, assetItems, ...rest } = input;
+        const application = await db.getApplicationById(applicationId);
+        if (!application || application.userId !== ctx.user.id) throw new Error("申请不存在或无权访问");
+        const data = { ...rest, investmentObjectives: JSON.stringify(investmentObjectives || []), experiencedProducts: JSON.stringify(experiencedProducts || []), assetItems: JSON.stringify(assetItems || []) };
+        await db.saveCorporateInvestmentInfo(applicationId, data);
+        await db.updateApplicationStep(applicationId, 5);
+        const saved = await db.getCorporateInvestmentInfo(applicationId);
+        return { success: true, data: saved };
+      }),
+    get: protectedProcedure
+      .input(z.object({ applicationId: z.number() }))
+      .query(async ({ input, ctx }) => {
+        const application = await db.getApplicationById(input.applicationId);
+        if (!application || application.userId !== ctx.user.id) throw new Error("申请不存在或无权访问");
+        return await db.getCorporateInvestmentInfo(input.applicationId);
+      }),
+  }),
+
+  // Case 3e: 公司关联人士
+  corporateRelatedParties: router({
+    save: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+        relatedParties: z.array(z.any()),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { applicationId, relatedParties } = input;
+        const application = await db.getApplicationById(applicationId);
+        if (!application || application.userId !== ctx.user.id) throw new Error("申请不存在或无权访问");
+        await db.saveCorporateRelatedParties(applicationId, relatedParties);
+        await db.updateApplicationStep(applicationId, 6);
+        const saved = await db.getCorporateRelatedParties(applicationId);
+        return { success: true, data: saved };
+      }),
+    get: protectedProcedure
+      .input(z.object({ applicationId: z.number() }))
+      .query(async ({ input, ctx }) => {
+        const application = await db.getApplicationById(input.applicationId);
+        if (!application || application.userId !== ctx.user.id) throw new Error("申请不存在或无权访问");
+        return await db.getCorporateRelatedParties(input.applicationId);
+      }),
+  }),
+
   // Case 4: 个人详细信息
   personalDetailed: router({
     save: protectedProcedure

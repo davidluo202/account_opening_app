@@ -494,6 +494,119 @@ export async function getCorporateBasicInfo(applicationId: number) {
   }
 }
 
+// === Corporate Financial ===
+let _corpFinTableCreated = false;
+export async function saveCorporateFinancialInfo(applicationId: number, data: any) {
+  const mysql2 = await import('mysql2/promise');
+  const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+  try {
+    if (!_corpFinTableCreated) {
+      await conn.execute(`DROP TABLE IF EXISTS corporate_financial_info`);
+      await conn.execute(`CREATE TABLE corporate_financial_info (
+        id INT AUTO_INCREMENT PRIMARY KEY, applicationId INT NOT NULL UNIQUE,
+        authorizedShareCapital VARCHAR(100), issuedShareCapital VARCHAR(100),
+        initialSourceOfWealth TEXT, netAssetValue VARCHAR(100), netAssetAuditDate VARCHAR(20),
+        profitAfterTax VARCHAR(100), profitAuditDate VARCHAR(20),
+        assetItems TEXT, assetItemsOther VARCHAR(200),
+        experiencedProducts TEXT, experiencedProductsOther VARCHAR(200),
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+      )`);
+      _corpFinTableCreated = true;
+    }
+    const fields = ['authorizedShareCapital','issuedShareCapital','initialSourceOfWealth','netAssetValue','netAssetAuditDate','profitAfterTax','profitAuditDate','assetItems','assetItemsOther','experiencedProducts','experiencedProductsOther'];
+    const values = fields.map(f => data[f] ?? null);
+    const setClauses = fields.map(f => `\`${f}\` = VALUES(\`${f}\`)`).join(', ');
+    await conn.execute(
+      `INSERT INTO corporate_financial_info (applicationId, ${fields.map(f=>'`'+f+'`').join(', ')}) VALUES (?, ${fields.map(()=>'?').join(', ')}) ON DUPLICATE KEY UPDATE ${setClauses}`,
+      [applicationId, ...values]
+    );
+  } finally { await conn.end(); }
+}
+export async function getCorporateFinancialInfo(applicationId: number) {
+  try {
+    const mysql2 = await import('mysql2/promise');
+    const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+    const [rows] = await conn.execute('SELECT * FROM corporate_financial_info WHERE applicationId = ? LIMIT 1', [applicationId]);
+    await conn.end();
+    return (rows as any[]).length > 0 ? (rows as any[])[0] : null;
+  } catch { return null; }
+}
+
+// === Corporate Investment ===
+let _corpInvTableCreated = false;
+export async function saveCorporateInvestmentInfo(applicationId: number, data: any) {
+  const mysql2 = await import('mysql2/promise');
+  const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+  try {
+    if (!_corpInvTableCreated) {
+      await conn.execute(`DROP TABLE IF EXISTS corporate_investment_info`);
+      await conn.execute(`CREATE TABLE corporate_investment_info (
+        id INT AUTO_INCREMENT PRIMARY KEY, applicationId INT NOT NULL UNIQUE,
+        investmentObjectives TEXT, investmentObjectivesOther VARCHAR(200),
+        estimatedInvestmentAmount VARCHAR(100), riskVolatility VARCHAR(100),
+        investmentExperience VARCHAR(100), knowledgeOfDerivatives VARCHAR(100),
+        experiencedProducts TEXT, experiencedProductsOther VARCHAR(200),
+        assetItems TEXT, assetItemsOther VARCHAR(200),
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+      )`);
+      _corpInvTableCreated = true;
+    }
+    const fields = ['investmentObjectives','investmentObjectivesOther','estimatedInvestmentAmount','riskVolatility','investmentExperience','knowledgeOfDerivatives','experiencedProducts','experiencedProductsOther','assetItems','assetItemsOther'];
+    const values = fields.map(f => data[f] ?? null);
+    const setClauses = fields.map(f => `\`${f}\` = VALUES(\`${f}\`)`).join(', ');
+    await conn.execute(
+      `INSERT INTO corporate_investment_info (applicationId, ${fields.map(f=>'`'+f+'`').join(', ')}) VALUES (?, ${fields.map(()=>'?').join(', ')}) ON DUPLICATE KEY UPDATE ${setClauses}`,
+      [applicationId, ...values]
+    );
+  } finally { await conn.end(); }
+}
+export async function getCorporateInvestmentInfo(applicationId: number) {
+  try {
+    const mysql2 = await import('mysql2/promise');
+    const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+    const [rows] = await conn.execute('SELECT * FROM corporate_investment_info WHERE applicationId = ? LIMIT 1', [applicationId]);
+    await conn.end();
+    return (rows as any[]).length > 0 ? (rows as any[])[0] : null;
+  } catch { return null; }
+}
+
+// === Corporate Related Parties ===
+let _corpPartiesTableCreated = false;
+export async function saveCorporateRelatedParties(applicationId: number, parties: any[]) {
+  const mysql2 = await import('mysql2/promise');
+  const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+  try {
+    if (!_corpPartiesTableCreated) {
+      await conn.execute(`DROP TABLE IF EXISTS corporate_related_parties`);
+      await conn.execute(`CREATE TABLE corporate_related_parties (
+        id INT AUTO_INCREMENT PRIMARY KEY, applicationId INT NOT NULL,
+        partyData JSON NOT NULL,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+        UNIQUE KEY uq_app (applicationId)
+      )`);
+      _corpPartiesTableCreated = true;
+    }
+    await conn.execute(
+      `INSERT INTO corporate_related_parties (applicationId, partyData) VALUES (?, ?) ON DUPLICATE KEY UPDATE partyData = VALUES(partyData)`,
+      [applicationId, JSON.stringify(parties)]
+    );
+  } finally { await conn.end(); }
+}
+export async function getCorporateRelatedParties(applicationId: number) {
+  try {
+    const mysql2 = await import('mysql2/promise');
+    const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+    const [rows] = await conn.execute('SELECT * FROM corporate_related_parties WHERE applicationId = ? LIMIT 1', [applicationId]);
+    await conn.end();
+    if ((rows as any[]).length === 0) return null;
+    const row = (rows as any[])[0];
+    return typeof row.partyData === 'string' ? JSON.parse(row.partyData) : row.partyData;
+  } catch { return null; }
+}
+
 export async function savePersonalDetailedInfo(applicationId: number, data: any) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
