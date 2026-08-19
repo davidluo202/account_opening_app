@@ -453,17 +453,43 @@ export async function saveCorporateBasicInfo(applicationId: number, data: any) {
     }
   }
 
-  await db.insert(corporateBasicInfo).values({
-    applicationId,
-    ...data
-  }).onDuplicateKeyUpdate({ set: data });
+  // Use raw SQL to avoid Drizzle ORM issues with onDuplicateKeyUpdate
+  const mysql2 = await import('mysql2/promise');
+  const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+  try {
+    const fields = [
+      'companyEnglishName', 'companyChineseName', 'natureOfEntity', 'natureOfEntityOther',
+      'natureOfBusiness', 'natureOfBusinessOther', 'countryOfIncorporation', 'countryOfIncorporationOther',
+      'dateOfIncorporation', 'certificateOfIncorporationNo', 'jurisdictionOfResidence', 'businessRegistrationNo',
+      'registeredAddress', 'businessAddress', 'officeNo', 'facsimileNo',
+      'contactName', 'contactTitle', 'contactPhone', 'contactEmail', 'contactEmailVerified', 'website'
+    ];
+    const values = fields.map(f => data[f] ?? null);
+    const setClauses = fields.map(f => `\`${f}\` = VALUES(\`${f}\`)`).join(', ');
+    const placeholders = fields.map(() => '?').join(', ');
+
+    await conn.execute(
+      `INSERT INTO corporate_basic_info (applicationId, ${fields.map(f => '`' + f + '`').join(', ')})
+       VALUES (?, ${placeholders})
+       ON DUPLICATE KEY UPDATE ${setClauses}`,
+      [applicationId, ...values]
+    );
+  } finally {
+    await conn.end();
+  }
 }
 
 export async function getCorporateBasicInfo(applicationId: number) {
-  const db = await getDb();
-  if (!db) return null;
-  const result = await db.select().from(corporateBasicInfo).where(eq(corporateBasicInfo.applicationId, applicationId)).limit(1);
-  return result.length > 0 ? result[0] : null;
+  // Use raw SQL for reliability
+  try {
+    const mysql2 = await import('mysql2/promise');
+    const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+    const [rows] = await conn.execute('SELECT * FROM corporate_basic_info WHERE applicationId = ? LIMIT 1', [applicationId]);
+    await conn.end();
+    return (rows as any[]).length > 0 ? (rows as any[])[0] : null;
+  } catch {
+    return null;
+  }
 }
 
 export async function savePersonalDetailedInfo(applicationId: number, data: any) {
