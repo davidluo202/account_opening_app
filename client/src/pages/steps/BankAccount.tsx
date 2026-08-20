@@ -176,19 +176,19 @@ export default function BankAccount() {
   const { t } = useLang();
 
   const currencies = [
-    { value: "HKD", label: t('港幣 / HKD', 'HKD', '港币 / HKD') },
-    { value: "USD", label: t('美元 / USD', 'USD', '美元 / USD') },
-    { value: "CNY", label: t('人民幣 / CNY', 'CNY', '人民币 / CNY') },
+    { value: "HKD", label: t('港幣', 'HKD', '港币') },
+    { value: "USD", label: t('美元', 'USD', '美元') },
+    { value: "CNY", label: t('人民幣', 'CNY', '人民币') },
     { value: "EUR", label: t('歐元 / EUR', 'EUR', '欧元 / EUR') },
     { value: "GBP", label: t('英鎊 / GBP', 'GBP', '英镑 / GBP') },
     { value: "JPY", label: t('日元 / JPY', 'JPY', '日元 / JPY') },
   ];
 
   const accountTypes = [
-    { value: "saving", label: t('儲蓄賬戶 / Saving', 'Saving', '储蓄账户 / Saving') },
-    { value: "current", label: t('活期賬戶 / Current', 'Current', '活期账户 / Current') },
-    { value: "checking", label: t('支票賬戶 / Checking', 'Checking', '支票账户 / Checking') },
-    { value: "others", label: t('其他 / Others', 'Others', '其他 / Others') },
+    { value: "saving", label: t('儲蓄賬戶', 'Saving', '储蓄账户') },
+    { value: "current", label: t('活期賬戶', 'Current', '活期账户') },
+    { value: "checking", label: t('支票賬戶', 'Checking', '支票账户') },
+    { value: "others", label: t('其他', 'Others', '其他') },
   ];
 
   // Check if joint account
