@@ -84,7 +84,8 @@ const handleNext = () => {
       isNextLoading={saveMutation.isPending}
       hidePrevious
       showReturnToPreview={showReturnToPreview}
-      customerTypeOverride={customerType}
+      customerTypeOverride={customerType === 'corporate_pi' || customerType === 'institutional_pi' ? 'corporate' : customerType}
+      corporateSubTypeOverride={customerType === 'corporate_pi' ? 'corporate_pi' : customerType === 'institutional_pi' ? 'institutional_pi' : ''}
     >
       <div className="space-y-8">
         {/* Case 1: 客戶類型 */}
