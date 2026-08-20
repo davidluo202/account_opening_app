@@ -195,6 +195,7 @@ export const occupationInfo = mysqlTable("occupation_info", {
   position: varchar("position", { length: 100 }),
   yearsOfService: int("yearsOfService"),
   industry: varchar("industry", { length: 100 }),
+  industryOther: varchar("industryOther", { length: 200 }),
   companyAddress: text("companyAddress"),
   officePhone: varchar("officePhone", { length: 50 }),
   officeFaxNo: varchar("officeFaxNo", { length: 50 }), // 办公传真

@@ -459,7 +459,7 @@ export default function ApprovalDetail() {
                   </div>
                   <div>
                     <Label>行业</Label>
-                    <p>{occupationInfo.industry || "-"}</p>
+                    <p>{occupationInfo.industry || "-"}{(occupationInfo as any).industryOther ? ` (${(occupationInfo as any).industryOther})` : ''}</p>
                   </div>
                   <div>
                     <Label>办公电话</Label>

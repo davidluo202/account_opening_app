@@ -979,7 +979,7 @@ export default function ApplicationPreview() {
                       <td className="p-3 bg-gray-50 font-semibold border-r">从业年限 Years of Service</td>
                       <td className="p-3 border-r">{occupation?.yearsOfService || "-"}</td>
                       <td className="p-3 bg-gray-50 font-semibold border-r">行业 Industry</td>
-                      <td className="p-3">{occupation?.industry || "-"}</td>
+                      <td className="p-3">{occupation?.industry || "-"}{occupation?.industryOther ? ` (${occupation.industryOther})` : ''}</td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-3 bg-gray-50 font-semibold border-r">辦公地址 Office Address</td>
@@ -1032,7 +1032,7 @@ export default function ApplicationPreview() {
                           <td className="p-3 bg-gray-50 font-semibold border-r">从业年限 Years of Service</td>
                           <td className="p-3 border-r">{sh.occupation.yearsOfService || "-"}</td>
                           <td className="p-3 bg-gray-50 font-semibold border-r">行业 Industry</td>
-                          <td className="p-3">{sh.occupation.industry || "-"}</td>
+                          <td className="p-3">{sh.occupation.industry || "-"}{sh.occupation.industryOther ? ` (${sh.occupation.industryOther})` : ''}</td>
                         </tr>
                         <tr className="border-b">
                           <td className="p-3 bg-gray-50 font-semibold border-r">辦公地址 Office Address</td>

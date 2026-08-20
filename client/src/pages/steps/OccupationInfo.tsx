@@ -40,6 +40,7 @@ export default function OccupationInfo() {
     position: "",
     yearsOfService: "",
     industry: "",
+    industryOther: "",
     companyAddress: "",
     officePhone: "",
     officeFaxNo: "", // 辦公傳真（可選）
@@ -64,6 +65,7 @@ export default function OccupationInfo() {
     position: "",
     yearsOfService: "",
     industry: "",
+    industryOther: "",
     companyAddress: "",
     officePhone: "",
     officeFaxNo: "",
@@ -122,6 +124,7 @@ export default function OccupationInfo() {
         position: existingData.position || "",
         yearsOfService: existingData.yearsOfService?.toString() || "",
         industry: existingData.industry || "",
+        industryOther: existingData.industryOther || "",
         companyAddress: existingData.companyAddress || "",
         officePhone: existingData.officePhone || "",
         officeFaxNo: existingData.officeFaxNo || "",
@@ -142,7 +145,7 @@ export default function OccupationInfo() {
     }
 
     if (needsEmploymentDetails) {
-      const noSpecialChars = /^[A-Za-z0-9\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\s\-\(\)\/\.&]+$/;
+      const noSpecialChars = /^[A-Za-z0-9\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\s\-\(\)\uFF08\uFF09\/\.&]+$/;
 
       if (!formData.companyName?.trim()) {
         newErrors.companyName = t('請輸入公司名稱', 'Please enter company name', '请输入公司名称');
@@ -161,6 +164,9 @@ export default function OccupationInfo() {
         newErrors.yearsOfService = t('請輸入有效的從業年限', 'Please enter valid years of service', '请输入有效的从业年限');
       }
       if (!formData.industry) newErrors.industry = t('請選擇行業', 'Please select industry', '请选择行业');
+      if (formData.industry === '其他 / Other' && !formData.industryOther?.trim()) {
+        newErrors.industryOther = t('請填寫行業詳情', 'Please specify industry details', '请填写行业详情');
+      }
       if (!formData.companyAddress?.trim()) newErrors.companyAddress = t('請輸入公司地址', 'Please enter company address', '请输入公司地址');
 
       // Office phone / fax: digits only (optional)
@@ -227,6 +233,7 @@ const handleSave = () => {
       position: formData.position,
       yearsOfService: formData.yearsOfService ? parseInt(formData.yearsOfService) : undefined,
       industry: formData.industry,
+      industryOther: formData.industry === '其他 / Other' ? formData.industryOther : undefined,
       companyAddress: formData.companyAddress,
       officePhone: formData.officePhone,
       officeFaxNo: formData.officeFaxNo,
@@ -254,6 +261,7 @@ const handleSave = () => {
       position: needsEmploymentDetails ? formData.position : undefined,
       yearsOfService: needsEmploymentDetails ? parseInt(formData.yearsOfService) : undefined,
       industry: needsEmploymentDetails ? formData.industry : undefined,
+      industryOther: needsEmploymentDetails && formData.industry === '其他 / Other' ? formData.industryOther : undefined,
       companyAddress: needsEmploymentDetails ? formData.companyAddress : undefined,
       officePhone: needsEmploymentDetails ? formData.officePhone : undefined,
       officeFaxNo: needsEmploymentDetails ? formData.officeFaxNo : undefined,
@@ -451,6 +459,20 @@ const handleSave = () => {
                   </SelectContent>
                 </Select>
                 {errors.industry && <p className="text-sm text-destructive">{errors.industry}</p>}
+                {formData.industry === '其他 / Other' && (
+                  <div className="mt-2">
+                    <Input
+                      value={formData.industryOther}
+                      onChange={(e) => {
+                        setFormData({ ...formData, industryOther: e.target.value });
+                        if (errors.industryOther) setErrors({ ...errors, industryOther: "" });
+                      }}
+                      placeholder={t('請填寫行業詳情', 'Please specify industry', '请填写行业详情')}
+                      className={errors.industryOther ? "border-destructive" : ""}
+                    />
+                    {errors.industryOther && <p className="text-sm text-destructive">{errors.industryOther}</p>}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -648,6 +670,20 @@ const handleSave = () => {
                       </SelectContent>
                     </Select>
                     {errors.secondIndustry && <p className="text-sm text-destructive">{errors.secondIndustry}</p>}
+                    {secondFormData.industry === '其他 / Other' && (
+                      <div className="mt-2">
+                        <Input
+                          value={secondFormData.industryOther}
+                          onChange={(e) => {
+                            setSecondFormData({ ...secondFormData, industryOther: e.target.value });
+                            if (errors.secondIndustryOther) setErrors({ ...errors, secondIndustryOther: "" });
+                          }}
+                          placeholder={t('請填寫行業詳情', 'Please specify industry', '请填写行业详情')}
+                          className={errors.secondIndustryOther ? "border-destructive" : ""}
+                        />
+                        {errors.secondIndustryOther && <p className="text-sm text-destructive">{errors.secondIndustryOther}</p>}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="space-y-2">

@@ -1541,6 +1541,8 @@ export async function syncMissingTables() {
     try { await db.execute(sql`ALTER TABLE occupation_info ADD COLUMN mobilePhone VARCHAR(50)`); } catch {}
     try { await db.execute(sql`ALTER TABLE occupation_info ADD COLUMN phoneCountryCode VARCHAR(10)`); } catch {}
     try { await db.execute(sql`ALTER TABLE occupation_info ADD COLUMN correspondenceAddress TEXT`); } catch {}
+    // Add industryOther to occupation_info
+    try { await db.execute(sql`ALTER TABLE occupation_info ADD COLUMN industryOther VARCHAR(200)`); } catch {}
     // Expand employmentStatus enum to include retired/housewife/others
     try {
       await db.execute(sql`ALTER TABLE occupation_info MODIFY COLUMN employmentStatus ENUM('employed','self_employed','retired','student','housewife','others','unemployed') NOT NULL`);

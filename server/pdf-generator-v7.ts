@@ -606,7 +606,7 @@ export async function generateApplicationPDF(data: ApplicationPDFData): Promise<
         row4('公司名稱 Company Name', oc?.companyName || '-',
              '職位 Position', oc?.position || '-');
         row4('從業年限 Years of Service', oc?.yearsOfService || '-',
-             '行業 Industry', oc?.industry || '-');
+             '行業 Industry', (oc?.industry || '-') + (oc?.industryOther ? ` (${oc.industryOther})` : ''));
         row4wide('辦公地址 Office Address', oc?.companyAddress || '-');
         row4('辦公電話 Office Phone', oc?.officePhone || '-',
              '辦公傳真 Office Fax', oc?.officeFaxNo || '-');

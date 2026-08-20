@@ -758,6 +758,7 @@ export const appRouter = router({
         position: z.string().optional(),
         yearsOfService: z.number().optional(),
         industry: z.string().optional(),
+        industryOther: z.string().optional(),
         companyAddress: z.string().optional(),
         officePhone: z.string().optional(),
         officeFaxNo: z.string().optional(),
@@ -771,7 +772,7 @@ export const appRouter = router({
         if (!application || application.userId !== ctx.user.id) {
           throw new Error("申请不存在或无权访问");
         }
-        
+
         await db.saveOccupationInfo(applicationId, data);
         await db.updateApplicationStep(applicationId, 5);
         
@@ -1598,6 +1599,7 @@ export const appRouter = router({
               companyAddress: applicationData.occupation.companyAddress,
               position: applicationData.occupation.position,
               industry: applicationData.occupation.industry,
+              industryOther: applicationData.occupation.industryOther,
               yearsOfService: applicationData.occupation.yearsOfService?.toString() || null,
               officePhone: applicationData.occupation.officePhone,
               officeFaxNo: applicationData.occupation.officeFaxNo,
