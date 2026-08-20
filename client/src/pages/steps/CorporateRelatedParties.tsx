@@ -15,7 +15,7 @@ import { useLang } from '@/lib/i18n';
 
 interface RelatedParty {
   id: string;
-  relationshipType: "director" | "shareholder" | "beneficial_owner" | "authorized_signatory" | "other";
+  relationshipType: string; // comma-separated: "director,shareholder"
   relationshipTypeOther?: string;
   isDefaultContact: boolean;
   name: string;
@@ -61,7 +61,7 @@ const idIssuingCountriesData = [
 
 const defaultParty = (): RelatedParty => ({
   id: crypto.randomUUID(),
-  relationshipType: "director",
+  relationshipType: "",
   relationshipTypeOther: "",
   isDefaultContact: false,
   name: "",
@@ -231,7 +231,7 @@ export default function CorporateRelatedParties() {
 
   const validateParty = (party: RelatedParty, forSave: boolean = false) => {
     const errs: Record<string, string> = {};
-    if (!party.relationshipType) errs.relationshipType = t('請選擇關係類型', 'Please select relationship type', '请选择关系类型');
+    if (!party.relationshipType || party.relationshipType.length === 0) errs.relationshipType = t('請至少選擇一種關係類型', 'Please select at least one relationship type', '请至少选择一种关系类型');
     if (!party.name) errs.name = t('請輸入姓名', 'Please enter name', '请输入姓名');
     if (!party.gender) errs.gender = t('請選擇性別', 'Please select gender', '请选择性别');
 
@@ -298,7 +298,7 @@ export default function CorporateRelatedParties() {
 
   const validateRequiredTypes = (parties: RelatedParty[]): boolean => {
     const missing = requiredTypes
-      .filter(rt => !parties.some(p => p.relationshipType === rt.key))
+      .filter(rt => !parties.some(p => (p.relationshipType || '').split(',').includes(rt.key)))
       .map(rt => rt.label);
     setMissingTypes(missing);
     return missing.length === 0;
@@ -443,7 +443,10 @@ export default function CorporateRelatedParties() {
                 <div>
                   <p className="font-medium">{party.name}</p>
                   <p className="text-sm text-slate-500">
-                    {party.relationshipType === 'director' ? t('董事', 'Director', '董事') : party.relationshipType === 'shareholder' ? t('股東', 'Shareholder', '股东') : party.relationshipType === 'beneficial_owner' ? t('最終受益人', 'Beneficial Owner', '最终受益人') : party.relationshipType === 'authorized_signatory' ? t('授權簽署人', 'Authorized Signatory', '授权签署人') : t('其他', 'Other', '其他')}
+                    {(party.relationshipType || '').split(',').map(rt => {
+                      const labelMap: Record<string, string> = { director: t('董事', 'Director', '董事'), shareholder: t('股東', 'Shareholder', '股东'), beneficial_owner: t('最終受益人', 'Beneficial Owner', '最终受益人'), authorized_signatory: t('授權簽署人', 'Authorized Signatory', '授权签署人'), other: t('其他', 'Other', '其他') };
+                      return labelMap[rt] || rt;
+                    }).join(' / ')}
                   </p>
                 </div>
                 <div className="flex items-center gap-1">
@@ -465,24 +468,39 @@ export default function CorporateRelatedParties() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
-              <Label>{t('關係類型', 'Relationship Type', '关系类型')} <span className="text-destructive">*</span></Label>
-              <div className="flex gap-2">
-                <Select value={currentParty.relationshipType} onValueChange={(v: any) => setCurrentParty({ ...currentParty, relationshipType: v })}>
-                  <SelectTrigger><SelectValue placeholder={t('選擇類型', 'Select type', '选择类型')} /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="director">{t('董事', 'Director', '董事')}</SelectItem>
-                    <SelectItem value="shareholder">{t('股東', 'Shareholder', '股东')}</SelectItem>
-                    <SelectItem value="beneficial_owner">{t('最終受益人', 'Beneficial Owner', '最终受益人')}</SelectItem>
-                    <SelectItem value="authorized_signatory">{t('授權簽署人', 'Authorized Signatory', '授权签署人')}</SelectItem>
-                    <SelectItem value="other">{t('其他', 'Other', '其他')}</SelectItem>
-                  </SelectContent>
-                </Select>
-                {currentParty.relationshipType === "other" && (
+              <Label>{t('關係類型', 'Relationship Type', '关系类型')} <span className="text-destructive">*</span> ({t('可多選', 'Multiple selection', '可多选')})</Label>
+              <div className="grid grid-cols-1 gap-2 bg-slate-50 p-3 rounded-lg border">
+                {[
+                  { value: "director", label: t('董事', 'Director', '董事') },
+                  { value: "shareholder", label: t('股東', 'Shareholder', '股东') },
+                  { value: "beneficial_owner", label: t('最終受益人', 'Beneficial Owner', '最终受益人') },
+                  { value: "authorized_signatory", label: t('授權簽署人', 'Authorized Signatory', '授权签署人') },
+                  { value: "other", label: t('其他', 'Other', '其他') },
+                ].map(opt => {
+                  const selected = (currentParty.relationshipType || '').split(',').filter(Boolean);
+                  const checked = selected.includes(opt.value);
+                  return (
+                    <div key={opt.value} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`rt-${opt.value}`}
+                        checked={checked}
+                        onCheckedChange={(v) => {
+                          const newSelected = v
+                            ? [...selected, opt.value]
+                            : selected.filter(s => s !== opt.value);
+                          setCurrentParty({ ...currentParty, relationshipType: newSelected.join(',') });
+                        }}
+                      />
+                      <Label htmlFor={`rt-${opt.value}`} className="text-sm font-normal cursor-pointer">{opt.label}</Label>
+                    </div>
+                  );
+                })}
+                {(currentParty.relationshipType || '').includes("other") && (
                   <Input
                     value={currentParty.relationshipTypeOther || ""}
                     onChange={e => setCurrentParty({ ...currentParty, relationshipTypeOther: e.target.value })}
                     placeholder={t('請輸入關係類型', 'Enter relationship type', '请输入关系类型')}
-                    className="flex-1"
+                    className="mt-1"
                   />
                 )}
               </div>
@@ -536,7 +554,8 @@ export default function CorporateRelatedParties() {
             </div>
 
             <div className="space-y-3">
-              <Label>{t('出生日期', 'Date of Birth', '出生日期')} <span className="text-destructive">*</span> ({t('必須年滿18歲', 'Must be at least 18', '必须年满18岁')})</Label>
+              <Label>{t('出生日期', 'Date of Birth', '出生日期')} <span className="text-destructive">*</span></Label>
+              <p className="text-xs text-muted-foreground -mt-2">{t('必須年滿18歲', 'Must be at least 18', '必须年满18岁')}</p>
               <Input 
                 type="date" 
                 value={currentParty.dateOfBirth} 
