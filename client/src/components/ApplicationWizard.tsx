@@ -29,7 +29,23 @@ const individualSteps: Step[] = [
   { id: 13, title: "監管聲明", description: "簽署協議" },
 ];
 
-const corporateSteps: Step[] = [
+// 公司專業投資者 Corporate PI (有風險評估)
+const corporatePiSteps: Step[] = [
+  { id: 1, title: "客戶與賬戶類型", description: "選擇客戶與賬戶類型" },
+  { id: 2, title: "公司基本信息", description: "填寫公司基本資料" },
+  { id: 3, title: "公司財務狀況", description: "填寫公司財務資料" },
+  { id: 4, title: "公司投資經驗與目標", description: "填寫投資經驗與目標" },
+  { id: 5, title: "關聯人士信息", description: "填寫董事及授權人資料" },
+  { id: 6, title: "風險評估問卷", description: "完成風險評估" },
+  { id: 7, title: "結算銀行賬戶", description: "添加公司銀行賬戶" },
+  { id: 8, title: "稅務信息", description: "填寫公司稅務資料" },
+  { id: 9, title: "文件上傳", description: "上傳公司證明文件" },
+  { id: 10, title: "客戶聲明", description: "填寫客戶聲明" },
+  { id: 11, title: "監管聲明", description: "公司蓋章與簽署" },
+];
+
+// 機構專業投資者 Institutional PI (無風險評估)
+const institutionalPiSteps: Step[] = [
   { id: 1, title: "客戶與賬戶類型", description: "選擇客戶與賬戶類型" },
   { id: 2, title: "公司基本信息", description: "填寫公司基本資料" },
   { id: 3, title: "公司財務狀況", description: "填寫公司財務資料" },
@@ -57,6 +73,7 @@ interface ApplicationWizardProps {
   nextLabel?: string;
   showReturnToPreview?: boolean;
   customerTypeOverride?: "individual" | "joint" | "corporate";
+  corporateSubTypeOverride?: "corporate_pi" | "institutional_pi" | "";
 }
 
 export default function ApplicationWizard({
@@ -74,6 +91,7 @@ export default function ApplicationWizard({
   nextLabel = "下一步",
   showReturnToPreview = false,
   customerTypeOverride,
+  corporateSubTypeOverride,
 }: ApplicationWizardProps) {
   const [, setLocation] = useLocation();
 
@@ -93,19 +111,28 @@ export default function ApplicationWizard({
 
   // 根據客戶類型選擇步驟列表
   const customerType = customerTypeOverride || accountSelection?.customerType || 'individual';
-  const steps = customerType === 'corporate' ? corporateSteps : individualSteps;
+  const corporateSubType = corporateSubTypeOverride || accountSelection?.corporateSubType || '';
+
+  let steps: Step[];
+  if (customerType === 'corporate') {
+    steps = corporateSubType === 'institutional_pi' ? institutionalPiSteps : corporatePiSteps;
+  } else {
+    steps = individualSteps;
+  }
   // Step 4 (OccupationInfo) now displays as its own step
   const displayStep = currentStep;
   const stepIndex = steps.findIndex(s => s.id === displayStep);
   const progress = ((stepIndex + 1) / steps.length) * 100;
   const currentStepInfo = steps.find(s => s.id === displayStep);
 
+  const maxStep = steps[steps.length - 1]?.id || 1;
+
   const handlePrevious = () => {
     if (onPrevious) {
       onPrevious();
     } else if (currentStep > 1) {
-      // Skip step 11 (人臉識別 - temporarily hidden)
-      const prevStep = currentStep === 12 ? 10 : currentStep - 1;
+      // 個人流程跳過步驟11（人臉識別 - 暫時隱藏）
+      const prevStep = (customerType !== 'corporate' && currentStep === 12) ? 10 : currentStep - 1;
       setLocation(`/application/${applicationId}/step/${prevStep}`);
     }
   };
@@ -114,9 +141,9 @@ export default function ApplicationWizard({
     if (onNext) {
       onNext();
     } else {
-      // Skip step 11 (人臉識別 - temporarily hidden)
-      const nextStep = currentStep === 10 ? 12 : currentStep + 1;
-      if (nextStep <= 13) {
+      // 個人流程跳過步驟11（人臉識別 - 暫時隱藏）
+      const nextStep = (customerType !== 'corporate' && currentStep === 10) ? 12 : currentStep + 1;
+      if (nextStep <= maxStep) {
         setLocation(`/application/${applicationId}/step/${nextStep}`);
       }
     }

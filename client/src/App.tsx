@@ -78,25 +78,44 @@ function StepRouter() {
   }
 
   const customerType = accountSelection?.customerType || 'individual';
+  const corporateSubType = accountSelection?.corporateSubType || '';
 
   // Step 1 始终是账号选择
   if (stepNum === 1) return <AccountSelection />;
 
   if (customerType === 'corporate') {
-    switch (stepNum) {
-      case 2: return <CorporateBasicInfo />;
-      case 3: return <CorporateFinancial applicationId={applicationId} stepNum={stepNum} />; // 公司財務狀況
-      case 4: return <CorporateInvestment applicationId={applicationId} stepNum={stepNum} />; // 公司投資經驗與目標
-      case 5: return <CorporateRelatedParties />; // 关联人士
-      case 6: return <BankAccount />;
-      case 7: return <TaxInfo />;
-      case 8: return <DocumentUpload />;
-      case 9: return <ClientDeclaration />;
-      case 10: return <RegulatoryDeclaration />;
-      default: return <NotFound />;
+    if (corporateSubType === 'institutional_pi') {
+      // 機構專業投資者 (無風險評估，10步)
+      switch (stepNum) {
+        case 2: return <CorporateBasicInfo />;
+        case 3: return <CorporateFinancial applicationId={applicationId} stepNum={stepNum} />;
+        case 4: return <CorporateInvestment applicationId={applicationId} stepNum={stepNum} />;
+        case 5: return <CorporateRelatedParties />;
+        case 6: return <BankAccount />;
+        case 7: return <TaxInfo />;
+        case 8: return <DocumentUpload />;
+        case 9: return <ClientDeclaration />;
+        case 10: return <RegulatoryDeclaration />;
+        default: return <NotFound />;
+      }
+    } else {
+      // 公司專業投資者 corporate_pi (有風險評估，11步)
+      switch (stepNum) {
+        case 2: return <CorporateBasicInfo />;
+        case 3: return <CorporateFinancial applicationId={applicationId} stepNum={stepNum} />;
+        case 4: return <CorporateInvestment applicationId={applicationId} stepNum={stepNum} />;
+        case 5: return <CorporateRelatedParties />;
+        case 6: return <RiskQuestionnaire />;
+        case 7: return <BankAccount />;
+        case 8: return <TaxInfo />;
+        case 9: return <DocumentUpload />;
+        case 10: return <ClientDeclaration />;
+        case 11: return <RegulatoryDeclaration />;
+        default: return <NotFound />;
+      }
     }
   } else {
-    // 个人开户流程 (12步，步骤3含个人详细+职业信息)
+    // 个人/联名开户流程 (13步，步骤11人臉識別暫時隱藏)
     switch (stepNum) {
       case 2: return <PersonalBasicInfo />;
       case 3: return <PersonalDetailedInfo />;
