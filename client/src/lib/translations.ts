@@ -255,7 +255,7 @@ export function getRiskToleranceDescription(riskLevel: string | null | undefined
     R3: 'R3 - 中風險：在一定時間內，本金安全具有一定的不穩定性，基金淨值會有適度波動，或造成一定的本金虧損',
     R4: 'R4 - 中高風險：在一定時間內，本金安全的不穩定性相對較高，基金淨值會有較高波動，或造成較大的本金虧損',
     R5: 'R5 - 高風險：在一定的時間內，本金安全的不穩定性很高，基金淨值會有高度波動，或造成很大的本金虧損',
-    R6: 'R6 - 極高風險：在一定時間內，本金安全極度不穩定，可能造成絕大部分甚至全部本金虧損',
+    R6: 'R6 - 高風險：在一定的時間內，本金安全的不穩定性很高，基金淨值會有高度波動，或造成很大的本金虧損',
   };
   
   return descriptions[riskLevel] || translate(riskLevel);
