@@ -310,7 +310,7 @@ export default function CorporateRelatedParties() {
     // Convert name to Traditional Chinese
     const convertedParty = {
       ...currentParty,
-      name: convertToTraditional(currentParty.name),
+      name: currentParty.name,
       address: convertToTraditional(currentParty.address),
       idTypeOther: currentParty.idTypeOther ? convertToTraditional(currentParty.idTypeOther) : undefined,
       idIssuingPlaceOther: currentParty.idIssuingPlaceOther ? convertToTraditional(currentParty.idIssuingPlaceOther) : undefined,
@@ -356,7 +356,7 @@ export default function CorporateRelatedParties() {
       // If no saved parties, try to save current form
       const convertedParty = {
         ...currentParty,
-        name: convertToTraditional(currentParty.name),
+        name: currentParty.name,
         address: convertToTraditional(currentParty.address),
       };
       if (validateParty(convertedParty)) {
@@ -380,7 +380,7 @@ export default function CorporateRelatedParties() {
     if (savedParties.length === 0) {
       const convertedParty = {
         ...currentParty,
-        name: convertToTraditional(currentParty.name),
+        name: currentParty.name,
         address: convertToTraditional(currentParty.address),
       };
       if (validateParty(convertedParty)) {
@@ -526,7 +526,7 @@ export default function CorporateRelatedParties() {
                 value={currentParty.name}
                 onChange={e => setCurrentParty({ ...currentParty, name: e.target.value })}
                 onBlur={() => {
-                  const converted = convertToTraditional(currentParty.name.toUpperCase());
+                  const converted = currentParty.name;
                   setCurrentParty({ ...currentParty, name: converted });
                 }}
               />
