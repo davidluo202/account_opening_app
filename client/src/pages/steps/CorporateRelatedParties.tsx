@@ -232,7 +232,8 @@ export default function CorporateRelatedParties() {
   const validateParty = (party: RelatedParty, forSave: boolean = false) => {
     const errs: Record<string, string> = {};
     if (!party.relationshipType || party.relationshipType.length === 0) errs.relationshipType = t('請至少選擇一種關係類型', 'Please select at least one relationship type', '请至少选择一种关系类型');
-    if (!party.name) errs.name = t('請輸入姓名', 'Please enter name', '请输入姓名');
+    // 中文姓名非必填（客户可能持外国护照）
+    // if (!party.name) errs.name = t('請輸入姓名', 'Please enter name', '请输入姓名');
     if (!party.gender) errs.gender = t('請選擇性別', 'Please select gender', '请选择性别');
 
     if (!party.dateOfBirth) {
@@ -468,7 +469,8 @@ export default function CorporateRelatedParties() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
-              <Label>{t('關係類型', 'Relationship Type', '关系类型')} <span className="text-destructive">*</span> ({t('可多選', 'Multiple selection', '可多选')})</Label>
+              <Label className="block">{t('關係類型', 'Relationship Type', '关系类型')} <span className="text-destructive">*</span></Label>
+              <p className="text-xs text-muted-foreground -mt-2">{t('可多選', 'Multiple selection', '可多选')}</p>
               <div className="grid grid-cols-1 gap-2 bg-slate-50 p-3 rounded-lg border">
                 {[
                   { value: "director", label: t('董事', 'Director', '董事') },
@@ -519,7 +521,7 @@ export default function CorporateRelatedParties() {
             </div>
 
             <div className="space-y-3">
-              <Label>{t('中文姓名', 'Chinese Name', '中文姓名')} <span className="text-destructive">*</span></Label>
+              <Label>{t('中文姓名', 'Chinese Name', '中文姓名')}</Label>
               <Input
                 value={currentParty.name}
                 onChange={e => setCurrentParty({ ...currentParty, name: e.target.value })}
