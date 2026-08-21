@@ -571,7 +571,9 @@ export async function saveCorporateInvestmentInfo(applicationId: number, data: a
       )`);
       _corpInvTableCreated = true;
     }
-    const fields = ['investmentObjectives','investmentObjectivesOther','estimatedInvestmentAmount','riskVolatility','investmentExperience','knowledgeOfDerivatives','experiencedProducts','experiencedProductsOther','assetItems','assetItemsOther'];
+    // Add tradingRegions column if not exists
+    try { await conn.execute('ALTER TABLE corporate_investment_info ADD COLUMN tradingRegions TEXT'); } catch { /* exists */ }
+    const fields = ['investmentObjectives','investmentObjectivesOther','estimatedInvestmentAmount','riskVolatility','investmentExperience','knowledgeOfDerivatives','experiencedProducts','experiencedProductsOther','assetItems','assetItemsOther','tradingRegions'];
     const values = fields.map(f => data[f] ?? null);
     const setClauses = fields.map(f => `\`${f}\` = VALUES(\`${f}\`)`).join(', ');
     await conn.execute(

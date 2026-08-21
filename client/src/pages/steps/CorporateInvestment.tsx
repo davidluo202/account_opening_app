@@ -89,6 +89,7 @@ export default function CorporateInvestment({ applicationId, stepNum }: Props) {
   const [knowledgeOfDerivatives, setKnowledgeOfDerivatives] = useState("");
   const [experiencedProducts, setExperiencedProducts] = useState<string[]>([]);
   const [experiencedProductsOther, setExperiencedProductsOther] = useState("");
+  const [tradingRegions, setTradingRegions] = useState<Record<string, string>>({});
   const [assetItems, setAssetItems] = useState<string[]>([]);
   const [assetItemsOther, setAssetItemsOther] = useState("");
 
@@ -115,6 +116,7 @@ export default function CorporateInvestment({ applicationId, stepNum }: Props) {
       setKnowledgeOfDerivatives(existingData.knowledgeOfDerivatives || "");
       setExperiencedProductsOther(existingData.experiencedProductsOther || "");
       setAssetItemsOther(existingData.assetItemsOther || "");
+      try { setTradingRegions(JSON.parse(existingData.tradingRegions || "{}")); } catch { /* ignore */ }
     }
   }, [existingData]);
 
@@ -160,6 +162,7 @@ export default function CorporateInvestment({ applicationId, stepNum }: Props) {
     experiencedProductsOther,
     assetItems,
     assetItemsOther,
+    tradingRegions: JSON.stringify(tradingRegions),
   });
 
   if (isLoading) {
@@ -273,18 +276,38 @@ export default function CorporateInvestment({ applicationId, stepNum }: Props) {
         {/* 曾投資產品 */}
         <div className="space-y-4">
           <div>
-            <Label className="text-base font-semibold text-slate-800">{t('曾投資產品', 'Experienced Products', '曾投资产品')} <span className="text-destructive">*</span></Label>
+            <Label className="text-base font-semibold text-slate-800">{t('投資產品經驗', 'Investment Product Experience', '投资产品经验')} <span className="text-destructive">*</span></Label>
+            <p className="text-xs text-muted-foreground mt-1">{t('過往交易經驗（過去1年曾有≥5次交易）', 'Past trading experience (≥5 transactions in the past year)', '过往交易经验（过去1年曾有≥5次交易）')}</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border-2 border-slate-200">
+          <div className="space-y-3 bg-slate-50 p-4 rounded-lg border-2 border-slate-200">
             {experiencedProductsList.map(item => (
-              <div key={item.value} className="flex items-center space-x-3">
-                <Checkbox
-                  id={`inv-experienced-${item.value}`}
-                  className="h-5 w-5 border-2 border-slate-400 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-                  checked={experiencedProducts.includes(item.value)}
-                  onCheckedChange={() => setExperiencedProducts(prev => prev.includes(item.value) ? prev.filter(v => v !== item.value) : [...prev, item.value])}
-                />
-                <Label htmlFor={`inv-experienced-${item.value}`} className="font-medium text-slate-700">{item.label}</Label>
+              <div key={item.value} className="flex items-center gap-3 flex-wrap">
+                <div className="flex items-center space-x-2 min-w-[180px]">
+                  <Checkbox
+                    id={`inv-experienced-${item.value}`}
+                    className="h-5 w-5 border-2 border-slate-400 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                    checked={experiencedProducts.includes(item.value)}
+                    onCheckedChange={() => setExperiencedProducts(prev => prev.includes(item.value) ? prev.filter(v => v !== item.value) : [...prev, item.value])}
+                  />
+                  <Label htmlFor={`inv-experienced-${item.value}`} className="font-medium text-slate-700">{item.label}</Label>
+                </div>
+                {experiencedProducts.includes(item.value) && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-500">{t('交易地區', 'Trading Region', '交易地区')}:</span>
+                    <select
+                      className="text-xs border rounded px-2 py-1"
+                      value={tradingRegions[item.value] || ''}
+                      onChange={e => setTradingRegions(prev => ({ ...prev, [item.value]: e.target.value }))}
+                    >
+                      <option value="">{t('選擇地區', 'Select', '选择地区')}</option>
+                      <option value="HK">{t('香港', 'Hong Kong', '香港')}</option>
+                      <option value="CN">{t('中國內地', 'Chinese Mainland', '中国内地')}</option>
+                      <option value="US">{t('美國', 'United States', '美国')}</option>
+                      <option value="EU">{t('歐洲', 'Europe', '欧洲')}</option>
+                      <option value="OTHER">{t('其他', 'Other', '其他')}</option>
+                    </select>
+                  </div>
+                )}
               </div>
             ))}
           </div>
