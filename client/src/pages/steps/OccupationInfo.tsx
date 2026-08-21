@@ -43,7 +43,9 @@ export default function OccupationInfo() {
     industryOther: "",
     companyAddress: "",
     officePhone: "",
+    officePhoneCode: "+852",
     officeFaxNo: "", // 辦公傳真（可選）
+    officeFaxCode: "+852",
     mobilePhone: "",
     phoneCountryCode: "+852",
     correspondenceAddress: "",
@@ -507,13 +509,28 @@ const handleSave = () => {
                 <Label htmlFor="officePhone">
                   {t('辦公電話', 'Office Phone (Optional)', '办公电话')}
                 </Label>
-                <Input
-                  id="officePhone"
-                  value={formData.officePhone}
-                  onChange={(e) => setFormData({ ...formData, officePhone: e.target.value.replace(/\D/g, "") })}
-                  placeholder={t('請輸入辦公電話', 'Enter office phone', '请输入办公电话')}
-                  className={errors.officePhone ? "border-destructive" : ""}
-                />
+                <div className="flex gap-2">
+                  <select
+                    className="border rounded px-2 py-2 text-sm w-[120px]"
+                    value={formData.officePhoneCode || '+852'}
+                    onChange={(e) => setFormData({ ...formData, officePhoneCode: e.target.value })}
+                  >
+                    <option value="+852">+852 {t('香港', 'HK', '香港')}</option>
+                    <option value="+86">+86 {t('中國', 'CN', '中国')}</option>
+                    <option value="+853">+853 {t('澳門', 'MO', '澳门')}</option>
+                    <option value="+886">+886 {t('台灣', 'TW', '台湾')}</option>
+                    <option value="+1">+1 US/CA</option>
+                    <option value="+44">+44 UK</option>
+                    <option value="+65">+65 SG</option>
+                  </select>
+                  <Input
+                    id="officePhone"
+                    value={formData.officePhone}
+                    onChange={(e) => setFormData({ ...formData, officePhone: e.target.value.replace(/\D/g, "") })}
+                    placeholder={t('請輸入辦公電話', 'Enter office phone', '请输入办公电话')}
+                    className={errors.officePhone ? "border-destructive flex-1" : "flex-1"}
+                  />
+                </div>
                 {errors.officePhone && <p className="text-sm text-destructive">{errors.officePhone}</p>}
               </div>
 
@@ -522,13 +539,28 @@ const handleSave = () => {
                 <Label htmlFor="officeFaxNo">
                   {t('辦公傳真號', 'Office Fax No. (Optional)', '办公传真号')}
                 </Label>
-                <Input
-                  id="officeFaxNo"
-                  value={formData.officeFaxNo}
-                  onChange={(e) => setFormData({ ...formData, officeFaxNo: e.target.value.replace(/\D/g, "") })}
-                  placeholder={t('請輸入辦公傳真號', 'Enter office fax number', '请输入办公传真号')}
-                  className={errors.officeFaxNo ? "border-destructive" : ""}
-                />
+                <div className="flex gap-2">
+                  <select
+                    className="border rounded px-2 py-2 text-sm w-[120px]"
+                    value={formData.officeFaxCode || '+852'}
+                    onChange={(e) => setFormData({ ...formData, officeFaxCode: e.target.value })}
+                  >
+                    <option value="+852">+852 {t('香港', 'HK', '香港')}</option>
+                    <option value="+86">+86 {t('中國', 'CN', '中国')}</option>
+                    <option value="+853">+853 {t('澳門', 'MO', '澳门')}</option>
+                    <option value="+886">+886 {t('台灣', 'TW', '台湾')}</option>
+                    <option value="+1">+1 US/CA</option>
+                    <option value="+44">+44 UK</option>
+                    <option value="+65">+65 SG</option>
+                  </select>
+                  <Input
+                    id="officeFaxNo"
+                    value={formData.officeFaxNo}
+                    onChange={(e) => setFormData({ ...formData, officeFaxNo: e.target.value.replace(/\D/g, "") })}
+                    placeholder={t('請輸入辦公傳真號', 'Enter office fax number', '请输入办公传真号')}
+                    className={errors.officeFaxNo ? "border-destructive flex-1" : "flex-1"}
+                  />
+                </div>
                 {errors.officeFaxNo && <p className="text-sm text-destructive">{errors.officeFaxNo}</p>}
               </div>
             </div>
