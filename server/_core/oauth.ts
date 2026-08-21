@@ -158,6 +158,11 @@ export function registerOAuthRoutes(app: Express) {
           });
           user = await db.getUserByOpenId(openId);
         }
+        // Sync role from SSO (PostgreSQL admin_users) to local MySQL user
+        if (user && ssoUser.role && user.role !== ssoUser.role) {
+          await db.updateUserRole(user.id, ssoUser.role as 'user' | 'admin');
+          user = await db.getUserById(user.id);
+        }
       } else if (!ssoAuthenticated) {
         // Fallback: MySQL auth
         if (!user) {
