@@ -171,9 +171,19 @@ export default function OccupationInfo() {
       }
       if (!formData.companyAddress?.trim()) newErrors.companyAddress = t('請輸入公司地址', 'Please enter company address', '请输入公司地址');
 
-      // Office phone / fax: digits only (optional)
+      // Office phone / fax: digits only (optional) + length check
+      const phoneLengthMap: Record<string, number> = { '+852': 8, '+86': 11, '+853': 8, '+886': 9, '+1': 10, '+44': 10, '+65': 8, '+81': 10, '+61': 9 };
       if (formData.officePhone?.trim() && !/^\d+$/.test(formData.officePhone.trim())) {
         newErrors.officePhone = t('辦公電話只能使用阿拉伯數字', 'Office phone must contain only digits', '办公电话只能使用阿拉伯数字');
+      } else if (formData.officePhone?.trim()) {
+        const expectedLen = phoneLengthMap[formData.officePhoneCode];
+        if (expectedLen && formData.officePhone.trim().length !== expectedLen) {
+          newErrors.officePhone = t(
+            `${formData.officePhoneCode} 號碼應為 ${expectedLen} 位數`,
+            `${formData.officePhoneCode} number should be ${expectedLen} digits`,
+            `${formData.officePhoneCode} 号码应为 ${expectedLen} 位数`
+          );
+        }
       }
       if (formData.officeFaxNo?.trim() && !/^\d+$/.test(formData.officeFaxNo.trim())) {
         newErrors.officeFaxNo = t('辦公傳真號只能使用阿拉伯數字', 'Office fax must contain only digits', '办公传真号只能使用阿拉伯数字');

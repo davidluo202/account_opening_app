@@ -198,21 +198,19 @@ export default function CorporateBasicInfo() {
       const lengthRules: Record<string, number> = {
         "+852": 8,  // 香港
         "+86": 11,  // 中國內地
-        "+1": 10,   // 美國/加拿大（不含區號前綴，這裡按常見10位）
-        "+44": 10,  // 英國（常見10位，不含0）
+        "+853": 8,  // 澳門
+        "+886": 9,  // 台灣
+        "+1": 10,   // 美國/加拿大
+        "+44": 10,  // 英國
         "+65": 8,   // 新加坡
-        "+81": 10,  // 日本（常見10位，不含0）
-        "+82": 10,  // 韓國（常見10位，不含0）
+        "+81": 10,  // 日本
+        "+61": 9,   // 澳洲
+        "+82": 10,  // 韓國
       };
 
       const requiredLen = lengthRules[code];
-      // 香港電話允許少於8位，其他嚴格校驗位數
-      if (code === "+852") {
-        if (phone.length > 8) {
-          newErrors[field] = t(`電話號碼格式錯誤：${code} 不能超過8位`, `Invalid phone format: ${code} cannot exceed 8 digits`, `电话号码格式错误：${code} 不能超过8位`);
-        }
-      } else if (requiredLen && phone.length !== requiredLen) {
-        newErrors[field] = t(`電話號碼格式錯誤：${code} 需輸入${requiredLen}位阿拉伯數字`, `Invalid phone format: ${code} requires ${requiredLen} digits`, `电话号码格式错误：${code} 需输入${requiredLen}位阿拉伯数字`);
+      if (requiredLen && phone.length !== requiredLen) {
+        newErrors[field] = t(`${code} 號碼應為 ${requiredLen} 位數`, `${code} number should be ${requiredLen} digits`, `${code} 号码应为 ${requiredLen} 位数`);
       }
     };
 
