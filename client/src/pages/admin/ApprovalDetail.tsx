@@ -158,7 +158,11 @@ export default function ApprovalDetail() {
     }
     
     // 检查风险评级是否与客户自评一致
-    const customerRisk = extractRiskCode(applicationData?.financial?.riskTolerance);
+    // Use questionnaire-calculated risk level (not self-selected riskTolerance)
+    const rqScore = applicationData?.riskQuestionnaire?.totalScore || 0;
+    const customerRisk = rqScore > 0
+      ? (rqScore <= 99 ? 'R1' : rqScore <= 199 ? 'R2' : rqScore <= 299 ? 'R3' : rqScore <= 399 ? 'R4' : rqScore <= 599 ? 'R5' : 'R6')
+      : extractRiskCode(applicationData?.financial?.riskTolerance);
     if (customerRisk && customerRisk !== approvedRiskProfile) {
       setShowRiskWarningDialog(true);
     } else {
@@ -1152,9 +1156,16 @@ export default function ApprovalDetail() {
                 <div className="flex-1">
                   <p className="font-medium text-yellow-800">风险评级差异</p>
                   <div className="mt-2 text-sm text-yellow-700 space-y-1">
-                    <p>客户自评风险等级：
+                    <p>客户风险评估问卷等级：
                       <span className="font-semibold">
-                        {getRiskToleranceDescription(applicationData?.financial?.riskTolerance || '')}
+                        {(() => {
+                          const s = applicationData?.riskQuestionnaire?.totalScore || 0;
+                          if (s > 0) {
+                            const code = s <= 99 ? 'R1' : s <= 199 ? 'R2' : s <= 299 ? 'R3' : s <= 399 ? 'R4' : s <= 599 ? 'R5' : 'R6';
+                            return getRiskToleranceDescription(code);
+                          }
+                          return getRiskToleranceDescription(applicationData?.financial?.riskTolerance || '');
+                        })()}
                       </span>
                     </p>
                     <p>审批人员评定风险等级：
