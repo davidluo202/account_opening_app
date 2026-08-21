@@ -260,7 +260,7 @@ export default function ApplicationPreview() {
     );
   }
 
-  const { application, accountSelection, basicInfo: personalBasic, corporateBasic, detailedInfo: personalDetailed, occupation, employment, financial, corporateFinancial, corporateInvestment, bankAccounts, taxInfo, riskQuestionnaire, uploadedDocuments: documents, face: faceVerification, regulatory, relatedParties, personalClientDeclaration } = completeData;
+  const { application, accountSelection, basicInfo: personalBasic, corporateBasic, detailedInfo: personalDetailed, occupation, employment, financial, corporateFinancial, corporateInvestment, bankAccounts, taxInfo, riskQuestionnaire, uploadedDocuments: documents, face: faceVerification, regulatory, relatedParties, personalClientDeclaration, piAssessment } = completeData;
 
   // 判断是否为機構客戶
   const isCorporate = accountSelection?.customerType === 'corporate';
@@ -819,6 +819,67 @@ export default function ApplicationPreview() {
                 <div className="p-6 text-center text-gray-500">{t('未添加關聯人士', 'No related parties added', '未添加关联人士')}</div>
               )}
             </div>
+
+            {/* 5. 專業投資者評估 (Institutional PI only) */}
+            {accountSelection?.corporateSubType === 'institutional_pi' && (() => {
+              const piData = piAssessment?.assessment_data
+                ? (typeof piAssessment.assessment_data === 'string' ? JSON.parse(piAssessment.assessment_data) : piAssessment.assessment_data)
+                : null;
+              const classMap: Record<string, string> = { type_a: 'Type A: 個人 Individual', type_b: 'Type B: 法團/合夥 Corporate/Partnership', type_c: 'Type C: 信託法團 Trust Corporation', type_d: 'Type D: 其他法團 Other Corporation' };
+              const yearsMap: Record<string, string> = { '<2': '少於2年', '2-5': '2-5年', '5-10': '5-10年', '>10': '10年以上' };
+              const portfolioMap: Record<string, string> = { a: '< HK$500,000', b: 'HK$500,001 – HK$999,999', c: 'HK$1,000,000 – HK$7,999,999', d: 'HK$8,000,000 – HK$39,999,999', e: '> HK$40,000,000' };
+              const regionMap: Record<string, string> = { hong_kong: '香港', mainland_china: '中國內地', usa: '美國', europe: '歐洲', other: '其他' };
+              const productMap: Record<string, string> = { equities: '股票', futures_options: '期貨及期權', cbb: '牛熊證', funds: '基金', bonds: '債券', equity_linked: '股票掛鈎產品', others: '其他' };
+              return (
+                <div className="border-b">
+                  <div className="bg-blue-50 p-3 border-b">
+                    <h3 className="font-bold flex items-center justify-between">
+                      <span>5. 專業投資者評估 Professional Investor Assessment</span>
+                      <Button variant="ghost" size="sm" onClick={() => handleEdit(6)}>
+                        編輯
+                      </Button>
+                    </h3>
+                  </div>
+                  {piData ? (
+                    <table className="w-full min-w-[800px]">
+                      <tbody>
+                        <tr className="border-b">
+                          <td className="p-3 bg-gray-50 font-semibold w-1/4 border-r">PI類別 Classification</td>
+                          <td className="p-3" colSpan={3}>{classMap[piData.piClassification] || piData.piClassification || "-"}</td>
+                        </tr>
+                        <tr className="border-b">
+                          <td className="p-3 bg-gray-50 font-semibold border-r">投資經驗年限 Years of Experience</td>
+                          <td className="p-3" colSpan={3}>{yearsMap[piData.yearsOfExperience] || piData.yearsOfExperience || "-"}</td>
+                        </tr>
+                        <tr className="border-b">
+                          <td className="p-3 bg-gray-50 font-semibold border-r">投資組合總值 Portfolio Value</td>
+                          <td className="p-3" colSpan={3}>{portfolioMap[piData.portfolioValue] || piData.portfolioValue || "-"}</td>
+                        </tr>
+                        <tr className="border-b">
+                          <td className="p-3 bg-gray-50 font-semibold border-r">投資產品經驗 Product Experience</td>
+                          <td className="p-3" colSpan={3}>
+                            {piData.productExperiences ? (() => {
+                              const items = Object.entries(piData.productExperiences)
+                                .filter(([, v]: [string, any]) => v.hasExperience)
+                                .map(([k, v]: [string, any]) => `${productMap[k] || k}${v.tradingRegion ? ` (${regionMap[v.tradingRegion] || v.tradingRegion})` : ''}`);
+                              return items.length > 0 ? items.join(', ') : '-';
+                            })() : '-'}
+                          </td>
+                        </tr>
+                        <tr className="border-b">
+                          <td className="p-3 bg-gray-50 font-semibold border-r">授權簽署人 Authorized Signor</td>
+                          <td className="p-3 border-r">{piData.signorName || "-"}</td>
+                          <td className="p-3 bg-gray-50 font-semibold border-r">職銜 Title</td>
+                          <td className="p-3">{piData.signorTitle || "-"}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  ) : (
+                    <div className="p-6 text-center text-gray-500">{t('未填寫專業投資者評估', 'PI Assessment not completed', '未填写专业投资者评估')}</div>
+                  )}
+                </div>
+              );
+            })()}
           </>
           ) : (
           <div className="border-b">

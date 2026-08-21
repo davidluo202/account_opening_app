@@ -607,6 +607,37 @@ export async function getCorporateRelatedParties(applicationId: number) {
   } catch { return null; }
 }
 
+// === PI Assessment ===
+let _piAssessmentTableCreated = false;
+export async function savePIAssessment(applicationId: number, assessmentData: string) {
+  const mysql2 = await import('mysql2/promise');
+  const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+  try {
+    if (!_piAssessmentTableCreated) {
+      await conn.execute(`CREATE TABLE IF NOT EXISTS pi_assessment (
+        id INT AUTO_INCREMENT PRIMARY KEY, applicationId INT NOT NULL UNIQUE,
+        assessment_data JSON NOT NULL,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+      )`);
+      _piAssessmentTableCreated = true;
+    }
+    await conn.execute(
+      `INSERT INTO pi_assessment (applicationId, assessment_data) VALUES (?, ?) ON DUPLICATE KEY UPDATE assessment_data = VALUES(assessment_data)`,
+      [applicationId, assessmentData]
+    );
+  } finally { await conn.end(); }
+}
+export async function getPIAssessment(applicationId: number) {
+  try {
+    const mysql2 = await import('mysql2/promise');
+    const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+    const [rows] = await conn.execute('SELECT * FROM pi_assessment WHERE applicationId = ? LIMIT 1', [applicationId]);
+    await conn.end();
+    return (rows as any[]).length > 0 ? (rows as any[])[0] : null;
+  } catch { return null; }
+}
+
 export async function savePersonalDetailedInfo(applicationId: number, data: any) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
@@ -787,7 +818,8 @@ export async function getCompleteApplicationData(applicationId: number) {
     documents,
     face,
     regulatory,
-    personalClientDecl
+    personalClientDecl,
+    piAssessmentData
   ] = await Promise.all([
     getApplicationById(applicationId),
     getAccountSelection(applicationId),
@@ -802,7 +834,8 @@ export async function getCompleteApplicationData(applicationId: number) {
     getUploadedDocuments(applicationId),
     getFaceVerification(applicationId),
     getRegulatoryDeclarations(applicationId),
-    getCustomerDeclaration(applicationId)
+    getCustomerDeclaration(applicationId),
+    getPIAssessment(applicationId)
   ]);
 
   return {
@@ -819,7 +852,8 @@ export async function getCompleteApplicationData(applicationId: number) {
     uploadedDocuments: documents,
     face,
     regulatory,
-    personalClientDeclaration: personalClientDecl
+    personalClientDeclaration: personalClientDecl,
+    piAssessment: piAssessmentData
   };
 }
 

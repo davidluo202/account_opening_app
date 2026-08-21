@@ -693,6 +693,31 @@ export const appRouter = router({
       }),
   }),
 
+  // Case 3f: 專業投資者評估 (PI Assessment)
+  piAssessment: router({
+    save: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+        assessmentData: z.string(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { applicationId, assessmentData } = input;
+        const application = await db.getApplicationById(applicationId);
+        if (!application || application.userId !== ctx.user.id) throw new Error("申请不存在或无权访问");
+        await db.savePIAssessment(applicationId, assessmentData);
+        await db.updateApplicationStep(applicationId, 7);
+        const saved = await db.getPIAssessment(applicationId);
+        return { success: true, data: saved };
+      }),
+    get: protectedProcedure
+      .input(z.object({ applicationId: z.number() }))
+      .query(async ({ input, ctx }) => {
+        const application = await db.getApplicationById(input.applicationId);
+        if (!application || application.userId !== ctx.user.id) throw new Error("申请不存在或无权访问");
+        return await db.getPIAssessment(input.applicationId);
+      }),
+  }),
+
   // Case 4: 个人详细信息
   personalDetailed: router({
     save: protectedProcedure
