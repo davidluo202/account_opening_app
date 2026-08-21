@@ -195,22 +195,22 @@ export default function CorporateBasicInfo() {
         return;
       }
 
-      const lengthRules: Record<string, number> = {
-        "+852": 8,  // 香港
-        "+86": 11,  // 中國內地
-        "+853": 8,  // 澳門
-        "+886": 9,  // 台灣
-        "+1": 10,   // 美國/加拿大
-        "+44": 10,  // 英國
-        "+65": 8,   // 新加坡
-        "+81": 10,  // 日本
-        "+61": 9,   // 澳洲
-        "+82": 10,  // 韓國
+      const lengthRules: Record<string, number[]> = {
+        "+852": [8],      // 香港
+        "+86": [8, 11],   // 中國內地（座機8位，手機11位）
+        "+853": [8],      // 澳門
+        "+886": [9],      // 台灣
+        "+1": [10],       // 美國/加拿大
+        "+44": [10],      // 英國
+        "+65": [8],       // 新加坡
+        "+81": [10],      // 日本
+        "+61": [9],       // 澳洲
+        "+82": [10],      // 韓國
       };
 
-      const requiredLen = lengthRules[code];
-      if (requiredLen && phone.length !== requiredLen) {
-        newErrors[field] = t(`${code} 號碼應為 ${requiredLen} 位數`, `${code} number should be ${requiredLen} digits`, `${code} 号码应为 ${requiredLen} 位数`);
+      const allowedLens = lengthRules[code];
+      if (allowedLens && !allowedLens.includes(phone.length)) {
+        newErrors[field] = t(`${code} 號碼應為 ${allowedLens.join(' 或 ')} 位數`, `${code} number should be ${allowedLens.join(' or ')} digits`, `${code} 号码应为 ${allowedLens.join(' 或 ')} 位数`);
       }
     };
 
