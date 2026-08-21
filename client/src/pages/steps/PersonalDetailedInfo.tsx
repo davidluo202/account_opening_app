@@ -413,8 +413,20 @@ export default function PersonalDetailedInfo() {
       newErrors.email = t("請輸入有效的電郵地址", "Please enter a valid email address", "请输入有效的电邮地址");
     }
 
-    // 手機號碼必填
-    if (!formData.mobileNumber.trim()) newErrors.mobileNumber = t("請輸入手機號碼", "Please enter mobile number", "请输入手机号码");
+    // 手機號碼必填 + 位數校驗
+    const phoneLengthMap: Record<string, number> = { '+852': 8, '+86': 11, '+853': 8, '+886': 9, '+1': 10, '+44': 10, '+65': 8, '+81': 10, '+61': 9 };
+    if (!formData.mobileNumber.trim()) {
+      newErrors.mobileNumber = t("請輸入手機號碼", "Please enter mobile number", "请输入手机号码");
+    } else {
+      const expectedLen = phoneLengthMap[formData.mobileCountryCode];
+      if (expectedLen && formData.mobileNumber.trim().length !== expectedLen) {
+        newErrors.mobileNumber = t(
+          `${formData.mobileCountryCode} 號碼應為 ${expectedLen} 位數`,
+          `${formData.mobileCountryCode} number should be ${expectedLen} digits`,
+          `${formData.mobileCountryCode} 号码应为 ${expectedLen} 位数`
+        );
+      }
+    }
 
     if (!formData.residentialAddress.trim()) newErrors.residentialAddress = t("請輸入住宅地址", "Please enter residential address", "请输入住宅地址");
 
