@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, LogOut, CheckCircle, XCircle, ArrowLeft, FileDown } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
-import { translate, formatInvestmentObjectives, getRiskToleranceDescription } from "@/lib/translations";
+import { translate, formatInvestmentObjectives, getRiskToleranceDescription, extractRiskCode } from "@/lib/translations";
 import {
   Dialog,
   DialogContent,
@@ -158,7 +158,7 @@ export default function ApprovalDetail() {
     }
     
     // 检查风险评级是否与客户自评一致
-    const customerRisk = applicationData?.financial?.riskTolerance;
+    const customerRisk = extractRiskCode(applicationData?.financial?.riskTolerance);
     if (customerRisk && customerRisk !== approvedRiskProfile) {
       setShowRiskWarningDialog(true);
     } else {

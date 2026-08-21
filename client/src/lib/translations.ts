@@ -236,8 +236,18 @@ export function formatInvestmentExperience(experience: string | Record<string, s
 /**
  * 獲取風險等級的完整描述
  */
+export function extractRiskCode(riskLevel: string | null | undefined): string {
+  if (!riskLevel) return '';
+  // Extract R-code from full description like "高風險 High (R6)" or just "R6"
+  const match = riskLevel.match(/R(\d)/);
+  return match ? `R${match[1]}` : riskLevel;
+}
+
 export function getRiskToleranceDescription(riskLevel: string | null | undefined): string {
   if (!riskLevel) return 'N/A';
+  // Normalize: extract R-code if full description is passed
+  const code = extractRiskCode(riskLevel);
+  if (code !== riskLevel) riskLevel = code;
   
   const descriptions: Record<string, string> = {
     R1: 'R1 - 低風險：在一定的時間內，本金安全的不穩定性很低，基金淨值會有輕度波動，或造成較微的本金虧損',
@@ -245,6 +255,7 @@ export function getRiskToleranceDescription(riskLevel: string | null | undefined
     R3: 'R3 - 中風險：在一定時間內，本金安全具有一定的不穩定性，基金淨值會有適度波動，或造成一定的本金虧損',
     R4: 'R4 - 中高風險：在一定時間內，本金安全的不穩定性相對較高，基金淨值會有較高波動，或造成較大的本金虧損',
     R5: 'R5 - 高風險：在一定的時間內，本金安全的不穩定性很高，基金淨值會有高度波動，或造成很大的本金虧損',
+    R6: 'R6 - 極高風險：在一定時間內，本金安全極度不穩定，可能造成絕大部分甚至全部本金虧損',
   };
   
   return descriptions[riskLevel] || translate(riskLevel);
