@@ -47,6 +47,7 @@ export default function DocumentUpload() {
   const corporateDocumentTypes = getCorporateDocumentTypes(t);
 
   const [uploading, setUploading] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState<string | null>(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   // 獲取客戶類型
@@ -193,7 +194,18 @@ const handleNext = () => {
             const isUploading = uploading === docType.value;
 
             return (
-              <Card key={docType.value} className="p-4">
+              <Card
+                key={docType.value}
+                className={`p-4 transition-colors ${dragOver === docType.value ? 'border-blue-500 bg-blue-50 border-2 border-dashed' : ''}`}
+                onDragOver={(e) => { e.preventDefault(); setDragOver(docType.value); }}
+                onDragLeave={() => setDragOver(null)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setDragOver(null);
+                  const file = e.dataTransfer.files?.[0];
+                  if (file) handleFileSelect(docType.value, file);
+                }}
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <Label className="text-base">
@@ -255,6 +267,7 @@ const handleNext = () => {
                         }
                       }}
                     />
+                    <p className="text-xs text-muted-foreground mb-1">{t('拖拽文件到此處或點擊上傳', 'Drag file here or click to upload', '拖拽文件到此处或点击上传')}</p>
                     <Button
                       variant={uploaded ? "outline" : "default"}
                       size="sm"
