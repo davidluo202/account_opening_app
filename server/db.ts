@@ -374,18 +374,36 @@ export async function submitApplication(
 export async function saveAccountSelection(applicationId: number, data: any) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  
-  await db.insert(accountSelections).values({
-    applicationId,
-    ...data
-  }).onDuplicateKeyUpdate({ set: data });
+
+  // Ensure corporateSubType column exists
+  try { await db.execute(sql`ALTER TABLE account_selections ADD COLUMN corporateSubType VARCHAR(30)`); } catch { /* exists */ }
+
+  // Use raw SQL to handle corporateSubType
+  const mysql2 = await import('mysql2/promise');
+  const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+  try {
+    await conn.execute(
+      `INSERT INTO account_selections (applicationId, customerType, accountType, corporateSubType)
+       VALUES (?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE customerType = VALUES(customerType), accountType = VALUES(accountType), corporateSubType = VALUES(corporateSubType)`,
+      [applicationId, data.customerType, data.accountType, data.corporateSubType || null]
+    );
+  } finally { await conn.end(); }
 }
 
 export async function getAccountSelection(applicationId: number) {
-  const db = await getDb();
-  if (!db) return null;
-  const result = await db.select().from(accountSelections).where(eq(accountSelections.applicationId, applicationId)).limit(1);
-  return result.length > 0 ? result[0] : null;
+  try {
+    const mysql2 = await import('mysql2/promise');
+    const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+    const [rows] = await conn.execute('SELECT * FROM account_selections WHERE applicationId = ? LIMIT 1', [applicationId]);
+    await conn.end();
+    return (rows as any[]).length > 0 ? (rows as any[])[0] : null;
+  } catch {
+    const db = await getDb();
+    if (!db) return null;
+    const result = await db.select().from(accountSelections).where(eq(accountSelections.applicationId, applicationId)).limit(1);
+    return result.length > 0 ? result[0] : null;
+  }
 }
 
 export async function savePersonalBasicInfo(applicationId: number, data: any) {
